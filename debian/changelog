@@ -1,0 +1,5 @@
+msc-pygeoapi (0.1.0) trusty; urgency=medium
+
+  * initial Debian packaging
+
+ -- Tom Kralidis <tom.kralidis@canada.ca>  Wed, 18 Apr 2018 11:27:07 +0000
