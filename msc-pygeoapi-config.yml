@@ -7,7 +7,7 @@ server:
     mimetype: application/json; charset=UTF-8
     encoding: utf-8
     language: en-CA
-    cors: true
+    # cors: true
     pretty_print: true
     limit: 10
     # templates: /path/to/templates
