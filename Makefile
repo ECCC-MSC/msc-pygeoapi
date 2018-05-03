@@ -45,8 +45,17 @@
 
 BASEDIR=/opt/msc-pygeoapi
 
+all:
+
 install:
-	install -d 755 $(DESTDIR)/etc
-	install -d 755 $(DESTDIR)/app
-	install -m 644 msc-pygeoapi-config.yml $(DESTDIR)/etc/
-	install -m 644 msc-pygeoapi-openapi.yml $(DESTDIR)/etc/
+	install -d $(DESTDIR)/app
+	install -d $(DESTDIR)/conf
+	install -d $(DESTDIR)/etc/apache2
+	install -d $(DESTDIR)/etc/profile.d
+	install -m 644 msc-pygeoapi.wsgi $(DESTDIR)/app/
+	install -m 644 msc-pygeoapi-config.yml $(DESTDIR)/conf/
+	install -m 644 msc-pygeoapi-openapi.yml $(DESTDIR)/conf/
+	install -m 644 msc-pygeoapi.conf $(DESTDIR)/etc/apache2/
+	install -m 644 msc-pygeoapi.env $(DESTDIR)/etc/profile.d/
+
+.PHONY: all install

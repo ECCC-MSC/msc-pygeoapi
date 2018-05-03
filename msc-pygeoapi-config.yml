@@ -2,11 +2,11 @@ server:
     bind:
         host: 0.0.0.0
         port: 5000
-    url: http://geomet-dev-02.cmc.ec.gc.ca:9080/pygeoapi/
-    basepath: /pygeoapi
+    url: http://geomet-dev-02.cmc.ec.gc.ca:9080/features/
+    basepath: /features
     mimetype: application/json; charset=UTF-8
     encoding: utf-8
-    language: en-US
+    language: en-CA
     cors: true
     pretty_print: true
     limit: 10
@@ -36,13 +36,13 @@ metadata:
         terms_of_service: None
         url: https://www.canada.ca/en/services/environment/weather.html
     license:
-        name: CC-BY 4.0 license
-        url: https://creativecommons.org/licenses/by/4.0/
+        name: Environment and Climate Change Canada Data Server End-use Licence
+        url: http://dd.weather.gc.ca/doc/LICENCE_GENERAL.txt
     provider:
         name: Government of Canada, Environment and Climate Change Canada, Meteorological Service of Canada
         url: https://www.canada.ca/en/services/environment/weather.html
     contact:
-        name: overnment of Canada, Environment and Climate Change Canada, Meteorological Service of Canada
+        name: Government of Canada, Environment and Climate Change Canada, Meteorological Service of Canada
         position: Service Channel
         address: 77 Westmorland Street, Suite 260
         city: Fredericton

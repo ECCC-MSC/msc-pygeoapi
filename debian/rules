@@ -8,9 +8,10 @@
 
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
+#export DH_OPTIONS=-v
 
 %:
 	dh $@
 
 override_dh_auto_install:
-	make install DESTDIR=debian/msc-pygeoapi/opt/msc-pygeoapi
+	$(MAKE) install DESTDIR=debian/msc-pygeoapi/opt/msc-pygeoapi
