@@ -33,8 +33,8 @@ info:
     affects the growth of crops and the availability of water. It dictates which regions
     of the world are habitable or uninhabitable
   license:
-    name: CC-BY 4.0 license
-    url: https://creativecommons.org/licenses/by/4.0/
+    name: Environment and Climate Change Canada Data Server End-use Licence
+    url: http://dd.weather.gc.ca/doc/LICENCE_GENERAL.txt
   termsOfService: None
   title: Meteorological Service of Canada Geospatial Web Services
   version: 3.0.1
@@ -82,7 +82,8 @@ paths:
       - server
   /collections/hydrometric-annual-peaks:
     get:
-      description: Hydrometric Annual maximum and minimum instantaneous data
+      description: The annual maximum and minimum instantaneous data are the maximum
+        and minimum instantaneous values for a given year.
       responses:
         200:
           description: successful operation
@@ -95,7 +96,8 @@ paths:
       - hydrometric-annual-peaks
   /collections/hydrometric-annual-peaks/items:
     get:
-      description: Hydrometric Annual maximum and minimum instantaneous data
+      description: The annual maximum and minimum instantaneous data are the maximum
+        and minimum instantaneous values for a given year.
       parameters:
       - $ref: '#/components/parameters/limit'
       - explode: false
@@ -196,12 +198,13 @@ paths:
           description: Invalid ID supplied
         404:
           description: not found
-      summary: Get Hydrometric Annual maximum and minimum instantaneous data features
+      summary: Get Annual Maximum and Minimum Instantaneous Water Level or Flow features
       tags:
       - hydrometric-annual-peaks
   /collections/hydrometric-annual-peaks/items/{id}:
     get:
-      description: Hydrometric Annual maximum and minimum instantaneous data
+      description: The annual maximum and minimum instantaneous data are the maximum
+        and minimum instantaneous values for a given year.
       parameters:
       - $ref: '#/components/parameters/id'
       responses:
@@ -211,13 +214,14 @@ paths:
           description: Invalid ID supplied
         404:
           description: not found
-      summary: Get Hydrometric Annual maximum and minimum instantaneous data feature
+      summary: Get Annual Maximum and Minimum Instantaneous Water Level or Flow feature
         by ID
       tags:
       - hydrometric-annual-peaks
   /collections/hydrometric-annual-statistics:
     get:
-      description: Hydrometric Annual maximum and minimum daily data
+      description: The annual maximum and minimum daily data are the maximum and minimum
+        daily mean values for a given year.
       responses:
         200:
           description: successful operation
@@ -230,7 +234,8 @@ paths:
       - hydrometric-annual-statistics
   /collections/hydrometric-annual-statistics/items:
     get:
-      description: Hydrometric Annual maximum and minimum daily data
+      description: The annual maximum and minimum daily data are the maximum and minimum
+        daily mean values for a given year.
       parameters:
       - $ref: '#/components/parameters/limit'
       - explode: false
@@ -331,12 +336,13 @@ paths:
           description: Invalid ID supplied
         404:
           description: not found
-      summary: Get Hydrometric Annual maximum and minimum daily data features
+      summary: Get Annual Maximum and Minimum Daily Water Level or Flow features
       tags:
       - hydrometric-annual-statistics
   /collections/hydrometric-annual-statistics/items/{id}:
     get:
-      description: Hydrometric Annual maximum and minimum daily data
+      description: The annual maximum and minimum daily data are the maximum and minimum
+        daily mean values for a given year.
       parameters:
       - $ref: '#/components/parameters/id'
       responses:
@@ -346,12 +352,13 @@ paths:
           description: Invalid ID supplied
         404:
           description: not found
-      summary: Get Hydrometric Annual maximum and minimum daily data feature by ID
+      summary: Get Annual Maximum and Minimum Daily Water Level or Flow feature by
+        ID
       tags:
       - hydrometric-annual-statistics
   /collections/hydrometric-daily-mean:
     get:
-      description: Hydrometric Daily Mean
+      description: The daily mean is the average of all unit values for a given day.
       responses:
         200:
           description: successful operation
@@ -364,7 +371,7 @@ paths:
       - hydrometric-daily-mean
   /collections/hydrometric-daily-mean/items:
     get:
-      description: Hydrometric Daily Mean
+      description: The daily mean is the average of all unit values for a given day.
       parameters:
       - $ref: '#/components/parameters/limit'
       - explode: false
@@ -444,12 +451,12 @@ paths:
           description: Invalid ID supplied
         404:
           description: not found
-      summary: Get Hydrometric Daily Mean features
+      summary: Get Daily Mean of Water Level or Flow features
       tags:
       - hydrometric-daily-mean
   /collections/hydrometric-daily-mean/items/{id}:
     get:
-      description: Hydrometric Daily Mean
+      description: The daily mean is the average of all unit values for a given day.
       parameters:
       - $ref: '#/components/parameters/id'
       responses:
@@ -459,12 +466,13 @@ paths:
           description: Invalid ID supplied
         404:
           description: not found
-      summary: Get Hydrometric Daily Mean feature by ID
+      summary: Get Daily Mean of Water Level or Flow feature by ID
       tags:
       - hydrometric-daily-mean
   /collections/hydrometric-monthly-mean:
     get:
-      description: Hydrometric Monthly Mean
+      description: The monthly mean is the average of daily mean values for a given
+        month.
       responses:
         200:
           description: successful operation
@@ -477,7 +485,8 @@ paths:
       - hydrometric-monthly-mean
   /collections/hydrometric-monthly-mean/items:
     get:
-      description: Hydrometric Monthly Mean
+      description: The monthly mean is the average of daily mean values for a given
+        month.
       parameters:
       - $ref: '#/components/parameters/limit'
       - explode: false
@@ -529,12 +538,13 @@ paths:
           description: Invalid ID supplied
         404:
           description: not found
-      summary: Get Hydrometric Monthly Mean features
+      summary: Get Monthly Mean of Water Level or Flow features
       tags:
       - hydrometric-monthly-mean
   /collections/hydrometric-monthly-mean/items/{id}:
     get:
-      description: Hydrometric Monthly Mean
+      description: The monthly mean is the average of daily mean values for a given
+        month.
       parameters:
       - $ref: '#/components/parameters/id'
       responses:
@@ -544,12 +554,13 @@ paths:
           description: Invalid ID supplied
         404:
           description: not found
-      summary: Get Hydrometric Monthly Mean feature by ID
+      summary: Get Monthly Mean of Water Level or Flow feature by ID
       tags:
       - hydrometric-monthly-mean
   /collections/hydrometric-stations:
     get:
-      description: Hydrometric Stations
+      description: A station is a site on a river or lake where water quantity (water
+        level and flow) are collected and recorded.
       responses:
         200:
           description: successful operation
@@ -562,7 +573,8 @@ paths:
       - hydrometric-stations
   /collections/hydrometric-stations/items:
     get:
-      description: Hydrometric Stations
+      description: A station is a site on a river or lake where water quantity (water
+        level and flow) are collected and recorded.
       parameters:
       - $ref: '#/components/parameters/limit'
       - explode: false
@@ -635,12 +647,13 @@ paths:
           description: Invalid ID supplied
         404:
           description: not found
-      summary: Get Hydrometric Stations features
+      summary: Get Hydrometric Monitoring Stations features
       tags:
       - hydrometric-stations
   /collections/hydrometric-stations/items/{id}:
     get:
-      description: Hydrometric Stations
+      description: A station is a site on a river or lake where water quantity (water
+        level and flow) are collected and recorded.
       parameters:
       - $ref: '#/components/parameters/id'
       responses:
@@ -650,7 +663,7 @@ paths:
           description: Invalid ID supplied
         404:
           description: not found
-      summary: Get Hydrometric Stations feature by ID
+      summary: Get Hydrometric Monitoring Stations feature by ID
       tags:
       - hydrometric-stations
   /conformance:
@@ -675,14 +688,17 @@ tags:
     description: information
     url: https://www.canada.ca/en/services/environment/weather.html
   name: server
-- description: Hydrometric Monthly Mean
+- description: The monthly mean is the average of daily mean values for a given month.
   name: hydrometric-monthly-mean
-- description: Hydrometric Annual maximum and minimum instantaneous data
+- description: The annual maximum and minimum instantaneous data are the maximum and
+    minimum instantaneous values for a given year.
   name: hydrometric-annual-peaks
-- description: Hydrometric Annual maximum and minimum daily data
+- description: The annual maximum and minimum daily data are the maximum and minimum
+    daily mean values for a given year.
   name: hydrometric-annual-statistics
-- description: Hydrometric Stations
+- description: A station is a site on a river or lake where water quantity (water
+    level and flow) are collected and recorded.
   name: hydrometric-stations
-- description: Hydrometric Daily Mean
+- description: The daily mean is the average of all unit values for a given day.
   name: hydrometric-daily-mean
 

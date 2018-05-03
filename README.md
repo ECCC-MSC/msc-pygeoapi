@@ -7,6 +7,7 @@ MSC GeoMet WFS 3 server implementation using pygeoapi
 ## Dependencies
 
 - [Elasticsearch](https://elastic.co) (5 or above)
+ - i.e. `sudo echo `deb https://artifacts.elastic.co/packages/5.x/apt stable main` > /etc/apt/sources.list.d/elastic.list`
 - [pygeoapi](https://github.com/geopython/pygeoapi)
 
 
