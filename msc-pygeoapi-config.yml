@@ -274,3 +274,46 @@ datasets:
             name: Elasticsearch
             data: http://localhost:9200/hydrometric_annual_peaks/FeatureCollection
             id_field: IDENTIFIER
+
+    realtime-surface-weather-observations:
+        title: Realtime Surface Weather Observations
+        description: Realtime Surface Weather Observations
+        keywords: [observations,surface,realtime]
+        crs:
+            - CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title: Water Level and Flow - Environment Canada
+              href: https://wateroffice.ec.gc.ca
+              hreflang: en-CA
+            - type: text/html
+              rel: canonical
+              title: Niveau d'eau et débit - Environnement Canada
+              href: https://wateroffice.ec.gc.ca/index_f.html
+              hreflang: fr-CA
+            - type: text/html
+              rel: download
+              title: "National water data archive: HYDAT - Canada.ca"
+              href: https://www.canada.ca/en/environment-climate-change/services/water-overview/quantity/monitoring/survey/data-products-services/national-archive-hydat.html
+              hreflang: en-CA
+            - type: text/html
+              rel: download
+              title: "Archives nationales des données hydrologiques : HYDAT - Canada.ca"
+              href: https://www.canada.ca/fr/environnement-changement-climatique/services/eau-apercu/volume/surveillance/releves/produits-donnees-services/archives-nationales-hydat.html
+              hreflang: fr-CA
+            - type: application/zip
+              rel: download
+              title: download data
+              href: http://collaboration.cmc.ec.gc.ca/cmc/hydrometrics/www/Hydat_sqlite3_20180417.zip
+              hreflang: en-CA
+        extents:
+            spatial:
+                bbox: [-142, 52, -52, 84]
+            temporal:
+                begin: 1850-01-01
+                end: now  # or empty
+        provider:
+            name: Elasticsearch
+            data: http://localhost:9200/swob/FeatureCollection
+            id_field: instance_datetime

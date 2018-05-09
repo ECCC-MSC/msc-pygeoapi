@@ -1,3 +1,9 @@
+msc-pygeoapi (0.1.2) trusty; urgency=medium
+
+  * remove python-elasticsearch (installed by pip)
+
+ -- Tom Kralidis <tom.kralidis@canada.ca>  Wed, 09 May 2018 18:26:37 +0000
+
 msc-pygeoapi (0.1.1) trusty; urgency=medium
 
   * initial Debian packaging
