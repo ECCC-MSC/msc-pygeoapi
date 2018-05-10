@@ -2,8 +2,8 @@ server:
     bind:
         host: 0.0.0.0
         port: 5000
-    url: http://geomet-dev-02.cmc.ec.gc.ca:9080/pygeoapi/
-    basepath: /pygeoapi
+    url: http://geo.wxod-dev.cmc.ec.gc.ca/geomet/features/
+    basepath: /geomet/features
     mimetype: application/json; charset=UTF-8
     encoding: utf-8
     language: en-CA

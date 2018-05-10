@@ -43,4 +43,9 @@
 #
 # =================================================================
 
+import os
+
+os.environ['PYGEOAPI_CONFIG'] = '/opt/msc-pygeoapi/conf/msc-pygeoapi-config.yml'
+os.environ['PYGEOAPI_OPENAPI'] = '/opt/msc-pygeoapi/conf/msc-pygeoapi-openapi.yml'
+
 from pygeoapi.flask_app import APP as application

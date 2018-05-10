@@ -54,6 +54,5 @@ install:
 	install -m 644 msc-pygeoapi-config.yml $(DESTDIR)/conf/
 	install -m 644 msc-pygeoapi-openapi.yml $(DESTDIR)/conf/
 	install -m 644 msc-pygeoapi.conf $(DESTDIR)/etc/apache2/
-	install -m 644 msc-pygeoapi.env $(DESTDIR)/etc/profile.d/
 
 .PHONY: all install
