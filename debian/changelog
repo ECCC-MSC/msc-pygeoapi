@@ -1,3 +1,10 @@
+msc-pygeoapi (0.1.3) trusty; urgency=medium
+
+  * move variables to Flask
+
+ -- Tom Kralidis <tom.kralidis@canada.ca>  Thu, 10 May 2018 20:23:19 +0000
+
+
 msc-pygeoapi (0.1.2) trusty; urgency=medium
 
   * remove python-elasticsearch (installed by pip)
