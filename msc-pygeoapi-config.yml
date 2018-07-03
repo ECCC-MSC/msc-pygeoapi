@@ -9,7 +9,7 @@ server:
     language: en-CA
     # cors: true
     pretty_print: true
-    limit: 10
+    limit: 500
     # templates: /path/to/templates
 
 logging:
@@ -274,3 +274,95 @@ datasets:
             name: Elasticsearch
             data: http://localhost:9200/hydrometric_annual_peaks/FeatureCollection
             id_field: IDENTIFIER
+
+    climate-normals:
+        title: 1981-2010 Climate Normals
+        description: 1981-2010 Climate Normals
+        keywords: [climate, normals]
+        crs:
+            - CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title: Climate Data Online
+              href: https://climate.weather.ec.gc.ca
+              hreflang: en-CA
+        extents:
+            spatial:
+                bbox: [-142, 52, -52, 84]
+            temporal:
+                begin: 1981-01-01
+                end: 2010-12-31
+        provider:
+            name: Elasticsearch
+            data: http://localhost:9200/normals_data/FeatureCollection
+            id_field: ID
+
+    climate-stations:
+        title: Climate Stations
+        description: Climate Stations
+        keywords: [climate, stations]
+        crs:
+            - CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title: Climate Data Online
+              href: https://climate.weather.ec.gc.ca
+              hreflang: en-CA
+        extents:
+            spatial:
+                bbox: [-142, 52, -52, 84]
+            temporal:
+                begin: 1969-01-01
+                end: now  # or empty
+        provider:
+            name: Elasticsearch
+            data: http://localhost:9200/climate_station_information/FeatureCollection
+            id_field: STN_ID
+
+    climate-monthly:
+        title: MSC Monthly Data
+        description: MSC Monthly Data
+        keywords: [climate, monthly]
+        crs:
+            - CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title: Climate Data Online
+              href: https://climate.weather.ec.gc.ca
+              hreflang: en-CA
+        extents:
+            spatial:
+                bbox: [-142, 52, -52, 84]
+            temporal:
+                begin: 1969-01-01
+                end: now  # or empty
+        provider:
+            name: Elasticsearch
+            data: http://localhost:9200/climate_public_climate_summary/FeatureCollection
+            id_field: ID
+
+    climate-daily:
+        title: MSC Daily Data
+        description: MSC Daily Data
+        keywords: [climate, daily]
+        crs:
+            - CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title: Climate Data Online
+              href: https://climate.weather.ec.gc.ca
+              hreflang: en-CA
+        extents:
+            spatial:
+                bbox: [-142, 52, -52, 84]
+            temporal:
+                begin: 1969-01-01
+                end: now  # or empty
+        provider:
+            name: Elasticsearch
+            data: http://localhost:9200/climate_public_daily_data/FeatureCollection
+            id_field: ID
