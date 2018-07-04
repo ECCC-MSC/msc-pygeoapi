@@ -1,3 +1,9 @@
+msc-pygeoapi (0.3.0) trusty; urgency=medium
+
+  * add AHCCD feature collections
+
+ -- Tom Kralidis <tom.kralidis@canada.ca>  Tue, 04 Jul 2018 11:55:28 +0000
+
 msc-pygeoapi (0.2.0) trusty; urgency=medium
 
   * add MSC climate data feature collections
