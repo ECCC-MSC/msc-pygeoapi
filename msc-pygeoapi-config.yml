@@ -366,3 +366,115 @@ datasets:
             name: Elasticsearch
             data: http://localhost:9200/climate_public_daily_data/FeatureCollection
             id_field: ID
+
+    ahccd-stations:
+        title: Adjusted and Homogenized Canadian Climate Data (AHCCD) Stations
+        description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Stations
+        keywords: [ahccd, stations]
+        crs:
+            - CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title: Adjusted and Homogenized Canadian Climate Data (AHCCD)
+              href: http://ec.gc.ca/dccha-ahccd/default.asp?lang=En&n=B1F8423
+              hreflang: en-CA
+        extents:
+            spatial:
+                bbox: [-142, 52, -52, 84]
+        provider:
+            name: Elasticsearch
+            data: http://localhost:9200/ahccd_stations/FeatureCollection
+            id_field: identifier
+
+    ahccd-annual:
+        title: Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual
+        description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual
+        keywords: [ahccd, annual]
+        crs:
+            - CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title: Adjusted and Homogenized Canadian Climate Data (AHCCD)
+              href: http://ec.gc.ca/dccha-ahccd/default.asp?lang=En&n=B1F8423
+              hreflang: en-CA
+        extents:
+            spatial:
+                bbox: [-142, 52, -52, 84]
+            temporal:
+                begin: 1840-01-01
+                end: 2017-12-31
+        provider:
+            name: Elasticsearch
+            data: http://localhost:9200/ahccd_annual/FeatureCollection
+            id_field: identifier
+
+    ahccd-seasonal:
+        title: Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal
+        description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal
+        keywords: [ahccd, seasonal]
+        crs:
+            - CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title: Adjusted and Homogenized Canadian Climate Data (AHCCD)
+              href: http://ec.gc.ca/dccha-ahccd/default.asp?lang=En&n=B1F8423
+              hreflang: en-CA
+        extents:
+            spatial:
+                bbox: [-142, 52, -52, 84]
+            temporal:
+                begin: 1840-01-01
+                end: 2017-12-31
+        provider:
+            name: Elasticsearch
+            data: http://localhost:9200/ahccd_seasonal/FeatureCollection
+            id_field: identifier
+
+    ahccd-monthly:
+        title: Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
+        description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
+        keywords: [ahccd, monthly]
+        crs:
+            - CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title: Adjusted and Homogenized Canadian Climate Data (AHCCD)
+              href: http://ec.gc.ca/dccha-ahccd/default.asp?lang=En&n=B1F8423
+              hreflang: en-CA
+        extents:
+            spatial:
+                bbox: [-142, 52, -52, 84]
+            temporal:
+                begin: 1840-01-01
+                end: 2017-12-31
+        provider:
+            name: Elasticsearch
+            data: http://localhost:9200/ahccd_monthly/FeatureCollection
+            id_field: identifier
+
+    ahccd-trends:
+        title: Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends
+        description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends
+        keywords: [ahccd, trends]
+        crs:
+            - CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title: Adjusted and Homogenized Canadian Climate Data (AHCCD)
+              href: http://ec.gc.ca/dccha-ahccd/default.asp?lang=En&n=B1F8423
+              hreflang: en-CA
+        extents:
+            spatial:
+                bbox: [-142, 52, -52, 84]
+            temporal:
+                begin: 1840-01-01
+                end: 2017-12-31
+        provider:
+            name: Elasticsearch
+            data: http://localhost:9200/ahccd_trends/FeatureCollection
+            id_field: identifier
