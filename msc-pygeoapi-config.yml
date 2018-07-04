@@ -478,3 +478,26 @@ datasets:
             name: Elasticsearch
             data: http://localhost:9200/ahccd_trends/FeatureCollection
             id_field: identifier
+
+    cmip5:
+        title: Coupled Model Intercomparison Project Phase 5 (CMIP5)
+        description: Coupled Model Intercomparison Project Phase 5 (CMIP5)
+        keywords: [cmip5]
+        crs:
+            - CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title: CMIP5 gridded data
+              href: http://climate-scenarios.canada.ca/?page=gridded-data
+              hreflang: en-CA
+        extents:
+            spatial:
+                bbox: [-142, 52, -52, 84]
+            temporal:
+                begin: 1840-01-01
+                end: 2017-12-31
+        provider:
+            name: Elasticsearch
+            data: http://localhost:9200/cmip5/FeatureCollection
+            id_field: identifier
