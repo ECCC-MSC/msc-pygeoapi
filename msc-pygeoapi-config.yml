@@ -295,7 +295,7 @@ datasets:
                 end: 2010-12-31
         provider:
             name: Elasticsearch
-            data: http://localhost:9200/normals_data/FeatureCollection
+            data: http://localhost:9200/climate_normals_data/FeatureCollection
             id_field: ID
 
     climate-stations:
