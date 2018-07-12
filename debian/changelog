@@ -1,3 +1,9 @@
+msc-pygeoapi (0.3.1) trusty; urgency=medium
+
+  * fix ES reference
+
+ -- Tom Kralidis <tom.kralidis@canada.ca>  Thu, 12 Jul 2018 15:36:38 +0000
+
 msc-pygeoapi (0.3.0) trusty; urgency=medium
 
   * add AHCCD feature collections
