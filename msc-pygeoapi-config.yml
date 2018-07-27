@@ -188,6 +188,7 @@ datasets:
             name: Elasticsearch
             data: http://localhost:9200/hydrometric_monthly_mean/FeatureCollection
             id_field: IDENTIFIER
+            time_field: DATE
 
     hydrometric-annual-statistics:
         title: Annual Maximum and Minimum Daily Water Level or Flow
@@ -274,6 +275,7 @@ datasets:
             name: Elasticsearch
             data: http://localhost:9200/hydrometric_annual_peaks/FeatureCollection
             id_field: IDENTIFIER
+            time_field: DATE
 
     climate-normals:
         title: 1981-2010 Climate Normals
@@ -297,6 +299,7 @@ datasets:
             name: Elasticsearch
             data: http://localhost:9200/climate_normals_data/FeatureCollection
             id_field: ID
+            time_field: DATE_CALCULATED
 
     climate-stations:
         title: Climate Stations
@@ -343,6 +346,7 @@ datasets:
             name: Elasticsearch
             data: http://localhost:9200/climate_public_climate_summary/FeatureCollection
             id_field: ID
+            time_field: LAST_UPDATED
 
     climate-daily:
         title: MSC Daily Data
@@ -366,6 +370,7 @@ datasets:
             name: Elasticsearch
             data: http://localhost:9200/climate_public_daily_data/FeatureCollection
             id_field: ID
+            time_field: LOCAL_DATE
 
     ahccd-stations:
         title: Adjusted and Homogenized Canadian Climate Data (AHCCD) Stations
@@ -409,6 +414,7 @@ datasets:
             name: Elasticsearch
             data: http://localhost:9200/ahccd_annual/FeatureCollection
             id_field: identifier
+            time_field: year
 
     ahccd-seasonal:
         title: Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal
@@ -432,6 +438,7 @@ datasets:
             name: Elasticsearch
             data: http://localhost:9200/ahccd_seasonal/FeatureCollection
             id_field: identifier
+            time_field: year
 
     ahccd-monthly:
         title: Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
@@ -455,6 +462,7 @@ datasets:
             name: Elasticsearch
             data: http://localhost:9200/ahccd_monthly/FeatureCollection
             id_field: identifier
+            time_field: date
 
     ahccd-trends:
         title: Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends
@@ -501,3 +509,4 @@ datasets:
             name: Elasticsearch
             data: http://localhost:9200/cmip5/FeatureCollection
             id_field: identifier
+            time_field: year
