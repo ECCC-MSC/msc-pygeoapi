@@ -232,6 +232,7 @@ datasets:
             name: Elasticsearch
             data: http://localhost:9200/hydrometric_annual_statistics/FeatureCollection
             id_field: IDENTIFIER
+            time_field: MAX_DATE
 
     hydrometric-annual-peaks:
         title: Annual Maximum and Minimum Instantaneous Water Level or Flow
