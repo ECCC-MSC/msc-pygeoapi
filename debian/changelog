@@ -1,3 +1,9 @@
+msc-pygeoapi (0.3.3) trusty; urgency=medium
+
+  * add time field for relevant datasets again
+
+ -- Tom Kralidis <tom.kralidis@canada.ca>  Wed, 29 Aug 2018 12:18:35 +0000
+
 msc-pygeoapi (0.3.2) trusty; urgency=medium
 
   * add time field for relevant datasets
