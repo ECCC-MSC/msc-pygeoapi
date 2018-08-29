@@ -13,7 +13,7 @@ server:
     # templates: /path/to/templates
 
 logging:
-    level: DEBUG
+    level: ERROR
     # logfile: /tmp/pygeoapi.log
 
 metadata:
