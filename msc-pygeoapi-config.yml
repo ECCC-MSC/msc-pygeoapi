@@ -391,7 +391,7 @@ datasets:
         provider:
             name: Elasticsearch
             data: http://localhost:9200/ahccd_stations/FeatureCollection
-            id_field: identifier
+            id_field: identifier__identifiant
 
     ahccd-annual:
         title: Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual
@@ -414,8 +414,8 @@ datasets:
         provider:
             name: Elasticsearch
             data: http://localhost:9200/ahccd_annual/FeatureCollection
-            id_field: identifier
-            time_field: year
+            id_field: identifier__identifiant
+            time_field: year__année
 
     ahccd-seasonal:
         title: Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal
@@ -438,8 +438,8 @@ datasets:
         provider:
             name: Elasticsearch
             data: http://localhost:9200/ahccd_seasonal/FeatureCollection
-            id_field: identifier
-            time_field: year
+            id_field: identifier__identifiant
+            time_field: year__année
 
     ahccd-monthly:
         title: Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
@@ -462,7 +462,7 @@ datasets:
         provider:
             name: Elasticsearch
             data: http://localhost:9200/ahccd_monthly/FeatureCollection
-            id_field: identifier
+            id_field: identifier__identifiant
             time_field: date
 
     ahccd-trends:
@@ -486,7 +486,7 @@ datasets:
         provider:
             name: Elasticsearch
             data: http://localhost:9200/ahccd_trends/FeatureCollection
-            id_field: identifier
+            id_field: identifier__identifiant
 
     cmip5:
         title: Coupled Model Intercomparison Project Phase 5 (CMIP5)
