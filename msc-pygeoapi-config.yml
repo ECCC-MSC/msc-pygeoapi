@@ -415,7 +415,7 @@ datasets:
             name: Elasticsearch
             data: http://localhost:9200/ahccd_annual/FeatureCollection
             id_field: identifier__identifiant
-            time_field: year__année
+            time_field: year__annee
 
     ahccd-seasonal:
         title: Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal
@@ -439,7 +439,7 @@ datasets:
             name: Elasticsearch
             data: http://localhost:9200/ahccd_seasonal/FeatureCollection
             id_field: identifier__identifiant
-            time_field: year__année
+            time_field: year__annee
 
     ahccd-monthly:
         title: Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
