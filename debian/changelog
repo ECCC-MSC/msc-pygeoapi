@@ -1,3 +1,9 @@
+msc-pygeoapi (0.3.5) trusty; urgency=medium
+
+  * remove accents from field names
+
+ -- Tom Kralidis <tom.kralidis@canada.ca>  Thu, 06 Sep 2018 10:55:59 +0000
+
 msc-pygeoapi (0.3.4) trusty; urgency=medium
 
   * update ahccd fields
