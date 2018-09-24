@@ -347,7 +347,7 @@ datasets:
             name: Elasticsearch
             data: http://localhost:9200/climate_public_climate_summary/FeatureCollection
             id_field: ID
-            time_field: LAST_UPDATED
+            time_field: LOCAL_DATE
 
     climate-daily:
         title: MSC Daily Data
