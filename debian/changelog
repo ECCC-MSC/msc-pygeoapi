@@ -1,3 +1,9 @@
+msc-pygeoapi (0.3.6) trusty; urgency=medium
+
+  * fix MSC Climate monthlies time field
+
+ -- Tom Kralidis <tom.kralidis@canada.ca>  Mon, 24 Sep 2018 19:40:10 +0000
+
 msc-pygeoapi (0.3.5) trusty; urgency=medium
 
   * remove accents from field names
