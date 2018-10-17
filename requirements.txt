@@ -1,0 +1,4 @@
+click
+cx_Oracle
+requests
+sqlalchemy
