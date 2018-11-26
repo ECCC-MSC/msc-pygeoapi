@@ -10,14 +10,12 @@ import json
 import logging
 import click
 
-
 LOGGER = logging.getLogger(__name__)
 HTTP_OK = 200
 POST_OK = 201
 HEADERS = {'Content-type': 'application/json'}
 # Needs to be fixed.
 VERIFY = False
-
 
 def create_index(es, index, AUTH):
     """
@@ -55,10 +53,7 @@ def create_index(es, index, AUTH):
                             "properties": {
                                 "properties": {
                                     "station_id": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                        "type": "integer"
                                     },
                                     "temp_max_units": {
                                         "type": "text",
@@ -67,10 +62,7 @@ def create_index(es, index, AUTH):
                                         }
                                     },
                                     "identifier": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                        "type": "float"
                                     },
                                     "pressure_station_units": {
                                         "type": "text",
@@ -79,16 +71,10 @@ def create_index(es, index, AUTH):
                                         }
                                     },
                                     "pressure_station": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                        "type": "float"
                                     },
                                     "temp_min": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                        "type": "float"
                                     },
                                     "total_precip_units": {
                                         "type": "text",
@@ -102,17 +88,11 @@ def create_index(es, index, AUTH):
                                             "raw": {"type": "keyword"}
                                         }
                                     },
-                                    "prsesure_sea_level": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                    "pressure_sea_level": {
+                                        "type": "float"
                                     },
                                     "rain": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                        "type": "float"
                                     },
                                     "snow_units": {
                                         "type": "text",
@@ -121,22 +101,13 @@ def create_index(es, index, AUTH):
                                         }
                                     },
                                     "total_precip": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                        "type": "float"
                                     },
                                     "temp_mean": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                        "type": "float"
                                     },
                                     "snow": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                        "type": "float"
                                     },
                                     "pressure_sea_level_units": {
                                         "type": "text",
@@ -163,16 +134,10 @@ def create_index(es, index, AUTH):
                                         }
                                     },
                                     "temp_max": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                        "type": "float"
                                     },
                                     "wind_speed": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                        "type": "float"
                                     },
                                     "wind_speed_units": {
                                         "type": "text",
@@ -226,10 +191,7 @@ def create_index(es, index, AUTH):
                             "properties": {
                                 "properties": {
                                     "station_id": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                        "type": "integer"
                                     },
                                     "temp_max_units": {
                                         "type": "text",
@@ -238,10 +200,7 @@ def create_index(es, index, AUTH):
                                         }
                                     },
                                     "identifier": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                        "type": "float"
                                     },
                                     "pressure_station_units": {
                                         "type": "text",
@@ -250,16 +209,10 @@ def create_index(es, index, AUTH):
                                         }
                                     },
                                     "pressure_station": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                        "type": "float"
                                     },
                                     "temp_min": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                        "type": "float"
                                     },
                                     "temp_min_units": {
                                         "type": "text",
@@ -280,16 +233,10 @@ def create_index(es, index, AUTH):
                                         }
                                     },
                                     "prsesure_sea_level": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                        "type": "float"
                                     },
                                     "rain": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                        "type": "float"
                                     },
                                     "snow_units": {
                                         "type": "text",
@@ -298,22 +245,13 @@ def create_index(es, index, AUTH):
                                         }
                                     },
                                     "total_precip": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                        "type": "float"
                                     },
                                     "temp_mean": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                        "type": "float"
                                     },
                                     "snow": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                        "type": "float"
                                     },
                                     "pressure_sea_level_units": {
                                         "type": "text",
@@ -340,16 +278,10 @@ def create_index(es, index, AUTH):
                                         }
                                     },
                                     "temp_max": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                        "type": "float"
                                     },
                                     "wind_speed": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                        "type": "float"
                                     },
                                     "wind_speed_units": {
                                         "type": "text",
@@ -402,10 +334,7 @@ def create_index(es, index, AUTH):
                             "properties": {
                                 "properties": {
                                     "station_id": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                        "type": "integer"
                                     },
                                     "temp_max_units": {
                                         "type": "text",
@@ -414,10 +343,7 @@ def create_index(es, index, AUTH):
                                         }
                                     },
                                     "identifier": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                        "type": "float"
                                     },
                                     "pressure_station_units": {
                                         "type": "text",
@@ -426,16 +352,10 @@ def create_index(es, index, AUTH):
                                         }
                                     },
                                     "pressure_station": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                        "type": "float"
                                     },
                                     "temp_min": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                        "type": "float"
                                     },
                                     "temp_min_units": {
                                         "type": "text",
@@ -455,17 +375,14 @@ def create_index(es, index, AUTH):
                                             "raw": {"type": "keyword"}
                                         }
                                     },
-                                    "prsesure_sea_level": {
+                                    "pressure_sea_level": {
                                         "type": "text",
                                         "fields": {
                                             "raw": {"type": "keyword"}
                                         }
                                     },
                                     "rain": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                        "type": "float"
                                     },
                                     "snow_units": {
                                         "type": "text",
@@ -474,22 +391,13 @@ def create_index(es, index, AUTH):
                                         }
                                     },
                                     "total_precip": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                        "type": "float"
                                     },
                                     "temp_mean": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                        "type": "float"
                                     },
                                     "snow": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                        "type": "float"
                                     },
                                     "pressure_sea_level_units": {
                                         "type": "text",
@@ -516,16 +424,10 @@ def create_index(es, index, AUTH):
                                         }
                                     },
                                     "temp_max": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                        "type": "float"
                                     },
                                     "wind_speed": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                        "type": "float"
                                     },
                                     "wind_speed_units": {
                                         "type": "text",
@@ -590,10 +492,10 @@ def create_index(es, index, AUTH):
                                         }
                                     },
                                     "identifier": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                        "type": "integer"
+                                    },
+                                    "trend_value": {
+                                        "type": "integer"
                                     },
                                     "elevation": {
                                         "type": "text",
@@ -607,12 +509,31 @@ def create_index(es, index, AUTH):
                                             "raw": {"type": "keyword"}
                                         }
                                     },
+                                    "measurement_type": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "period": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "year_range": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
                                     "province": {
                                         "type": "text",
                                         "fields": {
                                             "raw": {"type": "keyword"}
                                         }
                                     }
+                                    
                                 }
                             },
                             "geometry": {"type": "geo_shape"}
@@ -672,10 +593,7 @@ def create_index(es, index, AUTH):
                                         }
                                     },
                                     "elevation": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                        "type": "float"
                                     },
                                     "joined": {
                                         "type": "text",
@@ -696,10 +614,7 @@ def create_index(es, index, AUTH):
                                         }
                                     },
                                     "identifier": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                        "type": "float"
                                     },
                                     "period": {
                                         "type": "text",
@@ -708,10 +623,7 @@ def create_index(es, index, AUTH):
                                         }
                                     },
                                     "trend_value": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                        "type": "float"
                                     }
                                 }
                             },
