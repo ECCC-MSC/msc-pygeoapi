@@ -52,102 +52,125 @@ def create_index(es, index, AUTH):
                             "type": {"type": "text"},
                             "properties": {
                                 "properties": {
-                                    "station_id": {
+                                    "identifier__identifiant": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "lat__lat": {
+                                        "type": "float"
+                                    },
+                                    "lon__long": {
+                                        "type": "float"
+                                    },
+                                    "province__province": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "period_group__groupe_periode": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "period_value__valeur_periode": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "pressure_sea_level__pression_niveau_mer": {
+                                        "type": "float"
+                                    },
+                                    "pressure_sea_level_units__pression_niveau_mer_unite": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "pressure_station__pression_station": {
+                                        "type": "float"
+                                    },
+                                    "pressure_station_units__pression_station_unites": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "rain__pluie": {
+                                        "type": "float"
+                                    },
+                                    "rain_units__pluie_unites": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "snow__neige": {
+                                        "type": "float"
+                                    },
+                                    "snow_units__neige_unites": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "station_id__id_station": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "temp_max__temp_max": {
+                                        "type": "float"
+                                    },
+                                    "temp_max_units__temp_max_unites": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "temp_mean__temp_moyenne": {
+                                        "type": "float"
+                                    },
+                                    "temp_mean_units__temp_moyenne_unites": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "temp_min__temp_min": {
+                                        "type": "float"
+                                    },
+                                    "temp_min_units__temp_min_unites": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "total_precip__precip_totale": {
+                                        "type": "float"
+                                    },
+                                    "total_precip_units__precip_totale_unites": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "wind_speed__vitesse_vent": {
+                                        "type": "float"
+                                    },
+                                    "wind_speed_units__vitesse_vent_unites": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "year__annee": {
                                         "type": "integer"
-                                    },
-                                    "temp_max_units": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "identifier": {
-                                        "type": "float"
-                                    },
-                                    "pressure_station_units": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "pressure_station": {
-                                        "type": "float"
-                                    },
-                                    "temp_min": {
-                                        "type": "float"
-                                    },
-                                    "total_precip_units": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "temp_mean_units": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "pressure_sea_level": {
-                                        "type": "float"
-                                    },
-                                    "rain": {
-                                        "type": "float"
-                                    },
-                                    "snow_units": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "total_precip": {
-                                        "type": "float"
-                                    },
-                                    "temp_mean": {
-                                        "type": "float"
-                                    },
-                                    "snow": {
-                                        "type": "float"
-                                    },
-                                    "pressure_sea_level_units": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "rain_units": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "period_group": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "temp_min_units": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "temp_max": {
-                                        "type": "float"
-                                    },
-                                    "wind_speed": {
-                                        "type": "float"
-                                    },
-                                    "wind_speed_units": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "year": {
-                                        "type": "date",
-                                        "format": "yyyy"
                                     }
                                 }
                             },
@@ -190,108 +213,131 @@ def create_index(es, index, AUTH):
                             "type": {"type": "text"},
                             "properties": {
                                 "properties": {
-                                    "station_id": {
-                                        "type": "integer"
-                                    },
-                                    "temp_max_units": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "identifier": {
-                                        "type": "float"
-                                    },
-                                    "pressure_station_units": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "pressure_station": {
-                                        "type": "float"
-                                    },
-                                    "temp_min": {
-                                        "type": "float"
-                                    },
-                                    "temp_min_units": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "total_precip_units": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "temp_mean_units": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "prsesure_sea_level": {
-                                        "type": "float"
-                                    },
-                                    "rain": {
-                                        "type": "float"
-                                    },
-                                    "snow_units": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "total_precip": {
-                                        "type": "float"
-                                    },
-                                    "temp_mean": {
-                                        "type": "float"
-                                    },
-                                    "snow": {
-                                        "type": "float"
-                                    },
-                                    "pressure_sea_level_units": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "rain_units": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "period_group": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "period_value": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "temp_max": {
-                                        "type": "float"
-                                    },
-                                    "wind_speed": {
-                                        "type": "float"
-                                    },
-                                    "wind_speed_units": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
                                     "date": {
-                                        "type": "date",
-                                        "format": "yyyy-MM"
+                                       "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        } 
+                                    },
+                                    "identifier__identifiant": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "lat__lat": {
+                                        "type": "float"
+                                    },
+                                    "lon__long": {
+                                        "type": "float"
+                                    },
+                                    "province__province": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "period_group__groupe_periode": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "period_value__valeur_periode": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "pressure_sea_level__pression_niveau_mer": {
+                                        "type": "float"
+                                    },
+                                    "pressure_sea_level_units__pression_niveau_mer_unite": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "pressure_station__pression_station": {
+                                        "type": "float"
+                                    },
+                                    "pressure_station_units__pression_station_unites": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "rain__pluie": {
+                                        "type": "float"
+                                    },
+                                    "rain_units__pluie_unites": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "snow__neige": {
+                                        "type": "float"
+                                    },
+                                    "snow_units__neige_unites": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "station_id__id_station": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "temp_max__temp_max": {
+                                        "type": "float"
+                                    },
+                                    "temp_max_units__temp_max_unites": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "temp_mean__temp_moyenne": {
+                                        "type": "float"
+                                    },
+                                    "temp_mean_units__temp_moyenne_unites": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "temp_min__temp_min": {
+                                        "type": "float"
+                                    },
+                                    "temp_min_units__temp_min_unites": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "total_precip__precip_totale": {
+                                        "type": "float"
+                                    },
+                                    "total_precip_units__precip_totale_unites": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "wind_speed__vitesse_vent": {
+                                        "type": "float"
+                                    },
+                                    "wind_speed_units__vitesse_vent_unites": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "year__annee": {
+                                        "type": "integer"
                                     }
                                 }
                             },
@@ -333,111 +379,125 @@ def create_index(es, index, AUTH):
                             "type": {"type": "text"},
                             "properties": {
                                 "properties": {
-                                    "station_id": {
+                                    "identifier__identifiant": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "lat__lat": {
+                                        "type": "float"
+                                    },
+                                    "lon__long": {
+                                        "type": "float"
+                                    },
+                                    "province__province": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "period_group__groupe_periode": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "period_value__valeur_periode": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "pressure_sea_level__pression_niveau_mer": {
+                                        "type": "float"
+                                    },
+                                    "pressure_sea_level_units__pression_niveau_mer_unite": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "pressure_station__pression_station": {
+                                        "type": "float"
+                                    },
+                                    "pressure_station_units__pression_station_unites": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "rain__pluie": {
+                                        "type": "float"
+                                    },
+                                    "rain_units__pluie_unites": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "snow__neige": {
+                                        "type": "float"
+                                    },
+                                    "snow_units__neige_unites": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "station_id__id_station": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "temp_max__temp_max": {
+                                        "type": "float"
+                                    },
+                                    "temp_max_units__temp_max_unites": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "temp_mean__temp_moyenne": {
+                                        "type": "float"
+                                    },
+                                    "temp_mean_units__temp_moyenne_unites": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "temp_min__temp_min": {
+                                        "type": "float"
+                                    },
+                                    "temp_min_units__temp_min_unites": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "total_precip__precip_totale": {
+                                        "type": "float"
+                                    },
+                                    "total_precip_units__precip_totale_unites": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "wind_speed__vitesse_vent": {
+                                        "type": "float"
+                                    },
+                                    "wind_speed_units__vitesse_vent_unites": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "year__annee": {
                                         "type": "integer"
-                                    },
-                                    "temp_max_units": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "identifier": {
-                                        "type": "float"
-                                    },
-                                    "pressure_station_units": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "pressure_station": {
-                                        "type": "float"
-                                    },
-                                    "temp_min": {
-                                        "type": "float"
-                                    },
-                                    "temp_min_units": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "total_precip_units": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "temp_mean_units": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "pressure_sea_level": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "rain": {
-                                        "type": "float"
-                                    },
-                                    "snow_units": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "total_precip": {
-                                        "type": "float"
-                                    },
-                                    "temp_mean": {
-                                        "type": "float"
-                                    },
-                                    "snow": {
-                                        "type": "float"
-                                    },
-                                    "pressure_sea_level_units": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "rain_units": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "period_group": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "period_value": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "temp_max": {
-                                        "type": "float"
-                                    },
-                                    "wind_speed": {
-                                        "type": "float"
-                                    },
-                                    "wind_speed_units": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "year": {
-                                        "type": "date",
-                                        "format": "yyyy"
                                     }
                                 }
                             },
@@ -479,61 +539,57 @@ def create_index(es, index, AUTH):
                             "type": {"type": "text"},
                             "properties": {
                                 "properties": {
-                                    "station_id": {
+                                    "identifier__identifiant": {
                                         "type": "text",
                                         "fields": {
                                             "raw": {"type": "keyword"}
                                         }
                                     },
-                                    "station_name": {
+                                    "station_id__id_station": {
                                         "type": "text",
                                         "fields": {
                                             "raw": {"type": "keyword"}
                                         }
                                     },
-                                    "identifier": {
+                                    "station_name__nom_station": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "measurement_type__type_mesure": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "period__periode": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "trend_value__valeur_tendance": {
+                                        "type": "float"
+                                    },
+                                    "elevation__elevation": {
+                                        "type": "float"
+                                    },
+                                    "province__province": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "joined__rejoint": {
                                         "type": "integer"
                                     },
-                                    "trend_value": {
-                                        "type": "integer"
-                                    },
-                                    "elevation": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "joined": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "measurement_type": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "period": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "year_range": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "province": {
+                                    "year_range__annees": {
                                         "type": "text",
                                         "fields": {
                                             "raw": {"type": "keyword"}
                                         }
                                     }
-                                    
                                 }
                             },
                             "geometry": {"type": "geo_shape"}
@@ -574,56 +630,56 @@ def create_index(es, index, AUTH):
                             "type": {"type": "text"},
                             "properties": {
                                 "properties": {
-                                    "station_id": {
+                                    "identifier__identifiant": {
                                         "type": "text",
                                         "fields": {
                                             "raw": {"type": "keyword"}
                                         }
                                     },
-                                    "measurement_type": {
+                                    "station_id__id_station": {
                                         "type": "text",
                                         "fields": {
                                             "raw": {"type": "keyword"}
                                         }
                                     },
-                                    "station_name": {
+                                    "station_name__nom_station": {
                                         "type": "text",
                                         "fields": {
                                             "raw": {"type": "keyword"}
                                         }
                                     },
-                                    "elevation": {
+                                    "measurement_type__type_mesure": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "period__periode": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "trend_value__valeur_tendance": {
                                         "type": "float"
                                     },
-                                    "joined": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "year_range": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "province": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "identifier": {
+                                    "elevation__elevation": {
                                         "type": "float"
                                     },
-                                    "period": {
+                                    "province__province": {
                                         "type": "text",
                                         "fields": {
                                             "raw": {"type": "keyword"}
                                         }
                                     },
-                                    "trend_value": {
-                                        "type": "float"
+                                    "joined__rejoint": {
+                                        "type": "integer"
+                                    },
+                                    "year_range__annees": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
                                     }
                                 }
                             },
