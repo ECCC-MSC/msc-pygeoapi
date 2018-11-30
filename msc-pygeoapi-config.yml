@@ -145,6 +145,18 @@ datasets:
             data: http://localhost:9200/hydrometric_daily_mean/FeatureCollection
             id_field: IDENTIFIER
             time_field: DATE
+            properties:
+                - IDENTIFIER
+                - STATION_NAME
+                - STATION_NUMBER
+                - PROV_TERR_STATE_LOC
+                - DATE
+                - LEVEL
+                - LEVEL_SYMBOL_EN
+                - FLOW
+                - FLOW_SYMBOL_EN
+                - FLOW_SYMBOL_FR
+                - LEVEL_SYMBOL_FR
 
     hydrometric-monthly-mean:
         title: Monthly Mean of Water Level or Flow
@@ -189,6 +201,14 @@ datasets:
             data: http://localhost:9200/hydrometric_monthly_mean/FeatureCollection
             id_field: IDENTIFIER
             time_field: DATE
+            properties:
+                - IDENTIFIER
+                - STATION_NAME
+                - STATION_NUMBER
+                - PROV_TERR_STATE_LOC
+                - DATE
+                - MONTHLY_MEAN_LEVEL
+                - MONTHLY_MEAN_FLOW
 
     hydrometric-annual-statistics:
         title: Annual Maximum and Minimum Daily Water Level or Flow
@@ -233,6 +253,21 @@ datasets:
             data: http://localhost:9200/hydrometric_annual_statistics/FeatureCollection
             id_field: IDENTIFIER
             time_field: MAX_DATE
+            properties:
+                - IDENTIFIER
+                - STATION_NAME
+                - STATION_NUMBER
+                - PROV_TERR_STATE_LOC
+                - DATA_TYPE_EN
+                - DATA_TYPE_FR
+                - MAX_DATE
+                - MAX_SYMBOL_EN
+                - MAX_SYMBOL_FR
+                - MAX_VALUE
+                - MIN_DATE
+                - MIN_SYMBOL_EN
+                - MIN_SYMBOL_FR
+                - MIN_VALUE
 
     hydrometric-annual-peaks:
         title: Annual Maximum and Minimum Instantaneous Water Level or Flow
@@ -277,6 +312,23 @@ datasets:
             data: http://localhost:9200/hydrometric_annual_peaks/FeatureCollection
             id_field: IDENTIFIER
             time_field: DATE
+            properties:
+                - IDENTIFIER
+                - STATION_NAME
+                - STATION_NUMBER
+                - TIMEZONE_OFFSET
+                - PROV_TERR_STATE_LOC
+                - DATE
+                - DATA_TYPE_EN
+                - DATA_TYPE_FR
+                - PEAK_CODE_EN
+                - PEAK_CODE_FR
+                - UNITS_EN
+                - IDENTIFIER
+                - MIN_SYMBOL_FR
+                - UNITS_FR
+                - SYMBOL_EN
+                - SYMBOL_FR
 
     climate-normals:
         title: 1981-2010 Climate Normals
@@ -301,6 +353,33 @@ datasets:
             data: http://localhost:9200/climate_normals_data/FeatureCollection
             id_field: ID
             time_field: DATE_CALCULATED
+            properties:
+                - STATION_NAME
+                - STN_ID
+                - ID
+                - PERIOD
+                - CURRENT_FLAG
+                - NORMAL_CODE
+                - NORMAL_ID
+                - PUBLICATION_CODE
+                - DATE_CALCULATED
+                - FIRST_OCCURRENCE_DATE
+                - PROVINCE_CODE
+                - PERIOD_BEGIN
+                - PERIOD_END
+                - FIRST_YEAR
+                - FIRST_YEAR_NORMAL_PERIOD
+                - LAST_YEAR
+                - LAST_YEAR_NORMAL_PERIOD
+                - YEAR_COUNT_NORMAL_PERIOD
+                - TOTAL_OBS_COUNT
+                - OCCURRENCE_COUNT
+                - MAX_DURATION_MISSING_YEARS
+                - PERCENT_OF_POSSIBLE_OBS
+                - ENG_PUB_NAME
+                - FRE_PUB_NAME
+                - MONTH
+                - VALUE
 
     climate-stations:
         title: Climate Stations
@@ -348,6 +427,40 @@ datasets:
             data: http://localhost:9200/climate_public_climate_summary/FeatureCollection
             id_field: ID
             time_field: LOCAL_DATE
+            properties:
+                - LATITUDE
+                - LONGITUDE
+                - CLIMATE_IDENTIFIER
+                - STATION_NAME
+                - STN_ID
+                - ID
+                - LOCAL_DATE
+                - LAST_UPDATED
+                - PROVINCE_CODE
+                - ENG_PROVINCE_NAME
+                - FRE_PROVINCE_NAME
+                - LOCAL_YEAR
+                - LOCAL_MONTH
+                - NORMAL_MEAN_TEMPERATURE
+                - MEAN_TEMPERATURE
+                - DAYS_WITH_VALID_MEAN_TEMP
+                - MIN_TEMPERATURE
+                - DAYS_WITH_VALID_MIN_TEMP
+                - MAX_TEMPERATURE
+                - DAYS_WITH_VALID_MAX_TEMP
+                - NORMAL_PRECIPITATION
+                - TOTAL_PRECIPITATION
+                - DAYS_WITH_VALID_PRECIP
+                - DAYS_WITH_PRECIP_GE_1MM
+                - NORMAL_SNOWFALL
+                - TOTAL_SNOWFALL
+                - DAYS_WITH_VALID_SNOWFALL
+                - SNOW_ON_GROUND_LAST_DAY
+                - NORMAL_SUNSHINE
+                - BRIGHT_SUNSHINE
+                - DAYS_WITH_VALID_SUNSHINE
+                - COOLING_DEGREE_DAYS
+                - HEATING_DEGREE_DAYS
 
     climate-daily:
         title: MSC Daily Data
@@ -372,6 +485,43 @@ datasets:
             data: http://localhost:9200/climate_public_daily_data/FeatureCollection
             id_field: ID
             time_field: LOCAL_DATE
+            properties:
+                - CLIMATE_IDENTIFIER
+                - STATION_NAME
+                - STN_ID
+                - ID
+                - SOURCE
+                - LOCAL_DATE
+                - PROVINCE_CODE
+                - LOCAL_YEAR
+                - LOCAL_MONTH
+                - LOCAL_DAY
+                - MEAN_TEMPERATURE
+                - MEAN_TEMPERATURE_FLAG
+                - MIN_TEMPERATURE
+                - MIN_TEMPERATURE_FLAG
+                - MAX_TEMPERATURE
+                - MAX_TEMPERATURE_FLAG
+                - TOTAL_PRECIPITATION
+                - TOTAL_PRECIPITATION_FLAG
+                - TOTAL_RAIN
+                - TOTAL_RAIN_FLAG
+                - TOTAL_SNOW
+                - TOTAL_SNOW_FLAG
+                - SNOW_ON_GROUND
+                - SNOW_ON_GROUND_FLAG
+                - DIRECTION_MAX_GUST
+                - SPEED_MAX_GUST
+                - SPEED_MAX_GUST_FLAG
+                - DIRECTION_MAX_GUST_FLAG
+                - COOLING_DEGREE_DAYS
+                - COOLING_DEGREE_DAYS_FLAG
+                - HEATING_DEGREE_DAYS
+                - HEATING_DEGREE_DAYS_FLAG
+                - MIN_REL_HUMIDITY
+                - MIN_REL_HUMIDITY_FLAG
+                - MAX_REL_HUMIDITY
+                - MAX_REL_HUMIDITY_FLAG
 
     ahccd-stations:
         title: Adjusted and Homogenized Canadian Climate Data (AHCCD) Stations
@@ -416,6 +566,33 @@ datasets:
             data: http://localhost:9200/ahccd_annual/FeatureCollection
             id_field: identifier__identifiant
             time_field: year__annee
+            properties:
+                - lat__lat
+                - lon__long
+                - identifier__identifiant
+                - station_id__id_station
+                - period_group__groupe_periode
+                - period_value__valeur_periode
+                - province__province
+                - year__annee
+                - temp_mean__temp_moyenne
+                - temp_mean_units__temp_moyenne_unites
+                - temp_min__temp_min
+                - temp_min_units__temp_min_unites
+                - temp_max__temp_max
+                - temp_max_units__temp_max_unites
+                - total_precip__precip_totale
+                - total_precip_units__precip_totale_unites
+                - rain__pluie
+                - rain_units__pluie_unites
+                - snow__neige
+                - snow_units__neige_unites
+                - pressure_sea_level__pression_niveau_mer
+                - pressure_sea_level_units__pression_niveau_mer_unite
+                - pressure_station__pression_station
+                - pressure_station_units__pression_station_unites
+                - wind_speed__vitesse_vent
+                - wind_speed_units__vitesse_vent_unites
 
     ahccd-seasonal:
         title: Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal
@@ -440,6 +617,33 @@ datasets:
             data: http://localhost:9200/ahccd_seasonal/FeatureCollection
             id_field: identifier__identifiant
             time_field: year__annee
+            properties:
+                - lat__lat
+                - lon__long
+                - identifier__identifiant
+                - station_id__id_station
+                - period_value__valeur_periode
+                - period_group__groupe_periode
+                - province__province
+                - year__annee
+                - temp_mean__temp_moyenne
+                - temp_mean_units__temp_moyenne_unites
+                - temp_max__temp_max
+                - temp_max_units__temp_max_unites
+                - temp_min__temp_min
+                - temp_min_units__temp_min_unites
+                - total_precip__precip_totale
+                - total_precip_units__precip_totale_unites
+                - rain__pluie
+                - rain_units__pluie_unites
+                - snow__neige
+                - snow_units__neige_unites
+                - pressure_sea_level__pression_niveau_mer
+                - pressure_sea_level_units__pression_niveau_mer_unite
+                - pressure_station__pression_station
+                - pressure_station_units__pression_station_unites
+                - wind_speed__vitesse_vent
+                - wind_speed_units__vitesse_vent_unites
 
     ahccd-monthly:
         title: Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
@@ -464,6 +668,33 @@ datasets:
             data: http://localhost:9200/ahccd_monthly/FeatureCollection
             id_field: identifier__identifiant
             time_field: date
+            properties:
+                - lat__lat
+                - lon__long
+                - identifier__identifiant
+                - station_id__id_station
+                - period_value__valeur_periode
+                - period_group__groupe_periode
+                - province__province
+                - date
+                - temp_mean__temp_moyenne
+                - temp_mean_units__temp_moyenne_unites
+                - temp_max__temp_max
+                - temp_max_units__temp_max_unites
+                - temp_min__temp_min
+                - temp_min_units__temp_min_unites
+                - total_precip__precip_totale
+                - total_precip_units__precip_totale_unites
+                - rain__pluie
+                - rain_units__pluie_unites
+                - snow__neige
+                - snow_units__neige_unites
+                - pressure_sea_level__pression_niveau_mer
+                - pressure_sea_level_units__pression_niveau_mer_unite
+                - pressure_station__pression_station
+                - pressure_station_units__pression_station_unites
+                - wind_speed__vitesse_vent
+                - wind_speed_units__vitesse_vent_unites
 
     ahccd-trends:
         title: Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends
@@ -487,6 +718,17 @@ datasets:
             name: Elasticsearch
             data: http://localhost:9200/ahccd_trends/FeatureCollection
             id_field: identifier__identifiant
+            properties:
+                - identifier__identifiant
+                - station_id__id_station
+                - station_name__nom_station
+                - joined__rejoint
+                - elevation__elevation
+                - period__periode
+                - province__province
+                - year_range__annees
+                - measurement_type__type_mesure
+                - trend_value__valeur_tendance
 
     cmip5:
         title: Coupled Model Intercomparison Project Phase 5 (CMIP5)
