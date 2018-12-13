@@ -313,19 +313,17 @@ datasets:
             id_field: IDENTIFIER
             time_field: DATE
             properties:
+                - DATE
                 - IDENTIFIER
                 - STATION_NAME
                 - STATION_NUMBER
-                - TIMEZONE_OFFSET
                 - PROV_TERR_STATE_LOC
-                - DATE
+                - TIMEZONE_OFFSET
                 - DATA_TYPE_EN
                 - DATA_TYPE_FR
                 - PEAK_CODE_EN
                 - PEAK_CODE_FR
                 - UNITS_EN
-                - IDENTIFIER
-                - MIN_SYMBOL_FR
                 - UNITS_FR
                 - SYMBOL_EN
                 - SYMBOL_FR
