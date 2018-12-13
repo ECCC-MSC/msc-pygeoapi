@@ -1,6 +1,12 @@
 # Example Usage:
-# python es_loader_hydat.py --db path/to/hydat.sqlite3 --es https://path/to/elasticsearch --username user --password pass # noqa
-
+# python es_loader_hydat.py --db path/to/hydat.sqlite3 --es https://path/to/elasticsearch --username user --password pass --dataset stations # noqa
+'''
+DATASET VALUES:
+stations
+observations
+annual-statistics
+annual-peaks
+'''
 
 import logging
 import json
@@ -13,6 +19,7 @@ from sqlalchemy.schema import MetaData
 from sqlalchemy.orm import sessionmaker
 
 LOGGER = logging.getLogger(__name__)
+LOGGER.setLevel(40)
 HTTP_OK = 200
 POST_OK = 201
 HEADERS = {'Content-type': 'application/json'}
@@ -1088,7 +1095,9 @@ def load_annual_peaks(session, metadata, path, annual_peaks_table,
 @click.option('--es', help='URL to Elasticsearch')
 @click.option('--username', help='Username to connect to HTTPS')
 @click.option('--password', help='Password to connect to HTTPS')
-def cli(db, es, username, password):
+@click.option('--dataset', help='ES dataset to load, or all\
+                                 if loading everything')
+def cli(db, es, username, password, dataset):
     """
     Controls transformation from sqlite to Elasticsearch.
 
@@ -1096,6 +1105,7 @@ def cli(db, es, username, password):
     :param es: path to Elasticsearch.
     :param username: username for HTTP authentication.
     :param password: password for HTTP authentication.
+    :param dataset: name of dataset to load, or all for all datasets.
     """
     AUTH = (username, password)
     try:
@@ -1117,35 +1127,75 @@ def cli(db, es, username, password):
     except Exception as err:
         LOGGER.critical('Could not create table variables due to: {}. Exiting.').format(str(err)) # noqa
         return None
-    try:
-        LOGGER.info('Populating stations index...')
-        create_index(es, 'stations', AUTH)
-        load_stations(session, metadata, es, station_table, AUTH)
-        LOGGER.info('Stations index populated.')
-    except Exception as err:
-        LOGGER.error('Could not populate stations due to: {}.'.format(str(err))) # noqa
-    try:
-        LOGGER.info('Populating observations...')
-        create_index(es, 'observations', AUTH)
-        unpivot(session, flow_var, level_var, es, station_table, symbol_table, AUTH) # noqa
-        LOGGER.info('Observations populated.')
-    except Exception as err:
-        LOGGER.error('Could not populate observations due to: {}.'.format(str(err))) # noqa
-    try:
-        LOGGER.info('Populating annual statistics index...')
-        create_index(es, 'annual_statistics', AUTH)
-        load_annual_stats(session, es, annual_stats_table, data_types_table, station_table, symbol_table, AUTH) # noqa
-        LOGGER.info('Annual stastistics index populated.')
-    except Exception as err:
-        LOGGER.error('Could not populate annual statistics due to: {}.'.format(str(err))) # noqa
-    try:
-        LOGGER.info('Populating peaks index...')
-        create_index(es, 'annual_peaks', AUTH)
-        load_annual_peaks(session, metadata, es, annual_peaks_table, data_types_table, symbol_table, station_table, AUTH) # noqa
-        LOGGER.info('Annual peaks index populated.')
-    except Exception as err:
-        LOGGER.error('Could not populate annual peaks due to: {}.'.format(str(err))) # noqa
-    LOGGER.info('Finished populating indices.')
-
+    
+    if dataset == 'all':
+        try:
+            LOGGER.info('Populating stations index...')
+            create_index(es, 'stations', AUTH)
+            load_stations(session, metadata, es, station_table, AUTH)
+            LOGGER.info('Stations index populated.')
+        except Exception as err:
+            LOGGER.error('Could not populate stations due to: {}.'.format(str(err))) # noqa
+        try:
+            LOGGER.info('Populating observations indexes...')
+            create_index(es, 'observations', AUTH)
+            unpivot(session, flow_var, level_var, es, station_table, symbol_table, AUTH) # noqa
+            LOGGER.info('Observations populated.')
+        except Exception as err:
+            LOGGER.error('Could not populate observations due to: {}.'.format(str(err))) # noqa
+        try:
+            LOGGER.info('Populating annual statistics index...')
+            create_index(es, 'annual_statistics', AUTH)
+            load_annual_stats(session, es, annual_stats_table, data_types_table, station_table, symbol_table, AUTH) # noqa
+            LOGGER.info('Annual stastistics index populated.')
+        except Exception as err:
+            LOGGER.error('Could not populate annual statistics due to: {}.'.format(str(err))) # noqa
+        try:
+            LOGGER.info('Populating annual peaks index...')
+            create_index(es, 'annual_peaks', AUTH)
+            load_annual_peaks(session, metadata, es, annual_peaks_table, data_types_table, symbol_table, station_table, AUTH) # noqa
+            LOGGER.info('Annual peaks index populated.')
+        except Exception as err:
+            LOGGER.error('Could not populate annual peaks due to: {}.'.format(str(err))) # noqa
+        LOGGER.info('Finished populating all indices.')
+        
+    elif dataset == 'stations':
+        try:
+            LOGGER.info('Populating stations index...')
+            create_index(es, 'stations', AUTH)
+            load_stations(session, metadata, es, station_table, AUTH)
+            LOGGER.info('Stations index populated.')
+        except Exception as err:
+            LOGGER.error('Could not populate stations due to: {}.'.format(str(err))) # noqa
+        
+    elif dataset == 'observations':
+        try:
+            LOGGER.info('Populating observations indexes...')
+            create_index(es, 'observations', AUTH)
+            unpivot(session, flow_var, level_var, es, station_table, symbol_table, AUTH) # noqa
+            LOGGER.info('Observations populated.')
+        except Exception as err:
+            LOGGER.error('Could not populate observations due to: {}.'.format(str(err))) # noqa
+        
+    elif dataset == 'annual-statistics':
+        try:
+            LOGGER.info('Populating annual statistics index...')
+            create_index(es, 'annual_statistics', AUTH)
+            load_annual_stats(session, es, annual_stats_table, data_types_table, station_table, symbol_table, AUTH) # noqa
+            LOGGER.info('Annual stastistics index populated.')
+        except Exception as err:
+            LOGGER.error('Could not populate annual statistics due to: {}.'.format(str(err))) # noqa
+        
+    elif dataset == 'annual-peaks':
+        try:
+            LOGGER.info('Populating annual peaks index...')
+            create_index(es, 'annual_peaks', AUTH)
+            load_annual_peaks(session, metadata, es, annual_peaks_table, data_types_table, symbol_table, station_table, AUTH) # noqa
+            LOGGER.info('Annual peaks index populated.')
+        except Exception as err:
+            LOGGER.error('Could not populate annual peaks due to: {}.'.format(str(err))) # noqa
+        
+    else:
+        LOGGER.critical('Unknown dataset parameter {}, skipping index population.'.format(dataset)) # noqa
 
 cli()
