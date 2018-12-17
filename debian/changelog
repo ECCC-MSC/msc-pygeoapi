@@ -1,3 +1,12 @@
+msc-pygeoapi (0.4.0) trusty; urgency=medium
+
+  * add Hydat station related data links to ES Hydat loader
+  * add field ordering to configuration
+  * add --dataset option for ES Hydat loader
+  * update AHCCD mappings to reflect native data types
+
+ -- Tom Kralidis <tom.kralidis@canada.ca>  Mon, 17 Dec 2018 20:17:27 +0000
+
 msc-pygeoapi (0.3.6) trusty; urgency=medium
 
   * fix MSC Climate monthlies time field
