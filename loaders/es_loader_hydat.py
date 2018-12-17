@@ -27,6 +27,21 @@ HEADERS = {'Content-type': 'application/json'}
 VERIFY = False
 
 
+def get_wfs3_url(url):
+    """return WFS3 URL based on running environment"""
+
+    if 'geomet-dev' in url:
+        url2 = 'https://geo.wxod-dev.cmc.ec.gc.ca/geomet/features'
+    elif 'geomet-dev' in url:
+        url2 = 'https://geo.wxod-stage.cmc.ec.gc.ca/geomet/features'
+    elif 'geomet-beta' in url:
+        url2 = 'https://geo.weather.gc.ca/geomet-beta/features'
+    elif 'geomet-ops' in url:
+        url2 = 'https://geo.weather.gc.ca/geomet/features'
+
+    return url2
+
+
 def zero_pad(val):
     """
     If val is one character long, returns val left padded with a zero.
@@ -780,6 +795,9 @@ def load_stations(session, metadata, path, station_table, AUTH):
     :param AUTH: tuple of username and password used to authorize the
                  HTTP request.
     """
+
+    url = get_wfs3_url(path)
+
     station_codes = [x[0] for x in session.query(distinct(station_table.c['STATION_NUMBER'])).all()] # noqa
     for station in station_codes:
         station_keys = station_table.columns.keys()
@@ -822,19 +840,69 @@ def load_stations(session, metadata, path, station_table, AUTH):
         else:
             status_en = status_fr = ''
             LOGGER.warning('Could not find status information for station {}'.format(station)) # noqa
-        metadata_dict = {'type': 'Feature', 'properties':
-                         {'STATION_NAME': station_name,
-                          'IDENTIFIER': station,
-                          'STATION_NUMBER': station,
-                          'PROV_TERR_STATE_LOC': station_loc,
-                          'STATUS_EN': status_en,
-                          'STATUS_FR': status_fr,
-                          'CONTRIBUTOR_EN': agency_en,
-                          'CONTRIBUTOR_FR': agency_fr,
-                          'VERTICAL_DATUM': datum_en},
-                         'geometry': {'type': 'Point',
-                                      'coordinates': station_coords}
-                         }
+
+        metadata_dict = {
+            'type': 'Feature',
+            'properties': {
+                'STATION_NAME': station_name,
+                'IDENTIFIER': station,
+                'STATION_NUMBER': station,
+                'PROV_TERR_STATE_LOC': station_loc,
+                'STATUS_EN': status_en,
+                'STATUS_FR': status_fr,
+                'CONTRIBUTOR_EN': agency_en,
+                'CONTRIBUTOR_FR': agency_fr,
+                'VERTICAL_DATUM': datum_en,
+                'links': [{
+                    'type': 'text/html',
+                    'rel': 'related',
+                    'title': 'Station Information for {} ({})'.format(
+                        station_name, station),
+                    'href': '{}/collections/hydrometric-stations/items?STATION_NUMBER={}&f=html'.format(url, station)  # noqa
+                }, {
+                    'type': 'application/json',
+                    'rel': 'related',
+                    'title': 'Daily Mean of Water Level or Flow for {} ({})'.format(  # noqa
+                        station_name, station),
+                    'href': '{}/collections/hydrometric-daily-mean/items?STATION_NUMBER={}'.format(url, station)  # noqa
+                }, {
+                    'type': 'application/json',
+                    'rel': 'related',
+                    'title': 'Monthly Mean of Water Level or Flow for {} ({})'.format(  # noqa
+                        station_name, station),
+                    'href': '{}/collections/hydrometric-monthly-mean/items?STATION_NUMBER={}'.format(url, station)  # noqa
+                }, {
+                    'type': 'application/json',
+                    'rel': 'related',
+                    'title': 'Annual Maximum and Minimum Instantaneous Water Level or Flow for {} ({})'.format(station_name, station),  # noqa
+                    'href': '{}/collections/hydrometric-annual-peaks/items?STATION_NUMBER={}'.format(url, station)  # noqa
+                }, {
+                    'type': 'application/json',
+                    'rel': 'related',
+                    'title': 'Annual Maximum and Minimum Daily Water Level or Flow for {} ({})'.format(station_name, station),  # noqa
+                    'href': '{}/collections/hydrometric-annual-statistics/items?STATION_NUMBER={}'.format(url, station)  # noqa
+                }, {
+                    'type': 'text/html',
+                    'rel': 'alternate',
+                    'title': 'Station Information for {} ({})'.format(
+                        station_name, station),
+                    'href': 'https://wateroffice.ec.gc.ca/report/historical_e.html?stn={}'.format(station),  # noqa
+                    'hreflang': 'en-CA'
+                }, {
+                    'type': 'text/html',
+                    'rel': 'alternate',
+                    'title': 'Informations pour la station {} ({})'.format(
+                        station_name, station),
+                    'href': 'https://wateroffice.ec.gc.ca/report/historical_f.html?stn={}'.format(station),  # noqa
+                    'hreflang': 'fr-CA'
+                }]
+            },
+            'geometry': {
+                    'type': 'Point',
+                    'coordinates': station_coords
+            }
+        }
+
         r = requests.put(path + '/hydrometric_stations/FeatureCollection/{}'.format(station), # noqa
                                 data=json.dumps(metadata_dict),
                                 auth=AUTH, verify=VERIFY,
@@ -1003,7 +1071,8 @@ def load_annual_peaks(session, metadata, path, annual_peaks_table,
         try:
             station_metadata = list(session.query(station_table).filter_by(**args).all()[0]) # noqa
             station_name = station_metadata[station_keys.index('STATION_NAME')]
-            province = station_metadata[station_keys.index('PROV_TERR_STATE_LOC')]
+            province = station_metadata[station_keys.index(
+                'PROV_TERR_STATE_LOC')]
             station_coords = [float(station_metadata[station_keys.index('LONGITUDE')]), # noqa
                           float(station_metadata[station_keys.index('LATITUDE')])] # noqa
         except Exception:
@@ -1127,7 +1196,7 @@ def cli(db, es, username, password, dataset):
     except Exception as err:
         LOGGER.critical('Could not create table variables due to: {}. Exiting.').format(str(err)) # noqa
         return None
-    
+
     if dataset == 'all':
         try:
             LOGGER.info('Populating stations index...')
@@ -1158,7 +1227,7 @@ def cli(db, es, username, password, dataset):
         except Exception as err:
             LOGGER.error('Could not populate annual peaks due to: {}.'.format(str(err))) # noqa
         LOGGER.info('Finished populating all indices.')
-        
+
     elif dataset == 'stations':
         try:
             LOGGER.info('Populating stations index...')
@@ -1167,7 +1236,7 @@ def cli(db, es, username, password, dataset):
             LOGGER.info('Stations index populated.')
         except Exception as err:
             LOGGER.error('Could not populate stations due to: {}.'.format(str(err))) # noqa
-        
+
     elif dataset == 'observations':
         try:
             LOGGER.info('Populating observations indexes...')
@@ -1176,7 +1245,7 @@ def cli(db, es, username, password, dataset):
             LOGGER.info('Observations populated.')
         except Exception as err:
             LOGGER.error('Could not populate observations due to: {}.'.format(str(err))) # noqa
-        
+
     elif dataset == 'annual-statistics':
         try:
             LOGGER.info('Populating annual statistics index...')
@@ -1185,7 +1254,7 @@ def cli(db, es, username, password, dataset):
             LOGGER.info('Annual stastistics index populated.')
         except Exception as err:
             LOGGER.error('Could not populate annual statistics due to: {}.'.format(str(err))) # noqa
-        
+
     elif dataset == 'annual-peaks':
         try:
             LOGGER.info('Populating annual peaks index...')
@@ -1194,8 +1263,9 @@ def cli(db, es, username, password, dataset):
             LOGGER.info('Annual peaks index populated.')
         except Exception as err:
             LOGGER.error('Could not populate annual peaks due to: {}.'.format(str(err))) # noqa
-        
+
     else:
         LOGGER.critical('Unknown dataset parameter {}, skipping index population.'.format(dataset)) # noqa
+
 
 cli()
