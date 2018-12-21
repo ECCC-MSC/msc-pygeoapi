@@ -152,10 +152,10 @@ datasets:
                 - PROV_TERR_STATE_LOC
                 - DATE
                 - LEVEL
-                - LEVEL_SYMBOL_EN
                 - FLOW
                 - FLOW_SYMBOL_EN
                 - FLOW_SYMBOL_FR
+                - LEVEL_SYMBOL_EN
                 - LEVEL_SYMBOL_FR
 
     hydrometric-monthly-mean:
@@ -509,9 +509,9 @@ datasets:
                 - SNOW_ON_GROUND
                 - SNOW_ON_GROUND_FLAG
                 - DIRECTION_MAX_GUST
+                - DIRECTION_MAX_GUST_FLAG
                 - SPEED_MAX_GUST
                 - SPEED_MAX_GUST_FLAG
-                - DIRECTION_MAX_GUST_FLAG
                 - COOLING_DEGREE_DAYS
                 - COOLING_DEGREE_DAYS_FLAG
                 - HEATING_DEGREE_DAYS
