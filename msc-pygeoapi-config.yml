@@ -327,6 +327,7 @@ datasets:
                 - UNITS_FR
                 - SYMBOL_EN
                 - SYMBOL_FR
+                - PEAK
 
     climate-normals:
         title: 1981-2010 Climate Normals
