@@ -533,6 +533,9 @@ def create_index(path, index, AUTH):
                                             "raw": {"type": "keyword"}
                                         }
                                     },
+                                    "PEAK": {
+                                        "type": "float"
+                                    },
                                     "UNITS_EN": {
                                         "type": "text",
                                         "fields": {
@@ -1056,6 +1059,7 @@ def load_annual_peaks(session, metadata, path, annual_peaks_table,
         hour = result[annual_peaks_keys.index('HOUR')]
         minute = result[annual_peaks_keys.index('MINUTE')]
         time_zone = tz_map[result[annual_peaks_keys.index('TIME_ZONE')]]
+        peak_value = result[annual_peaks_keys.index('PEAK')]
         symbol_id = result[annual_peaks_keys.index('SYMBOL')]
         if month is None or day is None:
             date = None
@@ -1141,6 +1145,7 @@ def load_annual_peaks(session, metadata, path, annual_peaks_table,
                           'TIMEZONE_OFFSET': time_zone,
                           'PEAK_CODE_EN': peak_en,
                           'PEAK_CODE_FR': peak_fr,
+                          'PEAK': peak_value,
                           'UNITS_EN': unit_en,
                           'UNITS_FR': unit_fr,
                           'SYMBOL_EN': symbol_en,
