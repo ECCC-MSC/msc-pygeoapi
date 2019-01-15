@@ -26,13 +26,12 @@ HEADERS = {'Content-type': 'application/json'}
 # Needs to be fixed.
 VERIFY = False
 
-
 def get_wfs3_url(url):
     """return WFS3 URL based on running environment"""
 
     if 'geomet-dev' in url:
         url2 = 'https://geo.wxod-dev.cmc.ec.gc.ca/geomet/features'
-    elif 'geomet-dev' in url:
+    elif 'geomet-stage' in url:
         url2 = 'https://geo.wxod-stage.cmc.ec.gc.ca/geomet/features'
     elif 'geomet-beta' in url:
         url2 = 'https://geo.weather.gc.ca/geomet-beta/features'
