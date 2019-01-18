@@ -8,7 +8,7 @@
 # Update a dataset starting from a point in time
 # python es_loader_msc_climate_archive.py --db <oracle db connection string> --es https://path/to/elasticsearch --username user --password pass --dataset daily --date 2018-08-22 # noqa
 #
-# Update a dataset on a regular basis (e.g. update based on new data in last 7 days)
+# Update a dataset on a regular basis (e.g. update based on new data in last 7 days)  # noqa
 # python es_loader_msc_climate_archive.py --db <oracle db connection string> --es https://path/to/elasticsearch --username user --password pass --dataset daily --date $(date -d '-7day' +"%Y-%m-%d") # noqa
 
 
@@ -25,7 +25,6 @@ POST_OK = 201
 HEADERS = {'Content-type': 'application/json'}
 # Needs to be fixed.
 VERIFY = False
-
 
 
 def create_index(path, index, AUTH):
@@ -893,10 +892,11 @@ def load_daily_data(path, cur, stn_dict, AUTH, date=None):
             # Transform Date fields from datetime to string.
             insert_dict['LOCAL_DATE'] = str(insert_dict['LOCAL_DATE']) if insert_dict['LOCAL_DATE'] is not None else insert_dict['LOCAL_DATE'] # noqa
 
-            insert_dict['ID'] = '{}.{}.{}.{}'.format(insert_dict['CLIMATE_IDENTIFIER'],
-                                                     insert_dict['LOCAL_YEAR'],
-                                                     insert_dict['LOCAL_MONTH'], # noqa
-                                                     insert_dict['LOCAL_DAY'])
+            insert_dict['ID'] = '{}.{}.{}.{}'.format(
+                insert_dict['CLIMATE_IDENTIFIER'],
+                insert_dict['LOCAL_YEAR'],
+                insert_dict['LOCAL_MONTH'], # noqa
+                insert_dict['LOCAL_DAY'])
             if insert_dict['STN_ID'] in stn_dict:
                 coords = stn_dict[insert_dict['STN_ID']]['coordinates']
                 insert_dict['PROVINCE_CODE'] = stn_dict[insert_dict['STN_ID']]['PROVINCE_CODE'] # noqa
@@ -1022,10 +1022,12 @@ def get_normals_periods(cur):
                                  if loading everything')
 @click.option('--station', help='station ID (STN_ID) of\
                                  station to load', required=False)
-@click.option('--starting_from', help=' Load all stations starting from\
-                                 specified station', required=False)                                  
+@click.option('--starting_from',
+              help=' Load all stations starting from specified station',
+              required=False)
 @click.option('--date', help='Start date to fetch updates', required=False)
-def cli(db, es, username, password, dataset, station=None, starting_from = False, date=None):
+def cli(db, es, username, password, dataset, station=None,
+        starting_from=False, date=None):
     """
     Controls transformation from oracle to ElasticSearch.
 
@@ -1042,7 +1044,9 @@ def cli(db, es, username, password, dataset, station=None, starting_from = False
     try:
         con = cx_Oracle.connect(db)
     except Exception as err:
-        LOGGER.critical('Could not connect to oracle due to: {}.'.format(str(err))) # noqa
+        msg = 'Could not connect to Oracle: {}'.format(err)
+        LOGGER.critical(msg)
+        raise click.ClickException(msg)
 
     cur = con.cursor()
 
