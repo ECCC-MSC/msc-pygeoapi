@@ -17,6 +17,7 @@ HEADERS = {'Content-type': 'application/json'}
 # Needs to be fixed.
 VERIFY = False
 
+
 def create_index(es, index, AUTH):
     """
     Creates the Elasticsearch index at es. If the index already exists,
@@ -215,9 +216,9 @@ def create_index(es, index, AUTH):
                                 "properties": {
                                     "date": {
                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        } 
+                                       "fields": {
+                                           "raw": {"type": "keyword"}
+                                       }
                                     },
                                     "identifier__identifiant": {
                                         "type": "text",
