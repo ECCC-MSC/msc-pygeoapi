@@ -2,7 +2,7 @@ server:
     bind:
         host: 0.0.0.0
         port: 5000
-    url: http://geo.wxod-dev.cmc.ec.gc.ca/geomet/features/
+    url: https://geo.wxod-dev.cmc.ec.gc.ca/geomet/features/
     basepath: /geomet/features
     mimetype: application/json; charset=UTF-8
     encoding: utf-8
@@ -38,7 +38,7 @@ metadata:
         url: https://www.canada.ca/en/services/environment/weather.html
     license:
         name: Environment and Climate Change Canada Data Server End-use Licence
-        url: http://dd.weather.gc.ca/doc/LICENCE_GENERAL.txt
+        url: https://dd.weather.gc.ca/doc/LICENCE_GENERAL.txt
     provider:
         name: Government of Canada, Environment and Climate Change Canada, Meteorological Service of Canada
         url: https://www.canada.ca/en/services/environment/weather.html
@@ -89,7 +89,7 @@ datasets:
             - type: application/zip
               rel: download
               title: download data
-              href: http://collaboration.cmc.ec.gc.ca/cmc/hydrometrics/www/Hydat_sqlite3_20180417.zip
+              href: https://collaboration.cmc.ec.gc.ca/cmc/hydrometrics/www
               hreflang: en-CA
         extents:
             spatial:
@@ -132,7 +132,7 @@ datasets:
             - type: application/zip
               rel: download
               title: download data
-              href: http://collaboration.cmc.ec.gc.ca/cmc/hydrometrics/www/Hydat_sqlite3_20180417.zip
+              href: https://collaboration.cmc.ec.gc.ca/cmc/hydrometrics/www
               hreflang: en-CA
         extents:
             spatial:
@@ -188,7 +188,7 @@ datasets:
               hreflang: en-CA
               rel: download
               title: download data
-              href: http://collaboration.cmc.ec.gc.ca/cmc/hydrometrics/www/Hydat_sqlite3_20180417.zip
+              href: https://collaboration.cmc.ec.gc.ca/cmc/hydrometrics/www
               hreflang: en-CA
         extents:
             spatial:
@@ -240,7 +240,7 @@ datasets:
             - type: application/zip
               rel: download
               title: download data
-              href: http://collaboration.cmc.ec.gc.ca/cmc/hydrometrics/www/Hydat_sqlite3_20180417.zip
+              href: https://collaboration.cmc.ec.gc.ca/cmc/hydrometrics/www
               hreflang: en-CA
         extents:
             spatial:
@@ -299,7 +299,7 @@ datasets:
             - type: application/zip
               rel: download
               title: download data
-              href: http://collaboration.cmc.ec.gc.ca/cmc/hydrometrics/www/Hydat_sqlite3_20180417.zip
+              href: https://collaboration.cmc.ec.gc.ca/cmc/hydrometrics/www
               hreflang: en-CA
         extents:
             spatial:
@@ -532,7 +532,7 @@ datasets:
             - type: text/html
               rel: canonical
               title: Adjusted and Homogenized Canadian Climate Data (AHCCD)
-              href: http://ec.gc.ca/dccha-ahccd/default.asp?lang=En&n=B1F8423
+              href: https://ec.gc.ca/dccha-ahccd/default.asp?lang=En&n=B1F8423
               hreflang: en-CA
         extents:
             spatial:
@@ -552,7 +552,7 @@ datasets:
             - type: text/html
               rel: canonical
               title: Adjusted and Homogenized Canadian Climate Data (AHCCD)
-              href: http://ec.gc.ca/dccha-ahccd/default.asp?lang=En&n=B1F8423
+              href: https://ec.gc.ca/dccha-ahccd/default.asp?lang=En&n=B1F8423
               hreflang: en-CA
         extents:
             spatial:
@@ -603,7 +603,7 @@ datasets:
             - type: text/html
               rel: canonical
               title: Adjusted and Homogenized Canadian Climate Data (AHCCD)
-              href: http://ec.gc.ca/dccha-ahccd/default.asp?lang=En&n=B1F8423
+              href: https://ec.gc.ca/dccha-ahccd/default.asp?lang=En&n=B1F8423
               hreflang: en-CA
         extents:
             spatial:
@@ -654,7 +654,7 @@ datasets:
             - type: text/html
               rel: canonical
               title: Adjusted and Homogenized Canadian Climate Data (AHCCD)
-              href: http://ec.gc.ca/dccha-ahccd/default.asp?lang=En&n=B1F8423
+              href: https://ec.gc.ca/dccha-ahccd/default.asp?lang=En&n=B1F8423
               hreflang: en-CA
         extents:
             spatial:
@@ -705,7 +705,7 @@ datasets:
             - type: text/html
               rel: canonical
               title: Adjusted and Homogenized Canadian Climate Data (AHCCD)
-              href: http://ec.gc.ca/dccha-ahccd/default.asp?lang=En&n=B1F8423
+              href: https://ec.gc.ca/dccha-ahccd/default.asp?lang=En&n=B1F8423
               hreflang: en-CA
         extents:
             spatial:
