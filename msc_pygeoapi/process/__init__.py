@@ -1,8 +1,9 @@
 # =================================================================
 #
-# Author: Tom Kralidis <tom.kralidis@canada.ca>
+# Author: Louis-Philippe Rousseau-Lambert 
+#         <Louis-Philippe.RousseauLambert2@canada.ca>
 #
-# Copyright (c) 2019 Tom Kralidis
+# Copyright (c) 2019 Louis-Philippe Rousseau-Lambert
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -29,26 +30,18 @@
 
 import click
 
-from msc_pygeoapi.loader import load
-from msc_pygeoapi.process import process
-
-__version__ = '0.5.dev0'
+from msc_pygeoapi.process.cccs import cccs 
 
 
 @click.group()
-def data():
+def process():
     pass
-
-
-data.add_command(load)
-data.add_command(process)
 
 
 @click.group()
-@click.version_option(version=__version__)
-def cli():
+def execute():
     pass
 
 
-cli.add_command(data)
-cli.add_command(process)
+process.add_command(execute)
+execute.add_command(cccs)
