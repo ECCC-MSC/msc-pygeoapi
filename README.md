@@ -1,18 +1,55 @@
-# MSC pygeoapi
+# msc_pygeoapi
 
-MSC GeoMet WFS 3 server implementation using pygeoapi
+## Overview
 
-# Installation
+MSC GeoMet pygeoapi server configuration and utilities
 
-## Dependencies
+## Installation
 
-- [Elasticsearch](https://elastic.co) (5 or above)
- - i.e. `sudo echo `deb https://artifacts.elastic.co/packages/5.x/apt stable main` > /etc/apt/sources.list.d/elastic.list`
-- [pygeoapi](https://github.com/geopython/pygeoapi)
-
+The easiest way to install msc-pygeoapi is via the Python [pip](https://pip.pypa.io/en/stable/)
+utility:
 
 ```bash
-sudo apt-get install msc-pygeoapi
+pip install msc-pygeoapi
+```
+
+Installing via apt:
+
+```bash
+apt-get install msc-pygeoapi
+```
+
+### Requirements
+- Python 3.  Works with Python 2.7
+- [virtualenv](https://virtualenv.pypa.io/)
+
+### Dependencies
+Dependencies are listed in [requirements.txt](requirements.txt). Dependencies
+are automatically installed during msc_pygeoapi installation.
+
+Dependendies of note:
+- [Elasticsearch](https://elastic.co) (5 or above)
+ - i.e. `sudo echo `deb https://artifacts.elastic.co/packages/5.x/apt stable main` > /etc/apt/sources.list.d/elastic.list`
+ - [pygeoapi](https://github.com/geopython/pygeoapi)
+
+### Installing msc-pygeoapi
+```bash
+# setup virtualenv
+virtualenv --system-site-packages -p python3 msc-pygeoapi
+cd msc-pygeoapi
+source bin/activate
+
+# clone codebase and install
+git clone https://gccode.ssc-spc.gc.ca/ec-msc/msc-pygeoapi.git
+cd msc-pygeoapi
+python setup.py build
+python setup.py install
+```
+
+## Running
+
+```bash
+msc-pygeoapi --version
 ```
 
 Server will be located at http://localhost/features
@@ -54,3 +91,50 @@ http://localhost/features/collections/hydrometric-daily-mean/items?STATION_NUMBE
 # filter by active stations in Nunavut
 http://localhost/features/collections/hydrometric-stations/items?STATUS_EN=Active&limit=5000&f=html&PROV_TERR_STATE_LOC=NU
 ```
+
+## Running the loaders
+
+```bash
+pip install -r requirements-oracle.txt
+
+msc-pygeoapi data load hydat <rest of flags/parameters>
+msc-pygeoapi data load climate-archive <rest of flags/parameters>
+msc-pygeoapi data load ahccd_cmip5 <rest of flags/parameters>
+```
+## Development
+
+### Running Tests
+
+```bash
+# install dev requirements
+pip install -r requirements-dev.txt
+
+# run tests like this:
+python msc_pygeoapi/tests/run_tests.py
+
+# or this:
+python setup.py test
+
+# measure code coverage
+coverage run --source=msc_pygeoapi -m unittest msc_pygeoapi.tests.run_tests
+coverage report -m
+```
+
+## Releasing
+
+```bash
+python setup.py sdist bdist_wheel --universal
+twine upload dist/*
+```
+
+### Code Conventions
+
+* [PEP8](https://www.python.org/dev/peps/pep-0008)
+
+### Bugs and Issues
+
+All bugs, enhancements and issues are managed on [GCcode](https://gccode.ssc-spc.gc.ca/ec-msc/msc-pygeoapi/issues).
+
+## Contact
+
+* [Tom Kralidis](https://gccode.ssc-spc.gc.ca/tomkralidis)

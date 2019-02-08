@@ -1,0 +1,4 @@
+deploy/msc-pygeoapi-config.yml opt/msc-pygeoapi/conf
+deploy/msc-pygeoapi-openapi.yml opt/msc-pygeoapi/conf
+deploy/msc-pygeoapi.conf opt/msc-pygeoapi/etc/apache2
+deploy/msc-pygeoapi.wsgi opt/msc-pygeoapi/app

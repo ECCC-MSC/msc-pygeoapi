@@ -26,6 +26,7 @@ HEADERS = {'Content-type': 'application/json'}
 # Needs to be fixed.
 VERIFY = False
 
+
 def get_wfs3_url(url):
     """return WFS3 URL based on running environment"""
 
@@ -1163,6 +1164,7 @@ def load_annual_peaks(session, metadata, path, annual_peaks_table,
 
 
 @click.command()
+@click.pass_context
 @click.option('--db', type=click.Path(exists=True, resolve_path=True),
               help='Path to Hydat sqlite database')
 @click.option('--es', help='URL to Elasticsearch')
@@ -1170,8 +1172,10 @@ def load_annual_peaks(session, metadata, path, annual_peaks_table,
 @click.option('--password', help='Password to connect to HTTPS')
 @click.option('--dataset', help='ES dataset to load, or all\
                                  if loading everything')
-def cli(db, es, username, password, dataset):
+def hydat(ctx, db, es, username, password, dataset):
     """
+    Loads HYDAT data into Elasticsearch
+
     Controls transformation from sqlite to Elasticsearch.
 
     :param db: database connection string.
@@ -1270,6 +1274,3 @@ def cli(db, es, username, password, dataset):
 
     else:
         LOGGER.critical('Unknown dataset parameter {}, skipping index population.'.format(dataset)) # noqa
-
-
-cli()
