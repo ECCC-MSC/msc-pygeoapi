@@ -1,24 +1,8 @@
 # =================================================================
 #
-# Terms and Conditions of Use
+# Author: Tom Kralidis <tom.kralidis@canada.ca>
 #
-# Unless otherwise noted, computer program source code of this
-# distribution is covered under Crown Copyright, Government of
-# Canada, and is distributed under the MIT License.
-#
-# The Canada wordmark and related graphics associated with this
-# distribution are protected under trademark law and copyright law.
-# No permission is granted to use them outside the parameters of
-# the Government of Canada's corporate identity program. For
-# more information, see
-# http://www.tbs-sct.gc.ca/fip-pcim/index-eng.asp
-#
-# Copyright title to all 3rd party software distributed with this
-# software is held by the respective copyright holders as noted in
-# those files. Users are asked to read the 3rd Party Licenses
-# referenced with those assets.
-#
-# Copyright (c) 2018 Government of Canada
+# Copyright (c) 2019 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -43,16 +27,20 @@
 #
 # =================================================================
 
-all:
+import click
 
-install:
-	install -d $(DESTDIR)/app
-	install -d $(DESTDIR)/conf
-	install -d $(DESTDIR)/etc/apache2
-	install -d $(DESTDIR)/etc/profile.d
-	install -m 644 msc-pygeoapi.wsgi $(DESTDIR)/app/
-	install -m 644 msc-pygeoapi-config.yml $(DESTDIR)/conf/
-	install -m 644 msc-pygeoapi-openapi.yml $(DESTDIR)/conf/
-	install -m 644 msc-pygeoapi.conf $(DESTDIR)/etc/apache2/
+from msc_pygeoapi.loader.hydat import hydat
+from msc_pygeoapi.loader.climate_archive import climate_archive
+from msc_pygeoapi.loader.ahccd_cmip5 import ahccd_cmip5
 
-.PHONY: all install
+__version__ = '0.4.0'
+
+
+@click.group()
+def load():
+    pass
+
+
+load.add_command(hydat)
+load.add_command(climate_archive)
+load.add_command(ahccd_cmip5)

@@ -882,7 +882,8 @@ def generic_loader(fp, es, index, AUTH):
             LOGGER.error('Could not open JSON file due to: {}.'.format(str(err))) # noqa
 
 
-@click.command()
+@click.command('ahccd-cmip5')
+@click.pass_context
 @click.option('--path', type=click.Path(exists=True, resolve_path=True),
               help='Path to file with raw JSON locations')
 @click.option('--es', help='URL to Elasticsearch.')
@@ -890,8 +891,10 @@ def generic_loader(fp, es, index, AUTH):
 @click.option('--password', help='Password to connect to HTTPS')
 @click.option('--dataset', help='ES dataset to load, or all\
                                  if loading everything')
-def cli(path, es, username, password, dataset):
+def ahccd_cmip5(ctx, path, es, username, password, dataset):
     """
+    Loads AHCCD and CMIP5 data into Elasticsearch
+
     Controls transformation from oracle to Elasticsearch.
 
     The JSON locations file should be a JSON of the form:
@@ -1024,6 +1027,3 @@ def cli(path, es, username, password, dataset):
         LOGGER.critical('Unknown dataset parameter {}, skipping index population.'.format(dataset)) # noqa
 
     LOGGER.info('Finished populating indices.')
-
-
-cli()

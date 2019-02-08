@@ -11,5 +11,4 @@ Package: msc-pygeoapi
 Architecture: all
 Depends: elasticsearch (>= 5), python-pygeoapi
 Homepage: https://gccode.ssc-spc.gc.ca/ec-msc/msc-pygeoapi
-Description: MSC GeoMet WFS 3 server implementation
- using pygeoapi
+Description: MSC GeoMet pygeoapi server configuration and utilities

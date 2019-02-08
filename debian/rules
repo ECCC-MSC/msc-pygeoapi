@@ -11,7 +11,4 @@
 #export DH_OPTIONS=-v
 
 %:
-	dh $@
-
-override_dh_auto_install:
-	$(MAKE) install DESTDIR=debian/msc-pygeoapi/opt/msc-pygeoapi
+	dh $@ --with python2 --buildsystem=pybuild

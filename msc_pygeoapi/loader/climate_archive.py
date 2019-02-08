@@ -1013,7 +1013,8 @@ def get_normals_periods(cur):
     return period_dict
 
 
-@click.command()
+@click.command('climate-archive')
+@click.pass_context
 @click.option('--db', help='Oracle database connection string.')
 @click.option('--es', help='URL to ElasticSearch.')
 @click.option('--username', help='Username to connect to HTTPS')
@@ -1026,9 +1027,11 @@ def get_normals_periods(cur):
               help=' Load all stations starting from specified station',
               required=False)
 @click.option('--date', help='Start date to fetch updates', required=False)
-def cli(db, es, username, password, dataset, station=None,
-        starting_from=False, date=None):
+def climate_archive(ctx, db, es, username, password, dataset, station=None,
+                    starting_from=False, date=None):
     """
+    Loads MSC Climate Archive data into Elasticsearch
+
     Controls transformation from oracle to ElasticSearch.
 
     :param db: database connection string.
@@ -1140,6 +1143,3 @@ def cli(db, es, username, password, dataset, station=None,
     LOGGER.info('Finished populating indices.')
 
     con.close()
-
-
-cli()
