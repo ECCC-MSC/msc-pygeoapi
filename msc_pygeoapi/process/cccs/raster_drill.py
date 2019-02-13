@@ -38,9 +38,6 @@ from pyproj import Proj, transform
 import yaml
 from yaml import CLoader
 
-from msc_pygeoapi.process.cccs import (GEOMET_CLIMATE_CONFIG,
-                                       GEOMET_CLIMATE_BASEPATH,
-                                       GEOMET_CLIMATE_BASEPATH_VRT)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -309,6 +306,10 @@ def raster_drill(ctx, layer, lon, lat, format_='GeoJSON'):
 
     :return: return the final file fo a given location
     """
+
+    from msc_pygeoapi.process.cccs import (GEOMET_CLIMATE_CONFIG,
+                                           GEOMET_CLIMATE_BASEPATH,
+                                           GEOMET_CLIMATE_BASEPATH_VRT)
     LOGGER.info('start raster drilling')
 
     if None in [layer, lon, lat]:
