@@ -359,6 +359,11 @@ def raster_drill(ctx, layer, lon, lat, format_='JSON'):
         outProj = Proj(src_epsg)
         lon, lat = transform(inProj, outProj, lon, lat)
 
+    else:
+        msg = '{}: not a valid or time enabled layer'.format(layer)
+        LOGGER.error(msg)
+        raise ValueError(msg)
+
     ds = os.path.join(data_basepath,
                       inter_path,
                       file_name)
