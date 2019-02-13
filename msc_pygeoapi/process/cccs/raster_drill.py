@@ -55,7 +55,7 @@ UNITS = {'PR': '%',
          'SND': 'm'
          }
 
-JSON_TEMPLATE = """{{
+GEOJSON_FEATURE_TEMPLATE = """{{
   "type": "Feature",
   "geometry": {{
     "type": "Point",
@@ -266,25 +266,26 @@ def write2format(values_dict, cfg, output_format, lon, lat):
                 if values != '':
                     values += ',\n'
                 values += '      {}'.format(k)
-            file_out = JSON_TEMPLATE.format(lon,
-                                            lat,
-                                            time_begin,
-                                            time_end,
-                                            time_step,
-                                            var_en,
-                                            var_fr.encode('utf-8'),
-                                            values_dict['uom'],
-                                            type_en,
-                                            type_fr.encode('utf-8'),
-                                            sce_en,
-                                            sce_fr.encode('utf-8'),
-                                            seas_en,
-                                            seas_fr.encode('utf-8'),
-                                            pctl_en,
-                                            pctl_fr.encode('utf-8'),
-                                            label_en,
-                                            label_fr.encode('utf-8'),
-                                            values)
+            file_out = GEOJSON_FEATURE_TEMPLATE.format(
+                lon,
+                lat,
+                time_begin,
+                time_end,
+                time_step,
+                var_en,
+                var_fr.encode('utf-8'),
+                values_dict['uom'],
+                type_en,
+                type_fr.encode('utf-8'),
+                sce_en,
+                sce_fr.encode('utf-8'),
+                seas_en,
+                seas_fr.encode('utf-8'),
+                pctl_en,
+                pctl_fr.encode('utf-8'),
+                label_en,
+                label_fr.encode('utf-8'),
+                values)
 
     return file_out
 
@@ -294,9 +295,9 @@ def write2format(values_dict, cfg, output_format, lon, lat):
 @click.option('--layer', help='Layer name to process')
 @click.option('--lon', help='Longitude')
 @click.option('--lat', help='Latitude')
-@click.option('--format', 'format_', type=click.Choice(['JSON', 'CSV']),
-              default='JSON', help='output format')
-def raster_drill(ctx, layer, lon, lat, format_='JSON'):
+@click.option('--format', 'format_', type=click.Choice(['GeoJSON', 'CSV']),
+              default='GeoJSON', help='output format')
+def raster_drill(ctx, layer, lon, lat, format_='GeoJSON'):
     """
     Writes the information in the format provided by the user
     and reads some information from the geomet-climate yaml
@@ -316,7 +317,6 @@ def raster_drill(ctx, layer, lon, lat, format_='JSON'):
     with open(GEOMET_CLIMATE_CONFIG) as fh:
         cfg = yaml.load(fh, Loader=CLoader)
 
-    layer = layer
     lon = int(lon)
     lat = int(lat)
 

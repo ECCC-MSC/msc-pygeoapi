@@ -1,6 +1,6 @@
 # =================================================================
 #
-# Author: Louis-Philippe Rousseau-Lambert 
+# Author: Louis-Philippe Rousseau-Lambert
 #         <Louis-Philippe.RousseauLambert2@canada.ca>
 #
 # Copyright (c) 2019 Louis-Philippe Rousseau-Lambert
@@ -30,7 +30,7 @@
 
 import click
 
-from msc_pygeoapi.process.cccs import cccs 
+from msc_pygeoapi.process.cccs import cccs
 
 
 @click.group()

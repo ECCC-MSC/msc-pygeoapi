@@ -1,6 +1,6 @@
 # =================================================================
 #
-# Author: Louis-Philippe Rousseau-Lambert 
+# Author: Louis-Philippe Rousseau-Lambert
 #         <Louis-Philippe.RousseauLambert2@canada.ca>
 #
 # Copyright (c) 2019 Louis-Philippe Rousseau-Lambert
@@ -30,11 +30,11 @@
 
 import click
 
+from msc_pygeoapi.process.cccs.raster_drill import raster_drill
+
 GEOMET_CLIMATE_CONFIG = '/opt/geomet-climate/geomet-climate.yml'
 GEOMET_CLIMATE_BASEPATH = '/data/geomet/amqp/climate'
 GEOMET_CLIMATE_BASEPATH_VRT = '/opt/geomet-climate/vrt'
-
-from msc_pygeoapi.process.cccs.raster_drill import raster_drill 
 
 
 @click.group()
