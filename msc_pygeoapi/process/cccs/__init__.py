@@ -1,8 +1,9 @@
 # =================================================================
 #
-# Author: Tom Kralidis <tom.kralidis@canada.ca>
+# Author: Louis-Philippe Rousseau-Lambert 
+#         <Louis-Philippe.RousseauLambert2@canada.ca>
 #
-# Copyright (c) 2019 Tom Kralidis
+# Copyright (c) 2019 Louis-Philippe Rousseau-Lambert
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -29,26 +30,16 @@
 
 import click
 
-from msc_pygeoapi.loader import load
-from msc_pygeoapi.process import process
+GEOMET_CLIMATE_CONFIG = '/opt/geomet-climate/geomet-climate.yml'
+GEOMET_CLIMATE_BASEPATH = '/data/geomet/amqp/climate'
+GEOMET_CLIMATE_BASEPATH_VRT = '/opt/geomet-climate/vrt'
 
-__version__ = '0.5.dev0'
-
-
-@click.group()
-def data():
-    pass
-
-
-data.add_command(load)
-data.add_command(process)
+from msc_pygeoapi.process.cccs.raster_drill import raster_drill 
 
 
 @click.group()
-@click.version_option(version=__version__)
-def cli():
+def cccs():
     pass
 
 
-cli.add_command(data)
-cli.add_command(process)
+cccs.add_command(raster_drill)

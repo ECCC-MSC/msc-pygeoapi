@@ -1,3 +1,6 @@
 click
+gdal
+pyproj
+pyyaml
 requests
 sqlalchemy
