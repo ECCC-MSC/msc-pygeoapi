@@ -294,8 +294,9 @@ def write2format(values_dict, cfg, output_format, lon, lat):
 @click.option('--layer', help='Layer name to process')
 @click.option('--lon', help='Longitude')
 @click.option('--lat', help='Latitude')
-@click.option('--format', '-f', 'format_', help='output format')
-def raster_drill(ctx, layer, lon, lat, format_):
+@click.option('--format', 'format_', type=click.Choice(['JSON', 'CSV']),
+              default='JSON', help='output format')
+def raster_drill(ctx, layer, lon, lat, format_='JSON'):
     """
     Writes the information in the format provided by the user
     and reads some information from the geomet-climate yaml
@@ -308,6 +309,9 @@ def raster_drill(ctx, layer, lon, lat, format_):
     :return: return the final file fo a given location
     """
     LOGGER.info('start raster drilling')
+
+    if None in [layer, lon, lat]:
+        raise click.ClickException('Missing required parameters')
 
     with open(GEOMET_CLIMATE_CONFIG) as fh:
         cfg = yaml.load(fh, Loader=CLoader)
