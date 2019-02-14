@@ -29,6 +29,9 @@
 # =================================================================
 
 import click
+import csv
+import io
+import json
 import logging
 import os
 import re
@@ -38,48 +41,19 @@ from pyproj import Proj, transform
 import yaml
 from yaml import CLoader
 
-
 LOGGER = logging.getLogger(__name__)
 
-UNITS = {'PR': '%',
-         'TM': 'Celsius',
-         'TN': 'Celsius',
-         'TX': 'Celsius',
-         'TT': 'Celsius',
-         'SIC': '%',
-         'SIT': 'm',
-         'SFCWIND': 'm s-1',
-         'SND': 'm'
-         }
-
-GEOJSON_FEATURE_TEMPLATE = """{{
-  "type": "Feature",
-  "geometry": {{
-    "type": "Point",
-    "coordinates": [{}, {}]
-  }},
-  "properties": {{
-    "time_begin": "{}",
-    "time_end": "{}",
-    "time_step": "{}",
-    "variable_en" "{}",
-    "variable_fr" "{}",
-    "UOM": "{}",
-    "value_type_en": "{}",
-    "value_type_fr": "{}",
-    "scenario_en": "{}",
-    "scenario_fr": "{}",
-    "period_en": "{}",
-    "period_fr": "{}",
-    "percentile_en": "{}",
-    "percentile_fr": "{}",
-    "label_en": "{}",
-    "label_fr": "{}"
-    "values":[
-{}
-    ]
-  }}
-}}"""
+UNITS = {
+    'PR': '%',
+    'TM': 'Celsius',
+    'TN': 'Celsius',
+    'TX': 'Celsius',
+    'TT': 'Celsius',
+    'SIC': '%',
+    'SIT': 'm',
+    'SFCWIND': 'm s-1',
+    'SND': 'm'
+}
 
 
 def get_time_info(cfg):
@@ -87,10 +61,11 @@ def get_time_info(cfg):
     function to build an array of date based on the yaml info
 
     :param cfg: CCCS Yaml section for the layer
-    :return: dict with the time steps
+
+    :returns: `dict` with the time steps
     """
 
-    LOGGER.debug('creating a Date array')
+    LOGGER.debug('creating a date array')
     dates = []
 
     time_begin = cfg['climate_model']['temporal_extent']['begin']
@@ -140,7 +115,7 @@ def geo2xy(ds, x, y):
     x = int((x - origin_x) / width) - 1
     y = int((y - origin_y) / height) - 1
 
-    return x, y
+    return (x, y)
 
 
 def get_location_info(file_, x, y, cfg, layer_keys):
@@ -153,7 +128,7 @@ def get_location_info(file_, x, y, cfg, layer_keys):
     :param cfg: yaml information
     :param layer_keys: layer label splitted
 
-    :return: dict of metadata and array values
+    :returns: `dict` of metadata and array values
     """
 
     dict_ = {
@@ -166,18 +141,18 @@ def get_location_info(file_, x, y, cfg, layer_keys):
 
     LOGGER.debug('Opening {}'.format(file_))
     try:
-        ds = gdal.Open(file_)
         LOGGER.debug('Fetching units')
         dict_['time_step'] = cfg['timestep']
 
         dict_['metadata'] = layer_keys
         dict_['uom'] = UNITS[layer_keys['Variable']]
 
+        ds = gdal.Open(file_)
         LOGGER.debug('Transforming map coordinates into image coordinates')
-
         x_, y_ = geo2xy(ds, x, y)
 
     except RuntimeError as err:
+        ds = None
         msg = 'Cannot open file: {}'.format(err)
         LOGGER.exception(msg)
 
@@ -187,7 +162,7 @@ def get_location_info(file_, x, y, cfg, layer_keys):
         LOGGER.debug('Fetching band {}'.format(band))
 
         srcband = ds.GetRasterBand(band)
-        array = srcband.ReadAsArray()
+        array = srcband.ReadAsArray().tolist()
 
         try:
             dict_['values'].append(array[y_][x_])
@@ -203,7 +178,7 @@ def get_location_info(file_, x, y, cfg, layer_keys):
     return dict_
 
 
-def write2format(values_dict, cfg, output_format, lon, lat):
+def serialize(values_dict, cfg, output_format, lon, lat):
     """
     Writes the information in the format provided by the user
 
@@ -213,16 +188,16 @@ def write2format(values_dict, cfg, output_format, lon, lat):
     :param lon: longitude
     :param lat: latitude
 
-    :return: GeoJSON or CSV output
+    :returns: GeoJSON or CSV output
     """
 
     time_begin = values_dict['dates'][0]
     time_end = values_dict['dates'][-1]
     time_step = values_dict['time_step']
 
-    file_out = None
+    data = None
 
-    LOGGER.debug('Creating the outpuf file')
+    LOGGER.debug('Creating the output file')
     if len(values_dict['dates']) == len(values_dict['values']):
         if output_format == 'CSV':
             column1 = 'time_{}/{}/{}'.format(time_begin,
@@ -230,13 +205,13 @@ def write2format(values_dict, cfg, output_format, lon, lat):
                                              time_step)
             column2 = 'values_{}'.format(values_dict['uom'])
 
-            file_out = '{},{}'.format(column1, column2)
+            data = io.BytesIO()
+            writer = csv.writer(data)
+            writer.writerow([column1, column2])
 
             for i in range(0, len(values_dict['dates'])):
-                line = '\n{},{}'.format(values_dict['dates'][i],
-                                        values_dict['values'][i])
-
-                file_out += line
+                writer.writerow([values_dict['dates'][i],
+                                 values_dict['values'][i]])
 
         elif output_format == 'GeoJSON':
             if 'CANGRD' not in cfg['label_en']:
@@ -258,33 +233,38 @@ def write2format(values_dict, cfg, output_format, lon, lat):
                 sce_fr = 'Historique'
                 pctl_en = pctl_fr = ''
 
-            values = ''
+            values = []
             for k in values_dict['values']:
-                if values != '':
-                    values += ',\n'
-                values += '      {}'.format(k)
-            file_out = GEOJSON_FEATURE_TEMPLATE.format(
-                lon,
-                lat,
-                time_begin,
-                time_end,
-                time_step,
-                var_en,
-                var_fr.encode('utf-8'),
-                values_dict['uom'],
-                type_en,
-                type_fr.encode('utf-8'),
-                sce_en,
-                sce_fr.encode('utf-8'),
-                seas_en,
-                seas_fr.encode('utf-8'),
-                pctl_en,
-                pctl_fr.encode('utf-8'),
-                label_en,
-                label_fr.encode('utf-8'),
-                values)
+                values.append(k)
 
-    return file_out
+            data = {
+                'type': 'Feature',
+                'geometry': {
+                    'type': 'Point',
+                    'coordinates': [lon, lat]
+                },
+                'properties': {
+                    'time_begin': time_begin,
+                    'time_end': time_end,
+                    'time_step': time_step,
+                    'variable_en': var_en,
+                    'variable_fr': var_fr,
+                    'uom': values_dict['uom'],
+                    'value_type_en': type_en,
+                    'value_type_fr': type_fr,
+                    'scenario_en': sce_en,
+                    'scenario_fr': sce_fr,
+                    'period_en': seas_en,
+                    'period_fr': seas_fr,
+                    'percentile_en': pctl_en,
+                    'percertile_fr': pctl_fr,
+                    'label_en': label_en,
+                    'label_fr': label_fr,
+                    'values': values
+                }
+            }
+
+    return data
 
 
 @click.command('raster-drill')
@@ -315,7 +295,7 @@ def raster_drill(ctx, layer, lon, lat, format_='GeoJSON'):
     if None in [layer, lon, lat]:
         raise click.ClickException('Missing required parameters')
 
-    with open(GEOMET_CLIMATE_CONFIG) as fh:
+    with io.open(GEOMET_CLIMATE_CONFIG) as fh:
         cfg = yaml.load(fh, Loader=CLoader)
 
     lon = int(lon)
@@ -365,10 +345,11 @@ def raster_drill(ctx, layer, lon, lat, format_='GeoJSON'):
         LOGGER.error(msg)
         raise ValueError(msg)
 
-    ds = os.path.join(data_basepath,
-                      inter_path,
-                      file_name)
+    ds = os.path.join(data_basepath, inter_path, file_name)
 
-    output = get_location_info(ds, lon, lat, cfg['layers'][layer], layer_keys)
-    output_file = write2format(output, cfg['layers'][layer], format_, lon, lat)
-    click.echo(output_file)
+    data = get_location_info(ds, lon, lat, cfg['layers'][layer], layer_keys)
+    output = serialize(data, cfg['layers'][layer], format_, lon, lat)
+    if format_ == 'GeoJSON':
+        click.echo(json.dumps(output, ensure_ascii=False))
+    elif format_ == 'CSV':
+        click.echo(output.getvalue())
