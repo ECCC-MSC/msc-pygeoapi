@@ -205,7 +205,7 @@ def serialize(values_dict, cfg, output_format, lon, lat):
                                              time_step)
             column2 = 'values_{}'.format(values_dict['uom'])
 
-            data = io.BytesIO()
+            data = io.StringIO()
             writer = csv.writer(data)
             writer.writerow([column1, column2])
 
