@@ -41,6 +41,8 @@ from pyproj import Proj, transform
 import yaml
 from yaml import CLoader
 
+from pygeoapi.process.base import BaseProcessor
+
 LOGGER = logging.getLogger(__name__)
 
 UNITS = {
@@ -53,6 +55,46 @@ UNITS = {
     'SIT': 'm',
     'SFCWIND': 'm s-1',
     'SND': 'm'
+}
+
+PROCESS_METADATA = {
+    'version': '0.1.0',
+    'name': 'raster-drill',
+    'title': 'Raster Drill process',
+    'description': 'Raster Drill process',
+    'keywords': ['raster drill'],
+    'links': [{
+        'type': 'text/html',
+        'rel': 'canonical',
+        'title': 'information',
+        'href': 'https://example.org/process',
+        'hreflang': 'en-US'
+    }],
+    'inputs': {
+        'layer': {
+            'title': 'layer name',
+            'description': 'layer name: must be a time enalbled layer'
+        },
+        'lat': {
+            'title': 'latitude',
+            'description': 'latitude in EPSG:4326'
+        },
+        'lon': {
+            'title': 'longitude',
+            'description': 'longitude in EPSG:4326'
+        },
+        'format': {
+            'title': 'format',
+            'description': 'format: GeoJSON | CSV'
+        }
+    },
+    'outputs': {
+        'raster-drill-response': {
+            'title': 'output raster drill',
+            'description': 'output raster drill',
+            'formats': ['application/json']
+        }
+    }
 }
 
 
@@ -205,7 +247,7 @@ def serialize(values_dict, cfg, output_format, lon, lat):
                                              time_step)
             column2 = 'values_{}'.format(values_dict['uom'])
 
-            data = io.BytesIO()
+            data = io.StringIO()
             writer = csv.writer(data)
             writer.writerow([column1, column2])
 
@@ -267,14 +309,7 @@ def serialize(values_dict, cfg, output_format, lon, lat):
     return data
 
 
-@click.command('raster-drill')
-@click.pass_context
-@click.option('--layer', help='Layer name to process')
-@click.option('--lon', help='Longitude')
-@click.option('--lat', help='Latitude')
-@click.option('--format', 'format_', type=click.Choice(['GeoJSON', 'CSV']),
-              default='GeoJSON', help='output format')
-def raster_drill(ctx, layer, lon, lat, format_='GeoJSON'):
+def raster_drill(layer, lon, lat, format_):
     """
     Writes the information in the format provided by the user
     and reads some information from the geomet-climate yaml
@@ -349,7 +384,54 @@ def raster_drill(ctx, layer, lon, lat, format_='GeoJSON'):
 
     data = get_location_info(ds, lon, lat, cfg['layers'][layer], layer_keys)
     output = serialize(data, cfg['layers'][layer], format_, lon, lat)
+
+    return output
+
+
+@click.command('raster-drill')
+@click.pass_context
+@click.option('--layer', help='Layer name to process')
+@click.option('--lon', help='Longitude')
+@click.option('--lat', help='Latitude')
+@click.option('--format', 'format_', type=click.Choice(['GeoJSON', 'CSV']),
+              default='GeoJSON', help='output format')
+def cli(ctx, layer, lon, lat, format_='GeoJSON'):
+
+    output = raster_drill(layer, lon, lat, format_)
     if format_ == 'GeoJSON':
         click.echo(json.dumps(output, ensure_ascii=False))
     elif format_ == 'CSV':
         click.echo(output.getvalue())
+
+
+class RasterDrillProcessor(BaseProcessor):
+    """Raster Drill Processor"""
+
+    def __init__(self, provider_def):
+        """
+        Initialize object
+
+        :param provider_def: provider definition
+
+        :returns: pygeoapi.process.cccs.raster_drill.RasterDrillProcessor
+        """
+
+        BaseProcessor.__init__(self, provider_def, PROCESS_METADATA)
+
+    def execute(self, data):
+        inputs = json.loads(data.decode('utf-8'))
+        layer = inputs['inputs']['data']['layer']
+        lon = float(inputs['inputs']['data']['long'])
+        lat = float(inputs['inputs']['data']['lat'])
+        format_ = inputs['inputs']['data']['format']
+
+        output = raster_drill(layer, lon, lat, format_)
+        if format_ == 'GeoJSON':
+            dict_ = json.dumps(output, ensure_ascii=False)
+        elif format_ == 'CSV':
+            dict_ = output.getvalue()
+
+        return dict_
+
+    def __repr__(self):
+        return '<RasterDrillProcessor> {}'.format(self.name)
