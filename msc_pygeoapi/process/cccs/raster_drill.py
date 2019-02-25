@@ -436,5 +436,5 @@ try:
 
         def __repr__(self):
             return '<RasterDrillProcessor> {}'.format(self.name)
-except ImportError:
+except (ImportError, RuntimeError):
     pass
