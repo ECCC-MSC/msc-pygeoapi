@@ -41,8 +41,6 @@ from pyproj import Proj, transform
 import yaml
 from yaml import CLoader
 
-from pygeoapi.process.base import BaseProcessor
-
 LOGGER = logging.getLogger(__name__)
 
 UNITS = {
@@ -404,34 +402,39 @@ def cli(ctx, layer, lon, lat, format_='GeoJSON'):
         click.echo(output.getvalue())
 
 
-class RasterDrillProcessor(BaseProcessor):
-    """Raster Drill Processor"""
+try:
+    from pygeoapi.process.base import BaseProcessor
 
-    def __init__(self, provider_def):
-        """
-        Initialize object
+    class RasterDrillProcessor(BaseProcessor):
+        """Raster Drill Processor"""
 
-        :param provider_def: provider definition
+        def __init__(self, provider_def):
+            """
+            Initialize object
 
-        :returns: pygeoapi.process.cccs.raster_drill.RasterDrillProcessor
-        """
+            :param provider_def: provider definition
 
-        BaseProcessor.__init__(self, provider_def, PROCESS_METADATA)
+            :returns: pygeoapi.process.cccs.raster_drill.RasterDrillProcessor
+             """
 
-    def execute(self, data):
-        inputs = json.loads(data.decode('utf-8'))
-        layer = inputs['inputs']['data']['layer']
-        lon = float(inputs['inputs']['data']['long'])
-        lat = float(inputs['inputs']['data']['lat'])
-        format_ = inputs['inputs']['data']['format']
+            BaseProcessor.__init__(self, provider_def, PROCESS_METADATA)
 
-        output = raster_drill(layer, lon, lat, format_)
-        if format_ == 'GeoJSON':
-            dict_ = json.dumps(output, ensure_ascii=False)
-        elif format_ == 'CSV':
-            dict_ = output.getvalue()
+        def execute(self, data):
+            inputs = json.loads(data.decode('utf-8'))
+            layer = inputs['inputs']['data']['layer']
+            lon = float(inputs['inputs']['data']['long'])
+            lat = float(inputs['inputs']['data']['lat'])
+            format_ = inputs['inputs']['data']['format']
 
-        return dict_
+            output = raster_drill(layer, lon, lat, format_)
+            if format_ == 'GeoJSON':
+                dict_ = json.dumps(output, ensure_ascii=False)
+            elif format_ == 'CSV':
+                dict_ = output.getvalue()
 
-    def __repr__(self):
-        return '<RasterDrillProcessor> {}'.format(self.name)
+            return dict_
+
+        def __repr__(self):
+            return '<RasterDrillProcessor> {}'.format(self.name)
+except ImportError:
+    pass
