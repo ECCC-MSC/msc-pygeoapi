@@ -466,7 +466,7 @@ try:
 
             output = raster_drill(layer, lon, lat, format_)
             if format_ == 'GeoJSON':
-                dict_ = json.dumps(output, ensure_ascii=False)
+                dict_ = output
             elif format_ == 'CSV':
                 dict_ = output.getvalue()
 
