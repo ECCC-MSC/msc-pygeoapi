@@ -752,3 +752,8 @@ datasets:
             data: http://localhost:9200/cmip5/FeatureCollection
             id_field: identifier
             time_field: year
+
+processes:
+    raster-drill:
+        processor:
+            name: msc_pygeoapi.process.cccs.raster_drill.RasterDrillProcessor

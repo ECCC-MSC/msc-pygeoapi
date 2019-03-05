@@ -1,5 +1,20 @@
 components:
   parameters:
+    f:
+      description: The optional f parameter indicates the output format which the
+        server shall provide as part of the response document.  The default format
+        is GeoJSON.
+      explode: false
+      in: query
+      name: f
+      required: false
+      schema:
+        default: GeoJSON
+        enum:
+        - GeoJSON
+        - CSV
+        type: string
+      style: form
     id:
       description: The id of a feature
       in: path
@@ -12,15 +27,41 @@ components:
         presented in the response document. Only items are counted that are on the
         first level of the collection in the response document. Nested objects contained
         within the explicitly requested items shall not be counted. Minimum = 1. Maximum
-        = 10000. Default = 10.
+        = 10000. Default = 500.
       explode: false
       in: query
       name: limit
       required: false
       schema:
-        default: 10
+        default: 500
         maximum: 10000
         minimum: 1
+        type: integer
+      style: form
+    sortby:
+      description: The optional sortby parameter indicates the sort property and order
+        on which the server shall present results in the response document using the
+        convention `sortby=PROPERTY:X`, where `PROPERTY` is the sort property and
+        `X` is the sort order (`A` is ascending, `D` is descending). Sorting by multiple
+        properties is supported by providing a comma-separated list.
+      explode: false
+      in: query
+      name: sortby
+      required: false
+      schema:
+        type: string
+      style: form
+    startindex:
+      description: The optional startindex parameter indicates the index within the
+        result set from which the server shall begin presenting results in the response
+        document.  The first element has an index of 0 (default).
+      explode: false
+      in: query
+      name: startindex
+      required: false
+      schema:
+        default: 0
+        minimum: 0
         type: integer
       style: form
 info:
@@ -34,10 +75,10 @@ info:
     of the world are habitable or uninhabitable
   license:
     name: Environment and Climate Change Canada Data Server End-use Licence
-    url: http://dd.weather.gc.ca/doc/LICENCE_GENERAL.txt
+    url: https://dd.weather.gc.ca/doc/LICENCE_GENERAL.txt
   termsOfService: None
   title: Meteorological Service of Canada Geospatial Web Services
-  version: 3.0.1
+  version: 3.0.2
   x-keywords:
   - Weather
   - Meteorology
@@ -51,7 +92,7 @@ info:
   - Precipitations
   - Snow
   - Ice
-openapi: 3.0.1
+openapi: 3.0.2
 paths:
   /:
     get:
@@ -80,6 +121,2153 @@ paths:
       summary: Feature Collections
       tags:
       - server
+  /collections/ahccd-annual:
+    get:
+      description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Invalid ID supplied
+        404:
+          description: not found
+      summary: Get feature collection metadata
+      tags:
+      - ahccd-annual
+  /collections/ahccd-annual/items:
+    get:
+      description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual
+      parameters:
+      - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/limit'
+      - $ref: '#/components/parameters/sortby'
+      - $ref: '#/components/parameters/startindex'
+      - explode: false
+        in: query
+        name: temp_min__temp_min
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: identifier__identifiant
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: rain__pluie
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: total_precip_units__precip_totale_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: wind_speed_units__vitesse_vent_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: lat__lat
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: wind_speed__vitesse_vent
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: temp_max_units__temp_max_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: lon__long
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: temp_mean__temp_moyenne
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: total_precip__precip_totale
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: rain_units__pluie_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: period_value__valeur_periode
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: province__province
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: period_group__groupe_periode
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: year__annee
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: pressure_station_units__pression_station_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: temp_mean_units__temp_moyenne_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: pressure_sea_level_units__pression_niveau_mer_unite
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: station_id__id_station
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: temp_max__temp_max
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: pressure_sea_level__pression_niveau_mer
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: temp_min_units__temp_min_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: snow__neige
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: pressure_station__pression_station
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: snow_units__neige_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Invalid ID supplied
+        404:
+          description: not found
+      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual features
+      tags:
+      - ahccd-annual
+  /collections/ahccd-annual/items/{id}:
+    get:
+      description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual
+      parameters:
+      - $ref: '#/components/parameters/id'
+      - $ref: '#/components/parameters/f'
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Invalid ID supplied
+        404:
+          description: not found
+      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual feature
+        by ID
+      tags:
+      - ahccd-annual
+  /collections/ahccd-monthly:
+    get:
+      description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Invalid ID supplied
+        404:
+          description: not found
+      summary: Get feature collection metadata
+      tags:
+      - ahccd-monthly
+  /collections/ahccd-monthly/items:
+    get:
+      description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
+      parameters:
+      - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/limit'
+      - $ref: '#/components/parameters/sortby'
+      - $ref: '#/components/parameters/startindex'
+      - explode: false
+        in: query
+        name: temp_min__temp_min
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: identifier__identifiant
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: rain__pluie
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: total_precip_units__precip_totale_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: wind_speed_units__vitesse_vent_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: lat__lat
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: wind_speed__vitesse_vent
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: temp_max_units__temp_max_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: lon__long
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: temp_mean__temp_moyenne
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: total_precip__precip_totale
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: rain_units__pluie_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: period_value__valeur_periode
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: province__province
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: period_group__groupe_periode
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: year__annee
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: pressure_station_units__pression_station_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: temp_mean_units__temp_moyenne_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: date
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: pressure_sea_level_units__pression_niveau_mer_unite
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: station_id__id_station
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: temp_max__temp_max
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: pressure_sea_level__pression_niveau_mer
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: temp_min_units__temp_min_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: snow__neige
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: pressure_station__pression_station
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: snow_units__neige_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Invalid ID supplied
+        404:
+          description: not found
+      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
+        features
+      tags:
+      - ahccd-monthly
+  /collections/ahccd-monthly/items/{id}:
+    get:
+      description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
+      parameters:
+      - $ref: '#/components/parameters/id'
+      - $ref: '#/components/parameters/f'
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Invalid ID supplied
+        404:
+          description: not found
+      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
+        feature by ID
+      tags:
+      - ahccd-monthly
+  /collections/ahccd-seasonal:
+    get:
+      description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Invalid ID supplied
+        404:
+          description: not found
+      summary: Get feature collection metadata
+      tags:
+      - ahccd-seasonal
+  /collections/ahccd-seasonal/items:
+    get:
+      description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal
+      parameters:
+      - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/limit'
+      - $ref: '#/components/parameters/sortby'
+      - $ref: '#/components/parameters/startindex'
+      - explode: false
+        in: query
+        name: temp_min__temp_min
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: identifier__identifiant
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: rain__pluie
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: total_precip_units__precip_totale_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: wind_speed_units__vitesse_vent_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: lat__lat
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: wind_speed__vitesse_vent
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: temp_max_units__temp_max_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: lon__long
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: temp_mean__temp_moyenne
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: total_precip__precip_totale
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: rain_units__pluie_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: period_value__valeur_periode
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: province__province
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: period_group__groupe_periode
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: year__annee
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: pressure_station_units__pression_station_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: temp_mean_units__temp_moyenne_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: pressure_sea_level_units__pression_niveau_mer_unite
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: station_id__id_station
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: temp_max__temp_max
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: pressure_sea_level__pression_niveau_mer
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: temp_min_units__temp_min_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: snow__neige
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: pressure_station__pression_station
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: snow_units__neige_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Invalid ID supplied
+        404:
+          description: not found
+      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal
+        features
+      tags:
+      - ahccd-seasonal
+  /collections/ahccd-seasonal/items/{id}:
+    get:
+      description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal
+      parameters:
+      - $ref: '#/components/parameters/id'
+      - $ref: '#/components/parameters/f'
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Invalid ID supplied
+        404:
+          description: not found
+      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal
+        feature by ID
+      tags:
+      - ahccd-seasonal
+  /collections/ahccd-stations:
+    get:
+      description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Stations
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Invalid ID supplied
+        404:
+          description: not found
+      summary: Get feature collection metadata
+      tags:
+      - ahccd-stations
+  /collections/ahccd-stations/items:
+    get:
+      description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Stations
+      parameters:
+      - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/limit'
+      - $ref: '#/components/parameters/sortby'
+      - $ref: '#/components/parameters/startindex'
+      - explode: false
+        in: query
+        name: station_id__id_station
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: elevation__elevation
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: identifier__identifiant
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: station_name__nom_station
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: province__province
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: year_range__annees
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: period__periode
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: measurement_type__type_mesure
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: joined__rejoint
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: trend_value__valeur_tendance
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Invalid ID supplied
+        404:
+          description: not found
+      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Stations
+        features
+      tags:
+      - ahccd-stations
+  /collections/ahccd-stations/items/{id}:
+    get:
+      description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Stations
+      parameters:
+      - $ref: '#/components/parameters/id'
+      - $ref: '#/components/parameters/f'
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Invalid ID supplied
+        404:
+          description: not found
+      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Stations
+        feature by ID
+      tags:
+      - ahccd-stations
+  /collections/ahccd-trends:
+    get:
+      description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Invalid ID supplied
+        404:
+          description: not found
+      summary: Get feature collection metadata
+      tags:
+      - ahccd-trends
+  /collections/ahccd-trends/items:
+    get:
+      description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends
+      parameters:
+      - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/limit'
+      - $ref: '#/components/parameters/sortby'
+      - $ref: '#/components/parameters/startindex'
+      - explode: false
+        in: query
+        name: station_id__id_station
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: elevation__elevation
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: identifier__identifiant
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: station_name__nom_station
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: province__province
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: year_range__annees
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: period__periode
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: measurement_type__type_mesure
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: joined__rejoint
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: trend_value__valeur_tendance
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Invalid ID supplied
+        404:
+          description: not found
+      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends features
+      tags:
+      - ahccd-trends
+  /collections/ahccd-trends/items/{id}:
+    get:
+      description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends
+      parameters:
+      - $ref: '#/components/parameters/id'
+      - $ref: '#/components/parameters/f'
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Invalid ID supplied
+        404:
+          description: not found
+      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends feature
+        by ID
+      tags:
+      - ahccd-trends
+  /collections/climate-daily:
+    get:
+      description: MSC Daily Data
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Invalid ID supplied
+        404:
+          description: not found
+      summary: Get feature collection metadata
+      tags:
+      - climate-daily
+  /collections/climate-daily/items:
+    get:
+      description: MSC Daily Data
+      parameters:
+      - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/limit'
+      - $ref: '#/components/parameters/sortby'
+      - $ref: '#/components/parameters/startindex'
+      - explode: false
+        in: query
+        name: MIN_REL_HUMIDITY
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: STN_ID
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: CLIMATE_IDENTIFIER
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: MAX_REL_HUMIDITY
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: SPEED_MAX_GUST
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: TOTAL_RAIN_FLAG
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: MIN_TEMPERATURE_FLAG
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: PROVINCE_CODE
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: LOCAL_YEAR
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: TOTAL_PRECIPITATION_FLAG
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: MEAN_TEMPERATURE
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: SOURCE
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: MAX_TEMPERATURE_FLAG
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: COOLING_DEGREE_DAYS
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: MIN_REL_HUMIDITY_FLAG
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: STATION_NAME
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: DIRECTION_MAX_GUST_FLAG
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: HEATING_DEGREE_DAYS
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: MAX_REL_HUMIDITY_FLAG
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: LOCAL_DATE
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: TOTAL_RAIN
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: MAX_TEMPERATURE
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: LOCAL_MONTH
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: SNOW_ON_GROUND_FLAG
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: COOLING_DEGREE_DAYS_FLAG
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: ID
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: SNOW_ON_GROUND
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: HEATING_DEGREE_DAYS_FLAG
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: LOCAL_DAY
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: DIRECTION_MAX_GUST
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: TOTAL_SNOW_FLAG
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: MEAN_TEMPERATURE_FLAG
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: SPEED_MAX_GUST_FLAG
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: TOTAL_PRECIPITATION
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: MIN_TEMPERATURE
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: TOTAL_SNOW
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Invalid ID supplied
+        404:
+          description: not found
+      summary: Get MSC Daily Data features
+      tags:
+      - climate-daily
+  /collections/climate-daily/items/{id}:
+    get:
+      description: MSC Daily Data
+      parameters:
+      - $ref: '#/components/parameters/id'
+      - $ref: '#/components/parameters/f'
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Invalid ID supplied
+        404:
+          description: not found
+      summary: Get MSC Daily Data feature by ID
+      tags:
+      - climate-daily
+  /collections/climate-monthly:
+    get:
+      description: MSC Monthly Data
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Invalid ID supplied
+        404:
+          description: not found
+      summary: Get feature collection metadata
+      tags:
+      - climate-monthly
+  /collections/climate-monthly/items:
+    get:
+      description: MSC Monthly Data
+      parameters:
+      - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/limit'
+      - $ref: '#/components/parameters/sortby'
+      - $ref: '#/components/parameters/startindex'
+      - explode: false
+        in: query
+        name: NORMAL_SUNSHINE
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: NORMAL_MEAN_TEMPERATURE
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: DAYS_WITH_VALID_SNOWFALL
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: STN_ID
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: DAYS_WITH_VALID_PRECIP
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: CLIMATE_IDENTIFIER
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: PROVINCE_CODE
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: BRIGHT_SUNSHINE
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: LOCAL_YEAR
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: NORMAL_PRECIPITATION
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: MEAN_TEMPERATURE
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: FRE_PROVINCE_NAME
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: COOLING_DEGREE_DAYS
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: DAYS_WITH_PRECIP_GE_1MM
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: STATION_NAME
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: HEATING_DEGREE_DAYS
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: LOCAL_DATE
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: MAX_TEMPERATURE
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: LOCAL_MONTH
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: LONGITUDE
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: ENG_PROVINCE_NAME
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: DAYS_WITH_VALID_MIN_TEMP
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: ID
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: TOTAL_SNOWFALL
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: SNOW_ON_GROUND_LAST_DAY
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: LAST_UPDATED
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: DAYS_WITH_VALID_MAX_TEMP
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: DAYS_WITH_VALID_SUNSHINE
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: NORMAL_SNOWFALL
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: DAYS_WITH_VALID_MEAN_TEMP
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: LATITUDE
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: TOTAL_PRECIPITATION
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: MIN_TEMPERATURE
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Invalid ID supplied
+        404:
+          description: not found
+      summary: Get MSC Monthly Data features
+      tags:
+      - climate-monthly
+  /collections/climate-monthly/items/{id}:
+    get:
+      description: MSC Monthly Data
+      parameters:
+      - $ref: '#/components/parameters/id'
+      - $ref: '#/components/parameters/f'
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Invalid ID supplied
+        404:
+          description: not found
+      summary: Get MSC Monthly Data feature by ID
+      tags:
+      - climate-monthly
+  /collections/climate-normals:
+    get:
+      description: 1981-2010 Climate Normals
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Invalid ID supplied
+        404:
+          description: not found
+      summary: Get feature collection metadata
+      tags:
+      - climate-normals
+  /collections/climate-normals/items:
+    get:
+      description: 1981-2010 Climate Normals
+      parameters:
+      - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/limit'
+      - $ref: '#/components/parameters/sortby'
+      - $ref: '#/components/parameters/startindex'
+      - explode: false
+        in: query
+        name: NORMAL_CODE
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: OCCURRENCE_COUNT
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: FIRST_YEAR
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: PERCENT_OF_POSSIBLE_OBS
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: PERIOD_END
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: PERIOD_BEGIN
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: PROVINCE_CODE
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: PUBLICATION_CODE
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: FIRST_YEAR_NORMAL_PERIOD
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: LAST_YEAR
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: STATION_NAME
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: CURRENT_FLAG
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: MAX_DURATION_MISSING_YEARS
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: DATE_CALCULATED
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: FRE_PUB_NAME
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: LAST_YEAR_NORMAL_PERIOD
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: TOTAL_OBS_COUNT
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: PERIOD
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: VALUE
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: STN_ID
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: NORMAL_ID
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: ID
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: FIRST_OCCURRENCE_DATE
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: MONTH
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: YEAR_COUNT_NORMAL_PERIOD
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: ENG_PUB_NAME
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Invalid ID supplied
+        404:
+          description: not found
+      summary: Get 1981-2010 Climate Normals features
+      tags:
+      - climate-normals
+  /collections/climate-normals/items/{id}:
+    get:
+      description: 1981-2010 Climate Normals
+      parameters:
+      - $ref: '#/components/parameters/id'
+      - $ref: '#/components/parameters/f'
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Invalid ID supplied
+        404:
+          description: not found
+      summary: Get 1981-2010 Climate Normals feature by ID
+      tags:
+      - climate-normals
+  /collections/climate-stations:
+    get:
+      description: Climate Stations
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Invalid ID supplied
+        404:
+          description: not found
+      summary: Get feature collection metadata
+      tags:
+      - climate-stations
+  /collections/climate-stations/items:
+    get:
+      description: Climate Stations
+      parameters:
+      - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/limit'
+      - $ref: '#/components/parameters/sortby'
+      - $ref: '#/components/parameters/startindex'
+      - explode: false
+        in: query
+        name: NORMAL_CODE
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: FRE_STN_OPERATOR_ACRONYM
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: COUNTRY
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: STN_ID
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: WMO_IDENTIFIER
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: CLIMATE_IDENTIFIER
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: HAS_MONTHLY_SUMMARY
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: TIMEZONE
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: PROV_STATE_TERR_CODE
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: ELEVATION
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: PUBLICATION_CODE
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: ENG_PROV_NAME
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: STATION_NAME
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: DISPLAY_CODE
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: FRE_PROV_NAME
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: STATION_TYPE
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: ENG_STN_OPERATOR_ACRONYM
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: LONGITUDE
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: HAS_NORMALS_DATA
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: ENG_STN_OPERATOR_NAME
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: TC_IDENTIFIER
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: FRE_STN_OPERATOR_NAME
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: LATITUDE
+        required: false
+        schema:
+          type: integer
+        style: form
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Invalid ID supplied
+        404:
+          description: not found
+      summary: Get Climate Stations features
+      tags:
+      - climate-stations
+  /collections/climate-stations/items/{id}:
+    get:
+      description: Climate Stations
+      parameters:
+      - $ref: '#/components/parameters/id'
+      - $ref: '#/components/parameters/f'
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Invalid ID supplied
+        404:
+          description: not found
+      summary: Get Climate Stations feature by ID
+      tags:
+      - climate-stations
+  /collections/cmip5:
+    get:
+      description: Coupled Model Intercomparison Project Phase 5 (CMIP5)
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Invalid ID supplied
+        404:
+          description: not found
+      summary: Get feature collection metadata
+      tags:
+      - cmip5
+  /collections/cmip5/items:
+    get:
+      description: Coupled Model Intercomparison Project Phase 5 (CMIP5)
+      parameters:
+      - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/limit'
+      - $ref: '#/components/parameters/sortby'
+      - $ref: '#/components/parameters/startindex'
+      - explode: false
+        in: query
+        name: rcp
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: time
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: lon
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: period
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: value
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: grid_id
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: lat
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: percentile
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: year
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: variable
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: table
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: identifier
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Invalid ID supplied
+        404:
+          description: not found
+      summary: Get Coupled Model Intercomparison Project Phase 5 (CMIP5) features
+      tags:
+      - cmip5
+  /collections/cmip5/items/{id}:
+    get:
+      description: Coupled Model Intercomparison Project Phase 5 (CMIP5)
+      parameters:
+      - $ref: '#/components/parameters/id'
+      - $ref: '#/components/parameters/f'
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Invalid ID supplied
+        404:
+          description: not found
+      summary: Get Coupled Model Intercomparison Project Phase 5 (CMIP5) feature by
+        ID
+      tags:
+      - cmip5
   /collections/hydrometric-annual-peaks:
     get:
       description: The annual maximum and minimum instantaneous data are the maximum
@@ -99,7 +2287,10 @@ paths:
       description: The annual maximum and minimum instantaneous data are the maximum
         and minimum instantaneous values for a given year.
       parameters:
+      - $ref: '#/components/parameters/f'
       - $ref: '#/components/parameters/limit'
+      - $ref: '#/components/parameters/sortby'
+      - $ref: '#/components/parameters/startindex'
       - explode: false
         in: query
         name: UNITS_FR
@@ -151,10 +2342,19 @@ paths:
         style: form
       - explode: false
         in: query
+        name: PEAK
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
         name: DATE
         required: false
         schema:
-          type: date
+          format: date
+          type: string
         style: form
       - explode: false
         in: query
@@ -191,6 +2391,13 @@ paths:
         schema:
           type: string
         style: form
+      - explode: false
+        in: query
+        name: PROV_TERR_STATE_LOC
+        required: false
+        schema:
+          type: string
+        style: form
       responses:
         200:
           description: successful operation
@@ -207,6 +2414,7 @@ paths:
         and minimum instantaneous values for a given year.
       parameters:
       - $ref: '#/components/parameters/id'
+      - $ref: '#/components/parameters/f'
       responses:
         200:
           description: successful operation
@@ -237,7 +2445,10 @@ paths:
       description: The annual maximum and minimum daily data are the maximum and minimum
         daily mean values for a given year.
       parameters:
+      - $ref: '#/components/parameters/f'
       - $ref: '#/components/parameters/limit'
+      - $ref: '#/components/parameters/sortby'
+      - $ref: '#/components/parameters/startindex'
       - explode: false
         in: query
         name: STATION_NUMBER
@@ -271,7 +2482,8 @@ paths:
         name: MIN_VALUE
         required: false
         schema:
-          type: float
+          format: float
+          type: number
         style: form
       - explode: false
         in: query
@@ -285,7 +2497,8 @@ paths:
         name: MIN_DATE
         required: false
         schema:
-          type: date
+          format: date
+          type: string
         style: form
       - explode: false
         in: query
@@ -296,17 +2509,26 @@ paths:
         style: form
       - explode: false
         in: query
+        name: MIN_SYMBOL_FR
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
         name: MAX_DATE
         required: false
         schema:
-          type: date
+          format: date
+          type: string
         style: form
       - explode: false
         in: query
         name: MAX_VALUE
         required: false
         schema:
-          type: float
+          format: float
+          type: number
         style: form
       - explode: false
         in: query
@@ -324,7 +2546,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: MIN_SYMBOL_FR
+        name: PROV_TERR_STATE_LOC
         required: false
         schema:
           type: string
@@ -345,6 +2567,7 @@ paths:
         daily mean values for a given year.
       parameters:
       - $ref: '#/components/parameters/id'
+      - $ref: '#/components/parameters/f'
       responses:
         200:
           description: successful operation
@@ -373,7 +2596,10 @@ paths:
     get:
       description: The daily mean is the average of all unit values for a given day.
       parameters:
+      - $ref: '#/components/parameters/f'
       - $ref: '#/components/parameters/limit'
+      - $ref: '#/components/parameters/sortby'
+      - $ref: '#/components/parameters/startindex'
       - explode: false
         in: query
         name: STATION_NUMBER
@@ -386,7 +2612,8 @@ paths:
         name: LEVEL
         required: false
         schema:
-          type: float
+          format: float
+          type: number
         style: form
       - explode: false
         in: query
@@ -400,7 +2627,8 @@ paths:
         name: FLOW
         required: false
         schema:
-          type: float
+          format: float
+          type: number
         style: form
       - explode: false
         in: query
@@ -414,7 +2642,8 @@ paths:
         name: DATE
         required: false
         schema:
-          type: date
+          format: date
+          type: string
         style: form
       - explode: false
         in: query
@@ -444,6 +2673,13 @@ paths:
         schema:
           type: string
         style: form
+      - explode: false
+        in: query
+        name: PROV_TERR_STATE_LOC
+        required: false
+        schema:
+          type: string
+        style: form
       responses:
         200:
           description: successful operation
@@ -459,6 +2695,7 @@ paths:
       description: The daily mean is the average of all unit values for a given day.
       parameters:
       - $ref: '#/components/parameters/id'
+      - $ref: '#/components/parameters/f'
       responses:
         200:
           description: successful operation
@@ -488,7 +2725,10 @@ paths:
       description: The monthly mean is the average of daily mean values for a given
         month.
       parameters:
+      - $ref: '#/components/parameters/f'
       - $ref: '#/components/parameters/limit'
+      - $ref: '#/components/parameters/sortby'
+      - $ref: '#/components/parameters/startindex'
       - explode: false
         in: query
         name: STATION_NUMBER
@@ -501,14 +2741,16 @@ paths:
         name: MONTHLY_MEAN_LEVEL
         required: false
         schema:
-          type: float
+          format: float
+          type: number
         style: form
       - explode: false
         in: query
         name: DATE
         required: false
         schema:
-          type: date
+          format: date
+          type: string
         style: form
       - explode: false
         in: query
@@ -529,7 +2771,15 @@ paths:
         name: MONTHLY_MEAN_FLOW
         required: false
         schema:
-          type: float
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: PROV_TERR_STATE_LOC
+        required: false
+        schema:
+          type: string
         style: form
       responses:
         200:
@@ -547,6 +2797,7 @@ paths:
         month.
       parameters:
       - $ref: '#/components/parameters/id'
+      - $ref: '#/components/parameters/f'
       responses:
         200:
           description: successful operation
@@ -576,7 +2827,10 @@ paths:
       description: A station is a site on a river or lake where water quantity (water
         level and flow) are collected and recorded.
       parameters:
+      - $ref: '#/components/parameters/f'
       - $ref: '#/components/parameters/limit'
+      - $ref: '#/components/parameters/sortby'
+      - $ref: '#/components/parameters/startindex'
       - explode: false
         in: query
         name: CONTRIBUTOR_FR
@@ -656,6 +2910,7 @@ paths:
         level and flow) are collected and recorded.
       parameters:
       - $ref: '#/components/parameters/id'
+      - $ref: '#/components/parameters/f'
       responses:
         200:
           description: successful operation
@@ -675,11 +2930,62 @@ paths:
       summary: API conformance definition
       tags:
       - server
+  /processes:
+    get:
+      description: Processes
+      responses:
+        200:
+          description: successful operation
+      summary: Processes
+      tags:
+      - server
+  /processes/raster-drill:
+    get:
+      description: Raster Drill process
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Invalid ID supplied
+        404:
+          description: not found
+      summary: Get process metadata
+      tags:
+      - raster-drill
+  /processes/raster-drill/jobs:
+    get:
+      description: Raster Drill process
+      responses:
+        200:
+          description: successful operation
+      summary: Retrieve job list for process
+      tags:
+      - raster-drill
+    post:
+      description: Raster Drill process
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: execute.yaml
+        description: Mandatory execute request JSON
+        required: true
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Invalid ID supplied
+        404:
+          description: not found
+      summary: Process Raster Drill process execution
+      tags:
+      - raster-drill
 servers:
 - description: The weather can have an incredible influence on our daily lives. It
     affects the growth of crops and the availability of water. It dictates which regions
     of the world are habitable or uninhabitable
-  url: http://geomet-dev-02.cmc.ec.gc.ca:9080/pygeoapi/
+  url: https://geo.wxod-dev.cmc.ec.gc.ca/geomet/features/
 tags:
 - description: The weather can have an incredible influence on our daily lives. It
     affects the growth of crops and the availability of water. It dictates which regions
@@ -690,15 +2996,37 @@ tags:
   name: server
 - description: The monthly mean is the average of daily mean values for a given month.
   name: hydrometric-monthly-mean
-- description: The annual maximum and minimum instantaneous data are the maximum and
-    minimum instantaneous values for a given year.
-  name: hydrometric-annual-peaks
-- description: The annual maximum and minimum daily data are the maximum and minimum
-    daily mean values for a given year.
-  name: hydrometric-annual-statistics
 - description: A station is a site on a river or lake where water quantity (water
     level and flow) are collected and recorded.
   name: hydrometric-stations
+- description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Stations
+  name: ahccd-stations
 - description: The daily mean is the average of all unit values for a given day.
   name: hydrometric-daily-mean
+- description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual
+  name: ahccd-annual
+- description: The annual maximum and minimum instantaneous data are the maximum and
+    minimum instantaneous values for a given year.
+  name: hydrometric-annual-peaks
+- description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal
+  name: ahccd-seasonal
+- description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends
+  name: ahccd-trends
+- description: Coupled Model Intercomparison Project Phase 5 (CMIP5)
+  name: cmip5
+- description: MSC Monthly Data
+  name: climate-monthly
+- description: The annual maximum and minimum daily data are the maximum and minimum
+    daily mean values for a given year.
+  name: hydrometric-annual-statistics
+- description: 1981-2010 Climate Normals
+  name: climate-normals
+- description: Climate Stations
+  name: climate-stations
+- description: MSC Daily Data
+  name: climate-daily
+- description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
+  name: ahccd-monthly
+- description: Raster Drill process
+  name: raster-drill
 

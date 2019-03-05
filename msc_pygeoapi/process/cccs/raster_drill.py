@@ -57,7 +57,7 @@ UNITS = {
 
 PROCESS_METADATA = {
     'version': '0.1.0',
-    'name': 'raster-drill',
+    'id': 'raster-drill',
     'title': 'Raster Drill process',
     'description': 'Raster Drill process',
     'keywords': ['raster drill'],
@@ -68,31 +68,70 @@ PROCESS_METADATA = {
         'href': 'https://example.org/process',
         'hreflang': 'en-US'
     }],
-    'inputs': {
-        'layer': {
-            'title': 'layer name',
-            'description': 'layer name: must be a time enalbled layer'
+    'inputs': [{
+        'id': 'layer',
+        'title': 'layer name',
+        'input': {
+            'literalDataDomain': {
+                'dataType': 'string',
+                'valueDefinition': {
+                    'anyValue': True
+                }
+            }
         },
-        'lat': {
-            'title': 'latitude',
-            'description': 'latitude in EPSG:4326'
+        'minOccurs': 1,
+        'maxOccurs': 1
+    }, {
+        'id': 'latitude',
+        'title': 'latitude in EPSG:4326',
+        'input': {
+            'literalDataDomain': {
+                'dataType': 'float',
+                'valueDefinition': {
+                    'anyValue': True
+                }
+            }
         },
-        'lon': {
-            'title': 'longitude',
-            'description': 'longitude in EPSG:4326'
+        'minOccurs': 1,
+        'maxOccurs': 1
+    }, {
+        'id': 'longitude',
+        'title': 'longitude in EPSG:4326',
+        'input': {
+            'literalDataDomain': {
+                'dataType': 'float',
+                'valueDefinition': {
+                    'anyValue': True
+                }
+            }
         },
-        'format': {
-            'title': 'format',
-            'description': 'format: GeoJSON | CSV'
+        'minOccurs': 1,
+        'maxOccurs': 1
+    }, {
+        'id': 'format',
+        'title': 'format: GeoJSON or CSV',
+        'input': {
+            'literalDataDomain': {
+                'dataType': 'string',
+                'valueDefinition': {
+                    'anyValue': True
+                }
+            }
+        },
+        'minOccurs': 1,
+        'maxOccurs': 1
+    }],
+    'outputs': [{
+        'id': 'raster-drill-response',
+        'title': 'output raster drill',
+        'output': {
+            'formats': [{
+                'mimeType': 'application/json'
+            }, {
+                'mimeType': 'text/csv'
+            }]
         }
-    },
-    'outputs': {
-        'raster-drill-response': {
-            'title': 'output raster drill',
-            'description': 'output raster drill',
-            'formats': ['application/json']
-        }
-    }
+    }]
 }
 
 
@@ -245,7 +284,7 @@ def serialize(values_dict, cfg, output_format, lon, lat):
                                              time_step)
             column2 = 'values_{}'.format(values_dict['uom'])
 
-            data = io.StringIO()
+            data = io.BytesIO()
             writer = csv.writer(data)
             writer.writerow([column1, column2])
 
@@ -420,11 +459,10 @@ try:
             BaseProcessor.__init__(self, provider_def, PROCESS_METADATA)
 
         def execute(self, data):
-            inputs = json.loads(data.decode('utf-8'))
-            layer = inputs['inputs']['data']['layer']
-            lon = float(inputs['inputs']['data']['long'])
-            lat = float(inputs['inputs']['data']['lat'])
-            format_ = inputs['inputs']['data']['format']
+            layer = data['layer']
+            lon = float(data['longitude'])
+            lat = float(data['latitude'])
+            format_ = data['format']
 
             output = raster_drill(layer, lon, lat, format_)
             if format_ == 'GeoJSON':
