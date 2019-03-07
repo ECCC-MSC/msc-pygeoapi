@@ -364,11 +364,6 @@ def raster_drill(layer, x, y, format_):
                                            GEOMET_CLIMATE_BASEPATH_VRT)
     LOGGER.info('start raster drilling')
 
-    if None in [layer, x, y, format_]:
-        msg = 'Missing required parameters'
-        LOGGER.error(msg)
-        raise RuntimeError(msg)
-
     if format_ not in ['CSV', 'GeoJSON']:
         msg = 'Invalid format'
         LOGGER.error(msg)
