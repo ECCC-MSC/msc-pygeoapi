@@ -82,8 +82,8 @@ PROCESS_METADATA = {
         'minOccurs': 1,
         'maxOccurs': 1
     }, {
-        'id': 'latitude',
-        'title': 'latitude in EPSG:4326',
+        'id': 'y',
+        'title': 'y coordinate',
         'input': {
             'literalDataDomain': {
                 'dataType': 'float',
@@ -95,8 +95,8 @@ PROCESS_METADATA = {
         'minOccurs': 1,
         'maxOccurs': 1
     }, {
-        'id': 'longitude',
-        'title': 'longitude in EPSG:4326',
+        'id': 'x',
+        'title': 'y coordinate',
         'input': {
             'literalDataDomain': {
                 'dataType': 'float',
@@ -246,7 +246,7 @@ def get_location_info(file_, x, y, cfg, layer_keys):
         try:
             dict_['values'].append(array[y_][x_])
         except IndexError as err:
-            msg = 'invalid lat/long value: {}'.format(err)
+            msg = 'Invalid x/yvalue: {}'.format(err)
             LOGGER.exception(msg)
 
     dict_['dates'] = get_time_info(cfg)
@@ -257,15 +257,15 @@ def get_location_info(file_, x, y, cfg, layer_keys):
     return dict_
 
 
-def serialize(values_dict, cfg, output_format, lon, lat):
+def serialize(values_dict, cfg, output_format, x, y):
     """
     Writes the information in the format provided by the user
 
     :param values_dict: result of the get_location_info function
     :param cfg: yaml information
     :param output_format: output format (GeoJSON or CSV)
-    :param lon: longitude
-    :param lat: latitude
+    :param x: x coordinate
+    :param y: y coordinate
 
     :returns: GeoJSON or CSV output
     """
@@ -320,7 +320,7 @@ def serialize(values_dict, cfg, output_format, lon, lat):
                 'type': 'Feature',
                 'geometry': {
                     'type': 'Point',
-                    'coordinates': [lon, lat]
+                    'coordinates': [x, y]
                 },
                 'properties': {
                     'time_begin': time_begin,
@@ -346,14 +346,14 @@ def serialize(values_dict, cfg, output_format, lon, lat):
     return data
 
 
-def raster_drill(layer, lon, lat, format_):
+def raster_drill(layer, x, y, format_):
     """
     Writes the information in the format provided by the user
     and reads some information from the geomet-climate yaml
 
     :param layer: layer name
-    :param lon: longitude
-    :param lat: latitude
+    :param x: x coordinate
+    :param y: y coordinate
     :param format: output format (GeoJSON or CSV)
 
     :return: return the final file fo a given location
@@ -364,14 +364,21 @@ def raster_drill(layer, lon, lat, format_):
                                            GEOMET_CLIMATE_BASEPATH_VRT)
     LOGGER.info('start raster drilling')
 
-    if None in [layer, lon, lat]:
-        raise click.ClickException('Missing required parameters')
+    if None in [layer, x, y, format_]:
+        msg = 'Missing required parameters'
+        LOGGER.error(msg)
+        raise RuntimeError(msg)
+
+    if format_ not in ['CSV', 'GeoJSON']:
+        msg = 'Invalid format'
+        LOGGER.error(msg)
+        raise ValueError(msg)
 
     with io.open(GEOMET_CLIMATE_CONFIG) as fh:
         cfg = yaml.load(fh, Loader=CLoader)
 
-    lon = int(lon)
-    lat = int(lat)
+    x = int(x)
+    y = int(y)
 
     if ('ABS' in layer or 'ANO' in layer and
        layer.startswith('CANGRD') is False):
@@ -410,17 +417,17 @@ def raster_drill(layer, lon, lat, format_):
                    +k=1 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs'
         inProj = Proj(init='epsg:4326')
         outProj = Proj(src_epsg)
-        lon, lat = transform(inProj, outProj, lon, lat)
+        x, y = transform(inProj, outProj, x, y)
 
     else:
-        msg = '{}: not a valid or time enabled layer'.format(layer)
+        msg = 'Not a valid or time enabled layer: {}'.format(layer)
         LOGGER.error(msg)
         raise ValueError(msg)
 
     ds = os.path.join(data_basepath, inter_path, file_name)
 
-    data = get_location_info(ds, lon, lat, cfg['layers'][layer], layer_keys)
-    output = serialize(data, cfg['layers'][layer], format_, lon, lat)
+    data = get_location_info(ds, x, y, cfg['layers'][layer], layer_keys)
+    output = serialize(data, cfg['layers'][layer], format_, x, y)
 
     return output
 
@@ -428,13 +435,13 @@ def raster_drill(layer, lon, lat, format_):
 @click.command('raster-drill')
 @click.pass_context
 @click.option('--layer', help='Layer name to process')
-@click.option('--lon', help='Longitude')
-@click.option('--lat', help='Latitude')
+@click.option('--x', help='x coordinate')
+@click.option('--y', help='y coordinate')
 @click.option('--format', 'format_', type=click.Choice(['GeoJSON', 'CSV']),
               default='GeoJSON', help='output format')
-def cli(ctx, layer, lon, lat, format_='GeoJSON'):
+def cli(ctx, layer, x, y, format_='GeoJSON'):
 
-    output = raster_drill(layer, lon, lat, format_)
+    output = raster_drill(layer, x, y, format_)
     if format_ == 'GeoJSON':
         click.echo(json.dumps(output, ensure_ascii=False))
     elif format_ == 'CSV':
@@ -442,7 +449,7 @@ def cli(ctx, layer, lon, lat, format_='GeoJSON'):
 
 
 try:
-    from pygeoapi.process.base import BaseProcessor
+    from pygeoapi.process.base import BaseProcessor, ProcessorExecuteError
 
     class RasterDrillProcessor(BaseProcessor):
         """Raster Drill Processor"""
@@ -460,15 +467,25 @@ try:
 
         def execute(self, data):
             layer = data['layer']
-            lon = float(data['longitude'])
-            lat = float(data['latitude'])
+            x = float(data['x'])
+            y = float(data['y'])
             format_ = data['format']
 
-            output = raster_drill(layer, lon, lat, format_)
+            try:
+                output = raster_drill(layer, x, y, format_)
+            except ValueError as err:
+                msg = 'Process execution error: {}'.format(err)
+                LOGGER.error(msg)
+                raise ProcessorExecuteError(msg)
+
             if format_ == 'GeoJSON':
                 dict_ = output
             elif format_ == 'CSV':
                 dict_ = output.getvalue()
+            else:
+                msg = 'Invalid format'
+                LOGGER.error(msg)
+                raise ValueError(msg)
 
             return dict_
 
