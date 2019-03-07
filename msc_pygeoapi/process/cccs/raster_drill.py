@@ -246,7 +246,7 @@ def get_location_info(file_, x, y, cfg, layer_keys):
         try:
             dict_['values'].append(array[y_][x_])
         except IndexError as err:
-            msg = 'Invalid x/yvalue: {}'.format(err)
+            msg = 'Invalid x/y value: {}'.format(err)
             LOGGER.exception(msg)
 
     dict_['dates'] = get_time_info(cfg)
