@@ -106,10 +106,10 @@ msc-pygeoapi data load ahccd_cmip5 <rest of flags/parameters>
 ```bash
 
 # run the CCCS Raster drill process (returns GeoJSON by default)
-msc-pygeoapi process execute cccs raster-drill --lat=45 --lon=-75 --layer=CMIP5.SFCWIND.HISTO.WINTER.ABS_PCTL95
+msc-pygeoapi process execute cccs raster-drill --y=45 --x=-75 --layer=CMIP5.SFCWIND.HISTO.WINTER.ABS_PCTL95
 
 # run the CCCS Raster drill process returning CSV
-msc-pygeoapi process execute cccs raster-drill --lat=45 --lon=-75 --layer=CMIP5.SFCWIND.HISTO.WINTER.ABS_PCTL95 --format=CSV
+msc-pygeoapi process execute cccs raster-drill --y=45 --x=-75 --layer=CMIP5.SFCWIND.HISTO.WINTER.ABS_PCTL95 --format=CSV
 ```
 
 ## Development
