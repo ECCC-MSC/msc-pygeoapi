@@ -19,6 +19,7 @@ import json
 import click
 import collections
 
+logging.basicConfig()
 LOGGER = logging.getLogger(__name__)
 HTTP_OK = 200
 POST_OK = 201
