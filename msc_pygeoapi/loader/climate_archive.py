@@ -186,6 +186,30 @@ def create_index(path, index, AUTH):
                                         "fields": {
                                             "raw": {"type": "keyword"}
                                         }
+                                    },
+                                    "DLY_FIRST_DATE": {
+                                        "type": "date",
+                                        "format": "yyyy-MM-dd HH:mm:ss"
+                                    },
+                                    "DLY_LAST_DATE": {
+                                        "type": "date",
+                                        "format": "yyyy-MM-dd HH:mm:ss"
+                                    },
+                                    "MLY_FIRST_DATE": {
+                                        "type": "date",
+                                        "format": "yyyy-MM-dd HH:mm:ss"
+                                    },
+                                    "MLY_LAST_DATE": {
+                                        "type": "date",
+                                        "format": "yyyy-MM-dd HH:mm:ss"
+                                    },
+                                    "FIRST_DATE": {
+                                        "type": "date",
+                                        "format": "yyyy-MM-dd HH:mm:ss"
+                                    },
+                                    "LAST_DATE": {
+                                        "type": "date",
+                                        "format": "yyyy-MM-dd HH:mm:ss"
                                     }
                                 }
                             },
