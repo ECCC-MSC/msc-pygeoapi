@@ -49,7 +49,7 @@ metadata:
         city: Fredericton
         stateorprovince: New Brunswick
         postalcode: E3B 6Z3
-        country: Canadal
+        country: Canada
         phone: None
         fax: +01-506-451-6010
         email: ecweather-meteo@ec.gc.ca
@@ -406,9 +406,9 @@ datasets:
             id_field: STN_ID
 
     climate-monthly:
-        title: MSC Monthly Data
-        description: MSC Monthly Data
-        keywords: [climate, monthly]
+        title: Monthly Climate Observation Summaries
+        description: A cross-country summary of the averages and extremes for the month, including precipitation totals, max-min temperatures, and degree days. This data is available from stations that produce daily data.
+        keywords: [Climate, Climate archives, Climate change]
         crs:
             - CRS84
         links:
@@ -464,9 +464,9 @@ datasets:
                 - HEATING_DEGREE_DAYS
 
     climate-daily:
-        title: MSC Daily Data
-        description: MSC Daily Data
-        keywords: [climate, daily]
+        title: Daily Climate Observations
+        description: "Daily climate observations are derived from two sources of data. The first are Daily Climate Stations producing one or two observations per day of temperature, precipitation. The second are hourly stations that typically produce more weather elements e.g. wind or snow on ground. Only a subset of the total stations is shown due to size limitations. The criteria for station selection are listed as below. The priorities for inclusion are as follows: (1) Station is currently operational, (2) Stations with long periods of record, (3) Stations that are co-located with the categories above and supplement the period of record"
+        keywords: [Climate, Climate archives, Climate change]
         crs:
             - CRS84
         links:

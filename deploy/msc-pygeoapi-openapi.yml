@@ -1096,7 +1096,15 @@ paths:
       - ahccd-trends
   /collections/climate-daily:
     get:
-      description: MSC Daily Data
+      description: 'Daily climate observations are derived from two sources of data.
+        The first are Daily Climate Stations producing one or two observations per
+        day of temperature, precipitation. The second are hourly stations that typically
+        produce more weather elements e.g. wind or snow on ground. Only a subset of
+        the total stations is shown due to size limitations. The criteria for station
+        selection are listed as below. The priorities for inclusion are as follows:
+        (1) Station is currently operational, (2) Stations with long periods of record,
+        (3) Stations that are co-located with the categories above and supplement
+        the period of record'
       responses:
         200:
           description: successful operation
@@ -1109,7 +1117,15 @@ paths:
       - climate-daily
   /collections/climate-daily/items:
     get:
-      description: MSC Daily Data
+      description: 'Daily climate observations are derived from two sources of data.
+        The first are Daily Climate Stations producing one or two observations per
+        day of temperature, precipitation. The second are hourly stations that typically
+        produce more weather elements e.g. wind or snow on ground. Only a subset of
+        the total stations is shown due to size limitations. The criteria for station
+        selection are listed as below. The priorities for inclusion are as follows:
+        (1) Station is currently operational, (2) Stations with long periods of record,
+        (3) Stations that are co-located with the categories above and supplement
+        the period of record'
       parameters:
       - $ref: '#/components/parameters/f'
       - $ref: '#/components/parameters/limit'
@@ -1386,12 +1402,20 @@ paths:
           description: Invalid ID supplied
         404:
           description: not found
-      summary: Get MSC Daily Data features
+      summary: Get Daily Climate Observations features
       tags:
       - climate-daily
   /collections/climate-daily/items/{id}:
     get:
-      description: MSC Daily Data
+      description: 'Daily climate observations are derived from two sources of data.
+        The first are Daily Climate Stations producing one or two observations per
+        day of temperature, precipitation. The second are hourly stations that typically
+        produce more weather elements e.g. wind or snow on ground. Only a subset of
+        the total stations is shown due to size limitations. The criteria for station
+        selection are listed as below. The priorities for inclusion are as follows:
+        (1) Station is currently operational, (2) Stations with long periods of record,
+        (3) Stations that are co-located with the categories above and supplement
+        the period of record'
       parameters:
       - $ref: '#/components/parameters/id'
       - $ref: '#/components/parameters/f'
@@ -1402,12 +1426,14 @@ paths:
           description: Invalid ID supplied
         404:
           description: not found
-      summary: Get MSC Daily Data feature by ID
+      summary: Get Daily Climate Observations feature by ID
       tags:
       - climate-daily
   /collections/climate-monthly:
     get:
-      description: MSC Monthly Data
+      description: A cross-country summary of the averages and extremes for the month,
+        including precipitation totals, max-min temperatures, and degree days. This
+        data is available from stations that produce daily data.
       responses:
         200:
           description: successful operation
@@ -1420,7 +1446,9 @@ paths:
       - climate-monthly
   /collections/climate-monthly/items:
     get:
-      description: MSC Monthly Data
+      description: A cross-country summary of the averages and extremes for the month,
+        including precipitation totals, max-min temperatures, and degree days. This
+        data is available from stations that produce daily data.
       parameters:
       - $ref: '#/components/parameters/f'
       - $ref: '#/components/parameters/limit'
@@ -1677,12 +1705,14 @@ paths:
           description: Invalid ID supplied
         404:
           description: not found
-      summary: Get MSC Monthly Data features
+      summary: Get Monthly Climate Observation Summaries features
       tags:
       - climate-monthly
   /collections/climate-monthly/items/{id}:
     get:
-      description: MSC Monthly Data
+      description: A cross-country summary of the averages and extremes for the month,
+        including precipitation totals, max-min temperatures, and degree days. This
+        data is available from stations that produce daily data.
       parameters:
       - $ref: '#/components/parameters/id'
       - $ref: '#/components/parameters/f'
@@ -1693,7 +1723,7 @@ paths:
           description: Invalid ID supplied
         404:
           description: not found
-      summary: Get MSC Monthly Data feature by ID
+      summary: Get Monthly Climate Observation Summaries feature by ID
       tags:
       - climate-monthly
   /collections/climate-normals:
@@ -1744,6 +1774,13 @@ paths:
         required: false
         schema:
           type: integer
+        style: form
+      - explode: false
+        in: query
+        name: F_NORMAL_ELEMENT_NAME
+        required: false
+        schema:
+          type: string
         style: form
       - explode: false
         in: query
@@ -1818,7 +1855,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: FRE_PUB_NAME
+        name: E_NORMAL_ELEMENT_NAME
         required: false
         schema:
           type: string
@@ -1893,13 +1930,6 @@ paths:
         required: false
         schema:
           type: integer
-        style: form
-      - explode: false
-        in: query
-        name: ENG_PUB_NAME
-        required: false
-        schema:
-          type: string
         style: form
       responses:
         200:
@@ -1978,6 +2008,14 @@ paths:
         style: form
       - explode: false
         in: query
+        name: MLY_LAST_DATE
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: false
+        in: query
         name: WMO_IDENTIFIER
         required: false
         schema:
@@ -2020,10 +2058,34 @@ paths:
         style: form
       - explode: false
         in: query
+        name: FIRST_DATE
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: false
+        in: query
         name: PUBLICATION_CODE
         required: false
         schema:
           type: integer
+        style: form
+      - explode: false
+        in: query
+        name: DLY_FIRST_DATE
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: LAST_DATE
+        required: false
+        schema:
+          format: date
+          type: string
         style: form
       - explode: false
         in: query
@@ -2034,7 +2096,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: STATION_NAME
+        name: ENG_STN_OPERATOR_NAME
         required: false
         schema:
           type: string
@@ -2083,7 +2145,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: ENG_STN_OPERATOR_NAME
+        name: STATION_NAME
         required: false
         schema:
           type: string
@@ -2104,10 +2166,26 @@ paths:
         style: form
       - explode: false
         in: query
+        name: MLY_FIRST_DATE
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: false
+        in: query
         name: LATITUDE
         required: false
         schema:
           type: integer
+        style: form
+      - explode: false
+        in: query
+        name: DLY_LAST_DATE
+        required: false
+        schema:
+          format: date
+          type: string
         style: form
       responses:
         200:
@@ -3014,7 +3092,9 @@ tags:
   name: ahccd-trends
 - description: Coupled Model Intercomparison Project Phase 5 (CMIP5)
   name: cmip5
-- description: MSC Monthly Data
+- description: A cross-country summary of the averages and extremes for the month,
+    including precipitation totals, max-min temperatures, and degree days. This data
+    is available from stations that produce daily data.
   name: climate-monthly
 - description: The annual maximum and minimum daily data are the maximum and minimum
     daily mean values for a given year.
@@ -3023,7 +3103,14 @@ tags:
   name: climate-normals
 - description: Climate Stations
   name: climate-stations
-- description: MSC Daily Data
+- description: 'Daily climate observations are derived from two sources of data. The
+    first are Daily Climate Stations producing one or two observations per day of
+    temperature, precipitation. The second are hourly stations that typically produce
+    more weather elements e.g. wind or snow on ground. Only a subset of the total
+    stations is shown due to size limitations. The criteria for station selection
+    are listed as below. The priorities for inclusion are as follows: (1) Station
+    is currently operational, (2) Stations with long periods of record, (3) Stations
+    that are co-located with the categories above and supplement the period of record'
   name: climate-daily
 - description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
   name: ahccd-monthly
