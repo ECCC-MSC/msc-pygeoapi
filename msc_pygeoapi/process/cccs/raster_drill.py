@@ -300,8 +300,8 @@ def serialize(values_dict, cfg, output_format, x, y):
 
         if output_format == 'CSV':
             time = 'time_{}/{}/{}'.format(time_begin,
-                                             time_end,
-                                             time_step)
+                                          time_end,
+                                          time_step)
             row = [time,
                    'values',
                    'longitude',
