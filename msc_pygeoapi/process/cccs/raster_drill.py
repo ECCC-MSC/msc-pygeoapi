@@ -278,39 +278,63 @@ def serialize(values_dict, cfg, output_format, x, y):
 
     LOGGER.debug('Creating the output file')
     if len(values_dict['dates']) == len(values_dict['values']):
+
+        if 'CANGRD' not in cfg['label_en']:
+
+            split_en = cfg['label_en'].split('/')
+            split_fr = cfg['label_fr'].split('/')
+            var_en, sce_en, seas_en, type_en, label_en = split_en
+
+            var_fr, sce_fr, seas_fr, type_fr, label_fr = split_fr
+
+            pctl_en = re.findall(r' \((.*?)\)', label_en)[-1]
+            pctl_fr = re.findall(r' \((.*?)\)', label_fr)[-1]
+        else:
+            type_en, var_en, label_en = cfg['label_en'].split('/')
+            type_fr, var_fr, label_fr = cfg['label_fr'].split('/')
+            seas_en = re.findall(r' \((.*?)\)', label_en)[0]
+            seas_fr = re.findall(r' \((.*?)\)', label_fr)[0]
+            sce_en = 'Historical'
+            sce_fr = 'Historique'
+            pctl_en = pctl_fr = ''
+
         if output_format == 'CSV':
-            column1 = 'time_{}/{}/{}'.format(time_begin,
+            time = 'time_{}/{}/{}'.format(time_begin,
                                              time_end,
                                              time_step)
-            column2 = 'values_{}'.format(values_dict['uom'])
+            row = [time,
+                   'values',
+                   'longitude',
+                   'latitude',
+                   'scenario',
+                   'time_res',
+                   'value_type',
+                   'percentile',
+                   'variable',
+                   'uom']
 
-            data = io.BytesIO()
-            writer = csv.writer(data)
-            writer.writerow([column1, column2])
+            try:
+                data = io.BytesIO()
+                writer = csv.writer(data)
+                writer.writerow(row)
+            except TypeError:
+                data = io.StringIO()
+                writer = csv.writer(data)
+                writer.writerow(row)
 
             for i in range(0, len(values_dict['dates'])):
                 writer.writerow([values_dict['dates'][i],
-                                 values_dict['values'][i]])
+                                 values_dict['values'][i],
+                                 x,
+                                 y,
+                                 sce_en,
+                                 seas_en,
+                                 type_en,
+                                 pctl_en,
+                                 var_en,
+                                 values_dict['uom']])
 
         elif output_format == 'GeoJSON':
-            if 'CANGRD' not in cfg['label_en']:
-
-                split_en = cfg['label_en'].split('/')
-                split_fr = cfg['label_fr'].split('/')
-                var_en, sce_en, seas_en, type_en, label_en = split_en
-
-                var_fr, sce_fr, seas_fr, type_fr, label_fr = split_fr
-
-                pctl_en = re.findall(r' \((.*?)\)', label_en)[-1]
-                pctl_fr = re.findall(r' \((.*?)\)', label_fr)[-1]
-            else:
-                type_en, var_en, label_en = cfg['label_en'].split('/')
-                type_fr, var_fr, label_fr = cfg['label_fr'].split('/')
-                seas_en = re.findall(r' \((.*?)\)', label_en)[0]
-                seas_fr = re.findall(r' \((.*?)\)', label_fr)[0]
-                sce_en = 'Historical'
-                sce_fr = 'Historique'
-                pctl_en = pctl_fr = ''
 
             values = []
             for k in values_dict['values']:
