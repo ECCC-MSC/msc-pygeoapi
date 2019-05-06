@@ -30,11 +30,11 @@ metadata:
             - Storms
             - Wind
             - Temperature
-            - Precipitations
+            - Precipitation
             - Snow
             - Ice
         keywords_type: theme
-        terms_of_service: None
+        terms_of_service: https://www.canada.ca/en/transparency/terms.html
         url: https://www.canada.ca/en/services/environment/weather.html
     license:
         name: Environment and Climate Change Canada Data Server End-use Licence
@@ -52,7 +52,7 @@ metadata:
         country: Canada
         phone: None
         fax: +01-506-451-6010
-        email: ecweather-meteo@ec.gc.ca
+        email: ec.ecweather-meteo.ec@canada.ca
         url: https://weather.gc.ca/mainmenu/contact_us_e.html
         hours: Monday to Friday, 1300h - 2100h UTC
         instructions: During hours of service
