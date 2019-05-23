@@ -192,14 +192,6 @@ def create_index(path, index, AUTH):
                                         "type": "date",
                                         "format": "yyyy-MM-dd HH:mm:ss"
                                     },
-                                    "MLY_FIRST_DATE": {
-                                        "type": "date",
-                                        "format": "yyyy-MM-dd HH:mm:ss"
-                                    },
-                                    "MLY_LAST_DATE": {
-                                        "type": "date",
-                                        "format": "yyyy-MM-dd HH:mm:ss"
-                                    },
                                     "FIRST_DATE": {
                                         "type": "date",
                                         "format": "yyyy-MM-dd HH:mm:ss"
@@ -260,6 +252,12 @@ def create_index(path, index, AUTH):
                                     },
                                     "PUBLICATION_CODE": {
                                         "type": "integer"
+                                    },
+                                    "CLIMATE_IDENTIFIER": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
                                     },
                                     "NORMAL_CODE": {
                                         "type": "text",
@@ -804,6 +802,7 @@ def load_normals(path, cur, stn_dict, normals_dict, periods_dict, AUTH):
             insert_dict['PERIOD'] = normals_dict[insert_dict['NORMAL_ID']]['PERIOD'] # noqa
             insert_dict['PERIOD_BEGIN'] = periods_dict[insert_dict['NORMAL_PERIOD_ID']]['PERIOD_BEGIN'] # noqa
             insert_dict['PERIOD_END'] = periods_dict[insert_dict['NORMAL_PERIOD_ID']]['PERIOD_END'] # noqa
+            insert_dict['CLIMATE_IDENTIFIER'] = stn_dict[insert_dict['STN_ID']]['CLIMATE_IDENTIFIER']
 
             del insert_dict['NORMAL_PERIOD_ID']
             del insert_dict['STN_ID']
@@ -934,7 +933,7 @@ def get_station_data(cur, station, starting_from):
                              LATITUDE_DECIMAL_DEGREES,\
                              ENG_PROV_NAME, FRE_PROV_NAME,\
                              PROV_STATE_TERR_CODE,\
-                             STATION_NAME from\
+                             STATION_NAME, CLIMATE_IDENTIFIER from\
                              CCCS_PORTAL.STATION_INFORMATION\
                              where STN_ID >= {}\
                              order by STN_ID'.format(station))
@@ -943,7 +942,7 @@ def get_station_data(cur, station, starting_from):
                              LATITUDE_DECIMAL_DEGREES,\
                              ENG_PROV_NAME, FRE_PROV_NAME,\
                              PROV_STATE_TERR_CODE,\
-                             STATION_NAME from\
+                             STATION_NAME, CLIMATE_IDENTIFIER from\
                              CCCS_PORTAL.STATION_INFORMATION\
                              where STN_ID = {}\
                              order by STN_ID'.format(station))
@@ -952,7 +951,7 @@ def get_station_data(cur, station, starting_from):
                          LATITUDE_DECIMAL_DEGREES,\
                          ENG_PROV_NAME, FRE_PROV_NAME,\
                          PROV_STATE_TERR_CODE,\
-                         STATION_NAME from\
+                         STATION_NAME, CLIMATE_IDENTIFIER from\
                          CCCS_PORTAL.STATION_INFORMATION\
                          order by STN_ID')
     except Exception as err:
@@ -963,7 +962,8 @@ def get_station_data(cur, station, starting_from):
                             'ENG_PROV_NAME': row[3],
                             'FRE_PROV_NAME': row[4],
                             'PROVINCE_CODE': row[5].strip(),  # remove the strip # noqa
-                            'STATION_NAME': row[6]
+                            'STATION_NAME': row[6],
+                            'CLIMATE_IDENTIFIER': row[7].strip()
                             }
     return stn_dict
 
