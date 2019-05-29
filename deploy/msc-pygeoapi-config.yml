@@ -11,6 +11,9 @@ server:
     pretty_print: true
     limit: 500
     # templates: /path/to/templates
+    map:
+        url: https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png
+        attribution: '<a href="https://wikimediafoundation.org/wiki/Maps_Terms_of_Use">Wikimedia maps</a> | Map data &copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
 
 logging:
     level: ERROR
@@ -354,7 +357,7 @@ datasets:
             time_field: DATE_CALCULATED
             properties:
                 - STATION_NAME
-                - STN_ID
+                - CLIMATE_IDENTIFIER
                 - ID
                 - PERIOD
                 - CURRENT_FLAG
@@ -403,7 +406,7 @@ datasets:
         provider:
             name: Elasticsearch
             data: http://localhost:9200/climate_station_information/FeatureCollection
-            id_field: STN_ID
+            id_field: CLIMATE_IDENTIFIER
 
     climate-monthly:
         title: Monthly Climate Observation Summaries
@@ -433,7 +436,7 @@ datasets:
                 - LONGITUDE
                 - CLIMATE_IDENTIFIER
                 - STATION_NAME
-                - STN_ID
+                - CLIMATE_IDENTIFIER
                 - ID
                 - LOCAL_DATE
                 - LAST_UPDATED
@@ -489,9 +492,8 @@ datasets:
             properties:
                 - CLIMATE_IDENTIFIER
                 - STATION_NAME
-                - STN_ID
+                - CLIMATE_IDENTIFIER
                 - ID
-                - SOURCE
                 - LOCAL_DATE
                 - PROVINCE_CODE
                 - LOCAL_YEAR
