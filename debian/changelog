@@ -1,3 +1,12 @@
+msc-pygeoapi (0.5.0) trusty; urgency=medium
+
+  * repurpose into proper Python package
+  * numerous updates to ES dataset loaders
+  * numerous updates to pygeoapi dataset configurations
+  * addition of process infrastructure and plugin framework
+
+ -- Tom Kralidis <tom.kralidis@canada.ca>  Wed, 29 May 2019 16:30:35 +0000
+
 msc-pygeoapi (0.4.1) trusty; urgency=medium
 
   * update hydrometric and climate column ordering
