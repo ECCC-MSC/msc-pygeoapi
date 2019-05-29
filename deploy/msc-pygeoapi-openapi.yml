@@ -1,5 +1,29 @@
 components:
   parameters:
+    bbox:
+      description: The bbox parameter indicates the minimum bounding rectangle upon
+        which to query the collection in WFS84 (minx, miny, maxx, maxy).
+      explode: false
+      in: query
+      name: bbox
+      required: false
+      schema:
+        items:
+          type: number
+        maxItems: 6
+        minItems: 4
+        type: array
+      style: form
+    datetime:
+      description: The time parameter indicates an RFC3339 formatted datetime (single,
+        interval, open).
+      explode: false
+      in: query
+      name: datetime
+      required: false
+      schema:
+        type: string
+      style: form
     f:
       description: The optional f parameter indicates the output format which the
         server shall provide as part of the response document.  The default format
@@ -9,10 +33,10 @@ components:
       name: f
       required: false
       schema:
-        default: GeoJSON
+        default: json
         enum:
-        - GeoJSON
-        - CSV
+        - json
+        - csv
         type: string
       style: form
     id:
@@ -66,7 +90,7 @@ components:
       style: form
 info:
   contact:
-    email: ecweather-meteo@ec.gc.ca
+    email: ec.ecweather-meteo.ec@canada.ca
     name: Government of Canada, Environment and Climate Change Canada, Meteorological
       Service of Canada
     url: https://www.canada.ca/en/services/environment/weather.html
@@ -76,7 +100,7 @@ info:
   license:
     name: Environment and Climate Change Canada Data Server End-use Licence
     url: https://dd.weather.gc.ca/doc/LICENCE_GENERAL.txt
-  termsOfService: None
+  termsOfService: https://www.canada.ca/en/transparency/terms.html
   title: Meteorological Service of Canada Geospatial Web Services
   version: 3.0.2
   x-keywords:
@@ -89,7 +113,7 @@ info:
   - Storms
   - Wind
   - Temperature
-  - Precipitations
+  - Precipitation
   - Snow
   - Ice
 openapi: 3.0.2
@@ -128,7 +152,7 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get feature collection metadata
@@ -139,6 +163,8 @@ paths:
       description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/bbox'
+      - $ref: '#/components/parameters/time'
       - $ref: '#/components/parameters/limit'
       - $ref: '#/components/parameters/sortby'
       - $ref: '#/components/parameters/startindex'
@@ -339,13 +365,13 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual features
       tags:
       - ahccd-annual
-  /collections/ahccd-annual/items/{id}:
+  /collections/ahccd-annual/items/{featureId}:
     get:
       description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual
       parameters:
@@ -355,11 +381,11 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual feature
-        by ID
+        by id
       tags:
       - ahccd-annual
   /collections/ahccd-monthly:
@@ -369,7 +395,7 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get feature collection metadata
@@ -380,6 +406,8 @@ paths:
       description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/bbox'
+      - $ref: '#/components/parameters/time'
       - $ref: '#/components/parameters/limit'
       - $ref: '#/components/parameters/sortby'
       - $ref: '#/components/parameters/startindex'
@@ -587,14 +615,14 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
         features
       tags:
       - ahccd-monthly
-  /collections/ahccd-monthly/items/{id}:
+  /collections/ahccd-monthly/items/{featureId}:
     get:
       description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
       parameters:
@@ -604,11 +632,11 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
-        feature by ID
+        feature by id
       tags:
       - ahccd-monthly
   /collections/ahccd-seasonal:
@@ -618,7 +646,7 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get feature collection metadata
@@ -629,6 +657,8 @@ paths:
       description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/bbox'
+      - $ref: '#/components/parameters/time'
       - $ref: '#/components/parameters/limit'
       - $ref: '#/components/parameters/sortby'
       - $ref: '#/components/parameters/startindex'
@@ -829,14 +859,14 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal
         features
       tags:
       - ahccd-seasonal
-  /collections/ahccd-seasonal/items/{id}:
+  /collections/ahccd-seasonal/items/{featureId}:
     get:
       description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal
       parameters:
@@ -846,11 +876,11 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal
-        feature by ID
+        feature by id
       tags:
       - ahccd-seasonal
   /collections/ahccd-stations:
@@ -860,7 +890,7 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get feature collection metadata
@@ -871,6 +901,8 @@ paths:
       description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Stations
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/bbox'
+      - $ref: '#/components/parameters/time'
       - $ref: '#/components/parameters/limit'
       - $ref: '#/components/parameters/sortby'
       - $ref: '#/components/parameters/startindex'
@@ -950,14 +982,14 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Stations
         features
       tags:
       - ahccd-stations
-  /collections/ahccd-stations/items/{id}:
+  /collections/ahccd-stations/items/{featureId}:
     get:
       description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Stations
       parameters:
@@ -967,11 +999,11 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Stations
-        feature by ID
+        feature by id
       tags:
       - ahccd-stations
   /collections/ahccd-trends:
@@ -981,7 +1013,7 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get feature collection metadata
@@ -992,6 +1024,8 @@ paths:
       description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/bbox'
+      - $ref: '#/components/parameters/time'
       - $ref: '#/components/parameters/limit'
       - $ref: '#/components/parameters/sortby'
       - $ref: '#/components/parameters/startindex'
@@ -1071,13 +1105,13 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends features
       tags:
       - ahccd-trends
-  /collections/ahccd-trends/items/{id}:
+  /collections/ahccd-trends/items/{featureId}:
     get:
       description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends
       parameters:
@@ -1087,11 +1121,11 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends feature
-        by ID
+        by id
       tags:
       - ahccd-trends
   /collections/climate-daily:
@@ -1109,7 +1143,7 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get feature collection metadata
@@ -1128,6 +1162,8 @@ paths:
         the period of record'
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/bbox'
+      - $ref: '#/components/parameters/time'
       - $ref: '#/components/parameters/limit'
       - $ref: '#/components/parameters/sortby'
       - $ref: '#/components/parameters/startindex'
@@ -1138,13 +1174,6 @@ paths:
         schema:
           format: float
           type: number
-        style: form
-      - explode: false
-        in: query
-        name: STN_ID
-        required: false
-        schema:
-          type: string
         style: form
       - explode: false
         in: query
@@ -1211,13 +1240,6 @@ paths:
         schema:
           format: float
           type: number
-        style: form
-      - explode: false
-        in: query
-        name: SOURCE
-        required: false
-        schema:
-          type: string
         style: form
       - explode: false
         in: query
@@ -1399,13 +1421,13 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get Daily Climate Observations features
       tags:
       - climate-daily
-  /collections/climate-daily/items/{id}:
+  /collections/climate-daily/items/{featureId}:
     get:
       description: 'Daily climate observations are derived from two sources of data.
         The first are Daily Climate Stations producing one or two observations per
@@ -1423,10 +1445,10 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
-      summary: Get Daily Climate Observations feature by ID
+      summary: Get Daily Climate Observations feature by id
       tags:
       - climate-daily
   /collections/climate-monthly:
@@ -1438,7 +1460,7 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get feature collection metadata
@@ -1451,6 +1473,8 @@ paths:
         data is available from stations that produce daily data.
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/bbox'
+      - $ref: '#/components/parameters/time'
       - $ref: '#/components/parameters/limit'
       - $ref: '#/components/parameters/sortby'
       - $ref: '#/components/parameters/startindex'
@@ -1476,13 +1500,6 @@ paths:
         required: false
         schema:
           type: integer
-        style: form
-      - explode: false
-        in: query
-        name: STN_ID
-        required: false
-        schema:
-          type: string
         style: form
       - explode: false
         in: query
@@ -1702,13 +1719,13 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get Monthly Climate Observation Summaries features
       tags:
       - climate-monthly
-  /collections/climate-monthly/items/{id}:
+  /collections/climate-monthly/items/{featureId}:
     get:
       description: A cross-country summary of the averages and extremes for the month,
         including precipitation totals, max-min temperatures, and degree days. This
@@ -1720,10 +1737,10 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
-      summary: Get Monthly Climate Observation Summaries feature by ID
+      summary: Get Monthly Climate Observation Summaries feature by id
       tags:
       - climate-monthly
   /collections/climate-normals:
@@ -1733,7 +1750,7 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get feature collection metadata
@@ -1744,6 +1761,8 @@ paths:
       description: 1981-2010 Climate Normals
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/bbox'
+      - $ref: '#/components/parameters/time'
       - $ref: '#/components/parameters/limit'
       - $ref: '#/components/parameters/sortby'
       - $ref: '#/components/parameters/startindex'
@@ -1777,7 +1796,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: F_NORMAL_ELEMENT_NAME
+        name: CLIMATE_IDENTIFIER
         required: false
         schema:
           type: string
@@ -1855,7 +1874,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: E_NORMAL_ELEMENT_NAME
+        name: FRE_PUB_NAME
         required: false
         schema:
           type: string
@@ -1931,17 +1950,24 @@ paths:
         schema:
           type: integer
         style: form
+      - explode: false
+        in: query
+        name: ENG_PUB_NAME
+        required: false
+        schema:
+          type: string
+        style: form
       responses:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get 1981-2010 Climate Normals features
       tags:
       - climate-normals
-  /collections/climate-normals/items/{id}:
+  /collections/climate-normals/items/{featureId}:
     get:
       description: 1981-2010 Climate Normals
       parameters:
@@ -1951,10 +1977,10 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
-      summary: Get 1981-2010 Climate Normals feature by ID
+      summary: Get 1981-2010 Climate Normals feature by id
       tags:
       - climate-normals
   /collections/climate-stations:
@@ -1964,7 +1990,7 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get feature collection metadata
@@ -1975,6 +2001,8 @@ paths:
       description: Climate Stations
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/bbox'
+      - $ref: '#/components/parameters/time'
       - $ref: '#/components/parameters/limit'
       - $ref: '#/components/parameters/sortby'
       - $ref: '#/components/parameters/startindex'
@@ -2005,14 +2033,6 @@ paths:
         required: false
         schema:
           type: integer
-        style: form
-      - explode: false
-        in: query
-        name: MLY_LAST_DATE
-        required: false
-        schema:
-          format: date
-          type: string
         style: form
       - explode: false
         in: query
@@ -2096,7 +2116,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: ENG_STN_OPERATOR_NAME
+        name: STATION_NAME
         required: false
         schema:
           type: string
@@ -2145,7 +2165,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: STATION_NAME
+        name: ENG_STN_OPERATOR_NAME
         required: false
         schema:
           type: string
@@ -2162,14 +2182,6 @@ paths:
         name: FRE_STN_OPERATOR_NAME
         required: false
         schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: MLY_FIRST_DATE
-        required: false
-        schema:
-          format: date
           type: string
         style: form
       - explode: false
@@ -2191,13 +2203,13 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get Climate Stations features
       tags:
       - climate-stations
-  /collections/climate-stations/items/{id}:
+  /collections/climate-stations/items/{featureId}:
     get:
       description: Climate Stations
       parameters:
@@ -2207,10 +2219,10 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
-      summary: Get Climate Stations feature by ID
+      summary: Get Climate Stations feature by id
       tags:
       - climate-stations
   /collections/cmip5:
@@ -2220,7 +2232,7 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get feature collection metadata
@@ -2231,6 +2243,8 @@ paths:
       description: Coupled Model Intercomparison Project Phase 5 (CMIP5)
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/bbox'
+      - $ref: '#/components/parameters/time'
       - $ref: '#/components/parameters/limit'
       - $ref: '#/components/parameters/sortby'
       - $ref: '#/components/parameters/startindex'
@@ -2323,13 +2337,13 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get Coupled Model Intercomparison Project Phase 5 (CMIP5) features
       tags:
       - cmip5
-  /collections/cmip5/items/{id}:
+  /collections/cmip5/items/{featureId}:
     get:
       description: Coupled Model Intercomparison Project Phase 5 (CMIP5)
       parameters:
@@ -2339,11 +2353,11 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get Coupled Model Intercomparison Project Phase 5 (CMIP5) feature by
-        ID
+        id
       tags:
       - cmip5
   /collections/hydrometric-annual-peaks:
@@ -2354,7 +2368,7 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get feature collection metadata
@@ -2366,6 +2380,8 @@ paths:
         and minimum instantaneous values for a given year.
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/bbox'
+      - $ref: '#/components/parameters/time'
       - $ref: '#/components/parameters/limit'
       - $ref: '#/components/parameters/sortby'
       - $ref: '#/components/parameters/startindex'
@@ -2480,13 +2496,13 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get Annual Maximum and Minimum Instantaneous Water Level or Flow features
       tags:
       - hydrometric-annual-peaks
-  /collections/hydrometric-annual-peaks/items/{id}:
+  /collections/hydrometric-annual-peaks/items/{featureId}:
     get:
       description: The annual maximum and minimum instantaneous data are the maximum
         and minimum instantaneous values for a given year.
@@ -2497,11 +2513,11 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get Annual Maximum and Minimum Instantaneous Water Level or Flow feature
-        by ID
+        by id
       tags:
       - hydrometric-annual-peaks
   /collections/hydrometric-annual-statistics:
@@ -2512,7 +2528,7 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get feature collection metadata
@@ -2524,6 +2540,8 @@ paths:
         daily mean values for a given year.
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/bbox'
+      - $ref: '#/components/parameters/time'
       - $ref: '#/components/parameters/limit'
       - $ref: '#/components/parameters/sortby'
       - $ref: '#/components/parameters/startindex'
@@ -2633,13 +2651,13 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get Annual Maximum and Minimum Daily Water Level or Flow features
       tags:
       - hydrometric-annual-statistics
-  /collections/hydrometric-annual-statistics/items/{id}:
+  /collections/hydrometric-annual-statistics/items/{featureId}:
     get:
       description: The annual maximum and minimum daily data are the maximum and minimum
         daily mean values for a given year.
@@ -2650,11 +2668,11 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get Annual Maximum and Minimum Daily Water Level or Flow feature by
-        ID
+        id
       tags:
       - hydrometric-annual-statistics
   /collections/hydrometric-daily-mean:
@@ -2664,7 +2682,7 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get feature collection metadata
@@ -2675,6 +2693,8 @@ paths:
       description: The daily mean is the average of all unit values for a given day.
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/bbox'
+      - $ref: '#/components/parameters/time'
       - $ref: '#/components/parameters/limit'
       - $ref: '#/components/parameters/sortby'
       - $ref: '#/components/parameters/startindex'
@@ -2762,13 +2782,13 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get Daily Mean of Water Level or Flow features
       tags:
       - hydrometric-daily-mean
-  /collections/hydrometric-daily-mean/items/{id}:
+  /collections/hydrometric-daily-mean/items/{featureId}:
     get:
       description: The daily mean is the average of all unit values for a given day.
       parameters:
@@ -2778,10 +2798,10 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
-      summary: Get Daily Mean of Water Level or Flow feature by ID
+      summary: Get Daily Mean of Water Level or Flow feature by id
       tags:
       - hydrometric-daily-mean
   /collections/hydrometric-monthly-mean:
@@ -2792,7 +2812,7 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get feature collection metadata
@@ -2804,6 +2824,8 @@ paths:
         month.
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/bbox'
+      - $ref: '#/components/parameters/time'
       - $ref: '#/components/parameters/limit'
       - $ref: '#/components/parameters/sortby'
       - $ref: '#/components/parameters/startindex'
@@ -2863,13 +2885,13 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get Monthly Mean of Water Level or Flow features
       tags:
       - hydrometric-monthly-mean
-  /collections/hydrometric-monthly-mean/items/{id}:
+  /collections/hydrometric-monthly-mean/items/{featureId}:
     get:
       description: The monthly mean is the average of daily mean values for a given
         month.
@@ -2880,10 +2902,10 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
-      summary: Get Monthly Mean of Water Level or Flow feature by ID
+      summary: Get Monthly Mean of Water Level or Flow feature by id
       tags:
       - hydrometric-monthly-mean
   /collections/hydrometric-stations:
@@ -2894,7 +2916,7 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get feature collection metadata
@@ -2906,6 +2928,8 @@ paths:
         level and flow) are collected and recorded.
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/bbox'
+      - $ref: '#/components/parameters/time'
       - $ref: '#/components/parameters/limit'
       - $ref: '#/components/parameters/sortby'
       - $ref: '#/components/parameters/startindex'
@@ -2976,13 +3000,13 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get Hydrometric Monitoring Stations features
       tags:
       - hydrometric-stations
-  /collections/hydrometric-stations/items/{id}:
+  /collections/hydrometric-stations/items/{featureId}:
     get:
       description: A station is a site on a river or lake where water quantity (water
         level and flow) are collected and recorded.
@@ -2993,10 +3017,10 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
-      summary: Get Hydrometric Monitoring Stations feature by ID
+      summary: Get Hydrometric Monitoring Stations feature by id
       tags:
       - hydrometric-stations
   /conformance:
@@ -3024,7 +3048,7 @@ paths:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Get process metadata
@@ -3046,14 +3070,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: execute.yaml
+              $ref: https://raw.githubusercontent.com/opengeospatial/wps-rest-binding/master/core/openapi/schemas/execute.yaml
         description: Mandatory execute request JSON
         required: true
       responses:
         200:
           description: successful operation
         400:
-          description: Invalid ID supplied
+          description: Invalid id supplied
         404:
           description: not found
       summary: Process Raster Drill process execution
