@@ -357,6 +357,7 @@ datasets:
             time_field: DATE_CALCULATED
             properties:
                 - STATION_NAME
+                - STN_ID
                 - CLIMATE_IDENTIFIER
                 - ID
                 - PERIOD
@@ -434,8 +435,8 @@ datasets:
             properties:
                 - LATITUDE
                 - LONGITUDE
-                - CLIMATE_IDENTIFIER
                 - STATION_NAME
+                - STN_ID
                 - CLIMATE_IDENTIFIER
                 - ID
                 - LOCAL_DATE
@@ -490,8 +491,8 @@ datasets:
             id_field: ID
             time_field: LOCAL_DATE
             properties:
-                - CLIMATE_IDENTIFIER
                 - STATION_NAME
+                - STN_ID
                 - CLIMATE_IDENTIFIER
                 - ID
                 - LOCAL_DATE
