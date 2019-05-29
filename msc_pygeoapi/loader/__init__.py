@@ -27,11 +27,19 @@
 #
 # =================================================================
 
+import logging
+
 import click
 
-from msc_pygeoapi.loader.hydat import hydat
-from msc_pygeoapi.loader.climate_archive import climate_archive
-from msc_pygeoapi.loader.ahccd_cmip5 import ahccd_cmip5
+LOGGER = logging.getLogger(__name__)
+
+try:
+    from msc_pygeoapi.loader.hydat import hydat
+    from msc_pygeoapi.loader.climate_archive import climate_archive
+    from msc_pygeoapi.loader.ahccd_cmip5 import ahccd_cmip5
+except ImportError:
+    LOGGER.info('loaders not imported')
+
 
 __version__ = '0.4.0'
 
@@ -41,6 +49,9 @@ def load():
     pass
 
 
-load.add_command(hydat)
-load.add_command(climate_archive)
-load.add_command(ahccd_cmip5)
+try:
+    load.add_command(hydat)
+    load.add_command(climate_archive)
+    load.add_command(ahccd_cmip5)
+except NameError:
+    LOGGER.info('loaders not found')
