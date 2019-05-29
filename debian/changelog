@@ -1,3 +1,9 @@
+msc-pygeoapi (0.5.1) trusty; urgency=medium
+
+  * fix import error/bug
+
+ -- Tom Kralidis <tom.kralidis@canada.ca>  Wed, 29 May 2019 19:43:30 +0000
+
 msc-pygeoapi (0.5.0) trusty; urgency=medium
 
   * repurpose into proper Python package
