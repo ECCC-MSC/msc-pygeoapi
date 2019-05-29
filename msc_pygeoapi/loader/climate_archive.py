@@ -70,6 +70,9 @@ def create_index(path, index, AUTH):
                                             "raw": {"type": "keyword"}
                                         }
                                     },
+                                    "STN_ID": {
+                                        "type": "integer"
+                                    },
                                     "STATION_NAME": {
                                         "type": "text",
                                         "fields": {
@@ -241,6 +244,12 @@ def create_index(path, index, AUTH):
                             "type": {"type": "text"},
                             "properties": {
                                 "properties": {
+                                    "STN_ID": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
                                     "MONTH": {
                                         "type": "integer"
                                     },
@@ -404,6 +413,12 @@ def create_index(path, index, AUTH):
                                             "raw": {"type": "keyword"}
                                         }
                                     },
+                                    "STN_ID": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
                                     "STATION_NAME": {
                                         "type": "text",
                                         "fields": {
@@ -555,7 +570,19 @@ def create_index(path, index, AUTH):
                                             "raw": {"type": "keyword"}
                                         }
                                     },
+                                    "STN_ID": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
                                     "STATION_NAME": {
+                                        "type": "text",
+                                        "fields": {
+                                            "raw": {"type": "keyword"}
+                                        }
+                                    },
+                                    "SOURCE": {
                                         "type": "text",
                                         "fields": {
                                             "raw": {"type": "keyword"}
@@ -754,7 +781,6 @@ def load_stations(path, cur, AUTH):
         del insert_dict['LONGITUDE_DECIMAL_DEGREES']
         del insert_dict['LATITUDE_DECIMAL_DEGREES']
         stn_id = insert_dict['STN_ID']
-        del insert_dict['STN_ID']
         wrapper = {'type': 'Feature', 'properties': insert_dict,
                    'geometry': {'type': 'Point', 'coordinates': coords}}
         r = requests.put('{}/climate_station_information/FeatureCollection/{}'.format(path, stn_id), data=json.dumps(wrapper), auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
@@ -805,7 +831,6 @@ def load_normals(path, cur, stn_dict, normals_dict, periods_dict, AUTH):
             insert_dict['CLIMATE_IDENTIFIER'] = stn_dict[insert_dict['STN_ID']]['CLIMATE_IDENTIFIER']
 
             del insert_dict['NORMAL_PERIOD_ID']
-            del insert_dict['STN_ID']
             wrapper = {'type': 'Feature', 'properties': insert_dict,
                        'geometry': {'type': 'Point', 'coordinates': coords}}
             r = requests.put('{}/climate_normals_data/FeatureCollection/{}'.format(path, insert_dict['ID']), data=json.dumps(wrapper), auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
@@ -852,7 +877,6 @@ def load_monthly_data(path, cur, stn_dict, AUTH, date=None):
         if insert_dict['STN_ID'] in stn_dict:
             coords = stn_dict[insert_dict['STN_ID']]['coordinates']
             insert_dict['PROVINCE_CODE'] = stn_dict[insert_dict['STN_ID']]['PROVINCE_CODE'] # noqa
-            del insert_dict['STN_ID']
             wrapper = {'type': 'Feature', 'properties': insert_dict,
                        'geometry': {'type': 'Point', 'coordinates': coords}}
             r = requests.put('{}/climate_public_climate_summary/FeatureCollection/{}'.format(path, insert_dict['ID']), data=json.dumps(wrapper), auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
@@ -902,8 +926,6 @@ def load_daily_data(path, cur, stn_dict, AUTH, date=None):
                 coords = stn_dict[insert_dict['STN_ID']]['coordinates']
                 insert_dict['PROVINCE_CODE'] = stn_dict[insert_dict['STN_ID']]['PROVINCE_CODE'] # noqa
                 insert_dict['STATION_NAME'] = stn_dict[insert_dict['STN_ID']]['STATION_NAME'] # noqa
-                del insert_dict['STN_ID']
-                del insert_dict['SOURCE']
                 wrapper = {'type': 'Feature', 'properties': insert_dict,
                            'geometry': {'type': 'Point',
                                         'coordinates': coords}}
