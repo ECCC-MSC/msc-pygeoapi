@@ -908,6 +908,13 @@ paths:
       - $ref: '#/components/parameters/startindex'
       - explode: false
         in: query
+        name: start_date__date_debut
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
         name: station_id__id_station
         required: false
         schema:
@@ -923,7 +930,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: identifier__identifiant
+        name: measurement_type__type_mesure
         required: false
         schema:
           type: string
@@ -951,14 +958,15 @@ paths:
         style: form
       - explode: false
         in: query
-        name: period__periode
+        name: end_date__date_fin
         required: false
         schema:
+          format: date
           type: string
         style: form
       - explode: false
         in: query
-        name: measurement_type__type_mesure
+        name: period__periode
         required: false
         schema:
           type: string
@@ -969,6 +977,13 @@ paths:
         required: false
         schema:
           type: integer
+        style: form
+      - explode: false
+        in: query
+        name: identifier__identifiant
+        required: false
+        schema:
+          type: string
         style: form
       - explode: false
         in: query
@@ -1177,6 +1192,13 @@ paths:
         style: form
       - explode: false
         in: query
+        name: STN_ID
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
         name: CLIMATE_IDENTIFIER
         required: false
         schema:
@@ -1240,6 +1262,13 @@ paths:
         schema:
           format: float
           type: number
+        style: form
+      - explode: false
+        in: query
+        name: SOURCE
+        required: false
+        schema:
+          type: string
         style: form
       - explode: false
         in: query
@@ -1500,6 +1529,13 @@ paths:
         required: false
         schema:
           type: integer
+        style: form
+      - explode: false
+        in: query
+        name: STN_ID
+        required: false
+        schema:
+          type: string
         style: form
       - explode: false
         in: query
@@ -1803,6 +1839,13 @@ paths:
         style: form
       - explode: false
         in: query
+        name: F_NORMAL_ELEMENT_NAME
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
         name: PERIOD_END
         required: false
         schema:
@@ -1874,7 +1917,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: FRE_PUB_NAME
+        name: E_NORMAL_ELEMENT_NAME
         required: false
         schema:
           type: string
@@ -1949,13 +1992,6 @@ paths:
         required: false
         schema:
           type: integer
-        style: form
-      - explode: false
-        in: query
-        name: ENG_PUB_NAME
-        required: false
-        schema:
-          type: string
         style: form
       responses:
         200:

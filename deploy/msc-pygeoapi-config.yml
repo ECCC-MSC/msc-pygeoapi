@@ -379,8 +379,6 @@ datasets:
                 - OCCURRENCE_COUNT
                 - MAX_DURATION_MISSING_YEARS
                 - PERCENT_OF_POSSIBLE_OBS
-                - ENG_PUB_NAME
-                - FRE_PUB_NAME
                 - E_NORMAL_ELEMENT_NAME
                 - F_NORMAL_ELEMENT_NAME
                 - MONTH
