@@ -292,13 +292,13 @@ def create_index(path, index, AUTH):
                                             "raw": {"type": "keyword"}
                                         }
                                     },
-                                    "ENG_PUB_NAME": {
+                                    "E_NORMAL_ELEMENT_NAME": {
                                         "type": "text",
                                         "fields": {
                                             "raw": {"type": "keyword"}
                                         }
                                     },
-                                    "FRE_PUB_NAME": {
+                                    "F_NORMAL_ELEMENT_NAME": {
                                         "type": "text",
                                         "fields": {
                                             "raw": {"type": "keyword"}
@@ -823,12 +823,12 @@ def load_normals(path, cur, stn_dict, normals_dict, periods_dict, AUTH):
             coords = stn_dict[insert_dict['STN_ID']]['coordinates']
             insert_dict['STATION_NAME'] = stn_dict[insert_dict['STN_ID']]['STATION_NAME'] # noqa
             insert_dict['PROVINCE_CODE'] = stn_dict[insert_dict['STN_ID']]['PROVINCE_CODE'] # noqa
-            insert_dict['ENG_PUB_NAME'] = normals_dict[insert_dict['NORMAL_ID']]['ENG_PUB_NAME'] # noqa
-            insert_dict['FRE_PUB_NAME'] = normals_dict[insert_dict['NORMAL_ID']]['FRE_PUB_NAME'] # noqa
+            insert_dict['E_NORMAL_ELEMENT_NAME'] = normals_dict[insert_dict['NORMAL_ID']]['E_NORMAL_ELEMENT_NAME'] # noqa
+            insert_dict['F_NORMAL_ELEMENT_NAME'] = normals_dict[insert_dict['NORMAL_ID']]['F_NORMAL_ELEMENT_NAME'] # noqa
             insert_dict['PERIOD'] = normals_dict[insert_dict['NORMAL_ID']]['PERIOD'] # noqa
             insert_dict['PERIOD_BEGIN'] = periods_dict[insert_dict['NORMAL_PERIOD_ID']]['PERIOD_BEGIN'] # noqa
             insert_dict['PERIOD_END'] = periods_dict[insert_dict['NORMAL_PERIOD_ID']]['PERIOD_END'] # noqa
-            insert_dict['CLIMATE_IDENTIFIER'] = stn_dict[insert_dict['STN_ID']]['CLIMATE_IDENTIFIER']
+            insert_dict['CLIMATE_IDENTIFIER'] = stn_dict[insert_dict['STN_ID']]['CLIMATE_IDENTIFIER'] # noqa
 
             del insert_dict['NORMAL_PERIOD_ID']
             wrapper = {'type': 'Feature', 'properties': insert_dict,
@@ -1001,15 +1001,15 @@ def get_normals_data(cur):
     """
     normals_dict = {}
     try:
-        cur.execute('select NORMAL_ID, ENG_PUB_NAME,\
-                     FRE_PUB_NAME, PERIOD from\
+        cur.execute('select NORMAL_ID, E_NORMAL_ELEMENT_NAME,\
+                     F_NORMAL_ELEMENT_NAME, PERIOD from\
                      CCCS_PORTAL.VALID_NORMALS_ELEMENTS')
     except Exception as err:
         LOGGER.error('Could not fetch records from oracle due to: {}.'.format(str(err))) # noqa
 
     for row in cur:
-        normals_dict[row[0]] = {'ENG_PUB_NAME': row[1],
-                                'FRE_PUB_NAME': row[2],
+        normals_dict[row[0]] = {'E_NORMAL_ELEMENT_NAME': row[1],
+                                'F_NORMAL_ELEMENT_NAME': row[2],
                                 'PERIOD': row[3]
                                 }
     return normals_dict
