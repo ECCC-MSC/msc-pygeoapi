@@ -29,7 +29,7 @@
 # =================================================================
 
 import click
-import csv
+import unicodecsv as csv
 import io
 import json
 import logging
