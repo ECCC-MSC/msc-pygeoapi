@@ -306,11 +306,16 @@ def serialize(values_dict, cfg, output_format, x, y):
                    'values',
                    'longitude',
                    'latitude',
-                   'scenario',
-                   'time_res',
-                   'value_type',
-                   'percentile',
-                   'variable',
+                   'scenario_en',
+                   'scenario_fr',
+                   'time_res_en',
+                   'time_res_fr',
+                   'value_type_en',
+                   'value_type_fr',
+                   'percentile_en',
+                   'percentile_fr',
+                   'variable_en',
+                   'variable_fr',
                    'uom']
 
             try:
@@ -328,10 +333,15 @@ def serialize(values_dict, cfg, output_format, x, y):
                                  x,
                                  y,
                                  sce_en,
+                                 sce_fr,
                                  seas_en,
+                                 seas_fr,
                                  type_en,
+                                 type_fr,
                                  pctl_en,
+                                 pctl_fr,
                                  var_en,
+                                 var_fr,
                                  values_dict['uom']])
 
         elif output_format == 'GeoJSON':
@@ -395,9 +405,6 @@ def raster_drill(layer, x, y, format_):
 
     with open(GEOMET_CLIMATE_CONFIG) as fh:
         cfg = yaml.load(fh, Loader=CLoader)
-
-    x = int(x)
-    y = int(y)
 
     if ('ABS' in layer or 'ANO' in layer and
        layer.startswith('CANGRD') is False):
