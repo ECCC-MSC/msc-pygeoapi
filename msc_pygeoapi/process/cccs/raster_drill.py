@@ -393,7 +393,7 @@ def raster_drill(layer, x, y, format_):
         LOGGER.error(msg)
         raise ValueError(msg)
 
-    with io.open(GEOMET_CLIMATE_CONFIG) as fh:
+    with open(GEOMET_CLIMATE_CONFIG) as fh:
         cfg = yaml.load(fh, Loader=CLoader)
 
     x = int(x)
@@ -460,7 +460,7 @@ def raster_drill(layer, x, y, format_):
               default='GeoJSON', help='output format')
 def cli(ctx, layer, x, y, format_='GeoJSON'):
 
-    output = raster_drill(layer, x, y, format_)
+    output = raster_drill(layer, float(x), float(y), format_)
     if format_ == 'GeoJSON':
         click.echo(json.dumps(output, ensure_ascii=False))
     elif format_ == 'CSV':
