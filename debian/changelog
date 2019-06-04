@@ -1,3 +1,10 @@
+msc-pygeoapi (0.5.3) trusty; urgency=medium
+
+  * fix YAML processing encoding error
+  * fix float casting
+
+ -- Tom Kralidis <tom.kralidis@canada.ca>  Tue, 04 Jun 2019 12:05:21 +0000
+
 msc-pygeoapi (0.5.2) trusty; urgency=medium
 
   * adjust normals columns
