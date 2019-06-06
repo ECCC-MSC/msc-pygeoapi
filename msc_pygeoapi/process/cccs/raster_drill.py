@@ -425,6 +425,7 @@ def raster_drill(layer, x, y, format_):
         inter_path = os.path.join(climate_model_path, file_path)
 
         file_name = cfg['layers'][layer]['filename']
+        _x, _y = x, y
 
     elif 'TREND' not in layer and layer.startswith('CANGRD') is True:
         keys = ['Model', 'Type', 'Variable', 'Period']
@@ -443,7 +444,7 @@ def raster_drill(layer, x, y, format_):
                    +k=1 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs'
         inProj = Proj(init='epsg:4326')
         outProj = Proj(src_epsg)
-        x, y = transform(inProj, outProj, x, y)
+        _x, _y = transform(inProj, outProj, x, y)
 
     else:
         msg = 'Not a valid or time enabled layer: {}'.format(layer)
@@ -452,7 +453,7 @@ def raster_drill(layer, x, y, format_):
 
     ds = os.path.join(data_basepath, inter_path, file_name)
 
-    data = get_location_info(ds, x, y, cfg['layers'][layer], layer_keys)
+    data = get_location_info(ds, _x, _y, cfg['layers'][layer], layer_keys)
     output = serialize(data, cfg['layers'][layer], format_, x, y)
 
     return output
