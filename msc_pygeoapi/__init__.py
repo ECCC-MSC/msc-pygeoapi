@@ -32,7 +32,7 @@ import click
 from msc_pygeoapi.loader import load
 from msc_pygeoapi.process import process
 
-__version__ = '0.5.4'
+__version__ = '0.5.5'
 
 
 @click.group()
