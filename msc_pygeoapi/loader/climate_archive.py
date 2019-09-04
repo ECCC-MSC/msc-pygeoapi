@@ -780,10 +780,10 @@ def load_stations(path, cur, AUTH):
                   float(insert_dict['LATITUDE_DECIMAL_DEGREES'])]
         del insert_dict['LONGITUDE_DECIMAL_DEGREES']
         del insert_dict['LATITUDE_DECIMAL_DEGREES']
-        stn_id = insert_dict['STN_ID']
+        climate_identifier = insert_dict['CLIMATE_IDENTIFIER']
         wrapper = {'type': 'Feature', 'properties': insert_dict,
                    'geometry': {'type': 'Point', 'coordinates': coords}}
-        r = requests.put('{}/climate_station_information/FeatureCollection/{}'.format(path, stn_id), data=json.dumps(wrapper), auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
+        r = requests.put('{}/climate_station_information/FeatureCollection/{}'.format(path, climate_identifier), data=json.dumps(wrapper), auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
         if r.status_code != POST_OK and r.status_code != HTTP_OK:
             LOGGER.error('Could not insert into stations due to: {}'.format(r.text)) # noqa
         else:
