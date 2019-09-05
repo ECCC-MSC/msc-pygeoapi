@@ -14,16 +14,6 @@ components:
         minItems: 4
         type: array
       style: form
-    datetime:
-      description: The time parameter indicates an RFC3339 formatted datetime (single,
-        interval, open).
-      explode: false
-      in: query
-      name: datetime
-      required: false
-      schema:
-        type: string
-      style: form
     f:
       description: The optional f parameter indicates the output format which the
         server shall provide as part of the response document.  The default format
@@ -58,7 +48,7 @@ components:
       required: false
       schema:
         default: 500
-        maximum: 10000
+        maximum: 500
         minimum: 1
         type: integer
       style: form
@@ -87,6 +77,16 @@ components:
         default: 0
         minimum: 0
         type: integer
+      style: form
+    time:
+      description: The time parameter indicates an RFC3339 formatted datetime (single,
+        interval, open).
+      explode: false
+      in: query
+      name: time
+      required: false
+      schema:
+        type: string
       style: form
 info:
   contact:
@@ -371,7 +371,7 @@ paths:
       summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual features
       tags:
       - ahccd-annual
-  /collections/ahccd-annual/items/{featureId}:
+  /collections/ahccd-annual/items/{id}:
     get:
       description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual
       parameters:
@@ -549,6 +549,7 @@ paths:
         name: date
         required: false
         schema:
+          format: date
           type: string
         style: form
       - explode: false
@@ -622,7 +623,7 @@ paths:
         features
       tags:
       - ahccd-monthly
-  /collections/ahccd-monthly/items/{featureId}:
+  /collections/ahccd-monthly/items/{id}:
     get:
       description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
       parameters:
@@ -866,7 +867,7 @@ paths:
         features
       tags:
       - ahccd-seasonal
-  /collections/ahccd-seasonal/items/{featureId}:
+  /collections/ahccd-seasonal/items/{id}:
     get:
       description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal
       parameters:
@@ -911,6 +912,7 @@ paths:
         name: start_date__date_debut
         required: false
         schema:
+          format: date
           type: string
         style: form
       - explode: false
@@ -1004,7 +1006,7 @@ paths:
         features
       tags:
       - ahccd-stations
-  /collections/ahccd-stations/items/{featureId}:
+  /collections/ahccd-stations/items/{id}:
     get:
       description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Stations
       parameters:
@@ -1046,6 +1048,14 @@ paths:
       - $ref: '#/components/parameters/startindex'
       - explode: false
         in: query
+        name: start_date__date_debut
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: false
+        in: query
         name: station_id__id_station
         required: false
         schema:
@@ -1061,7 +1071,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: identifier__identifiant
+        name: measurement_type__type_mesure
         required: false
         schema:
           type: string
@@ -1089,14 +1099,15 @@ paths:
         style: form
       - explode: false
         in: query
-        name: period__periode
+        name: end_date__date_fin
         required: false
         schema:
+          format: date
           type: string
         style: form
       - explode: false
         in: query
-        name: measurement_type__type_mesure
+        name: period__periode
         required: false
         schema:
           type: string
@@ -1107,6 +1118,13 @@ paths:
         required: false
         schema:
           type: integer
+        style: form
+      - explode: false
+        in: query
+        name: identifier__identifiant
+        required: false
+        schema:
+          type: string
         style: form
       - explode: false
         in: query
@@ -1126,7 +1144,7 @@ paths:
       summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends features
       tags:
       - ahccd-trends
-  /collections/ahccd-trends/items/{featureId}:
+  /collections/ahccd-trends/items/{id}:
     get:
       description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends
       parameters:
@@ -1456,7 +1474,7 @@ paths:
       summary: Get Daily Climate Observations features
       tags:
       - climate-daily
-  /collections/climate-daily/items/{featureId}:
+  /collections/climate-daily/items/{id}:
     get:
       description: 'Daily climate observations are derived from two sources of data.
         The first are Daily Climate Stations producing one or two observations per
@@ -1761,7 +1779,7 @@ paths:
       summary: Get Monthly Climate Observation Summaries features
       tags:
       - climate-monthly
-  /collections/climate-monthly/items/{featureId}:
+  /collections/climate-monthly/items/{id}:
     get:
       description: A cross-country summary of the averages and extremes for the month,
         including precipitation totals, max-min temperatures, and degree days. This
@@ -2003,7 +2021,7 @@ paths:
       summary: Get 1981-2010 Climate Normals features
       tags:
       - climate-normals
-  /collections/climate-normals/items/{featureId}:
+  /collections/climate-normals/items/{id}:
     get:
       description: 1981-2010 Climate Normals
       parameters:
@@ -2245,7 +2263,7 @@ paths:
       summary: Get Climate Stations features
       tags:
       - climate-stations
-  /collections/climate-stations/items/{featureId}:
+  /collections/climate-stations/items/{id}:
     get:
       description: Climate Stations
       parameters:
@@ -2261,141 +2279,6 @@ paths:
       summary: Get Climate Stations feature by id
       tags:
       - climate-stations
-  /collections/cmip5:
-    get:
-      description: Coupled Model Intercomparison Project Phase 5 (CMIP5)
-      responses:
-        200:
-          description: successful operation
-        400:
-          description: Invalid id supplied
-        404:
-          description: not found
-      summary: Get feature collection metadata
-      tags:
-      - cmip5
-  /collections/cmip5/items:
-    get:
-      description: Coupled Model Intercomparison Project Phase 5 (CMIP5)
-      parameters:
-      - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/bbox'
-      - $ref: '#/components/parameters/time'
-      - $ref: '#/components/parameters/limit'
-      - $ref: '#/components/parameters/sortby'
-      - $ref: '#/components/parameters/startindex'
-      - explode: false
-        in: query
-        name: rcp
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: time
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: lon
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: period
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: value
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: grid_id
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: lat
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: percentile
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: year
-        required: false
-        schema:
-          format: date
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: variable
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: table
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: identifier
-        required: false
-        schema:
-          type: string
-        style: form
-      responses:
-        200:
-          description: successful operation
-        400:
-          description: Invalid id supplied
-        404:
-          description: not found
-      summary: Get Coupled Model Intercomparison Project Phase 5 (CMIP5) features
-      tags:
-      - cmip5
-  /collections/cmip5/items/{featureId}:
-    get:
-      description: Coupled Model Intercomparison Project Phase 5 (CMIP5)
-      parameters:
-      - $ref: '#/components/parameters/id'
-      - $ref: '#/components/parameters/f'
-      responses:
-        200:
-          description: successful operation
-        400:
-          description: Invalid id supplied
-        404:
-          description: not found
-      summary: Get Coupled Model Intercomparison Project Phase 5 (CMIP5) feature by
-        id
-      tags:
-      - cmip5
   /collections/hydrometric-annual-peaks:
     get:
       description: The annual maximum and minimum instantaneous data are the maximum
@@ -2538,7 +2421,7 @@ paths:
       summary: Get Annual Maximum and Minimum Instantaneous Water Level or Flow features
       tags:
       - hydrometric-annual-peaks
-  /collections/hydrometric-annual-peaks/items/{featureId}:
+  /collections/hydrometric-annual-peaks/items/{id}:
     get:
       description: The annual maximum and minimum instantaneous data are the maximum
         and minimum instantaneous values for a given year.
@@ -2693,7 +2576,7 @@ paths:
       summary: Get Annual Maximum and Minimum Daily Water Level or Flow features
       tags:
       - hydrometric-annual-statistics
-  /collections/hydrometric-annual-statistics/items/{featureId}:
+  /collections/hydrometric-annual-statistics/items/{id}:
     get:
       description: The annual maximum and minimum daily data are the maximum and minimum
         daily mean values for a given year.
@@ -2824,7 +2707,7 @@ paths:
       summary: Get Daily Mean of Water Level or Flow features
       tags:
       - hydrometric-daily-mean
-  /collections/hydrometric-daily-mean/items/{featureId}:
+  /collections/hydrometric-daily-mean/items/{id}:
     get:
       description: The daily mean is the average of all unit values for a given day.
       parameters:
@@ -2927,7 +2810,7 @@ paths:
       summary: Get Monthly Mean of Water Level or Flow features
       tags:
       - hydrometric-monthly-mean
-  /collections/hydrometric-monthly-mean/items/{featureId}:
+  /collections/hydrometric-monthly-mean/items/{id}:
     get:
       description: The monthly mean is the average of daily mean values for a given
         month.
@@ -3042,7 +2925,7 @@ paths:
       summary: Get Hydrometric Monitoring Stations features
       tags:
       - hydrometric-stations
-  /collections/hydrometric-stations/items/{featureId}:
+  /collections/hydrometric-stations/items/{id}:
     get:
       description: A station is a site on a river or lake where water quantity (water
         level and flow) are collected and recorded.
@@ -3150,8 +3033,6 @@ tags:
   name: ahccd-seasonal
 - description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends
   name: ahccd-trends
-- description: Coupled Model Intercomparison Project Phase 5 (CMIP5)
-  name: cmip5
 - description: A cross-country summary of the averages and extremes for the month,
     including precipitation totals, max-min temperatures, and degree days. This data
     is available from stations that produce daily data.

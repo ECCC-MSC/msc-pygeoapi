@@ -1,9 +1,9 @@
 # Example Usage:
 # Load all datasets from scratch:
-# python es_loader_ahccd_cmip5.py --path /path/to/json/locations.json --es https://path/to/elasticsearch --username user --password pass --dataset all # noqa
+# msc-pygeoapi data load ahccd --path /path/to/json/locations.json --es https://path/to/elasticsearch --username user --password pass --dataset all # noqa
 #
 # Load a single dataset from scratch:
-# python es_loader_ahccd_cmip5.py --path /path/to/json/locations.json --es https://path/to/elasticsearch --username user --password pass --dataset trends # noqa
+# msc-pygeoapi data load ahccd --path /path/to/json/locations.json --es https://path/to/elasticsearch --username user --password pass --dataset trends # noqa
 
 import requests
 import json
@@ -215,10 +215,8 @@ def create_index(es, index, AUTH):
                             "properties": {
                                 "properties": {
                                     "date": {
-                                       "type": "text",
-                                       "fields": {
-                                           "raw": {"type": "keyword"}
-                                       }
+                                       "type": "date",
+                                       "format": "yyyy-MM||yyyy"
                                     },
                                     "identifier__identifiant": {
                                         "type": "text",
@@ -698,116 +696,6 @@ def create_index(es, index, AUTH):
         else:
             LOGGER.info('Created the trends index')
 
-    if index == 'cmip5':
-        r = requests.delete('{}/cmip5'.format(es),
-                            auth=AUTH, verify=VERIFY)
-        if r.status_code != HTTP_OK and r.status_code != POST_OK:
-            LOGGER.error('Could not delete cmip5 due to: {}'.format(r.text)) # noqa
-        else:
-            LOGGER.info('Deleted the cmip5 index')
-        mapping =\
-            {
-                "settings": {
-                    "number_of_shards": 1,
-                    "number_of_replicas": 0
-                },
-                "mappings": {
-                    "FeatureCollection": {
-                        "_meta": {
-                            "geomfields": {
-                                "geometry": "POINT"
-                            }
-                        },
-                        "properties": {
-                            "type": {"type": "text"},
-                            "properties": {
-                                "properties": {
-                                    "rcp": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "table": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "identifier": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "variable": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "percentile": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "time": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "grid_id": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "value": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "period": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "lat": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "lon": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "year": {
-                                        "type": "date",
-                                        "format": "yyyy"
-                                    }
-                                }
-                            },
-                            "geometry": {"type": "geo_shape"}
-                        }
-                    }
-                }
-            }
-        r = requests.put('{}/cmip5'.format(es),
-                         data=json.dumps(mapping),
-                         auth=AUTH, verify=VERIFY,
-                         headers=HEADERS)
-        if r.status_code != HTTP_OK and r.status_code != POST_OK:
-            LOGGER.error('Could not create cmip5 due to: {}'.format(r.text)) # noqa
-        else:
-            LOGGER.info('Created the cmip5 index')
-
 
 def generic_loader(fp, es, index, AUTH):
     """
@@ -820,69 +708,52 @@ def generic_loader(fp, es, index, AUTH):
     :param AUTH: tuple of username and password used to authorize the
                  HTTP request.
     """
-    if index == 'cmip5':
-        # CMIP5 data is stored in multiple files, so each file needs to
-        # be read in separately. As a result, CMIP5 paths are stored
-        # in a list in the JSON locations file.
-        for file in fp:
-            try:
-                with open(file, 'r') as f:
-                    json_source = f.read()
-                    data = json.loads(json_source)
-                for record in data['features']:
-                    r = requests.put('{}/cmip5/FeatureCollection/{}'.format(es, record['properties']['identifier']), data=json.dumps(record), auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
-                    if r.status_code != POST_OK and r.status_code != HTTP_OK:
-                        LOGGER.error('Could not insert into cmip5 due to: {}'.format(r.text)) # noqa
-                    else:
-                        LOGGER.info('Successfully inserted a record into the cmip5 index') # noqa
-            except Exception as err:
-                LOGGER.error('Could not open JSON file due to: {}.'.format(str(err))) # noqa
-    else:
-        try:
-            with open(fp, 'r') as f:
-                json_source = f.read()
-                data = json.loads(json_source)
 
-            for record in data['features']:
-                if index == 'monthly':
-                    record['properties']['date'] = '{}-{}'.format(record['properties']['identifier__identifiant'].split('.')[1], record['properties']['identifier__identifiant'].split('.')[2]) # noqa
-                    del record['properties']['year__annee']
-                    r = requests.put('{}/ahccd_monthly/FeatureCollection/{}'.format(es, record['properties']['identifier__identifiant']), data=json.dumps(record), auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
-                    if r.status_code != POST_OK and r.status_code != HTTP_OK:
-                        LOGGER.error('Could not insert into monthly due to: {}'.format(r.text)) # noqa
-                    else:
-                        LOGGER.info('Successfully inserted a record into the monthly index') # noqa
-                if index == 'stations':
-                    record['properties']['identifier__identifiant'] = record['properties']['station_id__id_station'] # noqa
-                    r = requests.put('{}/ahccd_stations/FeatureCollection/{}'.format(es, record['properties']['identifier__identifiant']), data=json.dumps(record), auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
-                    if r.status_code != POST_OK and r.status_code != HTTP_OK:
-                        LOGGER.error('Could not insert into stations due to: {}'.format(r.text)) # noqa
-                    else:
-                        LOGGER.info('Successfully inserted a record into the stations index') # noqa
-                if index == 'annual':
-                    r = requests.put('{}/ahccd_annual/FeatureCollection/{}'.format(es, record['properties']['identifier__identifiant']), data=json.dumps(record), auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
-                    if r.status_code != POST_OK and r.status_code != HTTP_OK:
-                        LOGGER.error('Could not insert into annual due to: {}'.format(r.text)) # noqa
-                    else:
-                        LOGGER.info('Successfully inserted a record into the annual index') # noqa
-                if index == 'seasonal':
-                    r = requests.put('{}/ahccd_seasonal/FeatureCollection/{}'.format(es, record['properties']['identifier__identifiant']), data=json.dumps(record), auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
-                    if r.status_code != POST_OK and r.status_code != HTTP_OK:
-                        LOGGER.error('Could not insert into seasonal due to: {}'.format(r.text)) # noqa
-                    else:
-                        LOGGER.info('Successfully inserted a record into the seasonal index') # noqa
-                if index == 'trends':
-                    record['properties']['identifier__identifiant'] = '{}.{}.{}'.format(record['properties']['station_id__id_station'], record['properties']['period__periode'], record['properties']['measurement_type__type_mesure']) # noqa
-                    r = requests.put('{}/ahccd_trends/FeatureCollection/{}'.format(es, record['properties']['identifier__identifiant']), data=json.dumps(record), auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
-                    if r.status_code != POST_OK and r.status_code != HTTP_OK:
-                        LOGGER.error('Could not insert into trends due to: {}'.format(r.text)) # noqa
-                    else:
-                        LOGGER.info('Successfully inserted a record into the trends index') # noqa
-        except Exception as err:
-            LOGGER.error('Could not open JSON file due to: {}.'.format(str(err))) # noqa
+    try:
+        with open(fp, 'r') as f:
+            json_source = f.read()
+            data = json.loads(json_source)
+
+        for record in data['features']:
+            if index == 'monthly':
+                record['properties']['date'] = '{}-{}'.format(record['properties']['identifier__identifiant'].split('.')[1], record['properties']['identifier__identifiant'].split('.')[2]) # noqa
+                del record['properties']['year__annee']
+                r = requests.put('{}/ahccd_monthly/FeatureCollection/{}'.format(es, record['properties']['identifier__identifiant']), data=json.dumps(record), auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
+                if r.status_code != POST_OK and r.status_code != HTTP_OK:
+                    LOGGER.error('Could not insert into monthly due to: {}'.format(r.text)) # noqa
+                else:
+                    LOGGER.info('Successfully inserted a record into the monthly index') # noqa
+            if index == 'stations':
+                record['properties']['identifier__identifiant'] = record['properties']['station_id__id_station'] # noqa
+                r = requests.put('{}/ahccd_stations/FeatureCollection/{}'.format(es, record['properties']['identifier__identifiant']), data=json.dumps(record), auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
+                if r.status_code != POST_OK and r.status_code != HTTP_OK:
+                    LOGGER.error('Could not insert into stations due to: {}'.format(r.text)) # noqa
+                else:
+                    LOGGER.info('Successfully inserted a record into the stations index') # noqa
+            if index == 'annual':
+                r = requests.put('{}/ahccd_annual/FeatureCollection/{}'.format(es, record['properties']['identifier__identifiant']), data=json.dumps(record), auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
+                if r.status_code != POST_OK and r.status_code != HTTP_OK:
+                    LOGGER.error('Could not insert into annual due to: {}'.format(r.text)) # noqa
+                else:
+                    LOGGER.info('Successfully inserted a record into the annual index') # noqa
+            if index == 'seasonal':
+                r = requests.put('{}/ahccd_seasonal/FeatureCollection/{}'.format(es, record['properties']['identifier__identifiant']), data=json.dumps(record), auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
+                if r.status_code != POST_OK and r.status_code != HTTP_OK:
+                    LOGGER.error('Could not insert into seasonal due to: {}'.format(r.text)) # noqa
+                else:
+                    LOGGER.info('Successfully inserted a record into the seasonal index') # noqa
+            if index == 'trends':
+                record['properties']['identifier__identifiant'] = '{}.{}.{}'.format(record['properties']['station_id__id_station'], record['properties']['period__periode'], record['properties']['measurement_type__type_mesure']) # noqa
+                r = requests.put('{}/ahccd_trends/FeatureCollection/{}'.format(es, record['properties']['identifier__identifiant']), data=json.dumps(record), auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
+                if r.status_code != POST_OK and r.status_code != HTTP_OK:
+                    LOGGER.error('Could not insert into trends due to: {}'.format(r.text)) # noqa
+                else:
+                    LOGGER.info('Successfully inserted a record into the trends index') # noqa
+    except Exception as err:
+        LOGGER.error('Could not open JSON file due to: {}.'.format(str(err))) # noqa
 
 
-@click.command('ahccd-cmip5')
+@click.command('ahccd')
 @click.pass_context
 @click.option('--path', type=click.Path(exists=True, resolve_path=True),
               help='Path to file with raw JSON locations')
@@ -891,7 +762,7 @@ def generic_loader(fp, es, index, AUTH):
 @click.option('--password', help='Password to connect to HTTPS')
 @click.option('--dataset', help='ES dataset to load, or all\
                                  if loading everything')
-def ahccd_cmip5(ctx, path, es, username, password, dataset):
+def ahccd(ctx, path, es, username, password, dataset):
     """
     Loads AHCCD and CMIP5 data into Elasticsearch
 
@@ -899,12 +770,11 @@ def ahccd_cmip5(ctx, path, es, username, password, dataset):
 
     The JSON locations file should be a JSON of the form:
     {
-    "stations": "/path/to/stations.json",
-    "annual": "/path/to/annual.json",
-    "monthly": "/path/to/monthly.json",
-    "seasonal": "/path/to/seasonal.json",
-    "trends": "/path/to/trends.json",
-    "cmip5": ["/path/to/cmip5one.json", /path/to/cmip5two.json, ...]
+        "stations": "/path/to/stations.json",
+        "annual": "/path/to/annual.json",
+        "monthly": "/path/to/monthly.json",
+        "seasonal": "/path/to/seasonal.json",
+        "trends": "/path/to/trends.json"
     }
 
     :param path: path to file with raw JSON locations
@@ -961,14 +831,6 @@ def ahccd_cmip5(ctx, path, es, username, password, dataset):
         except Exception as err:
             LOGGER.error('Could not populate monthly due to: {}.'.format(str(err))) # noqa
 
-        try:
-            LOGGER.info('Populating cmip5...')
-            create_index(es, 'cmip5', AUTH)
-            generic_loader(path_dict['cmip5'], es, 'cmip5', AUTH)
-            LOGGER.info('Cmip5 populated.')
-        except Exception as err:
-            LOGGER.error('Could not populate cmip5 due to: {}.'.format(str(err))) # noqa
-
     elif dataset == 'stations':
         try:
             LOGGER.info('Populating stations...')
@@ -1013,15 +875,6 @@ def ahccd_cmip5(ctx, path, es, username, password, dataset):
             LOGGER.info('Monthly populated.')
         except Exception as err:
             LOGGER.error('Could not populate monthly due to: {}.'.format(str(err))) # noqa
-
-    elif dataset == 'cmip5':
-        try:
-            LOGGER.info('Populating cmip5...')
-            create_index(es, 'cmip5', AUTH)
-            generic_loader(path_dict['cmip5'], es, 'cmip5', AUTH)
-            LOGGER.info('Cmip5 populated.')
-        except Exception as err:
-            LOGGER.error('Could not populate cmip5 due to: {}.'.format(str(err))) # noqa
 
     else:
         LOGGER.critical('Unknown dataset parameter {}, skipping index population.'.format(dataset)) # noqa
