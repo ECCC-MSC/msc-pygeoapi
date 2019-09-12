@@ -66,7 +66,13 @@ PROCESS_METADATA = {
         'rel': 'canonical',
         'title': 'information',
         'href': 'https://canada.ca/climate-services',
-        'hreflang': 'en-US'
+        'hreflang': 'en-CA'
+    }, {
+        'type': 'text/html',
+        'rel': 'canonical',
+        'title': 'information',
+        'href': 'https://canada.ca/services-climatiques',
+        'hreflang': 'fr-CA'
     }],
     'inputs': [{
         'id': 'layer',
