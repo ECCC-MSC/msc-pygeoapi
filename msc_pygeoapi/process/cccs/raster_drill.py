@@ -96,7 +96,7 @@ PROCESS_METADATA = {
         'maxOccurs': 1
     }, {
         'id': 'x',
-        'title': 'y coordinate',
+        'title': 'x coordinate',
         'input': {
             'literalDataDomain': {
                 'dataType': 'float',
