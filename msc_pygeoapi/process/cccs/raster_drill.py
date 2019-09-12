@@ -65,7 +65,7 @@ PROCESS_METADATA = {
         'type': 'text/html',
         'rel': 'canonical',
         'title': 'information',
-        'href': 'https://example.org/process',
+        'href': 'https://canada.ca/climate-services',
         'hreflang': 'en-US'
     }],
     'inputs': [{
