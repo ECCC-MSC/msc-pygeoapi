@@ -1210,13 +1210,6 @@ paths:
         style: form
       - explode: false
         in: query
-        name: STN_ID
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
         name: CLIMATE_IDENTIFIER
         required: false
         schema:
@@ -1547,13 +1540,6 @@ paths:
         required: false
         schema:
           type: integer
-        style: form
-      - explode: false
-        in: query
-        name: STN_ID
-        required: false
-        schema:
-          type: string
         style: form
       - explode: false
         in: query
@@ -1970,13 +1956,6 @@ paths:
         style: form
       - explode: false
         in: query
-        name: STN_ID
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
         name: NORMAL_ID
         required: false
         schema:
@@ -2080,13 +2059,6 @@ paths:
         required: false
         schema:
           type: string
-        style: form
-      - explode: false
-        in: query
-        name: STN_ID
-        required: false
-        schema:
-          type: integer
         style: form
       - explode: false
         in: query
