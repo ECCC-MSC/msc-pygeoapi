@@ -66,8 +66,6 @@ datasets:
         title: Hydrometric Monitoring Stations
         description: A station is a site on a river or lake where water quantity (water level and flow) are collected and recorded.
         keywords: [station, hydrometric station]
-        crs:
-            - CRS84
         links:
             - type: text/html
               rel: canonical
@@ -97,9 +95,10 @@ datasets:
         extents:
             spatial:
                 bbox: [-142, 52, -52, 84]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
             temporal:
                 begin: 1850-01-01
-                end: now  # or empty
+                end: null # or empty
         provider:
             name: Elasticsearch
             data: http://localhost:9200/hydrometric_stations/FeatureCollection
@@ -109,8 +108,6 @@ datasets:
         title: Daily Mean of Water Level or Flow
         description: The daily mean is the average of all unit values for a given day.
         keywords: [Daily, Daily Mean, Water Level, Flow, Discharge]
-        crs:
-            - CRS84
         links:
             - type: text/html
               rel: canonical
@@ -140,9 +137,10 @@ datasets:
         extents:
             spatial:
                 bbox: [-142, 52, -52, 84]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
             temporal:
                 begin: 1850-01-01
-                end: now  # or empty
+                end: null # or empty
         provider:
             name: Elasticsearch
             data: http://localhost:9200/hydrometric_daily_mean/FeatureCollection
@@ -155,9 +153,9 @@ datasets:
                 - PROV_TERR_STATE_LOC
                 - DATE
                 - LEVEL
-                - FLOW
-                - FLOW_SYMBOL_EN
-                - FLOW_SYMBOL_FR
+                - DISCHARGE
+                - DISCHARGE_SYMBOL_EN
+                - DISCHARGE_SYMBOL_FR
                 - LEVEL_SYMBOL_EN
                 - LEVEL_SYMBOL_FR
 
@@ -165,8 +163,6 @@ datasets:
         title: Monthly Mean of Water Level or Flow
         description: The monthly mean is the average of daily mean values for a given month.
         keywords: [Monthly, Monthly Mean, Water Level, Flow, Discharge]
-        crs:
-            - CRS84
         links:
             - type: text/html
               rel: canonical
@@ -196,9 +192,10 @@ datasets:
         extents:
             spatial:
                 bbox: [-142, 52, -52, 84]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
             temporal:
                 begin: 1850-01-01
-                end: now  # or empty
+                end: null # or empty
         provider:
             name: Elasticsearch
             data: http://localhost:9200/hydrometric_monthly_mean/FeatureCollection
@@ -211,14 +208,12 @@ datasets:
                 - PROV_TERR_STATE_LOC
                 - DATE
                 - MONTHLY_MEAN_LEVEL
-                - MONTHLY_MEAN_FLOW
+                - MONTHLY_MEAN_DISCHARGE
 
     hydrometric-annual-statistics:
         title: Annual Maximum and Minimum Daily Water Level or Flow
         description: The annual maximum and minimum daily data are the maximum and minimum daily mean values for a given year.
         keywords: [Annual maximum, Annual Minimum, Water Level, Flow, Discharge]
-        crs:
-            - CRS84
         links:
             - type: text/html
               rel: canonical
@@ -248,9 +243,10 @@ datasets:
         extents:
             spatial:
                 bbox: [-142, 52, -52, 84]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
             temporal:
                 begin: 1850-01-01
-                end: now  # or empty
+                end: null # or empty
         provider:
             name: Elasticsearch
             data: http://localhost:9200/hydrometric_annual_statistics/FeatureCollection
@@ -276,8 +272,6 @@ datasets:
         title: Annual Maximum and Minimum Instantaneous Water Level or Flow
         description: The annual maximum and minimum instantaneous data are the maximum and minimum instantaneous values for a given year.
         keywords: [Annual maximum, Annual Minimum, Water Level, Flow, Discharge]
-        crs:
-            - CRS84
         links:
             - type: text/html
               rel: canonical
@@ -307,9 +301,10 @@ datasets:
         extents:
             spatial:
                 bbox: [-142, 52, -52, 84]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
             temporal:
                 begin: 1850-01-01
-                end: now  # or empty
+                end: null # or empty
         provider:
             name: Elasticsearch
             data: http://localhost:9200/hydrometric_annual_peaks/FeatureCollection
@@ -336,8 +331,6 @@ datasets:
         title: 1981-2010 Climate Normals
         description: 1981-2010 Climate Normals
         keywords: [climate, normals]
-        crs:
-            - CRS84
         links:
             - type: text/html
               rel: canonical
@@ -347,6 +340,7 @@ datasets:
         extents:
             spatial:
                 bbox: [-142, 52, -52, 84]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
             temporal:
                 begin: 1981-01-01
                 end: 2010-12-31
@@ -388,8 +382,6 @@ datasets:
         title: Climate Stations
         description: Climate Stations
         keywords: [climate, stations]
-        crs:
-            - CRS84
         links:
             - type: text/html
               rel: canonical
@@ -399,9 +391,10 @@ datasets:
         extents:
             spatial:
                 bbox: [-142, 52, -52, 84]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
             temporal:
                 begin: 1969-01-01
-                end: now  # or empty
+                end: null # or empty
         provider:
             name: Elasticsearch
             data: http://localhost:9200/climate_station_information/FeatureCollection
@@ -411,8 +404,6 @@ datasets:
         title: Monthly Climate Observation Summaries
         description: A cross-country summary of the averages and extremes for the month, including precipitation totals, max-min temperatures, and degree days. This data is available from stations that produce daily data.
         keywords: [Climate, Climate archives, Climate change]
-        crs:
-            - CRS84
         links:
             - type: text/html
               rel: canonical
@@ -422,9 +413,10 @@ datasets:
         extents:
             spatial:
                 bbox: [-142, 52, -52, 84]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
             temporal:
                 begin: 1969-01-01
-                end: now  # or empty
+                end: null # or empty
         provider:
             name: Elasticsearch
             data: http://localhost:9200/climate_public_climate_summary/FeatureCollection
@@ -469,8 +461,6 @@ datasets:
         title: Daily Climate Observations
         description: "Daily climate observations are derived from two sources of data. The first are Daily Climate Stations producing one or two observations per day of temperature, precipitation. The second are hourly stations that typically produce more weather elements e.g. wind or snow on ground. Only a subset of the total stations is shown due to size limitations. The criteria for station selection are listed as below. The priorities for inclusion are as follows: (1) Station is currently operational, (2) Stations with long periods of record, (3) Stations that are co-located with the categories above and supplement the period of record"
         keywords: [Climate, Climate archives, Climate change]
-        crs:
-            - CRS84
         links:
             - type: text/html
               rel: canonical
@@ -480,9 +470,10 @@ datasets:
         extents:
             spatial:
                 bbox: [-142, 52, -52, 84]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
             temporal:
                 begin: 1969-01-01
-                end: now  # or empty
+                end: null # or empty
         provider:
             name: Elasticsearch
             data: http://localhost:9200/climate_public_daily_data/FeatureCollection
@@ -529,8 +520,6 @@ datasets:
         title: Adjusted and Homogenized Canadian Climate Data (AHCCD) Stations
         description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Stations
         keywords: [ahccd, stations]
-        crs:
-            - CRS84
         links:
             - type: text/html
               rel: canonical
@@ -540,6 +529,7 @@ datasets:
         extents:
             spatial:
                 bbox: [-142, 52, -52, 84]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
         provider:
             name: Elasticsearch
             data: http://localhost:9200/ahccd_stations/FeatureCollection
@@ -549,8 +539,6 @@ datasets:
         title: Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual
         description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual
         keywords: [ahccd, annual]
-        crs:
-            - CRS84
         links:
             - type: text/html
               rel: canonical
@@ -560,6 +548,7 @@ datasets:
         extents:
             spatial:
                 bbox: [-142, 52, -52, 84]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
             temporal:
                 begin: 1840-01-01
                 end: 2017-12-31
@@ -600,8 +589,6 @@ datasets:
         title: Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal
         description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal
         keywords: [ahccd, seasonal]
-        crs:
-            - CRS84
         links:
             - type: text/html
               rel: canonical
@@ -611,6 +598,7 @@ datasets:
         extents:
             spatial:
                 bbox: [-142, 52, -52, 84]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
             temporal:
                 begin: 1840-01-01
                 end: 2017-12-31
@@ -651,8 +639,6 @@ datasets:
         title: Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
         description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
         keywords: [ahccd, monthly]
-        crs:
-            - CRS84
         links:
             - type: text/html
               rel: canonical
@@ -662,6 +648,7 @@ datasets:
         extents:
             spatial:
                 bbox: [-142, 52, -52, 84]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
             temporal:
                 begin: 1840-01-01
                 end: 2017-12-31
@@ -702,8 +689,6 @@ datasets:
         title: Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends
         description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends
         keywords: [ahccd, trends]
-        crs:
-            - CRS84
         links:
             - type: text/html
               rel: canonical
@@ -713,6 +698,7 @@ datasets:
         extents:
             spatial:
                 bbox: [-142, 52, -52, 84]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
             temporal:
                 begin: 1840-01-01
                 end: 2017-12-31

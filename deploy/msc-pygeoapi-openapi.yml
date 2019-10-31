@@ -14,6 +14,16 @@ components:
         minItems: 4
         type: array
       style: form
+    datetime:
+      description: The time parameter indicates an RFC3339 formatted datetime (single,
+        interval, open).
+      explode: false
+      in: query
+      name: datetime
+      required: false
+      schema:
+        type: string
+      style: form
     f:
       description: The optional f parameter indicates the output format which the
         server shall provide as part of the response document.  The default format
@@ -48,7 +58,7 @@ components:
       required: false
       schema:
         default: 500
-        maximum: 500
+        maximum: 10000
         minimum: 1
         type: integer
       style: form
@@ -77,16 +87,6 @@ components:
         default: 0
         minimum: 0
         type: integer
-      style: form
-    time:
-      description: The time parameter indicates an RFC3339 formatted datetime (single,
-        interval, open).
-      explode: false
-      in: query
-      name: time
-      required: false
-      schema:
-        type: string
       style: form
 info:
   contact:
@@ -371,7 +371,7 @@ paths:
       summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual features
       tags:
       - ahccd-annual
-  /collections/ahccd-annual/items/{id}:
+  /collections/ahccd-annual/items/{featureId}:
     get:
       description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual
       parameters:
@@ -623,7 +623,7 @@ paths:
         features
       tags:
       - ahccd-monthly
-  /collections/ahccd-monthly/items/{id}:
+  /collections/ahccd-monthly/items/{featureId}:
     get:
       description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
       parameters:
@@ -867,7 +867,7 @@ paths:
         features
       tags:
       - ahccd-seasonal
-  /collections/ahccd-seasonal/items/{id}:
+  /collections/ahccd-seasonal/items/{featureId}:
     get:
       description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal
       parameters:
@@ -1006,7 +1006,7 @@ paths:
         features
       tags:
       - ahccd-stations
-  /collections/ahccd-stations/items/{id}:
+  /collections/ahccd-stations/items/{featureId}:
     get:
       description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Stations
       parameters:
@@ -1144,7 +1144,7 @@ paths:
       summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends features
       tags:
       - ahccd-trends
-  /collections/ahccd-trends/items/{id}:
+  /collections/ahccd-trends/items/{featureId}:
     get:
       description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends
       parameters:
@@ -1474,7 +1474,7 @@ paths:
       summary: Get Daily Climate Observations features
       tags:
       - climate-daily
-  /collections/climate-daily/items/{id}:
+  /collections/climate-daily/items/{featureId}:
     get:
       description: 'Daily climate observations are derived from two sources of data.
         The first are Daily Climate Stations producing one or two observations per
@@ -1779,7 +1779,7 @@ paths:
       summary: Get Monthly Climate Observation Summaries features
       tags:
       - climate-monthly
-  /collections/climate-monthly/items/{id}:
+  /collections/climate-monthly/items/{featureId}:
     get:
       description: A cross-country summary of the averages and extremes for the month,
         including precipitation totals, max-min temperatures, and degree days. This
@@ -2021,7 +2021,7 @@ paths:
       summary: Get 1981-2010 Climate Normals features
       tags:
       - climate-normals
-  /collections/climate-normals/items/{id}:
+  /collections/climate-normals/items/{featureId}:
     get:
       description: 1981-2010 Climate Normals
       parameters:
@@ -2263,7 +2263,7 @@ paths:
       summary: Get Climate Stations features
       tags:
       - climate-stations
-  /collections/climate-stations/items/{id}:
+  /collections/climate-stations/items/{featureId}:
     get:
       description: Climate Stations
       parameters:
@@ -2421,7 +2421,7 @@ paths:
       summary: Get Annual Maximum and Minimum Instantaneous Water Level or Flow features
       tags:
       - hydrometric-annual-peaks
-  /collections/hydrometric-annual-peaks/items/{id}:
+  /collections/hydrometric-annual-peaks/items/{featureId}:
     get:
       description: The annual maximum and minimum instantaneous data are the maximum
         and minimum instantaneous values for a given year.
@@ -2576,7 +2576,7 @@ paths:
       summary: Get Annual Maximum and Minimum Daily Water Level or Flow features
       tags:
       - hydrometric-annual-statistics
-  /collections/hydrometric-annual-statistics/items/{id}:
+  /collections/hydrometric-annual-statistics/items/{featureId}:
     get:
       description: The annual maximum and minimum daily data are the maximum and minimum
         daily mean values for a given year.
@@ -2634,6 +2634,13 @@ paths:
         style: form
       - explode: false
         in: query
+        name: DISCHARGE_SYMBOL_EN
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
         name: LEVEL_SYMBOL_EN
         required: false
         schema:
@@ -2641,15 +2648,14 @@ paths:
         style: form
       - explode: false
         in: query
-        name: FLOW
+        name: DISCHARGE_SYMBOL_FR
         required: false
         schema:
-          format: float
-          type: number
+          type: string
         style: form
       - explode: false
         in: query
-        name: FLOW_SYMBOL_EN
+        name: LEVEL_SYMBOL_FR
         required: false
         schema:
           type: string
@@ -2664,17 +2670,11 @@ paths:
         style: form
       - explode: false
         in: query
-        name: LEVEL_SYMBOL_FR
+        name: DISCHARGE
         required: false
         schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: FLOW_SYMBOL_FR
-        required: false
-        schema:
-          type: string
+          format: float
+          type: number
         style: form
       - explode: false
         in: query
@@ -2707,7 +2707,7 @@ paths:
       summary: Get Daily Mean of Water Level or Flow features
       tags:
       - hydrometric-daily-mean
-  /collections/hydrometric-daily-mean/items/{id}:
+  /collections/hydrometric-daily-mean/items/{featureId}:
     get:
       description: The daily mean is the average of all unit values for a given day.
       parameters:
@@ -2765,6 +2765,14 @@ paths:
         style: form
       - explode: false
         in: query
+        name: MONTHLY_MEAN_DISCHARGE
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
         name: DATE
         required: false
         schema:
@@ -2787,14 +2795,6 @@ paths:
         style: form
       - explode: false
         in: query
-        name: MONTHLY_MEAN_FLOW
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
         name: PROV_TERR_STATE_LOC
         required: false
         schema:
@@ -2810,7 +2810,7 @@ paths:
       summary: Get Monthly Mean of Water Level or Flow features
       tags:
       - hydrometric-monthly-mean
-  /collections/hydrometric-monthly-mean/items/{id}:
+  /collections/hydrometric-monthly-mean/items/{featureId}:
     get:
       description: The monthly mean is the average of daily mean values for a given
         month.
@@ -2925,7 +2925,7 @@ paths:
       summary: Get Hydrometric Monitoring Stations features
       tags:
       - hydrometric-stations
-  /collections/hydrometric-stations/items/{id}:
+  /collections/hydrometric-stations/items/{featureId}:
     get:
       description: A station is a site on a river or lake where water quantity (water
         level and flow) are collected and recorded.
