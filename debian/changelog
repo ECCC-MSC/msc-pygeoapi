@@ -1,3 +1,12 @@
+msc-pygeoapi (0.5.6) trusty; urgency=medium
+
+  * update hydrometric property names (s/FLOW/DISCHARGE)
+  * remove climate STN_ID
+  * update raster drill links
+  * update cccs links
+
+ -- Tom Kralidis <tom.kralidis@canada.ca>  Thu, 31 Oct 2019 17:41:49 +0000
+
 msc-pygeoapi (0.5.5) trusty; urgency=medium
 
   * fix x/y output on WPS raster drilling
