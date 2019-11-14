@@ -129,19 +129,19 @@ def create_index(path, index, AUTH):
                                             "raw": {"type": "keyword"}
                                         }
                                     },
-                                    "FLOW_SYMBOL_EN": {
+                                    "DISCHARGE_SYMBOL_EN": {
                                         "type": "text",
                                         "fields": {
                                             "raw": {"type": "keyword"}
                                         }
                                     },
-                                    "FLOW_SYMBOL_FR": {
+                                    "DISCHARGE_SYMBOL_FR": {
                                         "type": "text",
                                         "fields": {
                                             "raw": {"type": "keyword"}
                                         }
                                     },
-                                    "FLOW": {
+                                    "DISCHARGE": {
                                         "type": "float"
                                     },
                                     "LEVEL": {
@@ -219,7 +219,7 @@ def create_index(path, index, AUTH):
                                         "type": "date",
                                         "format": "yyyy-MM"
                                     },
-                                    "MONTHLY_MEAN_FLOW": {
+                                    "MONTHLY_MEAN_DISCHARGE": {
                                         "type": "float"
                                     },
                                     "MONTHLY_MEAN_LEVEL": {
@@ -616,20 +616,21 @@ def get_table_var(metadata, table_name):
             return t
 
 
-def generate_obs(session, station, var, symbol_table, flow=True):
+def generate_obs(session, station, var, symbol_table, discharge=True):
     """
-    Generates a list of flow or level obs for station.
+    Generates a list of discharge or level obs for station.
     Each observation in the list is of the form:
-    {'Station_number' : 'foo', 'Date' : yyyy-MM-dd, 'Flow'/'Level' : 'X'}.
+    {'Station_number' : 'foo', 'Date' : yyyy-MM-dd, 'Discharge'/'Level' : 'X'}.
 
     :param session: SQLAlchemy session object.
     :param station: the station to generate_obs for.
-    :param var: table object to query flow or level data from.
+    :param var: table object to query discharge or level data from.
     :param symbol_table: table object to query symbol data from.
-    :param flow: boolean to determine whether flow or level data is returned.
+    :param discharge: boolean to determine whether discharge or level
+                      data is returned.
 
     :returns: tuple of lists of dictionaries containing daily obs
-              and monthly means for the station passed in in station.
+              and monthly means for the station passed in as <station>.
     """
     keys = var.columns.keys()
     symbol_keys = symbol_table.columns.keys()
@@ -638,12 +639,12 @@ def generate_obs(session, station, var, symbol_table, flow=True):
     obs = session.query(var).filter_by(**args).all()
     lst = []
     mean_lst = []
-    if flow:
-        word = 'FLOW'
+    if discharge:
+        word = 'DISCHARGE'
     else:
         word = 'LEVEL'
     for row in obs:
-        if flow:
+        if discharge:
             no_days = row[4]
         else:
             no_days = row[5]
@@ -690,14 +691,14 @@ def generate_obs(session, station, var, symbol_table, flow=True):
     return (lst, mean_lst)
 
 
-def unpivot(session, flow_var, level_var, path, station_table,
+def unpivot(session, discharge_var, level_var, path, station_table,
             symbol_table, AUTH):
     """
     Unpivots db observations one station at a time, and reformats
     observations so they can be bulk inserted to Elasticsearch.
 
     :param session: SQLAlchemy session object.
-    :param flow_var: table object to query flow data from.
+    :param discharge_var: table object to query discharge data from.
     :param level_var: table object to query level data from.
     :param path: path to Elasticsearch.
     :param station_table: table object to query station data from.
@@ -705,13 +706,13 @@ def unpivot(session, flow_var, level_var, path, station_table,
     :param AUTH: tuple of username and password used to authorize the
                  HTTP request.
     """
-    flow_station_codes = [x[0] for x in session.query(distinct(flow_var.c['STATION_NUMBER'])).all()] # noqa
+    discharge_station_codes = [x[0] for x in session.query(distinct(discharge_var.c['STATION_NUMBER'])).all()] # noqa
     level_station_codes = [x[0] for x in session.query(distinct(level_var.c['STATION_NUMBER'])).all()] # noqa
-    station_codes = list(set(flow_station_codes).union(level_station_codes))
+    station_codes = list(set(discharge_station_codes).union(level_station_codes))
     for station in station_codes:
-        LOGGER.debug('Generating flow and level values for station {}'.format(station)) # noqa
-        flow_lst, flow_means = generate_obs(session, station, flow_var,
-                                            symbol_table)
+        LOGGER.debug('Generating discharge and level values for station {}'.format(station)) # noqa
+        discharge_lst, discharge_means = \
+            generate_obs(session, station, discharge_var, symbol_table, True)
         level_lst, level_means = generate_obs(session, station, level_var,
                                               symbol_table, False)
         station_keys = station_table.columns.keys()
@@ -724,11 +725,11 @@ def unpivot(session, flow_var, level_var, path, station_table,
                           float(station_metadata[station_keys.index('LATITUDE')])] # noqa
         # combine dictionaries with dates in common
         d = defaultdict(dict)
-        for l in (flow_lst, level_lst):
+        for l in (discharge_lst, level_lst):
             for elem in l:
                 d[elem['DATE']].update(elem)
         comb_list = d.values()
-        # add missing flow/level key to any dicts that were
+        # add missing discharge/level key to any dicts that were
         # not combined (i.e. full outer join)
         wrapper_lst = []
         for item in comb_list:
@@ -736,10 +737,10 @@ def unpivot(session, flow_var, level_var, path, station_table,
                 item['LEVEL'] = None
                 item['LEVEL_SYMBOL_EN'] = None
                 item['LEVEL_SYMBOL_FR'] = None
-            if 'FLOW' not in item:
-                item['FLOW'] = None
-                item['FLOW_SYMBOL_EN'] = None
-                item['FLOW_SYMBOL_FR'] = None
+            if 'DISCHARGE' not in item:
+                item['DISCHARGE'] = None
+                item['DISCHARGE_SYMBOL_EN'] = None
+                item['DISCHARGE_SYMBOL_FR'] = None
             wrapper = {'type': 'Feature', 'properties': item,
                        'geometry': {'type': 'Point'}}
             wrapper['properties']['STATION_NAME'] = station_name
@@ -757,18 +758,18 @@ def unpivot(session, flow_var, level_var, path, station_table,
 
         # Insert all monthly means for this station
         d = defaultdict(dict)
-        for l in (flow_means, level_means):
+        for l in (discharge_means, level_means):
             for elem in l:
                 d[elem['DATE']].update(elem)
         comb_list = d.values()
-        # add missing mean flow/level key to any dicts that were
+        # add missing mean discharge/level key to any dicts that were
         # not combined (i.e. full outer join)
         wrapper_lst = []
         for item in comb_list:
             if 'MONTHLY_MEAN_LEVEL' not in item:
                 item['MONTHLY_MEAN_LEVEL'] = None
-            if 'MONTHLY_MEAN_FLOW' not in item:
-                item['MONTHLY_MEAN_FLOW'] = None
+            if 'MONTHLY_MEAN_DISCHARGE' not in item:
+                item['MONTHLY_MEAN_DISCHARGE'] = None
             wrapper = {'type': 'Feature', 'properties': item,
                        'geometry': {'type': 'Point'}}
             wrapper['properties']['STATION_NAME'] = station_name
@@ -865,24 +866,24 @@ def load_stations(session, metadata, path, station_table, AUTH):
                 }, {
                     'type': 'application/json',
                     'rel': 'related',
-                    'title': 'Daily Mean of Water Level or Flow for {} ({})'.format(  # noqa
+                    'title': 'Daily Mean of Water Level or Discharge for {} ({})'.format(  # noqa
                         station_name, station),
                     'href': '{}/collections/hydrometric-daily-mean/items?STATION_NUMBER={}'.format(url, station)  # noqa
                 }, {
                     'type': 'application/json',
                     'rel': 'related',
-                    'title': 'Monthly Mean of Water Level or Flow for {} ({})'.format(  # noqa
+                    'title': 'Monthly Mean of Water Level or Discharge for {} ({})'.format(  # noqa
                         station_name, station),
                     'href': '{}/collections/hydrometric-monthly-mean/items?STATION_NUMBER={}'.format(url, station)  # noqa
                 }, {
                     'type': 'application/json',
                     'rel': 'related',
-                    'title': 'Annual Maximum and Minimum Instantaneous Water Level or Flow for {} ({})'.format(station_name, station),  # noqa
+                    'title': 'Annual Maximum and Minimum Instantaneous Water Level or Discharge for {} ({})'.format(station_name, station),  # noqa
                     'href': '{}/collections/hydrometric-annual-peaks/items?STATION_NUMBER={}'.format(url, station)  # noqa
                 }, {
                     'type': 'application/json',
                     'rel': 'related',
-                    'title': 'Annual Maximum and Minimum Daily Water Level or Flow for {} ({})'.format(station_name, station),  # noqa
+                    'title': 'Annual Maximum and Minimum Daily Water Level or Discharge for {} ({})'.format(station_name, station),  # noqa
                     'href': '{}/collections/hydrometric-annual-statistics/items?STATION_NUMBER={}'.format(url, station)  # noqa
                 }, {
                     'type': 'text/html',
@@ -989,8 +990,8 @@ def load_annual_stats(session, path, annual_stats_table, data_types_table,
             LOGGER.warning('Could not find max symbol for station {}'.format(station_number)) # noqa
         if data_type_en == 'Water Level':
             es_id = '{}.{}.level-niveaux'.format(station_number, year)
-        elif data_type_en == 'Flow':
-            es_id = '{}.{}.flow-debit'.format(station_number, year)
+        elif data_type_en == 'Discharge':
+            es_id = '{}.{}.discharge-debit'.format(station_number, year)
         elif data_type_en == 'Sediment in mg/L':
             es_id = '{}.{}.sediment-sediment'.format(station_number, year)
         elif data_type_en == 'Daily Mean Tonnes':
@@ -1126,8 +1127,9 @@ def load_annual_peaks(session, metadata, path, annual_peaks_table,
 
         if data_type_en == 'Water Level':
             es_id = '{}.{}.level-niveaux.{}'.format(station_number, year, peak)
-        elif data_type_en == 'Flow':
-            es_id = '{}.{}.flow-debit.{}'.format(station_number, year, peak)
+        elif data_type_en == 'Discharge':
+            es_id = '{}.{}.discharge-debit.{}'.format(station_number, year,
+                                                      peak)
         elif data_type_en == 'Sediment in mg/L':
             es_id = '{}.{}.sediment-sediment.{}'.format(station_number,
                                                         year, peak)
@@ -1192,9 +1194,9 @@ def hydat(ctx, db, es, username, password, dataset):
         return None
     try:
         LOGGER.info('Accessing SQLite tables...')
-        flow_var = level_var = station_table = None
+        discharge_var = level_var = station_table = None
         level_var = get_table_var(metadata, 'DLY_LEVELS')
-        flow_var = get_table_var(metadata, 'DLY_FLOWS')
+        discharge_var = get_table_var(metadata, 'DLY_FLOWS')
         station_table = get_table_var(metadata, 'STATIONS')
         data_types_table = get_table_var(metadata, 'DATA_TYPES')
         annual_stats_table = get_table_var(metadata, 'ANNUAL_STATISTICS')
@@ -1216,7 +1218,7 @@ def hydat(ctx, db, es, username, password, dataset):
         try:
             LOGGER.info('Populating observations indexes...')
             create_index(es, 'observations', AUTH)
-            unpivot(session, flow_var, level_var, es, station_table, symbol_table, AUTH) # noqa
+            unpivot(session, discharge_var, level_var, es, station_table, symbol_table, AUTH) # noqa
             LOGGER.info('Observations populated.')
         except Exception as err:
             LOGGER.error('Could not populate observations due to: {}.'.format(str(err))) # noqa
@@ -1249,7 +1251,7 @@ def hydat(ctx, db, es, username, password, dataset):
         try:
             LOGGER.info('Populating observations indexes...')
             create_index(es, 'observations', AUTH)
-            unpivot(session, flow_var, level_var, es, station_table, symbol_table, AUTH) # noqa
+            unpivot(session, discharge_var, level_var, es, station_table, symbol_table, AUTH) # noqa
             LOGGER.info('Observations populated.')
         except Exception as err:
             LOGGER.error('Could not populate observations due to: {}.'.format(str(err))) # noqa
