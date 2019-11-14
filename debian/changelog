@@ -1,3 +1,9 @@
+msc-pygeoapi (0.5.7) trusty; urgency=medium
+
+  * add back dataset crs for pygeoapi 0.6.0 compat
+
+ -- Tom Kralidis <tom.kralidis@canada.ca>  Thu, 14 Nov 2019 16:02:50 +0000
+
 msc-pygeoapi (0.5.6) trusty; urgency=medium
 
   * update hydrometric property names (s/FLOW/DISCHARGE)
