@@ -640,9 +640,11 @@ def generate_obs(session, station, var, symbol_table, discharge=True):
     lst = []
     mean_lst = []
     if discharge:
-        word = 'DISCHARGE'
+        word_in = 'FLOW'
+        word_out = 'DISCHARGE'
     else:
-        word = 'LEVEL'
+        word_in = 'LEVEL'
+        word_out = 'LEVEL'
     for row in obs:
         if discharge:
             no_days = row[4]
@@ -650,29 +652,29 @@ def generate_obs(session, station, var, symbol_table, discharge=True):
             no_days = row[5]
         # get a month's worth of obs for station
         for i in range(1, no_days + 1):
-            insert_dict = {'STATION_NUMBER': row[0], 'DATE': '', word: '',
+            insert_dict = {'STATION_NUMBER': row[0], 'DATE': '', word_out: '',
                            'IDENTIFIER': ''}
             date = '{}-{}-{}'.format(str(row[1]),
                                      zero_pad(row[2]),
                                      zero_pad(i))
             insert_dict['DATE'] = date
             insert_dict['IDENTIFIER'] = '{}.{}'.format(row[0], date)
-            value = row[keys.index(word.upper() + str(i))]
-            symbol = row[keys.index(word.upper() + '_SYMBOL' + str(i))]
+            value = row[keys.index(word_in.upper() + str(i))]
+            symbol = row[keys.index(word_in.upper() + '_SYMBOL' + str(i))]
             if symbol is not None and symbol.strip():
                 args = {'SYMBOL_ID': symbol}
                 symbol_data = list(session.query(symbol_table).filter_by(**args).all()[0]) # noqa
                 symbol_en = symbol_data[symbol_keys.index('SYMBOL_EN')]
                 symbol_fr = symbol_data[symbol_keys.index('SYMBOL_FR')]
-                insert_dict[word + '_SYMBOL_EN'] = symbol_en
-                insert_dict[word + '_SYMBOL_FR'] = symbol_fr
+                insert_dict[word_out + '_SYMBOL_EN'] = symbol_en
+                insert_dict[word_out + '_SYMBOL_FR'] = symbol_fr
             else:
-                insert_dict[word + '_SYMBOL_EN'] = None
-                insert_dict[word + '_SYMBOL_FR'] = None
+                insert_dict[word_out + '_SYMBOL_EN'] = None
+                insert_dict[word_out + '_SYMBOL_FR'] = None
             if value is None:
-                insert_dict[word] = None
+                insert_dict[word_out] = None
             else:
-                insert_dict[word] = float(value)
+                insert_dict[word_out] = float(value)
             lst.append(insert_dict)
             LOGGER.debug('Generated a daily mean value for date {} and station {}'.format(insert_dict['DATE'], insert_dict['STATION_NUMBER'])) # noqa
 
@@ -683,9 +685,9 @@ def generate_obs(session, station, var, symbol_table, discharge=True):
             mean_dict['IDENTIFIER'] = '{}.{}'.format(row[0], date)
 
             if row[keys.index('MONTHLY_MEAN')]:
-                mean_dict['MONTHLY_MEAN_' + word] = float(row[keys.index('MONTHLY_MEAN')]) # noqa
+                mean_dict['MONTHLY_MEAN_' + word_out] = float(row[keys.index('MONTHLY_MEAN')]) # noqa
             else:
-                mean_dict['MONTHLY_MEAN_' + word] = None
+                mean_dict['MONTHLY_MEAN_' + word_out] = None
             mean_lst.append(mean_dict)
             LOGGER.debug('Generated a monthly mean value for date {} and station {}'.format(mean_dict['DATE'], insert_dict['STATION_NUMBER'])) # noqa
     return (lst, mean_lst)
@@ -959,6 +961,8 @@ def load_annual_stats(session, path, annual_stats_table, data_types_table,
                           float(station_metadata[station_keys.index('LATITUDE')])] # noqa
         data_type_en = data_type_metadata[data_types_keys.index('DATA_TYPE_EN')] # noqa
         data_type_fr = data_type_metadata[data_types_keys.index('DATA_TYPE_FR')] # noqa
+        if data_type_en == 'Flow':
+            data_type_en = 'Discharge'
         if min_month is None or min_day is None:
             min_date = None
             LOGGER.warning('Could not find min date for station {}'.format(station_number)) # noqa
@@ -1089,6 +1093,8 @@ def load_annual_peaks(session, metadata, path, annual_peaks_table,
         data_type_metadata = list(session.query(data_types_table).filter_by(**args).all()[0]) # noqa
         data_type_en = data_type_metadata[data_types_keys.index('DATA_TYPE_EN')] # noqa
         data_type_fr = data_type_metadata[data_types_keys.index('DATA_TYPE_FR')] # noqa
+        if data_type_en == 'Flow':
+            data_type_en = 'Discharge'
         if unit_id:
             unit_codes = get_table_var(metadata, 'PRECISION_CODES')
             unit_keys = unit_codes.columns.keys()
