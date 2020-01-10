@@ -9,6 +9,6 @@ Vcs-Git: https://gccode.ssc-spc.gc.ca/ec-msc/msc-pygeoapi.git
 
 Package: msc-pygeoapi
 Architecture: all
-Depends: elasticsearch (>=6,<7), python3-pygeoapi, python3-unicodecsv
+Depends: elasticsearch (>6), elasticsearch (<7), python3-elasticsearch (>6), python3-elasticsearch (<7), python3-gdal, python3-pygeoapi, python3-pyproj, python3-unicodecsv
 Homepage: https://gccode.ssc-spc.gc.ca/ec-msc/msc-pygeoapi
 Description: MSC GeoMet pygeoapi server configuration and utilities
