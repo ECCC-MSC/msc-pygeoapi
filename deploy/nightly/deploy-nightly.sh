@@ -1,0 +1,58 @@
+#!/bin/bash
+# =================================================================
+#
+# Copyright (c) 2020 Government of Canada
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# =================================================================
+
+BASEDIR=/data/web/msc-pygeoapi-nightly
+PYGEOAPI_GITREPO=https://github.com/geopython/pygeoapi.git
+MSC_PYGEOAPI_GITREPO=https://gccode.ssc-spc.gc.ca/ec-msc/msc-pygeoapi.git
+DAYSTOKEEP=7
+
+# you should be okay from here
+
+DATETIME=`date +%Y%m%d`
+TIMESTAMP=`date +%Y%m%d.%H%M`
+NIGHTLYDIR=msc-pygeoapi-$TIMESTAMP
+
+echo "Deleting nightly builds > $DAYSTOKEEP days old"
+
+cd $BASEDIR
+
+for f in `find . -type d -name "msc-pygeoapi-20*"`
+do
+    DATETIME2=`echo $f | awk -F- '{print $3}' | awk -F. '{print $1}'`
+    let DIFF=(`date +%s -d $DATETIME`-`date +%s -d $DATETIME2`)/86400
+    if [ $DIFF -gt $DAYSTOKEEP ]; then
+        rm -fr $f
+    fi
+done
+
+rm -fr latest
+echo "Generating nightly build for $TIMESTAMP"
+python3 -m venv $NIGHTLYDIR && cd $NIGHTLYDIR
+source bin/activate
+git clone $MSC_PYGEOAPI_GITREPO
+git clone $PYGEOAPI_GITREPO
+cd pygeoapi
+pip3 install -r requirements.txt
+pip3 install elasticsearch
+python3 setup.py install
+
+cd ../..
+
+ln -s $NIGHTLYDIR latest
