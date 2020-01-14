@@ -1,3 +1,11 @@
+msc-pygeoapi (0.6.0) trusty; urgency=medium
+
+  * change FLOW to DISCHARGE for hydrometric data
+  * update to Python 3
+  * update to Elasticsearch 7 in deps only
+
+ -- Tom Kralidis <tom.kralidis@canada.ca>  Tue, 14 Jan 2020 19:29:37 +0000
+
 msc-pygeoapi (0.5.7) trusty; urgency=medium
 
   * add back dataset crs for pygeoapi 0.6.0 compat

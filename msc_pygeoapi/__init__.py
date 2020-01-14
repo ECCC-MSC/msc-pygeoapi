@@ -2,7 +2,7 @@
 #
 # Author: Tom Kralidis <tom.kralidis@canada.ca>
 #
-# Copyright (c) 2019 Tom Kralidis
+# Copyright (c) 2020 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -32,7 +32,7 @@ import click
 from msc_pygeoapi.loader import load
 from msc_pygeoapi.process import process
 
-__version__ = '0.5.7'
+__version__ = '0.6.0'
 
 
 @click.group()
