@@ -54,159 +54,157 @@ def create_index(path, index, AUTH):
                     "number_of_replicas": 0
                 },
                 "mappings": {
-                    "FeatureCollection": {
-                        "_meta": {
-                            "geomfields": {
-                                "geometry": "POINT"
+                     "_meta": {
+                        "geomfields": {
+                            "geometry": "POINT"
+                        }
+                    },
+                    "properties": {
+                        "type": {"type": "text"},
+                        "properties": {
+                            "properties": {
+                                "PROV_STATE_TERR_CODE": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "STN_ID": {
+                                    "type": "integer"
+                                },
+                                "STATION_NAME": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "ENG_PROV_NAME": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "FRE_PROV_NAME": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "COUNTRY": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "LATITUDE": {
+                                    "type": "integer"
+                                },
+                                "LONGITUDE": {
+                                    "type": "integer"
+                                },
+                                "TIMEZONE": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "ELEVATION": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "CLIMATE_IDENTIFIER": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "TC_IDENTIFIER": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "WMO_IDENTIFIER": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "STATION_TYPE": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "NORMAL_CODE": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "PUBLICATION_CODE": {
+                                    "type": "integer"
+                                },
+                                "DISPLAY_CODE": {
+                                    "type": "integer"
+                                },
+                                "ENG_STN_OPERATOR_ACRONYM": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "FRE_STN_OPERATOR_ACRONYM": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "ENG_STN_OPERATOR_NAME": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "FRE_STN_OPERATOR_NAME": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "HAS_MONTHLY_SUMMARY": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "HAS_NORMALS_DATA": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "DLY_FIRST_DATE": {
+                                    "type": "date",
+                                    "format": "yyyy-MM-dd HH:mm:ss"
+                                },
+                                "DLY_LAST_DATE": {
+                                    "type": "date",
+                                    "format": "yyyy-MM-dd HH:mm:ss"
+                                },
+                                "FIRST_DATE": {
+                                    "type": "date",
+                                    "format": "yyyy-MM-dd HH:mm:ss"
+                                },
+                                "LAST_DATE": {
+                                    "type": "date",
+                                    "format": "yyyy-MM-dd HH:mm:ss"
+                                }
                             }
                         },
-                        "properties": {
-                            "type": {"type": "text"},
-                            "properties": {
-                                "properties": {
-                                    "PROV_STATE_TERR_CODE": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "STN_ID": {
-                                        "type": "integer"
-                                    },
-                                    "STATION_NAME": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "ENG_PROV_NAME": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "FRE_PROV_NAME": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "COUNTRY": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "LATITUDE": {
-                                        "type": "integer"
-                                    },
-                                    "LONGITUDE": {
-                                        "type": "integer"
-                                    },
-                                    "TIMEZONE": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "ELEVATION": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "CLIMATE_IDENTIFIER": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "TC_IDENTIFIER": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "WMO_IDENTIFIER": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "STATION_TYPE": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "NORMAL_CODE": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "PUBLICATION_CODE": {
-                                        "type": "integer"
-                                    },
-                                    "DISPLAY_CODE": {
-                                        "type": "integer"
-                                    },
-                                    "ENG_STN_OPERATOR_ACRONYM": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "FRE_STN_OPERATOR_ACRONYM": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "ENG_STN_OPERATOR_NAME": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "FRE_STN_OPERATOR_NAME": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "HAS_MONTHLY_SUMMARY": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "HAS_NORMALS_DATA": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "DLY_FIRST_DATE": {
-                                        "type": "date",
-                                        "format": "yyyy-MM-dd HH:mm:ss"
-                                    },
-                                    "DLY_LAST_DATE": {
-                                        "type": "date",
-                                        "format": "yyyy-MM-dd HH:mm:ss"
-                                    },
-                                    "FIRST_DATE": {
-                                        "type": "date",
-                                        "format": "yyyy-MM-dd HH:mm:ss"
-                                    },
-                                    "LAST_DATE": {
-                                        "type": "date",
-                                        "format": "yyyy-MM-dd HH:mm:ss"
-                                    }
-                                }
-                            },
-                            "geometry": {"type": "geo_shape"}
-                        }
+                        "geometry": {"type": "geo_shape"}
                     }
                 }
             }
@@ -234,142 +232,140 @@ def create_index(path, index, AUTH):
                     "number_of_replicas": 0
                 },
                 "mappings": {
-                    "FeatureCollection": {
-                        "_meta": {
-                            "geomfields": {
-                                "geometry": "POINT"
+                    "_meta": {
+                        "geomfields": {
+                            "geometry": "POINT"
+                        }
+                    },
+                    "properties": {
+                        "type": {"type": "text"},
+                        "properties": {
+                            "properties": {
+                                "STN_ID": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "MONTH": {
+                                    "type": "integer"
+                                },
+                                "VALUE": {
+                                    "type": "integer"
+                                },
+                                "OCCURRENCE_COUNT": {
+                                    "type": "integer"
+                                },
+                                "PUBLICATION_CODE": {
+                                    "type": "integer"
+                                },
+                                "CLIMATE_IDENTIFIER": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "NORMAL_CODE": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "NORMAL_ID": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "ID": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "PROVINCE_CODE": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "E_NORMAL_ELEMENT_NAME": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "F_NORMAL_ELEMENT_NAME": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "PERIOD": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "PERIOD_BEGIN": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "PERIOD_END": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "STATION_NAME": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "YEAR_COUNT_NORMAL_PERIOD": {
+                                    "type": "integer"
+                                },
+                                "MAX_DURATION_MISSING_YEARS": {
+                                    "type": "integer"
+                                },
+                                "FIRST_YEAR_NORMAL_PERIOD": {
+                                    "type": "integer"
+                                },
+                                "LAST_YEAR_NORMAL_PERIOD": {
+                                    "type": "integer"
+                                },
+                                "FIRST_YEAR": {
+                                    "type": "integer"
+                                },
+                                "LAST_YEAR": {
+                                    "type": "integer"
+                                },
+                                "TOTAL_OBS_COUNT": {
+                                    "type": "integer"
+                                },
+                                "PERCENT_OF_POSSIBLE_OBS": {
+                                    "type": "integer"
+                                },
+                                "CURRENT_FLAG": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "FIRST_OCCURRENCE_DATE": {
+                                    "type": "date",
+                                    "format": "yyyy-MM-dd HH:mm:ss"
+                                },
+                                "DATE_CALCULATED": {
+                                    "type": "date",
+                                    "format": "yyyy-MM-dd HH:mm:ss"
+                                }
                             }
                         },
-                        "properties": {
-                            "type": {"type": "text"},
-                            "properties": {
-                                "properties": {
-                                    "STN_ID": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "MONTH": {
-                                        "type": "integer"
-                                    },
-                                    "VALUE": {
-                                        "type": "integer"
-                                    },
-                                    "OCCURRENCE_COUNT": {
-                                        "type": "integer"
-                                    },
-                                    "PUBLICATION_CODE": {
-                                        "type": "integer"
-                                    },
-                                    "CLIMATE_IDENTIFIER": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "NORMAL_CODE": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "NORMAL_ID": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "ID": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "PROVINCE_CODE": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "E_NORMAL_ELEMENT_NAME": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "F_NORMAL_ELEMENT_NAME": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "PERIOD": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "PERIOD_BEGIN": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "PERIOD_END": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "STATION_NAME": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "YEAR_COUNT_NORMAL_PERIOD": {
-                                        "type": "integer"
-                                    },
-                                    "MAX_DURATION_MISSING_YEARS": {
-                                        "type": "integer"
-                                    },
-                                    "FIRST_YEAR_NORMAL_PERIOD": {
-                                        "type": "integer"
-                                    },
-                                    "LAST_YEAR_NORMAL_PERIOD": {
-                                        "type": "integer"
-                                    },
-                                    "FIRST_YEAR": {
-                                        "type": "integer"
-                                    },
-                                    "LAST_YEAR": {
-                                        "type": "integer"
-                                    },
-                                    "TOTAL_OBS_COUNT": {
-                                        "type": "integer"
-                                    },
-                                    "PERCENT_OF_POSSIBLE_OBS": {
-                                        "type": "integer"
-                                    },
-                                    "CURRENT_FLAG": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "FIRST_OCCURRENCE_DATE": {
-                                        "type": "date",
-                                        "format": "yyyy-MM-dd HH:mm:ss"
-                                    },
-                                    "DATE_CALCULATED": {
-                                        "type": "date",
-                                        "format": "yyyy-MM-dd HH:mm:ss"
-                                    }
-                                }
-                            },
-                            "geometry": {"type": "geo_shape"}
-                        }
+                        "geometry": {"type": "geo_shape"}
                     }
                 }
             }
@@ -397,136 +393,134 @@ def create_index(path, index, AUTH):
                     "number_of_replicas": 0
                 },
                 "mappings": {
-                    "FeatureCollection": {
-                        "_meta": {
-                            "geomfields": {
-                                "geometry": "POINT"
+                    "_meta": {
+                        "geomfields": {
+                            "geometry": "POINT"
+                        }
+                    },
+                    "properties": {
+                        "type": {"type": "text"},
+                        "properties": {
+                            "properties": {
+                                "CLIMATE_IDENTIFIER": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "STN_ID": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "STATION_NAME": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "ID": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "PROVINCE_CODE": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "LATITUDE": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "LONGITUDE": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "MEAN_TEMPERATURE": {
+                                    "type": "float"
+                                },
+                                "NORMAL_MEAN_TEMPERATURE": {
+                                    "type": "float"
+                                },
+                                "MAX_TEMPERATURE": {
+                                    "type": "float"
+                                },
+                                "MIN_TEMPERATURE": {
+                                    "type": "float"
+                                },
+                                "TOTAL_SNOWFALL": {
+                                    "type": "float"
+                                },
+                                "NORMAL_SNOWFALL": {
+                                    "type": "float"
+                                },
+                                "TOTAL_PRECIPITATION": {
+                                    "type": "float"
+                                },
+                                "NORMAL_PRECIPITATION": {
+                                    "type": "float"
+                                },
+                                "BRIGHT_SUNSHINE": {
+                                    "type": "float"
+                                },
+                                "NORMAL_SUNSHINE": {
+                                    "type": "float"
+                                },
+                                "SNOW_ON_GROUND_LAST_DAY": {
+                                    "type": "float"
+                                },
+                                "DAYS_WITH_VALID_MIN_TEMP": {
+                                    "type": "integer"
+                                },
+                                "DAYS_WITH_VALID_MEAN_TEMP": {
+                                    "type": "integer"
+                                },
+                                "DAYS_WITH_VALID_MAX_TEMP": {
+                                    "type": "integer"
+                                },
+                                "DAYS_WITH_VALID_SNOWFALL": {
+                                    "type": "integer"
+                                },
+                                "DAYS_WITH_VALID_PRECIP": {
+                                    "type": "integer"
+                                },
+                                "DAYS_WITH_VALID_SUNSHINE": {
+                                    "type": "integer"
+                                },
+                                "DAYS_WITH_PRECIP_GE_1MM": {
+                                    "type": "integer"
+                                },
+                                "HEATING_DEGREE_DAYS": {
+                                    "type": "integer"
+                                },
+                                "COOLING_DEGREE_DAYS": {
+                                    "type": "integer"
+                                },
+                                "LOCAL_YEAR": {
+                                    "type": "integer"
+                                },
+                                "LOCAL_MONTH": {
+                                    "type": "integer"
+                                },
+                                "LAST_UPDATED": {
+                                    "type": "date",
+                                    "format": "yyyy-MM-dd HH:mm:ss"
+                                },
+                                "LOCAL_DATE": {
+                                    "type": "date",
+                                    "format": "yyyy-MM"
+                                }
                             }
                         },
-                        "properties": {
-                            "type": {"type": "text"},
-                            "properties": {
-                                "properties": {
-                                    "CLIMATE_IDENTIFIER": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "STN_ID": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "STATION_NAME": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "ID": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "PROVINCE_CODE": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "LATITUDE": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "LONGITUDE": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "MEAN_TEMPERATURE": {
-                                        "type": "float"
-                                    },
-                                    "NORMAL_MEAN_TEMPERATURE": {
-                                        "type": "float"
-                                    },
-                                    "MAX_TEMPERATURE": {
-                                        "type": "float"
-                                    },
-                                    "MIN_TEMPERATURE": {
-                                        "type": "float"
-                                    },
-                                    "TOTAL_SNOWFALL": {
-                                        "type": "float"
-                                    },
-                                    "NORMAL_SNOWFALL": {
-                                        "type": "float"
-                                    },
-                                    "TOTAL_PRECIPITATION": {
-                                        "type": "float"
-                                    },
-                                    "NORMAL_PRECIPITATION": {
-                                        "type": "float"
-                                    },
-                                    "BRIGHT_SUNSHINE": {
-                                        "type": "float"
-                                    },
-                                    "NORMAL_SUNSHINE": {
-                                        "type": "float"
-                                    },
-                                    "SNOW_ON_GROUND_LAST_DAY": {
-                                        "type": "float"
-                                    },
-                                    "DAYS_WITH_VALID_MIN_TEMP": {
-                                        "type": "integer"
-                                    },
-                                    "DAYS_WITH_VALID_MEAN_TEMP": {
-                                        "type": "integer"
-                                    },
-                                    "DAYS_WITH_VALID_MAX_TEMP": {
-                                        "type": "integer"
-                                    },
-                                    "DAYS_WITH_VALID_SNOWFALL": {
-                                        "type": "integer"
-                                    },
-                                    "DAYS_WITH_VALID_PRECIP": {
-                                        "type": "integer"
-                                    },
-                                    "DAYS_WITH_VALID_SUNSHINE": {
-                                        "type": "integer"
-                                    },
-                                    "DAYS_WITH_PRECIP_GE_1MM": {
-                                        "type": "integer"
-                                    },
-                                    "HEATING_DEGREE_DAYS": {
-                                        "type": "integer"
-                                    },
-                                    "COOLING_DEGREE_DAYS": {
-                                        "type": "integer"
-                                    },
-                                    "LOCAL_YEAR": {
-                                        "type": "integer"
-                                    },
-                                    "LOCAL_MONTH": {
-                                        "type": "integer"
-                                    },
-                                    "LAST_UPDATED": {
-                                        "type": "date",
-                                        "format": "yyyy-MM-dd HH:mm:ss"
-                                    },
-                                    "LOCAL_DATE": {
-                                        "type": "date",
-                                        "format": "yyyy-MM"
-                                    }
-                                }
-                            },
-                            "geometry": {"type": "geo_shape"}
-                        }
+                        "geometry": {"type": "geo_shape"}
                     }
                 }
             }
@@ -554,186 +548,184 @@ def create_index(path, index, AUTH):
                     "number_of_replicas": 0
                 },
                 "mappings": {
-                    "FeatureCollection": {
-                        "_meta": {
-                            "geomfields": {
-                                "geometry": "POINT"
+                    "_meta": {
+                        "geomfields": {
+                            "geometry": "POINT"
+                        }
+                    },
+                    "properties": {
+                        "type": {"type": "text"},
+                        "properties": {
+                            "properties": {
+                                "CLIMATE_IDENTIFIER": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "STN_ID": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "STATION_NAME": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "SOURCE": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "ID": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "MAX_TEMPERATURE_FLAG": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "MIN_TEMPERATURE_FLAG": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "MEAN_TEMPERATURE_FLAG": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "PROVINCE_CODE": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "MAX_REL_HUMIDITY_FLAG": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "MIN_REL_HUMIDITY_FLAG": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "TOTAL_RAIN_FLAG": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "TOTAL_SNOW_FLAG": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "TOTAL_PRECIPITATION_FLAG": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "SNOW_ON_GROUND_FLAG": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "DIRECTION_MAX_GUST_FLAG": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "SPEED_MAX_GUST_FLAG": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "HEATING_DEGREE_DAYS_FLAG": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "COOLING_DEGREE_DAYS_FLAG": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "MEAN_TEMPERATURE": {
+                                    "type": "float"
+                                },
+                                "TOTAL_RAIN": {
+                                    "type": "float"
+                                },
+                                "MAX_TEMPERATURE": {
+                                    "type": "float"
+                                },
+                                "MIN_TEMPERATURE": {
+                                    "type": "float"
+                                },
+                                "MAX_REL_HUMIDITY": {
+                                    "type": "float"
+                                },
+                                "MIN_REL_HUMIDITY": {
+                                    "type": "float"
+                                },
+                                "TOTAL_SNOW": {
+                                    "type": "float"
+                                },
+                                "SNOW_ON_GROUND": {
+                                    "type": "float"
+                                },
+                                "TOTAL_PRECIPITATION": {
+                                    "type": "float"
+                                },
+                                "DIRECTION_MAX_GUST": {
+                                    "type": "float"
+                                },
+                                "SPEED_MAX_GUST": {
+                                    "type": "float"
+                                },
+                                "HEATING_DEGREE_DAYS": {
+                                    "type": "integer"
+                                },
+                                "COOLING_DEGREE_DAYS": {
+                                    "type": "integer"
+                                },
+                                "LOCAL_YEAR": {
+                                    "type": "integer"
+                                },
+                                "LOCAL_MONTH": {
+                                    "type": "integer"
+                                },
+                                "LOCAL_DAY": {
+                                    "type": "integer"
+                                },
+                                "LOCAL_DATE": {
+                                    "type": "date",
+                                    "format": "yyyy-MM-dd HH:mm:ss"
+                                }
                             }
                         },
-                        "properties": {
-                            "type": {"type": "text"},
-                            "properties": {
-                                "properties": {
-                                    "CLIMATE_IDENTIFIER": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "STN_ID": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "STATION_NAME": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "SOURCE": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "ID": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "MAX_TEMPERATURE_FLAG": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "MIN_TEMPERATURE_FLAG": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "MEAN_TEMPERATURE_FLAG": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "PROVINCE_CODE": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "MAX_REL_HUMIDITY_FLAG": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "MIN_REL_HUMIDITY_FLAG": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "TOTAL_RAIN_FLAG": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "TOTAL_SNOW_FLAG": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "TOTAL_PRECIPITATION_FLAG": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "SNOW_ON_GROUND_FLAG": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "DIRECTION_MAX_GUST_FLAG": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "SPEED_MAX_GUST_FLAG": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "HEATING_DEGREE_DAYS_FLAG": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "COOLING_DEGREE_DAYS_FLAG": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "MEAN_TEMPERATURE": {
-                                        "type": "float"
-                                    },
-                                    "TOTAL_RAIN": {
-                                        "type": "float"
-                                    },
-                                    "MAX_TEMPERATURE": {
-                                        "type": "float"
-                                    },
-                                    "MIN_TEMPERATURE": {
-                                        "type": "float"
-                                    },
-                                    "MAX_REL_HUMIDITY": {
-                                        "type": "float"
-                                    },
-                                    "MIN_REL_HUMIDITY": {
-                                        "type": "float"
-                                    },
-                                    "TOTAL_SNOW": {
-                                        "type": "float"
-                                    },
-                                    "SNOW_ON_GROUND": {
-                                        "type": "float"
-                                    },
-                                    "TOTAL_PRECIPITATION": {
-                                        "type": "float"
-                                    },
-                                    "DIRECTION_MAX_GUST": {
-                                        "type": "float"
-                                    },
-                                    "SPEED_MAX_GUST": {
-                                        "type": "float"
-                                    },
-                                    "HEATING_DEGREE_DAYS": {
-                                        "type": "integer"
-                                    },
-                                    "COOLING_DEGREE_DAYS": {
-                                        "type": "integer"
-                                    },
-                                    "LOCAL_YEAR": {
-                                        "type": "integer"
-                                    },
-                                    "LOCAL_MONTH": {
-                                        "type": "integer"
-                                    },
-                                    "LOCAL_DAY": {
-                                        "type": "integer"
-                                    },
-                                    "LOCAL_DATE": {
-                                        "type": "date",
-                                        "format": "yyyy-MM-dd HH:mm:ss"
-                                    }
-                                }
-                            },
-                            "geometry": {"type": "geo_shape"}
-                        }
+                        "geometry": {"type": "geo_shape"}
                     }
                 }
             }
@@ -783,7 +775,7 @@ def load_stations(path, cur, AUTH):
         climate_identifier = insert_dict['CLIMATE_IDENTIFIER']
         wrapper = {'type': 'Feature', 'properties': insert_dict,
                    'geometry': {'type': 'Point', 'coordinates': coords}}
-        r = requests.put('{}/climate_station_information/FeatureCollection/{}'.format(path, climate_identifier), data=json.dumps(wrapper), auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
+        r = requests.put('{}/climate_station_information/_doc/{}'.format(path, climate_identifier), data=json.dumps(wrapper), auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
         if r.status_code != POST_OK and r.status_code != HTTP_OK:
             LOGGER.error('Could not insert into stations due to: {}'.format(r.text)) # noqa
         else:
@@ -833,7 +825,7 @@ def load_normals(path, cur, stn_dict, normals_dict, periods_dict, AUTH):
             del insert_dict['NORMAL_PERIOD_ID']
             wrapper = {'type': 'Feature', 'properties': insert_dict,
                        'geometry': {'type': 'Point', 'coordinates': coords}}
-            r = requests.put('{}/climate_normals_data/FeatureCollection/{}'.format(path, insert_dict['ID']), data=json.dumps(wrapper), auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
+            r = requests.put('{}/climate_normals_data/_doc/{}'.format(path, insert_dict['ID']), data=json.dumps(wrapper), auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
             if r.status_code != POST_OK and r.status_code != HTTP_OK:
                 LOGGER.error('Could not insert into normals due to: {}'.format(r.text)) # noqa
             else:
@@ -879,7 +871,7 @@ def load_monthly_data(path, cur, stn_dict, AUTH, date=None):
             insert_dict['PROVINCE_CODE'] = stn_dict[insert_dict['STN_ID']]['PROVINCE_CODE'] # noqa
             wrapper = {'type': 'Feature', 'properties': insert_dict,
                        'geometry': {'type': 'Point', 'coordinates': coords}}
-            r = requests.put('{}/climate_public_climate_summary/FeatureCollection/{}'.format(path, insert_dict['ID']), data=json.dumps(wrapper), auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
+            r = requests.put('{}/climate_public_climate_summary/_doc/{}'.format(path, insert_dict['ID']), data=json.dumps(wrapper), auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
             if r.status_code != POST_OK and r.status_code != HTTP_OK:
                 LOGGER.error('Could not insert into monthly summary due to: {}'.format(r.text)) # noqa
             else:
@@ -929,7 +921,7 @@ def load_daily_data(path, cur, stn_dict, AUTH, date=None):
                 wrapper = {'type': 'Feature', 'properties': insert_dict,
                            'geometry': {'type': 'Point',
                                         'coordinates': coords}}
-                r = requests.put('{}/climate_public_daily_data/FeatureCollection/{}'.format(path, insert_dict['ID']), data=json.dumps(wrapper), auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
+                r = requests.put('{}/climate_public_daily_data/_doc/{}'.format(path, insert_dict['ID']), data=json.dumps(wrapper), auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
                 if r.status_code != POST_OK and r.status_code != HTTP_OK:
                     LOGGER.error('Could not insert into daily summary due to: {}'.format(r.text)) # noqa
                 else:

@@ -83,78 +83,76 @@ def create_index(path, index, AUTH):
                     "number_of_replicas": 0
                 },
                 "mappings": {
-                    "FeatureCollection": {
-                        "_meta": {
-                            "geomfields": {
-                                "geometry": "POINT"
+                    "_meta": {
+                        "geomfields": {
+                            "geometry": "POINT"
+                        }
+                    },
+                    "properties": {
+                        "type": {"type": "text"},
+                        "properties": {
+                            "properties": {
+                                "STATION_NUMBER": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "IDENTIFIER": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "STATION_NAME": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "PROV_TERR_STATE_LOC": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "LEVEL_SYMBOL_EN": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "LEVEL_SYMBOL_FR": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "DISCHARGE_SYMBOL_EN": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "DISCHARGE_SYMBOL_FR": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "DISCHARGE": {
+                                    "type": "float"
+                                },
+                                "LEVEL": {
+                                    "type": "float"
+                                },
+                                "DATE": {
+                                    "type": "date",
+                                    "format": "yyyy-MM-dd"
+                                }
                             }
                         },
-                        "properties": {
-                            "type": {"type": "text"},
-                            "properties": {
-                                "properties": {
-                                    "STATION_NUMBER": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "IDENTIFIER": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "STATION_NAME": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "PROV_TERR_STATE_LOC": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "LEVEL_SYMBOL_EN": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "LEVEL_SYMBOL_FR": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "DISCHARGE_SYMBOL_EN": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "DISCHARGE_SYMBOL_FR": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "DISCHARGE": {
-                                        "type": "float"
-                                    },
-                                    "LEVEL": {
-                                        "type": "float"
-                                    },
-                                    "DATE": {
-                                        "type": "date",
-                                        "format": "yyyy-MM-dd"
-                                    }
-                                }
-                            },
-                            "geometry": {"type": "geo_shape"}
-                        }
+                        "geometry": {"type": "geo_shape"}
                     }
                 }
             }
@@ -181,54 +179,52 @@ def create_index(path, index, AUTH):
                     "number_of_replicas": 0
                 },
                 "mappings": {
-                    "FeatureCollection": {
-                        "_meta": {
-                            "geomfields": {
-                                "geometry": "POINT"
+                    "_meta": {
+                        "geomfields": {
+                            "geometry": "POINT"
+                        }
+                    },
+                    "properties": {
+                        "type": {"type": "text"},
+                        "properties": {
+                            "properties": {
+                                "STATION_NUMBER": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "IDENTIFIER": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "STATION_NAME": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "PROV_TERR_STATE_LOC": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "DATE": {
+                                    "type": "date",
+                                    "format": "yyyy-MM"
+                                },
+                                "MONTHLY_MEAN_DISCHARGE": {
+                                    "type": "float"
+                                },
+                                "MONTHLY_MEAN_LEVEL": {
+                                    "type": "float"
+                                }
                             }
                         },
-                        "properties": {
-                            "type": {"type": "text"},
-                            "properties": {
-                                "properties": {
-                                    "STATION_NUMBER": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "IDENTIFIER": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "STATION_NAME": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "PROV_TERR_STATE_LOC": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "DATE": {
-                                        "type": "date",
-                                        "format": "yyyy-MM"
-                                    },
-                                    "MONTHLY_MEAN_DISCHARGE": {
-                                        "type": "float"
-                                    },
-                                    "MONTHLY_MEAN_LEVEL": {
-                                        "type": "float"
-                                    }
-                                }
-                            },
-                            "geometry": {"type": "geo_shape"}
-                        }
+                        "geometry": {"type": "geo_shape"}
                     }
                 }
             }
@@ -256,94 +252,92 @@ def create_index(path, index, AUTH):
                     "number_of_replicas": 0
                 },
                 "mappings": {
-                    "FeatureCollection": {
-                        "_meta": {
-                            "geomfields": {
-                                "geometry": "POINT"
-                            }
-                        },
+                    "_meta": {
+                        "geomfields": {
+                            "geometry": "POINT"
+                        }
+                    },
+                    "properties": {
+                        "type": {"type": "text"},
                         "properties": {
-                            "type": {"type": "text"},
                             "properties": {
-                                "properties": {
-                                    "STATION_NUMBER": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "IDENTIFIER": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "STATION_NAME": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "PROV_TERR_STATE_LOC": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "MIN_DATE": {
-                                        "type": "date",
-                                        "format": "yyyy-MM-dd"
-                                    },
-                                    "MAX_DATE": {
-                                        "type": "date",
-                                        "format": "yyyy-MM-dd"
-                                    },
-                                    "MIN_VALUE": {
-                                        "type": "float"
-                                    },
-                                    "MAX_VALUE": {
-                                        "type": "float"
-                                    },
-                                    "MIN_SYMBOL_EN": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "MIN_SYMBOL_FR": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "MAX_SYMBOL_EN": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "MAX_SYMBOL_FR": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "DATA_TYPE_EN": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "DATA_TYPE_FR": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                "STATION_NUMBER": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "IDENTIFIER": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "STATION_NAME": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "PROV_TERR_STATE_LOC": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "MIN_DATE": {
+                                    "type": "date",
+                                    "format": "yyyy-MM-dd"
+                                },
+                                "MAX_DATE": {
+                                    "type": "date",
+                                    "format": "yyyy-MM-dd"
+                                },
+                                "MIN_VALUE": {
+                                    "type": "float"
+                                },
+                                "MAX_VALUE": {
+                                    "type": "float"
+                                },
+                                "MIN_SYMBOL_EN": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "MIN_SYMBOL_FR": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "MAX_SYMBOL_EN": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "MAX_SYMBOL_FR": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "DATA_TYPE_EN": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "DATA_TYPE_FR": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
                                     }
                                 }
-                            },
-                            "geometry": {"type": "geo_shape"}
-                        }
+                            }
+                        },
+                        "geometry": {"type": "geo_shape"}
                     }
                 }
             }
@@ -371,74 +365,72 @@ def create_index(path, index, AUTH):
                     "number_of_replicas": 0
                 },
                 "mappings": {
-                    "FeatureCollection": {
-                        "_meta": {
-                            "geomfields": {
-                                "geometry": "POINT"
-                            }
-                        },
+                    "_meta": {
+                        "geomfields": {
+                            "geometry": "POINT"
+                        }
+                    },
+                    "properties": {
+                        "type": {"type": "text"},
                         "properties": {
-                            "type": {"type": "text"},
                             "properties": {
-                                "properties": {
-                                    "STATION_NUMBER": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "IDENTIFIER": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "STATION_NAME": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "PROV_TERR_STATE_LOC": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "STATUS_EN": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "STATUS_FR": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "CONTRIBUTOR_EN": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "CONTRIBUTOR_FR": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "VERTICAL_DATUM": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                "STATION_NUMBER": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "IDENTIFIER": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "STATION_NAME": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "PROV_TERR_STATE_LOC": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "STATUS_EN": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "STATUS_FR": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "CONTRIBUTOR_EN": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "CONTRIBUTOR_FR": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "VERTICAL_DATUM": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
                                     }
                                 }
-                            },
-                            "geometry": {"type": "geo_shape"}
-                        }
+                            }
+                        },
+                        "geometry": {"type": "geo_shape"}
                     }
                 }
             }
@@ -466,105 +458,103 @@ def create_index(path, index, AUTH):
                     "number_of_replicas": 0
                 },
                 "mappings": {
-                    "FeatureCollection": {
-                        "_meta": {
-                            "geomfields": {
-                                "geometry": "POINT"
-                            }
-                        },
+                    "_meta": {
+                        "geomfields": {
+                            "geometry": "POINT"
+                        }
+                    },
+                    "properties": {
+                        "type": {"type": "text"},
                         "properties": {
-                            "type": {"type": "text"},
                             "properties": {
-                                "properties": {
-                                    "STATION_NUMBER": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "IDENTIFIER": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "STATION_NAME": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "DATE": {
-                                        "type": "date",
-                                        "format": "yyyy-MM-dd'T'HH:mm||yyy-MM-dd" # noqa
-                                    },
-                                    "TIMEZONE_OFFSET": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "PROV_TERR_STATE_LOC": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "DATA_TYPE_EN": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "DATA_TYPE_FR": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "PEAK_CODE_EN": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "PEAK_CODE_FR": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "PEAK": {
-                                        "type": "float"
-                                    },
-                                    "UNITS_EN": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "UNITS_FR": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "SYMBOL_EN": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
-                                    },
-                                    "SYMBOL_FR": {
-                                        "type": "text",
-                                        "fields": {
-                                            "raw": {"type": "keyword"}
-                                        }
+                                "STATION_NUMBER": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "IDENTIFIER": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "STATION_NAME": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "DATE": {
+                                    "type": "date",
+                                    "format": "yyyy-MM-dd'T'HH:mm||yyy-MM-dd" # noqa
+                                },
+                                "TIMEZONE_OFFSET": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "PROV_TERR_STATE_LOC": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "DATA_TYPE_EN": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "DATA_TYPE_FR": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "PEAK_CODE_EN": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "PEAK_CODE_FR": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "PEAK": {
+                                    "type": "float"
+                                },
+                                "UNITS_EN": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "UNITS_FR": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "SYMBOL_EN": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
+                                    }
+                                },
+                                "SYMBOL_FR": {
+                                    "type": "text",
+                                    "fields": {
+                                        "raw": {"type": "keyword"}
                                     }
                                 }
-                            },
-                            "geometry": {"type": "geo_shape"}
-                        }
+                            }
+                        },
+                        "geometry": {"type": "geo_shape"}
                     }
                 }
             }
@@ -752,7 +742,7 @@ def unpivot(session, discharge_var, level_var, path, station_table,
         # turn list into a format suitable for bulk insert
         insert_lst = [x for item in wrapper_lst for x in ({'index': {'_id': item['properties']['IDENTIFIER']}}, item)] # noqa
         ES_str = '\n'.join([json.dumps(x) for x in insert_lst]) + '\n'
-        r = requests.post(path + '/hydrometric_daily_mean/FeatureCollection/_bulk', data = ES_str, auth=AUTH, verify=VERIFY) # noqa
+        r = requests.post(path + '/hydrometric_daily_mean/_bulk', data = ES_str, auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
         if r.status_code != POST_OK and r.status_code != HTTP_OK:
             LOGGER.error('Could not insert into daily means due to: {}'.format(r.text)) # noqa
         else:
@@ -782,7 +772,7 @@ def unpivot(session, discharge_var, level_var, path, station_table,
         # turn list into a format suitable for bulk insert
         insert_lst = [x for item in wrapper_lst for x in ({'index': {'_id': item['properties']['IDENTIFIER']}}, item)] # noqa
         ES_str = '\n'.join([json.dumps(x) for x in insert_lst]) + '\n'
-        r = requests.post(path + '/hydrometric_monthly_mean/FeatureCollection/_bulk', data = ES_str, auth=AUTH, verify=VERIFY) # noqa
+        r = requests.post(path + '/hydrometric_monthly_mean/_bulk', data = ES_str, auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
         if r.status_code != POST_OK and r.status_code != HTTP_OK:
             LOGGER.error('Could not insert into monthly means due to: {}'.format(r.text)) # noqa
         else:
@@ -909,7 +899,7 @@ def load_stations(session, metadata, path, station_table, AUTH):
             }
         }
 
-        r = requests.put(path + '/hydrometric_stations/FeatureCollection/{}'.format(station), # noqa
+        r = requests.put(path + '/hydrometric_stations/_doc/{}'.format(station), # noqa
                                 data=json.dumps(metadata_dict),
                                 auth=AUTH, verify=VERIFY,
                                 headers=HEADERS)
@@ -1020,7 +1010,7 @@ def load_annual_stats(session, path, annual_stats_table, data_types_table,
                          'geometry': {'type': 'Point',
                                       'coordinates': station_coords}
                          }
-        r = requests.put(path + '/hydrometric_annual_statistics/FeatureCollection/{}'.format(es_id), # noqa
+        r = requests.put(path + '/hydrometric_annual_statistics/_doc/{}'.format(es_id), # noqa
                                 data=json.dumps(metadata_dict),
                                 auth=AUTH, verify=VERIFY,
                                 headers=HEADERS)
@@ -1162,7 +1152,7 @@ def load_annual_peaks(session, metadata, path, annual_peaks_table,
                          'geometry': {'type': 'Point',
                                       'coordinates': station_coords}
                          }
-        r = requests.put(path + '/hydrometric_annual_peaks/FeatureCollection/{}'.format(es_id), # noqa
+        r = requests.put(path + '/hydrometric_annual_peaks/_doc/{}'.format(es_id), # noqa
                      data=json.dumps(metadata_dict),
                      auth=AUTH, verify=VERIFY, headers=HEADERS)
         if r.status_code != HTTP_OK and r.status_code != POST_OK:
