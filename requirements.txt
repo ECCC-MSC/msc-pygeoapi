@@ -1,4 +1,5 @@
 click
+elasticsearch
 gdal
 pyproj
 pyyaml

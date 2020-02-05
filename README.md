@@ -27,7 +27,7 @@ apt-get install msc-pygeoapi
 Dependencies are listed in [requirements.txt](requirements.txt). Dependencies
 are automatically installed during msc_pygeoapi installation.
 
-Dependendies of note:
+Dependencies of note:
 - [Elasticsearch](https://elastic.co) (5 or above)
  - i.e. `sudo echo `deb https://artifacts.elastic.co/packages/5.x/apt stable main` > /etc/apt/sources.list.d/elastic.list`
  - [pygeoapi](https://github.com/geopython/pygeoapi)
@@ -100,6 +100,9 @@ pip install -r requirements-oracle.txt
 msc-pygeoapi data load hydat <rest of flags/parameters>
 msc-pygeoapi data load climate-archive <rest of flags/parameters>
 msc-pygeoapi data load ahccd_cmip5 <rest of flags/parameters>
+
+# bulletins - delete index
+msc-pygeoapi data load bulletins delete-index  # use --yes flag to bypass prompt
 ```
 
 ## Running processes
