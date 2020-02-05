@@ -2,7 +2,7 @@
 #
 # Author: Tom Kralidis <tom.kralidis@canada.ca>
 #
-# Copyright (c) 2019 Tom Kralidis
+# Copyright (c) 2020 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -27,30 +27,39 @@
 #
 # =================================================================
 
-import logging
 
-import click
+class Event(object):
+    """core event"""
 
-LOGGER = logging.getLogger(__name__)
+    def __init__(self, parent):
+        """initialize"""
+        pass
 
-try:
-    from msc_pygeoapi.loader.bulletins import bulletins
-    from msc_pygeoapi.loader.hydat import hydat
-    from msc_pygeoapi.loader.climate_archive import climate_archive
-    from msc_pygeoapi.loader.ahccd import ahccd
-except ImportError:
-    LOGGER.info('loaders not imported')
+    def dispatch(self, parent):
+        """
+        sarracenia dispatcher
+
+        :param parent: `sarra.sr_subscribe.sr_subscribe`
+
+        :returns: `bool` of dispatch result
+        """
+
+        try:
+            from msc_pygeoapi.handler.core import CoreHandler
+
+            filepath = parent.msg.local_file
+            parent.logger.debug('Filepath: {}'.format(filepath))
+            handler = CoreHandler(filepath)
+            result = handler.handle()
+            parent.logger.debug('Result: {}'.format(result))
+            return True
+        except Exception as err:
+            parent.logger.warning(err)
+            return False
+
+    def __repr__(self):
+        return '<Event>'
 
 
-@click.group()
-def load():
-    pass
-
-
-try:
-    load.add_command(bulletins)
-    load.add_command(hydat)
-    load.add_command(climate_archive)
-    load.add_command(ahccd)
-except NameError:
-    LOGGER.info('loaders not found')
+event = Event(self)  # noqa
+self.on_message = self.on_file = event.dispatch  # noqa

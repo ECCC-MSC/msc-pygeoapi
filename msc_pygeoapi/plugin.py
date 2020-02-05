@@ -2,7 +2,7 @@
 #
 # Author: Tom Kralidis <tom.kralidis@canada.ca>
 #
-# Copyright (c) 2019 Tom Kralidis
+# Copyright (c) 2020 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -27,30 +27,53 @@
 #
 # =================================================================
 
+import importlib
 import logging
-
-import click
 
 LOGGER = logging.getLogger(__name__)
 
-try:
-    from msc_pygeoapi.loader.bulletins import bulletins
-    from msc_pygeoapi.loader.hydat import hydat
-    from msc_pygeoapi.loader.climate_archive import climate_archive
-    from msc_pygeoapi.loader.ahccd import ahccd
-except ImportError:
-    LOGGER.info('loaders not imported')
+PLUGINS = {
+    'loader': {
+        'hydrometric_realtime': {
+            'filename_pattern': 'hydrometric/csv',
+            'handler': 'msc_pygeoapi.loader.hydrometric_realtime.HydrometricRealtimeLoader'  # noqa
+        },
+        'bulletins_realtime': {
+            'filename_pattern': 'bulletins/alphanumeric',
+            'handler': 'msc_pygeoapi.loader.bulletins.BulletinsRealtimeLoader'  # noqa
+        }
+    }
+}
 
 
-@click.group()
-def load():
+def load_plugin(plugin_type, plugin_def):
+    """
+    loads plugin by type
+
+    :param plugin_type: type of plugin (loader, etc.)
+    :param plugin_def: plugin definition
+
+    :returns: plugin object
+    """
+
+    if plugin_type not in PLUGINS.keys():
+        msg = 'Plugin {} not found'.format(plugin_type)
+        LOGGER.exception(msg)
+        raise InvalidPluginError(msg)
+
+    handler = plugin_def['handler']
+
+    packagename, classname = handler.rsplit('.', 1)
+
+    LOGGER.debug('package name: {}'.format(packagename))
+    LOGGER.debug('class name: {}'.format(classname))
+
+    module = importlib.import_module(packagename)
+    class_ = getattr(module, classname)
+    plugin = class_(plugin_def)
+    return plugin
+
+
+class InvalidPluginError(Exception):
+    """Invalid plugin"""
     pass
-
-
-try:
-    load.add_command(bulletins)
-    load.add_command(hydat)
-    load.add_command(climate_archive)
-    load.add_command(ahccd)
-except NameError:
-    LOGGER.info('loaders not found')

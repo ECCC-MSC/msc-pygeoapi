@@ -2,7 +2,7 @@
 #
 # Author: Tom Kralidis <tom.kralidis@canada.ca>
 #
-# Copyright (c) 2019 Tom Kralidis
+# Copyright (c) 2020 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -26,31 +26,3 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 #
 # =================================================================
-
-import logging
-
-import click
-
-LOGGER = logging.getLogger(__name__)
-
-try:
-    from msc_pygeoapi.loader.bulletins import bulletins
-    from msc_pygeoapi.loader.hydat import hydat
-    from msc_pygeoapi.loader.climate_archive import climate_archive
-    from msc_pygeoapi.loader.ahccd import ahccd
-except ImportError:
-    LOGGER.info('loaders not imported')
-
-
-@click.group()
-def load():
-    pass
-
-
-try:
-    load.add_command(bulletins)
-    load.add_command(hydat)
-    load.add_command(climate_archive)
-    load.add_command(ahccd)
-except NameError:
-    LOGGER.info('loaders not found')
