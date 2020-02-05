@@ -171,18 +171,21 @@ def bulletins():
 
 @click.command()
 @click.pass_context
+@click.option('--days', '-d', default=DAYS_TO_KEEP, type=int,
+              help='delete documents older than n days (default={})'.format(
+                  DAYS_TO_KEEP))
 @click.option('--yes', is_flag=True, callback=click_abort_if_false,
               expose_value=False,
               prompt='Are you sure you want to delete old documents?')
-def clean_records(ctx):
+def clean_records(ctx, days):
     """Delete old documents"""
 
     es = get_es(MSC_PYGEOAPI_ES_URL)
 
-    older_than = (datetime.now() - timedelta(days=DAYS_TO_KEEP)).strftime(
+    older_than = (datetime.now() - timedelta(days=days)).strftime(
         '%Y-%m-%d %H:%M')
     click.echo('Deleting documents older than {} ({} days)'.format(
-        older_than, DAYS_TO_KEEP))
+        older_than, days))
 
     query = {
         'query': {
