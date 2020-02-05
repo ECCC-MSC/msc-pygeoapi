@@ -38,8 +38,10 @@ try:
     from msc_pygeoapi.loader.hydat import hydat
     from msc_pygeoapi.loader.climate_archive import climate_archive
     from msc_pygeoapi.loader.ahccd import ahccd
-except ImportError:
+    from msc_pygeoapi.loader.hydrometric_realtime import hydrometric_realtime
+except ImportError as err:
     LOGGER.info('loaders not imported')
+    LOGGER.debug(err)
 
 
 @click.group()
@@ -52,5 +54,7 @@ try:
     load.add_command(hydat)
     load.add_command(climate_archive)
     load.add_command(ahccd)
-except NameError:
+    load.add_command(hydrometric_realtime)
+except NameError as err:
     LOGGER.info('loaders not found')
+    LOGGER.debug(err)

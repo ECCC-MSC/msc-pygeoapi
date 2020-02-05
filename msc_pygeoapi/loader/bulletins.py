@@ -31,16 +31,19 @@ import click
 from datetime import datetime, timedelta
 import logging
 
-from msc_pygeoapi.env import MSC_PYGEOAPI_ES_URL
+from msc_pygeoapi.env import MSC_PYGEOAPI_ES_TIMEOUT, MSC_PYGEOAPI_ES_URL
 from msc_pygeoapi.loader.base import BaseLoader
-from msc_pygeoapi.util import get_es
+from msc_pygeoapi.util import click_abort_if_false, get_es
 
 
 LOGGER = logging.getLogger(__name__)
 
-# index settings
+# cleanup settings
+DAYS_TO_KEEP = 30
 
+# index settings
 INDEX_NAME = 'bulletins'
+
 SETTINGS = {
     'settings': {
         'number_of_shards': 1,
@@ -63,9 +66,6 @@ SETTINGS = {
     }
 }
 
-# cleanup settings
-DAYS_TO_KEEP = 30
-
 
 class BulletinsRealtimeLoader(BaseLoader):
     """Bulletins real-time loader"""
@@ -80,7 +80,7 @@ class BulletinsRealtimeLoader(BaseLoader):
 
         if not self.ES.indices.exists(INDEX_NAME):
             self.ES.indices.create(index=INDEX_NAME, body=SETTINGS,
-                                   request_timeout=90)
+                                   request_timeout=MSC_PYGEOAPI_ES_TIMEOUT)
 
     def load_data(self, filepath):
         """
@@ -169,14 +169,9 @@ def bulletins():
     pass
 
 
-def abort_if_false(ctx, param, value):
-    if not value:
-        ctx.abort()
-
-
 @click.command()
 @click.pass_context
-@click.option('--yes', is_flag=True, callback=abort_if_false,
+@click.option('--yes', is_flag=True, callback=click_abort_if_false,
               expose_value=False,
               prompt='Are you sure you want to delete old documents?')
 def clean_records(ctx):
@@ -204,13 +199,14 @@ def clean_records(ctx):
 
 @click.command()
 @click.pass_context
-@click.option('--yes', is_flag=True, callback=abort_if_false,
+@click.option('--yes', is_flag=True, callback=click_abort_if_false,
               expose_value=False,
               prompt='Are you sure you want to delete this index?')
 def delete_index(ctx):
     """Delete bulletins index"""
 
     es = get_es(MSC_PYGEOAPI_ES_URL)
+
     if es.indices.exists(INDEX_NAME):
         es.indices.delete(INDEX_NAME)
 

@@ -74,3 +74,18 @@ def get_es(url):
         raise RuntimeError(msg)
 
     return es
+
+
+def click_abort_if_false(ctx, param, value):
+    """
+    Helper function to abort (or not) `click` command on prompt/confirm
+
+    :param ctx: context manager
+    :param param: name of click option
+    :param value: `bool` of value
+
+    :returns: abort of click command if `False`
+    """
+
+    if not value:
+        ctx.abort()
