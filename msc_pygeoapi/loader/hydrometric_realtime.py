@@ -30,13 +30,19 @@
 import click
 from datetime import datetime, timedelta
 import logging
+import os
+import urllib.request
 
-from msc_pygeoapi.env import MSC_PYGEOAPI_ES_TIMEOUT, MSC_PYGEOAPI_ES_URL
+from msc_pygeoapi.env import (MSC_PYGEOAPI_CACHEDIR, MSC_PYGEOAPI_ES_TIMEOUT,
+                              MSC_PYGEOAPI_ES_URL)
 from msc_pygeoapi.loader.base import BaseLoader
 from msc_pygeoapi.util import click_abort_if_false, get_es
 
 
 LOGGER = logging.getLogger(__name__)
+
+STATIONS_CACHE = os.path.join(MSC_PYGEOAPI_CACHEDIR,
+                              'hydrometric_StationList.csv')
 
 # cleanup settings
 DAYS_TO_KEEP = 30
@@ -94,13 +100,35 @@ class HydrometricRealtimeLoader(BaseLoader):
         :returns: `bool` of status result
         """
 
-        LOGGER.info(filepath)
+        return True
+
+
+def download_stations():
+    """
+    Download realtime stations
+
+    :returns: void
+    """
+
+    s = 'https://dd.weather.gc.ca/hydrometric/doc/hydrometric_StationList.csv'
+
+    LOGGER.debug('Caching {} to {}'.format(s, STATIONS_CACHE))
+    urllib.request.urlretrieve(s, STATIONS_CACHE)
 
 
 @click.group()
 def hydrometric_realtime():
     """Manages hydrometric realtime index"""
     pass
+
+
+@click.command()
+@click.pass_context
+def cache_stations(ctx):
+    """Cache local copy of hydrometric realtime stations index"""
+
+    click.echo('Caching realtime stations to {}'.format(STATIONS_CACHE))
+    download_stations()
 
 
 @click.command()
@@ -150,5 +178,6 @@ def delete_index(ctx):
         es.indices.delete(INDEX_NAME_STATIONS)
 
 
+hydrometric_realtime.add_command(cache_stations)
 hydrometric_realtime.add_command(clean_records)
 hydrometric_realtime.add_command(delete_index)

@@ -28,4 +28,6 @@
 #
 # =================================================================
 
+export MSC_PYGEOAPI_ES_TIMEOUT=90
 export MSC_PYGEOAPI_ES_URL=http://localhost:9200
+export MSC_PYGEOAPI_CACHEDIR=/tmp
