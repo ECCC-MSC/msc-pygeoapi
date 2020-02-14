@@ -54,7 +54,7 @@ def create_index(path, index, AUTH):
                     "number_of_replicas": 0
                 },
                 "mappings": {
-                     "_meta": {
+                    "_meta": {
                         "geomfields": {
                             "geometry": "POINT"
                         }
@@ -782,20 +782,22 @@ def load_stations(path, cur, AUTH):
             LOGGER.info('Successfully inserted a record into the stations index') # noqa
 
 
-def load_normals(path, cur, stn_dict, normals_dict, periods_dict, AUTH):
+def generate_normals(cur, stn_dict, normals_dict, periods_dict):
     """
     Queries normals data from the db, and reformats
     data so it can be inserted into ElasticSearch.
 
-    :param path: path to ElasticSearch.
+    Returns a generator of dictionaries that represent upsert actions
+    into ElasticSearch's bulk API.
+
     :param cur: oracle cursor to perform queries against.
     :param stn_dict: mapping of station IDs to station information.
     :param normals_dict: mapping of normal IDs to normals information.
     :param periods_dict: mapping of normal period IDs to
                          normal period information.
-    :param AUTH: tuple of username and password used to authorize the
-                 HTTP request.
+    :returns: generator of bulk API upsert actions.
     """
+
     try:
         cur.execute('select * from CCCS_PORTAL.NORMALS_DATA')
     except Exception as err:
@@ -825,26 +827,30 @@ def load_normals(path, cur, stn_dict, normals_dict, periods_dict, AUTH):
             del insert_dict['NORMAL_PERIOD_ID']
             wrapper = {'type': 'Feature', 'properties': insert_dict,
                        'geometry': {'type': 'Point', 'coordinates': coords}}
-            r = requests.put('{}/climate_normals_data/_doc/{}'.format(path, insert_dict['ID']), data=json.dumps(wrapper), auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
-            if r.status_code != POST_OK and r.status_code != HTTP_OK:
-                LOGGER.error('Could not insert into normals due to: {}'.format(r.text)) # noqa
-            else:
-                LOGGER.info('Successfully inserted a record into the normals index') # noqa
+            action = {
+                '_id': insert_dict['ID'],
+                '_index': 'climate_normals_data',
+                '_op_type': 'update',
+                'doc': wrapper,
+                'doc_as_upsert': True
+            }
+            yield action
         else:
             LOGGER.error('Bad STN ID: {}, skipping records for this station'.format(insert_dict['STN_ID'])) # noqa
 
 
-def load_monthly_data(path, cur, stn_dict, AUTH, date=None):
+def generate_monthly_data(cur, stn_dict, date=None):
     """
     Queries monthly data from the db, and reformats
     data so it can be inserted into ElasticSearch.
 
-    :param path: path to ElasticSearch.
+    Returns a generator of dictionaries that represent upsert actions
+    into ElasticSearch's bulk API.
+
     :param cur: oracle cursor to perform queries against.
     :param stn_dict: mapping of station IDs to station information.
-    :param AUTH: tuple of username and password used to authorize the
-                 HTTP request.
     :param date: date to start fetching data from.
+    :returns: generator of bulk API upsert actions.
     """
 
     if not date:
@@ -871,27 +877,32 @@ def load_monthly_data(path, cur, stn_dict, AUTH, date=None):
             insert_dict['PROVINCE_CODE'] = stn_dict[insert_dict['STN_ID']]['PROVINCE_CODE'] # noqa
             wrapper = {'type': 'Feature', 'properties': insert_dict,
                        'geometry': {'type': 'Point', 'coordinates': coords}}
-            r = requests.put('{}/climate_public_climate_summary/_doc/{}'.format(path, insert_dict['ID']), data=json.dumps(wrapper), auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
-            if r.status_code != POST_OK and r.status_code != HTTP_OK:
-                LOGGER.error('Could not insert into monthly summary due to: {}'.format(r.text)) # noqa
-            else:
-                LOGGER.info('Successfully inserted a record into the monthly summary index') # noqa
+            action = {
+                '_id': insert_dict['ID'],
+                '_index': 'climate_public_climate_summary',
+                '_op_type': 'update',
+                'doc': wrapper,
+                'doc_as_upsert': True
+            }
+            yield action
         else:
             LOGGER.error('Bad STN ID: {}, skipping records for this station'.format(insert_dict['STN_ID'])) # noqa
 
 
-def load_daily_data(path, cur, stn_dict, AUTH, date=None):
+def generate_daily_data(cur, stn_dict, date=None):
     """
     Queries daily data from the db, and reformats
     data so it can be inserted into ElasticSearch.
 
-    :param path: path to ElasticSearch.
+    Returns a generator of dictionaries that represent upsert actions
+    into ElasticSearch's bulk API.
+
     :param cur: oracle cursor to perform queries against.
     :param stn_dict: mapping of station IDs to station information.
-    :param AUTH: tuple of username and password used to authorize the
-                 HTTP request.
     :param date: date to start fetching data from.
+    :returns: generator of bulk API upsert actions.
     """
+
     for station in stn_dict:
         if not date:
             try:
@@ -921,11 +932,14 @@ def load_daily_data(path, cur, stn_dict, AUTH, date=None):
                 wrapper = {'type': 'Feature', 'properties': insert_dict,
                            'geometry': {'type': 'Point',
                                         'coordinates': coords}}
-                r = requests.put('{}/climate_public_daily_data/_doc/{}'.format(path, insert_dict['ID']), data=json.dumps(wrapper), auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
-                if r.status_code != POST_OK and r.status_code != HTTP_OK:
-                    LOGGER.error('Could not insert into daily summary due to: {}'.format(r.text)) # noqa
-                else:
-                    LOGGER.info('Successfully inserted a record into the daily summary index') # noqa
+                action = {
+                    '_id': insert_dict['ID'],
+                    '_index': 'climate_public_daily_data',
+                    '_op_type': 'update',
+                    'doc': wrapper,
+                    'doc_as_upsert': True
+                }
+                yield action
             else:
                 LOGGER.error('Bad STN ID: {}, skipping records for this station'.format(insert_dict['STN_ID'])) # noqa
 
@@ -1087,7 +1101,8 @@ def climate_archive(ctx, db, es, username, password, dataset, station=None,
         try:
             LOGGER.info('Populating normals...')
             create_index(es, 'normals', AUTH)
-            load_normals(es, cur, stn_dict, normals_dict, periods_dict, AUTH)
+            normals = generate_normals(cur, stn_dict, normals_dict,
+                                       periods_dict)
             LOGGER.info('Normals populated.')
         except Exception as err:
             LOGGER.error('Could not populate normals due to: {}.'.format(str(err))) # noqa    
@@ -1096,7 +1111,7 @@ def climate_archive(ctx, db, es, username, password, dataset, station=None,
             LOGGER.info('Populating monthly summary...')
             if not date:
                 create_index(es, 'monthly_summary', AUTH)
-            load_monthly_data(es, cur, stn_dict, AUTH, date)
+            monthlies = generate_monthly_data(cur, stn_dict, date)
             LOGGER.info('Monthly Summary populated.')
         except Exception as err:
             LOGGER.error('Could not populate monthly summary due to: {}.'.format(str(err))) # noqa
@@ -1105,7 +1120,7 @@ def climate_archive(ctx, db, es, username, password, dataset, station=None,
             LOGGER.info('Populating daily summary...')
             if not date:
                 create_index(es, 'daily_summary', AUTH)
-            load_daily_data(es, cur, stn_dict, AUTH, date)
+            dailies = generate_daily_data(cur, stn_dict, date)
             LOGGER.info('Daily Summary populated.')
         except Exception as err:
             LOGGER.error('Could not populate daily summary due to: {}.'.format(str(err))) # noqa
@@ -1126,7 +1141,8 @@ def climate_archive(ctx, db, es, username, password, dataset, station=None,
             normals_dict = get_normals_data(cur)
             periods_dict = get_normals_periods(cur)
             create_index(es, 'normals', AUTH)
-            load_normals(es, cur, stn_dict, normals_dict, periods_dict, AUTH)
+            normals = generate_normals(cur, stn_dict, normals_dict,
+                                       periods_dict)
             LOGGER.info('Normals populated.')
         except Exception as err:
             LOGGER.error('Could not populate normals due to: {}.'.format(str(err))) # noqa
@@ -1137,7 +1153,7 @@ def climate_archive(ctx, db, es, username, password, dataset, station=None,
             stn_dict = get_station_data(cur, station, starting_from)
             if not (date or station or starting_from):
                 create_index(es, 'monthly_summary', AUTH)
-            load_monthly_data(es, cur, stn_dict, AUTH, date)
+            monthlies = generate_monthly_data(cur, stn_dict, date)
             LOGGER.info('Monthly Summary populated.')
         except Exception as err:
             LOGGER.error('Could not populate monthly summary due to: {}.'.format(str(err))) # noqa
@@ -1150,7 +1166,7 @@ def climate_archive(ctx, db, es, username, password, dataset, station=None,
             periods_dict = get_normals_periods(cur)
             if not (date or station or starting_from):
                 create_index(es, 'daily_summary', AUTH)
-            load_daily_data(es, cur, stn_dict, AUTH, date)
+            dailies = generate_daily_data(cur, stn_dict, date)
             LOGGER.info('Daily Summary populated.')
         except Exception as err:
             LOGGER.error('Could not populate daily summary due to: {}.'.format(str(err))) # noqa
