@@ -19,6 +19,9 @@ import json
 import click
 import collections
 
+from msc_pygeoapi.util import get_es
+
+
 logging.basicConfig()
 LOGGER = logging.getLogger(__name__)
 HTTP_OK = 200
@@ -28,7 +31,7 @@ HEADERS = {'Content-type': 'application/json'}
 VERIFY = False
 
 
-def create_index(path, index, AUTH):
+def create_index(es, index):
     """
     Creates the ElasticSearch index at path. If the index already exists,
     it is deleted and re-created. The mappings for the two types are also
@@ -39,14 +42,8 @@ def create_index(path, index, AUTH):
     :param AUTH: tuple of username and password used to authorize the
                  HTTP request.
     """
-    if index == 'stations':
-        r = requests.delete('{}/climate_station_information'.format(path),
-                            auth=AUTH, verify=VERIFY)
-        if r.status_code != HTTP_OK and r.status_code != POST_OK:
-            LOGGER.error('Could not delete stations due to: {}'.format(r.text)) # noqa
-        else:
-            LOGGER.info('Deleted the stations index')
 
+    if index == 'stations':
         mapping =\
             {
                 "settings": {
@@ -209,22 +206,14 @@ def create_index(path, index, AUTH):
                 }
             }
 
-        r = requests.put('{}/climate_station_information'.format(path),
-                         data=json.dumps(mapping), auth=AUTH, verify=VERIFY,
-                         headers=HEADERS)
-        if r.status_code != HTTP_OK and r.status_code != POST_OK:
-            LOGGER.error('Could not create stations due to: {}'.format(r.text)) # noqa
-        else:
-            LOGGER.info('Created the stations index')
+        index_name = 'climate_station_information'
+
+        if es.indices.exists(index_name):
+            es.indices.delete(index_name)
+            LOGGER.info('Deleted the stations index')
+        es.indices.create(index=index_name, body=mapping)
 
     if index == 'normals':
-        r = requests.delete('{}/climate_normals_data'.format(path),
-                            auth=AUTH, verify=VERIFY)
-        if r.status_code != HTTP_OK and r.status_code != POST_OK:
-            LOGGER.error('Could not delete normals due to: {}'.format(r.text))
-        else:
-            LOGGER.info('Deleted the normals index')
-
         mapping =\
             {
                 "settings": {
@@ -370,22 +359,14 @@ def create_index(path, index, AUTH):
                 }
             }
 
-        r = requests.put('{}/climate_normals_data'.format(path),
-                         data=json.dumps(mapping), auth=AUTH, verify=VERIFY,
-                         headers=HEADERS)
-        if r.status_code != HTTP_OK and r.status_code != POST_OK:
-            LOGGER.error('Could not create normals due to: {}'.format(r.text))
-        else:
-            LOGGER.info('Created the normals index')
+        index_name = 'climate_normals_data'
+
+        if es.indices.exists(index_name):
+            es.indices.delete(index_name)
+            LOGGER.info('Deleted the stations index')
+        es.indices.create(index=index_name, body=mapping)
 
     if index == 'monthly_summary':
-        r = requests.delete('{}/climate_public_climate_summary'.format(path),
-                            auth=AUTH, verify=VERIFY)
-        if r.status_code != HTTP_OK and r.status_code != POST_OK:
-            LOGGER.error('Could not create monthly summary due to: {}'.format(r.text)) # noqa
-        else:
-            LOGGER.info('Created the monthly summary index')
-
         mapping =\
             {
                 "settings": {
@@ -525,22 +506,14 @@ def create_index(path, index, AUTH):
                 }
             }
 
-        r = requests.put('{}/climate_public_climate_summary'.format(path),
-                         data=json.dumps(mapping), auth=AUTH, verify=VERIFY,
-                         headers=HEADERS)
-        if r.status_code != HTTP_OK and r.status_code != POST_OK:
-            LOGGER.error('Could not create monthly summary due to: {}'.format(r.text)) # noqa
-        else:
-            LOGGER.info('Created the monthly summary index')
+        index_name = 'climate_public_climate_summary'
+
+        if es.indices.exists(index_name):
+            es.indices.delete(index_name)
+            LOGGER.info('Deleted the stations index')
+        es.indices.create(index=index_name, body=mapping)
 
     if index == 'daily_summary':
-        r = requests.delete('{}/climate_public_daily_data'.format(path),
-                            auth=AUTH, verify=VERIFY)
-        if r.status_code != HTTP_OK and r.status_code != POST_OK:
-            LOGGER.error('Could not create daily summary due to: {}'.format(r.text)) # noqa
-        else:
-            LOGGER.info('Created the daily summary index')
-
         mapping =\
             {
                 "settings": {
@@ -730,13 +703,12 @@ def create_index(path, index, AUTH):
                 }
             }
 
-        r = requests.put('{}/climate_public_daily_data'.format(path),
-                         data=json.dumps(mapping), auth=AUTH, verify=VERIFY,
-                         headers=HEADERS)
-        if r.status_code != HTTP_OK and r.status_code != POST_OK:
-            LOGGER.error('Could not create daily summary due to: {}'.format(r.text)) # noqa
-        else:
-            LOGGER.info('Created the daily summary index')
+        index_name = 'climate_public_daily_data'
+
+        if es.indices.exists(index_name):
+            es.indices.delete(index_name)
+            LOGGER.info('Deleted the stations index')
+        es.indices.create(index=index_name, body=mapping)
 
 
 def load_stations(path, cur, AUTH):
@@ -1075,7 +1047,10 @@ def climate_archive(ctx, db, es, username, password, dataset, station=None,
     :param starting_from: load all stations after specified station
     :param date: date to start fetching daily and monthly data from.
     """
-    AUTH = (username, password)
+
+    auth = (username, password)
+    es_client = get_es(es, auth)
+
     try:
         con = cx_Oracle.connect(db)
     except Exception as err:
@@ -1092,15 +1067,15 @@ def climate_archive(ctx, db, es, username, password, dataset, station=None,
 
         try:
             LOGGER.info('Populating stations...')
-            create_index(es, 'stations', AUTH)
-            load_stations(es, cur, AUTH)
+            create_index(es_client, 'stations')
+            load_stations(es, cur, auth)
             LOGGER.info('Stations populated.')
         except Exception as err:
             LOGGER.error('Could not populate stations due to: {}.'.format(str(err))) # noqa
 
         try:
             LOGGER.info('Populating normals...')
-            create_index(es, 'normals', AUTH)
+            create_index(es_client, 'normals')
             normals = generate_normals(cur, stn_dict, normals_dict,
                                        periods_dict)
             LOGGER.info('Normals populated.')
@@ -1110,7 +1085,7 @@ def climate_archive(ctx, db, es, username, password, dataset, station=None,
         try:
             LOGGER.info('Populating monthly summary...')
             if not date:
-                create_index(es, 'monthly_summary', AUTH)
+                create_index(es_client, 'monthly_summary')
             monthlies = generate_monthly_data(cur, stn_dict, date)
             LOGGER.info('Monthly Summary populated.')
         except Exception as err:
@@ -1119,7 +1094,7 @@ def climate_archive(ctx, db, es, username, password, dataset, station=None,
         try:
             LOGGER.info('Populating daily summary...')
             if not date:
-                create_index(es, 'daily_summary', AUTH)
+                create_index(es_client, 'daily_summary')
             dailies = generate_daily_data(cur, stn_dict, date)
             LOGGER.info('Daily Summary populated.')
         except Exception as err:
@@ -1128,8 +1103,8 @@ def climate_archive(ctx, db, es, username, password, dataset, station=None,
     elif dataset == 'stations':
         try:
             LOGGER.info('Populating stations...')
-            create_index(es, 'stations', AUTH)
-            load_stations(es, cur, AUTH)
+            create_index(es_client, 'stations')
+            load_stations(es, cur, auth)
             LOGGER.info('Stations populated.')
         except Exception as err:
             LOGGER.error('Could not populate stations due to: {}.'.format(str(err))) # noqa
@@ -1140,7 +1115,7 @@ def climate_archive(ctx, db, es, username, password, dataset, station=None,
             stn_dict = get_station_data(cur, station, starting_from)
             normals_dict = get_normals_data(cur)
             periods_dict = get_normals_periods(cur)
-            create_index(es, 'normals', AUTH)
+            create_index(es_client, 'normals')
             normals = generate_normals(cur, stn_dict, normals_dict,
                                        periods_dict)
             LOGGER.info('Normals populated.')
@@ -1152,7 +1127,7 @@ def climate_archive(ctx, db, es, username, password, dataset, station=None,
             LOGGER.info('Populating monthly summary...')
             stn_dict = get_station_data(cur, station, starting_from)
             if not (date or station or starting_from):
-                create_index(es, 'monthly_summary', AUTH)
+                create_index(es_client, 'monthly_summary')
             monthlies = generate_monthly_data(cur, stn_dict, date)
             LOGGER.info('Monthly Summary populated.')
         except Exception as err:
@@ -1161,11 +1136,8 @@ def climate_archive(ctx, db, es, username, password, dataset, station=None,
     elif dataset == 'daily':
         try:
             LOGGER.info('Populating daily summary...')
-            stn_dict = get_station_data(cur, station, starting_from)
-            normals_dict = get_normals_data(cur)
-            periods_dict = get_normals_periods(cur)
             if not (date or station or starting_from):
-                create_index(es, 'daily_summary', AUTH)
+                create_index(es_client, 'daily_summary')
             dailies = generate_daily_data(cur, stn_dict, date)
             LOGGER.info('Daily Summary populated.')
         except Exception as err:
