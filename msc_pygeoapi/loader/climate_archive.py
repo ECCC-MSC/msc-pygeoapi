@@ -19,7 +19,7 @@ import json
 import click
 import collections
 
-from msc_pygeoapi.util import get_es
+from msc_pygeoapi import util
 
 
 logging.basicConfig()
@@ -363,7 +363,7 @@ def create_index(es, index):
 
         if es.indices.exists(index_name):
             es.indices.delete(index_name)
-            LOGGER.info('Deleted the stations index')
+            LOGGER.info('Deleted the climate normals index')
         es.indices.create(index=index_name, body=mapping)
 
     if index == 'monthly_summary':
@@ -510,7 +510,7 @@ def create_index(es, index):
 
         if es.indices.exists(index_name):
             es.indices.delete(index_name)
-            LOGGER.info('Deleted the stations index')
+            LOGGER.info('Deleted the climate monthly summaries index')
         es.indices.create(index=index_name, body=mapping)
 
     if index == 'daily_summary':
@@ -707,7 +707,7 @@ def create_index(es, index):
 
         if es.indices.exists(index_name):
             es.indices.delete(index_name)
-            LOGGER.info('Deleted the stations index')
+            LOGGER.info('Deleted the climate daily summaries index')
         es.indices.create(index=index_name, body=mapping)
 
 
@@ -1049,7 +1049,7 @@ def climate_archive(ctx, db, es, username, password, dataset, station=None,
     """
 
     auth = (username, password)
-    es_client = get_es(es, auth)
+    es_client = util.get_es(es, auth)
 
     try:
         con = cx_Oracle.connect(db)
@@ -1078,6 +1078,8 @@ def climate_archive(ctx, db, es, username, password, dataset, station=None,
             create_index(es_client, 'normals')
             normals = generate_normals(cur, stn_dict, normals_dict,
                                        periods_dict)
+
+            util.submit_elastic_package(es_client, normals)
             LOGGER.info('Normals populated.')
         except Exception as err:
             LOGGER.error('Could not populate normals due to: {}.'.format(str(err))) # noqa    
@@ -1087,6 +1089,8 @@ def climate_archive(ctx, db, es, username, password, dataset, station=None,
             if not date:
                 create_index(es_client, 'monthly_summary')
             monthlies = generate_monthly_data(cur, stn_dict, date)
+
+            util.submit_elastic_package(es_client, monthlies)
             LOGGER.info('Monthly Summary populated.')
         except Exception as err:
             LOGGER.error('Could not populate monthly summary due to: {}.'.format(str(err))) # noqa
@@ -1096,6 +1100,8 @@ def climate_archive(ctx, db, es, username, password, dataset, station=None,
             if not date:
                 create_index(es_client, 'daily_summary')
             dailies = generate_daily_data(cur, stn_dict, date)
+
+            util.submit_elastic_package(es_client, dailies)
             LOGGER.info('Daily Summary populated.')
         except Exception as err:
             LOGGER.error('Could not populate daily summary due to: {}.'.format(str(err))) # noqa
@@ -1118,6 +1124,8 @@ def climate_archive(ctx, db, es, username, password, dataset, station=None,
             create_index(es_client, 'normals')
             normals = generate_normals(cur, stn_dict, normals_dict,
                                        periods_dict)
+
+            util.submit_elastic_package(es_client, normals)
             LOGGER.info('Normals populated.')
         except Exception as err:
             LOGGER.error('Could not populate normals due to: {}.'.format(str(err))) # noqa
@@ -1129,6 +1137,8 @@ def climate_archive(ctx, db, es, username, password, dataset, station=None,
             if not (date or station or starting_from):
                 create_index(es_client, 'monthly_summary')
             monthlies = generate_monthly_data(cur, stn_dict, date)
+
+            util.submit_elastic_package(es_client, monthlies)
             LOGGER.info('Monthly Summary populated.')
         except Exception as err:
             LOGGER.error('Could not populate monthly summary due to: {}.'.format(str(err))) # noqa
@@ -1136,9 +1146,12 @@ def climate_archive(ctx, db, es, username, password, dataset, station=None,
     elif dataset == 'daily':
         try:
             LOGGER.info('Populating daily summary...')
+            stn_dict = get_station_data(cur, station, starting_from)
             if not (date or station or starting_from):
                 create_index(es_client, 'daily_summary')
             dailies = generate_daily_data(cur, stn_dict, date)
+
+            util.submit_elastic_package(es_client, dailies)
             LOGGER.info('Daily Summary populated.')
         except Exception as err:
             LOGGER.error('Could not populate daily summary due to: {}.'.format(str(err))) # noqa
