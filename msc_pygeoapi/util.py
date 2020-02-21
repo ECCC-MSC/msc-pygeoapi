@@ -84,10 +84,10 @@ def get_es(url, auth=None):
 
 def submit_elastic_package(es, package, request_size=10000):
     """
-    Helper function to send an update request to ElasticSearch and
+    Helper function to send an update request to Elasticsearch and
     log the status of the request. Returns True iff the upload succeeded.
 
-    :param es: ElasticSearch client object.
+    :param es: Elasticsearch client object.
     :param package: Iterable of bulk API update actions.
     :param request_size: Number of documents to upload per request.
     :returns: `bool` of whether the operation was successful.

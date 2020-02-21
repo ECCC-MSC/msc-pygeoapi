@@ -33,11 +33,11 @@ VERIFY = False
 
 def create_index(es, index):
     """
-    Creates the ElasticSearch index at path. If the index already exists,
+    Creates the Elasticsearch index at path. If the index already exists,
     it is deleted and re-created. The mappings for the two types are also
     created.
 
-    :param path: the path to ElasticSearch.
+    :param path: the path to Elasticsearch.
     :param index: the index to be created.
     :param AUTH: tuple of username and password used to authorize the
                  HTTP request.
@@ -714,9 +714,9 @@ def create_index(es, index):
 def load_stations(path, cur, AUTH):
     """
     Queries stations data from the db, and reformats
-    data so it can be inserted into ElasticSearch.
+    data so it can be inserted into Elasticsearch.
 
-    :param path: path to ElasticSearch.
+    :param path: path to Elasticsearch.
     :param cur: oracle cursor to perform queries against.
     :param AUTH: tuple of username and password used to authorize the
                  HTTP request.
@@ -757,10 +757,10 @@ def load_stations(path, cur, AUTH):
 def generate_normals(cur, stn_dict, normals_dict, periods_dict):
     """
     Queries normals data from the db, and reformats
-    data so it can be inserted into ElasticSearch.
+    data so it can be inserted into Elasticsearch.
 
     Returns a generator of dictionaries that represent upsert actions
-    into ElasticSearch's bulk API.
+    into Elasticsearch's bulk API.
 
     :param cur: oracle cursor to perform queries against.
     :param stn_dict: mapping of station IDs to station information.
@@ -814,10 +814,10 @@ def generate_normals(cur, stn_dict, normals_dict, periods_dict):
 def generate_monthly_data(cur, stn_dict, date=None):
     """
     Queries monthly data from the db, and reformats
-    data so it can be inserted into ElasticSearch.
+    data so it can be inserted into Elasticsearch.
 
     Returns a generator of dictionaries that represent upsert actions
-    into ElasticSearch's bulk API.
+    into Elasticsearch's bulk API.
 
     :param cur: oracle cursor to perform queries against.
     :param stn_dict: mapping of station IDs to station information.
@@ -864,10 +864,10 @@ def generate_monthly_data(cur, stn_dict, date=None):
 def generate_daily_data(cur, stn_dict, date=None):
     """
     Queries daily data from the db, and reformats
-    data so it can be inserted into ElasticSearch.
+    data so it can be inserted into Elasticsearch.
 
     Returns a generator of dictionaries that represent upsert actions
-    into ElasticSearch's bulk API.
+    into Elasticsearch's bulk API.
 
     :param cur: oracle cursor to perform queries against.
     :param stn_dict: mapping of station IDs to station information.
@@ -1020,7 +1020,7 @@ def get_normals_periods(cur):
 @click.command('climate-archive')
 @click.pass_context
 @click.option('--db', help='Oracle database connection string.')
-@click.option('--es', help='URL to ElasticSearch.')
+@click.option('--es', help='URL to Elasticsearch.')
 @click.option('--username', help='Username to connect to HTTPS')
 @click.option('--password', help='Password to connect to HTTPS')
 @click.option('--dataset', help='ES dataset to load, or all\
@@ -1036,10 +1036,10 @@ def climate_archive(ctx, db, es, username, password, dataset, station=None,
     """
     Loads MSC Climate Archive data into Elasticsearch
 
-    Controls transformation from oracle to ElasticSearch.
+    Controls transformation from oracle to Elasticsearch.
 
     :param db: database connection string.
-    :param es: path to ElasticSearch.
+    :param es: path to Elasticsearch.
     :param username: username for HTTP authentication.
     :param password: password for HTTP authentication.
     :param dataset: name of dataset to load, or all for all datasets.
