@@ -31,16 +31,19 @@ import logging
 from urllib.parse import urlparse
 
 from elasticsearch import Elasticsearch
-
+from elasticsearch.helpers import streaming_bulk, BulkIndexError
 
 LOGGER = logging.getLogger(__name__)
 
+VERIFY = False
 
-def get_es(url):
+
+def get_es(url, auth=None):
     """
     helper function to instantiate an Elasticsearch connection
 
     :param url: URL of ES endpoint
+    :param auth: HTTP username-password tuple for authentication (optional)
     :returns: `elasticsearch.Elasticsearch` object
     """
 
@@ -66,7 +69,10 @@ def get_es(url):
 
     LOGGER.debug('URL settings: {}'.format(url_settings))
 
-    es = Elasticsearch([url_settings])
+    if auth is None:
+        es = Elasticsearch([url_settings], verify_certs=VERIFY)
+    else:
+        es = Elasticsearch([url_settings], http_auth=auth, verify_certs=VERIFY)
 
     if not es.ping():
         msg = 'Cannot connect to Elasticsearch'
@@ -74,6 +80,55 @@ def get_es(url):
         raise RuntimeError(msg)
 
     return es
+
+
+def submit_elastic_package(es, package, request_size=10000):
+    """
+    Helper function to send an update request to Elasticsearch and
+    log the status of the request. Returns True iff the upload succeeded.
+
+    :param es: Elasticsearch client object.
+    :param package: Iterable of bulk API update actions.
+    :param request_size: Number of documents to upload per request.
+    :returns: `bool` of whether the operation was successful.
+    """
+
+    inserts = 0
+    updates = 0
+    noops = 0
+    errors = []
+
+    try:
+        for ok, response in streaming_bulk(es, package,
+                                           chunk_size=request_size,
+                                           request_timeout=30):
+            if not ok:
+                errors.append(response)
+            else:
+                status = response['update']['result']
+
+                if status == 'created':
+                    inserts += 1
+                elif status == 'updated':
+                    updates += 1
+                elif status == 'noop':
+                    noops += 1
+                else:
+                    LOGGER.error('Unhandled status code {}'.format(status))
+                    errors.append(response)
+    except BulkIndexError as err:
+        LOGGER.error('Unable to perform bulk insert due to: {}'
+                     .format(err.errors))
+        return False
+
+    if len(errors) != 0:
+        LOGGER.error('Errors encountered in bulk insert: {}'.format(errors))
+        return False
+
+    total = inserts + updates + noops
+    LOGGER.info('Inserted package of {} observations ({} inserts, {} updates,'
+                ' {} no-ops'.format(total, inserts, updates, noops))
+    return True
 
 
 def click_abort_if_false(ctx, param, value):
