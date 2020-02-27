@@ -9,14 +9,15 @@ annual-peaks
 '''
 
 import logging
-import json
-import requests
 import click
 from collections import defaultdict
 from sqlalchemy import create_engine
 from sqlalchemy.sql import distinct
 from sqlalchemy.schema import MetaData
 from sqlalchemy.orm import sessionmaker
+
+from msc_pygeoapi import util
+
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(40)
@@ -58,24 +59,16 @@ def zero_pad(val):
         return str(val)
 
 
-def create_index(path, index, AUTH):
+def create_index(es, index):
     """
-    Creates the Elasticsearch index at path. If the index already exists,
-    it is deleted and re-created. The mappings for the two types are also
-    created.
+    Creates the Elasticsearch index named <index>. If the index already
+    exists, it is deleted and re-created. The mappings for the two types
+    are also created.
 
-    :param path: path to Elasticsearch.
-    :param index: the index(es) to be created.
-    :param AUTH: tuple of username and password used to authorize the
-                 HTTP request.
+    :param es: elasticsearch.Elasticsearch client.
+    :param index: name for the index(es) to be created.
     """
     if index == 'observations':
-        r = requests.delete(path + '/hydrometric_daily_mean',
-                            auth=AUTH, verify=VERIFY)
-        if r.status_code != HTTP_OK and r.status_code != POST_OK:
-            LOGGER.error('Could not delete daily means due to: {}'.format(r.text)) # noqa
-        else:
-            LOGGER.info('Deleted the daily means index')
         mapping =\
             {
                 "settings": {
@@ -157,21 +150,12 @@ def create_index(path, index, AUTH):
                 }
             }
 
-        r = requests.put(path + '/hydrometric_daily_mean',
-                         data=json.dumps(mapping),
-                         auth=AUTH, verify=VERIFY,
-                         headers=HEADERS)
-        if r.status_code != HTTP_OK and r.status_code != POST_OK:
-            LOGGER.error('Could not create daily means due to: {}'.format(r.text)) # noqa
-        else:
-            LOGGER.info('Created the daily means index')
+        index_name = 'hydrometric_daily_mean'
+        if es.indices.exists(index_name):
+            es.indices.delete(index_name)
+            LOGGER.info('Deleted the daily observations index')
+        es.indices.create(index=index_name, body=mapping)
 
-        r = requests.delete(path + '/hydrometric_monthly_mean',
-                            auth=AUTH, verify=VERIFY)
-        if r.status_code != HTTP_OK and r.status_code != POST_OK:
-            LOGGER.error('Could not delete monthly means due to: {}'.format(r.text)) # noqa
-        else:
-            LOGGER.info('Deleted the monthly means index')
         mapping =\
             {
                 "settings": {
@@ -229,22 +213,13 @@ def create_index(path, index, AUTH):
                 }
             }
 
-        r = requests.put(path + '/hydrometric_monthly_mean',
-                         data=json.dumps(mapping),
-                         auth=AUTH, verify=VERIFY,
-                         headers=HEADERS)
-        if r.status_code != HTTP_OK and r.status_code != POST_OK:
-            LOGGER.error('Could not create monthly means due to: {}'.format(r.text)) # noqa
-        else:
-            LOGGER.info('Created the monthly means index')
+        index_name = 'hydrometric_monthly_mean'
+        if es.indices.exists(index_name):
+            es.indices.delete(index_name)
+            LOGGER.info('Deleted the monthly observations index')
+        es.indices.create(index=index_name, body=mapping)
 
     if index == 'annual_statistics':
-        r = requests.delete(path + '/hydrometric_annual_statistics',
-                            auth=AUTH, verify=VERIFY)
-        if r.status_code != HTTP_OK and r.status_code != POST_OK:
-            LOGGER.error('Could not delete annual statistics due to: {}'.format(r.text)) # noqa
-        else:
-            LOGGER.info('Deleted the annual statistics index')
         mapping =\
             {
                 "settings": {
@@ -342,22 +317,13 @@ def create_index(path, index, AUTH):
                 }
             }
 
-        r = requests.put(path + '/hydrometric_annual_statistics',
-                         data=json.dumps(mapping),
-                         auth=AUTH, verify=VERIFY,
-                         headers=HEADERS)
-        if r.status_code != HTTP_OK and r.status_code != POST_OK:
-            LOGGER.error('Could not create annual stats due to: {}'.format(r.text)) # noqa
-        else:
-            LOGGER.info('Created the annual stats index')
+        index_name = 'hydrometric_annual_statistics'
+        if es.indices.exists(index_name):
+            es.indices.delete(index_name)
+            LOGGER.info('Deleted the annual statistics index')
+        es.indices.create(index=index_name, body=mapping)
 
     if index == 'stations':
-        r = requests.delete(path + '/hydrometric_stations',
-                            auth=AUTH, verify=VERIFY)
-        if r.status_code != HTTP_OK and r.status_code != POST_OK:
-            LOGGER.error('Could not delete stations due to: {}'.format(r.text)) # noqa
-        else:
-            LOGGER.info('Deleted the stations index')
         mapping =\
             {
                 "settings": {
@@ -435,22 +401,13 @@ def create_index(path, index, AUTH):
                 }
             }
 
-        r = requests.put(path + '/hydrometric_stations',
-                         data=json.dumps(mapping),
-                         auth=AUTH, verify=VERIFY,
-                         headers=HEADERS)
-        if r.status_code != HTTP_OK and r.status_code != POST_OK:
-            LOGGER.error('Could not create stations due to: {}'.format(r.text)) # noqa
-        else:
-            LOGGER.info('Created the stations index')
+        index_name = 'hydrometric_stations'
+        if es.indices.exists(index_name):
+            es.indices.delete(index_name)
+            LOGGER.info('Deleted the stations index')
+        es.indices.create(index=index_name, body=mapping)
 
     if index == 'annual_peaks':
-        r = requests.delete(path + '/hydrometric_annual_peaks',
-                            auth=AUTH, verify=VERIFY)
-        if r.status_code != HTTP_OK and r.status_code != POST_OK:
-            LOGGER.error('Could not delete annual peaks due to: {}'.format(r.text)) # noqa
-        else:
-            LOGGER.info('Deleted the annual peaks index')
         mapping =\
             {
                 "settings": {
@@ -559,14 +516,11 @@ def create_index(path, index, AUTH):
                 }
             }
 
-        r = requests.put(path + '/hydrometric_annual_peaks',
-                         data=json.dumps(mapping),
-                         auth=AUTH, verify=VERIFY,
-                         headers=HEADERS)
-        if r.status_code != HTTP_OK and r.status_code != POST_OK:
-            LOGGER.error('Could not create annual peaks due to: {}'.format(r.text)) # noqa
-        else:
-            LOGGER.info('Created the annual peaks index')
+        index_name = 'hydrometric_annual_peaks'
+        if es.indices.exists(index_name):
+            es.indices.delete(index_name)
+            LOGGER.info('Deleted the annual peaks index')
+        es.indices.create(index=index_name, body=mapping)
 
 
 def connect_db(db_string):
@@ -683,24 +637,27 @@ def generate_obs(session, station, var, symbol_table, discharge=True):
     return (lst, mean_lst)
 
 
-def unpivot(session, discharge_var, level_var, path, station_table,
-            symbol_table, AUTH):
+def generate_means(session, discharge_var, level_var,
+                   station_table, symbol_table):
     """
     Unpivots db observations one station at a time, and reformats
     observations so they can be bulk inserted to Elasticsearch.
 
+    Returns a generator of dictionaries that represent upsert actions
+    into Elasticsearch's bulk API.
+
+    Generates documents for both daily and monthly means indexes.
+
     :param session: SQLAlchemy session object.
     :param discharge_var: table object to query discharge data from.
     :param level_var: table object to query level data from.
-    :param path: path to Elasticsearch.
     :param station_table: table object to query station data from.
     :param symbol_table: table object to query symbol data from.
-    :param AUTH: tuple of username and password used to authorize the
-                 HTTP request.
+    :returns: generator of bulk API upsert actions.
     """
     discharge_station_codes = [x[0] for x in session.query(distinct(discharge_var.c['STATION_NUMBER'])).all()] # noqa
     level_station_codes = [x[0] for x in session.query(distinct(level_var.c['STATION_NUMBER'])).all()] # noqa
-    station_codes = list(set(discharge_station_codes).union(level_station_codes))
+    station_codes = list(set(discharge_station_codes).union(level_station_codes)) # noqa
     for station in station_codes:
         LOGGER.debug('Generating discharge and level values for station {}'.format(station)) # noqa
         discharge_lst, discharge_means = \
@@ -723,7 +680,6 @@ def unpivot(session, discharge_var, level_var, path, station_table,
         comb_list = d.values()
         # add missing discharge/level key to any dicts that were
         # not combined (i.e. full outer join)
-        wrapper_lst = []
         for item in comb_list:
             if 'LEVEL' not in item:
                 item['LEVEL'] = None
@@ -738,15 +694,14 @@ def unpivot(session, discharge_var, level_var, path, station_table,
             wrapper['properties']['STATION_NAME'] = station_name
             wrapper['properties']['PROV_TERR_STATE_LOC'] = province
             wrapper['geometry']['coordinates'] = station_coords
-            wrapper_lst.append(wrapper)
-        # turn list into a format suitable for bulk insert
-        insert_lst = [x for item in wrapper_lst for x in ({'index': {'_id': item['properties']['IDENTIFIER']}}, item)] # noqa
-        ES_str = '\n'.join([json.dumps(x) for x in insert_lst]) + '\n'
-        r = requests.post(path + '/hydrometric_daily_mean/_bulk', data = ES_str, auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
-        if r.status_code != POST_OK and r.status_code != HTTP_OK:
-            LOGGER.error('Could not insert into daily means due to: {}'.format(r.text)) # noqa
-        else:
-            LOGGER.info('Successfully bulk inserted {} records into ES'.format(len(wrapper_lst))) # noqa
+            action = {
+                '_id': item['IDENTIFIER'],
+                '_index': 'hydrometric_daily_mean',
+                '_op_type': 'update',
+                'doc': wrapper,
+                'doc_as_upsert': True
+            }
+            yield action
 
         # Insert all monthly means for this station
         d = defaultdict(dict)
@@ -756,7 +711,6 @@ def unpivot(session, discharge_var, level_var, path, station_table,
         comb_list = d.values()
         # add missing mean discharge/level key to any dicts that were
         # not combined (i.e. full outer join)
-        wrapper_lst = []
         for item in comb_list:
             if 'MONTHLY_MEAN_LEVEL' not in item:
                 item['MONTHLY_MEAN_LEVEL'] = None
@@ -768,28 +722,29 @@ def unpivot(session, discharge_var, level_var, path, station_table,
             wrapper['properties']['STATION_NUMBER'] = station
             wrapper['properties']['PROV_TERR_STATE_LOC'] = province
             wrapper['geometry']['coordinates'] = station_coords
-            wrapper_lst.append(wrapper)
-        # turn list into a format suitable for bulk insert
-        insert_lst = [x for item in wrapper_lst for x in ({'index': {'_id': item['properties']['IDENTIFIER']}}, item)] # noqa
-        ES_str = '\n'.join([json.dumps(x) for x in insert_lst]) + '\n'
-        r = requests.post(path + '/hydrometric_monthly_mean/_bulk', data = ES_str, auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
-        if r.status_code != POST_OK and r.status_code != HTTP_OK:
-            LOGGER.error('Could not insert into monthly means due to: {}'.format(r.text)) # noqa
-        else:
-            LOGGER.info('Successfully bulk inserted {} records into ES'.format(len(wrapper_lst))) # noqa
+            action = {
+                '_id': item['IDENTIFIER'],
+                '_index': 'hydrometric_monthly_mean',
+                '_op_type': 'update',
+                'doc': wrapper,
+                'doc_as_upsert': True
+            }
+            yield action
 
 
-def load_stations(session, metadata, path, station_table, AUTH):
+def generate_stations(session, metadata, path, station_table):
     """
     Queries station data from the db, and reformats
     data so it can be inserted into Elasticsearch.
 
+    Returns a generator of dictionaries that represent upsert actions
+    into ElasticSearch's bulk API.
+
     :param session: SQLAlchemy session object.
     :param metadata: db metadata returned by connect_db.
-    :param path: path to Elasticsearch.
+    :param path: URL to Elasticsearch.
     :param station_table: table object to query station data from.
-    :param AUTH: tuple of username and password used to authorize the
-                 HTTP request.
+    :returns: generator of bulk API upsert actions.
     """
 
     url = get_wfs3_url(path)
@@ -837,7 +792,7 @@ def load_stations(session, metadata, path, station_table, AUTH):
             status_en = status_fr = ''
             LOGGER.warning('Could not find status information for station {}'.format(station)) # noqa
 
-        metadata_dict = {
+        insert_dict = {
             'type': 'Feature',
             'properties': {
                 'STATION_NAME': station_name,
@@ -899,30 +854,31 @@ def load_stations(session, metadata, path, station_table, AUTH):
             }
         }
 
-        r = requests.put(path + '/hydrometric_stations/_doc/{}'.format(station), # noqa
-                                data=json.dumps(metadata_dict),
-                                auth=AUTH, verify=VERIFY,
-                                headers=HEADERS)
-        if r.status_code != HTTP_OK and r.status_code != POST_OK:
-            LOGGER.error('Could not insert into stations due to: {}'.format(r.text)) # noqa
-        else:
-            LOGGER.info('Successfully inserted one station record into ES') # noqa   
+        action = {
+            '_id': station,
+            '_index': 'hydrometric_stations',
+            '_op_type': 'update',
+            'doc': insert_dict,
+            'doc_as_upsert': True
+        }
+        yield action
 
 
-def load_annual_stats(session, path, annual_stats_table, data_types_table,
-                      station_table, symbol_table, AUTH):
+def generate_annual_stats(session, annual_stats_table, data_types_table,
+                          station_table, symbol_table):
     """
     Queries annual statistics data from the db, and reformats
     data so it can be inserted into Elasticsearch.
 
+    Returns a generator of dictionaries that represent upsert actions
+    into Elasticsearch's bulk API.
+
     :param session: SQLAlchemy session object.
-    :param path: path to Elasticsearch.
     :param annual_stats_table: table object to query annual stats data from.
     :param data_types_table: table object to query data types data from.
     :param station_table: table object to query station data from.
     :param symbol_table: table object to query symbol data from.
-    :param AUTH: tuple of username and password used to authorize the
-                 HTTP request.
+    :returns: generator of bulk API upsert actions.
     """
     results = session.query(annual_stats_table).group_by(annual_stats_table.c['STATION_NUMBER'], annual_stats_table.c['DATA_TYPE'], annual_stats_table.c['YEAR']).all() # noqa
     results = [list(x) for x in results]
@@ -992,49 +948,55 @@ def load_annual_stats(session, path, annual_stats_table, data_types_table,
             es_id = '{}.{}.tonnes-tonnes'.format(station_number, year)
         else:
             es_id = '{}.{}.None'.format(station_number, year)
-        metadata_dict = {'type': 'Feature', 'properties':
-                         {'STATION_NAME': station_name,
-                          'IDENTIFIER': es_id,
-                          'STATION_NUMBER': station_number,
-                          'PROV_TERR_STATE_LOC': province,
-                          'DATA_TYPE_EN': data_type_en,
-                          'DATA_TYPE_FR': data_type_fr,
-                          'MIN_DATE': min_date,
-                          'MIN_VALUE': float(min_value) if min_value else None,
-                          'MIN_SYMBOL_EN': min_symbol_en,
-                          'MIN_SYMBOL_FR': min_symbol_fr,
-                          'MAX_DATE': max_date,
-                          'MAX_VALUE': float(max_value) if max_value else None,
-                          'MAX_SYMBOL_EN': max_symbol_en,
-                          'MAX_SYMBOL_FR': max_symbol_fr},
-                         'geometry': {'type': 'Point',
-                                      'coordinates': station_coords}
-                         }
-        r = requests.put(path + '/hydrometric_annual_statistics/_doc/{}'.format(es_id), # noqa
-                                data=json.dumps(metadata_dict),
-                                auth=AUTH, verify=VERIFY,
-                                headers=HEADERS)
-        if r.status_code != HTTP_OK and r.status_code != POST_OK:
-            LOGGER.error('Could not insert into annual stats due to: {}'.format(r.text)) # noqa
-        else:
-            LOGGER.info('Successfully inserted one annual stats record into ES') # noqa 
+        insert_dict = {
+            'type': 'Feature',
+            'properties': {
+                'STATION_NAME': station_name,
+                'IDENTIFIER': es_id,
+                'STATION_NUMBER': station_number,
+                'PROV_TERR_STATE_LOC': province,
+                'DATA_TYPE_EN': data_type_en,
+                'DATA_TYPE_FR': data_type_fr,
+                'MIN_DATE': min_date,
+                'MIN_VALUE': float(min_value) if min_value else None,
+                'MIN_SYMBOL_EN': min_symbol_en,
+                'MIN_SYMBOL_FR': min_symbol_fr,
+                'MAX_DATE': max_date,
+                'MAX_VALUE': float(max_value) if max_value else None,
+                'MAX_SYMBOL_EN': max_symbol_en,
+                'MAX_SYMBOL_FR': max_symbol_fr
+            },
+            'geometry': {
+                'type': 'Point',
+                'coordinates': station_coords
+            }
+        }
+        action = {
+            '_id': es_id,
+            '_index': 'hydrometric_annual_statistics',
+            '_op_type': 'update',
+            'doc': insert_dict,
+            'doc_as_upsert': True
+        }
+        yield action
 
 
-def load_annual_peaks(session, metadata, path, annual_peaks_table,
-                      data_types_table, symbol_table, station_table, AUTH):
+def generate_annual_peaks(session, metadata, annual_peaks_table,
+                          data_types_table, symbol_table, station_table):
     """
     Queries annual peaks data from the db, and reformats
     data so it can be inserted into Elasticsearch.
 
+    Returns a generator of dictionaries that represent upsert actions
+    into Elasticsearch's bulk API.
+
     :param session: SQLAlchemy session object.
     :param metadata: db metadata returned by connect_db.
-    :param path: path to Elasticsearch.
     :param annual_peaks_table: table object to query annual peaks data from.
     :param data_types_table: table object to query data types data from.
     :param symbol_table: table object to query symbol data from.
     :param station_table: table object to query station data from.
-    :param AUTH: tuple of username and password used to authorize the
-                 HTTP request.
+    :returns: generator of bulk API upsert actions.
     """
     tz_map = {None: None, '*': None, '0': None, 'AKST': '-9', 'AST': '-4',
               'CST': '-6', 'EST': '-5', 'MDT': '-6', 'MST': '-7',
@@ -1133,32 +1095,38 @@ def load_annual_peaks(session, metadata, path, annual_peaks_table,
             es_id = '{}.{}.tonnes-tonnes.{}'.format(station_number, year, peak)
         else:
             es_id = '{}.{}.None'.format(station_number, year)
-        metadata_dict = {'type': 'Feature', 'properties':
-                         {'STATION_NAME': station_name,
-                          'STATION_NUMBER': station_number,
-                          'PROV_TERR_STATE_LOC': province,
-                          'IDENTIFIER': es_id,
-                          'DATA_TYPE_EN': data_type_en,
-                          'DATA_TYPE_FR': data_type_fr,
-                          'DATE': date,
-                          'TIMEZONE_OFFSET': time_zone,
-                          'PEAK_CODE_EN': peak_en,
-                          'PEAK_CODE_FR': peak_fr,
-                          'PEAK': peak_value,
-                          'UNITS_EN': unit_en,
-                          'UNITS_FR': unit_fr,
-                          'SYMBOL_EN': symbol_en,
-                          'SYMBOL_FR': symbol_fr},
-                         'geometry': {'type': 'Point',
-                                      'coordinates': station_coords}
-                         }
-        r = requests.put(path + '/hydrometric_annual_peaks/_doc/{}'.format(es_id), # noqa
-                     data=json.dumps(metadata_dict),
-                     auth=AUTH, verify=VERIFY, headers=HEADERS)
-        if r.status_code != HTTP_OK and r.status_code != POST_OK:
-            LOGGER.error('Could not insert into annual peaks due to: {}'.format(r.text)) # noqa
-        else:
-            LOGGER.info('Successfully inserted one annual peaks record into ES') # noqa 
+        insert_dict = {
+            'type': 'Feature',
+            'properties': {
+                'STATION_NAME': station_name,
+                'STATION_NUMBER': station_number,
+                'PROV_TERR_STATE_LOC': province,
+                'IDENTIFIER': es_id,
+                'DATA_TYPE_EN': data_type_en,
+                'DATA_TYPE_FR': data_type_fr,
+                'DATE': date,
+                'TIMEZONE_OFFSET': time_zone,
+                'PEAK_CODE_EN': peak_en,
+                'PEAK_CODE_FR': peak_fr,
+                'PEAK': peak_value,
+                'UNITS_EN': unit_en,
+                'UNITS_FR': unit_fr,
+                'SYMBOL_EN': symbol_en,
+                'SYMBOL_FR': symbol_fr
+            },
+            'geometry': {
+                'type': 'Point',
+                'coordinates': station_coords
+            }
+        }
+        action = {
+            '_id': es_id,
+            '_index': 'hydrometric_annual_peaks',
+            '_op_type': 'update',
+            'doc': insert_dict,
+            'doc_as_upsert': True
+        }
+        yield action
 
 
 @click.command()
@@ -1182,7 +1150,8 @@ def hydat(ctx, db, es, username, password, dataset):
     :param password: password for HTTP authentication.
     :param dataset: name of dataset to load, or all for all datasets.
     """
-    AUTH = (username, password)
+    auth = (username, password)
+    es_client = util.get_es(es, auth)
     try:
         engine, session, metadata = connect_db('sqlite:///{}'.format(db))
     except Exception as err:
@@ -1206,29 +1175,37 @@ def hydat(ctx, db, es, username, password, dataset):
     if dataset == 'all':
         try:
             LOGGER.info('Populating stations index...')
-            create_index(es, 'stations', AUTH)
-            load_stations(session, metadata, es, station_table, AUTH)
+            create_index(es_client, 'stations')
+            stations = generate_stations(session, metadata, es, station_table)
+
+            util.submit_elastic_package(es_client, stations)
             LOGGER.info('Stations index populated.')
         except Exception as err:
             LOGGER.error('Could not populate stations due to: {}.'.format(str(err))) # noqa
         try:
             LOGGER.info('Populating observations indexes...')
-            create_index(es, 'observations', AUTH)
-            unpivot(session, discharge_var, level_var, es, station_table, symbol_table, AUTH) # noqa
+            create_index(es_client, 'observations')
+            means = generate_means(session, discharge_var, level_var, station_table, symbol_table) # noqa
+
+            util.submit_elastic_package(es_client, means)
             LOGGER.info('Observations populated.')
         except Exception as err:
             LOGGER.error('Could not populate observations due to: {}.'.format(str(err))) # noqa
         try:
             LOGGER.info('Populating annual statistics index...')
-            create_index(es, 'annual_statistics', AUTH)
-            load_annual_stats(session, es, annual_stats_table, data_types_table, station_table, symbol_table, AUTH) # noqa
+            create_index(es_client, 'annual_statistics')
+            stats = generate_annual_stats(session, annual_stats_table, data_types_table, station_table, symbol_table) # noqa
+
+            util.submit_elastic_package(es_client, stats)
             LOGGER.info('Annual stastistics index populated.')
         except Exception as err:
             LOGGER.error('Could not populate annual statistics due to: {}.'.format(str(err))) # noqa
         try:
             LOGGER.info('Populating annual peaks index...')
-            create_index(es, 'annual_peaks', AUTH)
-            load_annual_peaks(session, metadata, es, annual_peaks_table, data_types_table, symbol_table, station_table, AUTH) # noqa
+            create_index(es_client, 'annual_peaks')
+            peaks = generate_annual_peaks(session, metadata, annual_peaks_table, data_types_table, symbol_table, station_table) # noqa
+
+            util.submit_elastic_package(es_client, peaks)
             LOGGER.info('Annual peaks index populated.')
         except Exception as err:
             LOGGER.error('Could not populate annual peaks due to: {}.'.format(str(err))) # noqa
@@ -1237,8 +1214,10 @@ def hydat(ctx, db, es, username, password, dataset):
     elif dataset == 'stations':
         try:
             LOGGER.info('Populating stations index...')
-            create_index(es, 'stations', AUTH)
-            load_stations(session, metadata, es, station_table, AUTH)
+            create_index(es_client, 'stations')
+            stations = generate_stations(session, metadata, es, station_table)
+
+            util.submit_elastic_package(es_client, stations)
             LOGGER.info('Stations index populated.')
         except Exception as err:
             LOGGER.error('Could not populate stations due to: {}.'.format(str(err))) # noqa
@@ -1246,17 +1225,22 @@ def hydat(ctx, db, es, username, password, dataset):
     elif dataset == 'observations':
         try:
             LOGGER.info('Populating observations indexes...')
-            create_index(es, 'observations', AUTH)
-            unpivot(session, discharge_var, level_var, es, station_table, symbol_table, AUTH) # noqa
+            create_index(es_client, 'observations')
+            means = generate_means(session, discharge_var, level_var, station_table, symbol_table) # noqa
+
+            util.submit_elastic_package(es_client, means)
             LOGGER.info('Observations populated.')
         except Exception as err:
+            raise
             LOGGER.error('Could not populate observations due to: {}.'.format(str(err))) # noqa
 
     elif dataset == 'annual-statistics':
         try:
             LOGGER.info('Populating annual statistics index...')
-            create_index(es, 'annual_statistics', AUTH)
-            load_annual_stats(session, es, annual_stats_table, data_types_table, station_table, symbol_table, AUTH) # noqa
+            create_index(es_client, 'annual_statistics')
+            stats = generate_annual_stats(session, annual_stats_table, data_types_table, station_table, symbol_table) # noqa
+
+            util.submit_elastic_package(es_client, stats)
             LOGGER.info('Annual stastistics index populated.')
         except Exception as err:
             LOGGER.error('Could not populate annual statistics due to: {}.'.format(str(err))) # noqa
@@ -1264,8 +1248,10 @@ def hydat(ctx, db, es, username, password, dataset):
     elif dataset == 'annual-peaks':
         try:
             LOGGER.info('Populating annual peaks index...')
-            create_index(es, 'annual_peaks', AUTH)
-            load_annual_peaks(session, metadata, es, annual_peaks_table, data_types_table, symbol_table, station_table, AUTH) # noqa
+            create_index(es_client, 'annual_peaks')
+            peaks = generate_annual_peaks(session, metadata, annual_peaks_table, data_types_table, symbol_table, station_table) # noqa
+
+            util.submit_elastic_package(es_client, peaks)
             LOGGER.info('Annual peaks index populated.')
         except Exception as err:
             LOGGER.error('Could not populate annual peaks due to: {}.'.format(str(err))) # noqa

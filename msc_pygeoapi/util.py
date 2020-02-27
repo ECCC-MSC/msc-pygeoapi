@@ -101,7 +101,8 @@ def submit_elastic_package(es, package, request_size=10000):
     try:
         for ok, response in streaming_bulk(es, package,
                                            chunk_size=request_size,
-                                           request_timeout=30):
+                                           request_timeout=30,
+                                           raise_on_error=False):
             if not ok:
                 errors.append(response)
             else:

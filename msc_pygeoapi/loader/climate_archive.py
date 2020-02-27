@@ -14,8 +14,6 @@
 
 import logging
 import cx_Oracle
-import requests
-import json
 import click
 import collections
 
@@ -711,16 +709,18 @@ def create_index(es, index):
         es.indices.create(index=index_name, body=mapping)
 
 
-def load_stations(path, cur, AUTH):
+def generate_stations(cur):
     """
     Queries stations data from the db, and reformats
     data so it can be inserted into Elasticsearch.
 
-    :param path: path to Elasticsearch.
+    Returns a generator of dictionaries that represent upsert actions
+    into Elasticsearch's bulk API.
+
     :param cur: oracle cursor to perform queries against.
-    :param AUTH: tuple of username and password used to authorize the
-                 HTTP request.
+    :returns: generator of bulk API upsert actions.
     """
+
     try:
         cur.execute('select * from CCCS_PORTAL.STATION_INFORMATION')
     except Exception as err:
@@ -745,13 +745,20 @@ def load_stations(path, cur, AUTH):
         del insert_dict['LONGITUDE_DECIMAL_DEGREES']
         del insert_dict['LATITUDE_DECIMAL_DEGREES']
         climate_identifier = insert_dict['CLIMATE_IDENTIFIER']
-        wrapper = {'type': 'Feature', 'properties': insert_dict,
-                   'geometry': {'type': 'Point', 'coordinates': coords}}
-        r = requests.put('{}/climate_station_information/_doc/{}'.format(path, climate_identifier), data=json.dumps(wrapper), auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
-        if r.status_code != POST_OK and r.status_code != HTTP_OK:
-            LOGGER.error('Could not insert into stations due to: {}'.format(r.text)) # noqa
-        else:
-            LOGGER.info('Successfully inserted a record into the stations index') # noqa
+        wrapper = {
+            'type': 'Feature',
+            'properties': insert_dict,
+            'geometry': {'type': 'Point', 'coordinates': coords}
+        }
+
+        action = {
+            '_id': climate_identifier,
+            '_index': 'climate_station_information',
+            '_op_type': 'update',
+            'doc': wrapper,
+            'doc_as_upsert': True
+        }
+        yield action
 
 
 def generate_normals(cur, stn_dict, normals_dict, periods_dict):
@@ -1068,7 +1075,9 @@ def climate_archive(ctx, db, es, username, password, dataset, station=None,
         try:
             LOGGER.info('Populating stations...')
             create_index(es_client, 'stations')
-            load_stations(es, cur, auth)
+            stations = generate_stations(cur)
+
+            util.submit_elastic_package(es_client, stations)
             LOGGER.info('Stations populated.')
         except Exception as err:
             LOGGER.error('Could not populate stations due to: {}.'.format(str(err))) # noqa
@@ -1110,7 +1119,9 @@ def climate_archive(ctx, db, es, username, password, dataset, station=None,
         try:
             LOGGER.info('Populating stations...')
             create_index(es_client, 'stations')
-            load_stations(es, cur, auth)
+            stations = generate_stations(cur)
+
+            util.submit_elastic_package(es_client, stations)
             LOGGER.info('Stations populated.')
         except Exception as err:
             LOGGER.error('Could not populate stations due to: {}.'.format(str(err))) # noqa
