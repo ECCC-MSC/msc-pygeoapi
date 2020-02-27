@@ -5,10 +5,12 @@
 # Load a single dataset from scratch:
 # msc-pygeoapi data load ahccd --path /path/to/json/locations.json --es https://path/to/elasticsearch --username user --password pass --dataset trends # noqa
 
-import requests
 import json
 import logging
 import click
+
+from msc_pygeoapi import util
+
 
 LOGGER = logging.getLogger(__name__)
 HTTP_OK = 200
@@ -18,24 +20,17 @@ HEADERS = {'Content-type': 'application/json'}
 VERIFY = False
 
 
-def create_index(es, index, AUTH):
+def create_index(es, index):
     """
     Creates the Elasticsearch index at es. If the index already exists,
     it is deleted and re-created. The mappings for the two types are also
     created.
 
-    :param es: the path to the ES index.
-    :param index: the index to be created.
-    :param AUTH: tuple of username and password used to authorize the
-                 HTTP request.
+    :param es: elasticsearch.Elasticsearch object connected to ES cluster.
+    :param index: Identifier for the index to be created.
     """
+
     if index == 'annual':
-        r = requests.delete('{}/ahccd_annual'.format(es),
-                            auth=AUTH, verify=VERIFY)
-        if r.status_code != HTTP_OK and r.status_code != POST_OK:
-            LOGGER.error('Could not delete annual index due to: {}'.format(r.text)) # noqa
-        else:
-            LOGGER.info('Deleted the annual index')
         mapping =\
             {
                 "settings": {
@@ -85,7 +80,7 @@ def create_index(es, index, AUTH):
                                 "pressure_sea_level__pression_niveau_mer": {
                                     "type": "float"
                                 },
-                                "pressure_sea_level_units__pression_niveau_mer_unite": {
+                                "pressure_sea_level_units__pression_niveau_mer_unite": { # noqa
                                     "type": "text",
                                     "fields": {
                                         "raw": {"type": "keyword"}
@@ -94,7 +89,7 @@ def create_index(es, index, AUTH):
                                 "pressure_station__pression_station": {
                                     "type": "float"
                                 },
-                                "pressure_station_units__pression_station_unites": {
+                                "pressure_station_units__pression_station_unites": { # noqa
                                     "type": "text",
                                     "fields": {
                                         "raw": {"type": "keyword"}
@@ -179,22 +174,13 @@ def create_index(es, index, AUTH):
                 }
             }
 
-        r = requests.put('{}/ahccd_annual'.format(es),
-                         data=json.dumps(mapping),
-                         auth=AUTH, verify=VERIFY,
-                         headers=HEADERS)
-        if r.status_code != HTTP_OK and r.status_code != POST_OK:
-            LOGGER.error('Could not create annual index due to: {}'.format(r.text)) # noqa
-        else:
-            LOGGER.info('Created the annual index')
+        index_name = 'ahccd_annual'
+        if es.indices.exists(index_name):
+            es.indices.delete(index_name)
+            LOGGER.info('Deleted the AHCCD annuals index')
+        es.indices.create(index=index_name, body=mapping)
 
     if index == 'monthly':
-        r = requests.delete('{}/ahccd_monthly'.format(es),
-                            auth=AUTH, verify=VERIFY)
-        if r.status_code != HTTP_OK and r.status_code != POST_OK:
-            LOGGER.error('Could not delete monthly index due to: {}'.format(r.text)) # noqa
-        else:
-            LOGGER.info('Deleted the monthly index')
         mapping =\
             {
                 "settings": {
@@ -248,7 +234,7 @@ def create_index(es, index, AUTH):
                                 "pressure_sea_level__pression_niveau_mer": {
                                     "type": "float"
                                 },
-                                "pressure_sea_level_units__pression_niveau_mer_unite": {
+                                "pressure_sea_level_units__pression_niveau_mer_unite": { # noqa
                                     "type": "text",
                                     "fields": {
                                         "raw": {"type": "keyword"}
@@ -257,7 +243,7 @@ def create_index(es, index, AUTH):
                                 "pressure_station__pression_station": {
                                     "type": "float"
                                 },
-                                "pressure_station_units__pression_station_unites": {
+                                "pressure_station_units__pression_station_unites": { # noqa
                                     "type": "text",
                                     "fields": {
                                         "raw": {"type": "keyword"}
@@ -341,22 +327,14 @@ def create_index(es, index, AUTH):
                     }
                 }
             }
-        r = requests.put('{}/ahccd_monthly'.format(es),
-                         data=json.dumps(mapping),
-                         auth=AUTH, verify=VERIFY,
-                         headers=HEADERS)
-        if r.status_code != HTTP_OK and r.status_code != POST_OK:
-            LOGGER.error('Could not create monthly index due to: {}'.format(r.text)) # noqa
-        else:
-            LOGGER.info('Created the monthly index')
+
+        index_name = 'ahccd_monthly'
+        if es.indices.exists(index_name):
+            es.indices.delete(index_name)
+            LOGGER.info('Deleted the AHCCD monthlies index')
+        es.indices.create(index=index_name, body=mapping)
 
     if index == 'seasonal':
-        r = requests.delete('{}/ahccd_seasonal'.format(es),
-                            auth=AUTH, verify=VERIFY)
-        if r.status_code != HTTP_OK and r.status_code != POST_OK:
-            LOGGER.error('Could not delete seasonal index due to: {}'.format(r.text)) # noqa
-        else:
-            LOGGER.info('Deleted the seasonal index')
         mapping =\
             {
                 "settings": {
@@ -406,7 +384,7 @@ def create_index(es, index, AUTH):
                                 "pressure_sea_level__pression_niveau_mer": {
                                     "type": "float"
                                 },
-                                "pressure_sea_level_units__pression_niveau_mer_unite": {
+                                "pressure_sea_level_units__pression_niveau_mer_unite": { # noqa
                                     "type": "text",
                                     "fields": {
                                         "raw": {"type": "keyword"}
@@ -415,7 +393,7 @@ def create_index(es, index, AUTH):
                                 "pressure_station__pression_station": {
                                     "type": "float"
                                 },
-                                "pressure_station_units__pression_station_unites": {
+                                "pressure_station_units__pression_station_unites": { # noqa
                                     "type": "text",
                                     "fields": {
                                         "raw": {"type": "keyword"}
@@ -499,22 +477,14 @@ def create_index(es, index, AUTH):
                     }
                 }
             }
-        r = requests.put('{}/ahccd_seasonal'.format(es),
-                         data=json.dumps(mapping),
-                         auth=AUTH, verify=VERIFY,
-                         headers=HEADERS)
-        if r.status_code != HTTP_OK and r.status_code != POST_OK:
-            LOGGER.error('Could not create seasonal index due to: {}'.format(r.text)) # noqa
-        else:
-            LOGGER.info('Created the seasonal index')
+
+        index_name = 'ahccd_seasonal'
+        if es.indices.exists(index_name):
+            es.indices.delete(index_name)
+            LOGGER.info('Deleted the AHCCD seasonals index')
+        es.indices.create(index=index_name, body=mapping)
 
     if index == 'stations':
-        r = requests.delete('{}/ahccd_stations'.format(es),
-                            auth=AUTH, verify=VERIFY)
-        if r.status_code != HTTP_OK and r.status_code != POST_OK:
-            LOGGER.error('Could not delete stations due to: {}'.format(r.text)) # noqa
-        else:
-            LOGGER.info('Deleted the stations index')
         mapping =\
             {
                 "settings": {
@@ -588,22 +558,14 @@ def create_index(es, index, AUTH):
                     }
                 }
             }
-        r = requests.put('{}/ahccd_stations'.format(es),
-                         data=json.dumps(mapping),
-                         auth=AUTH, verify=VERIFY,
-                         headers=HEADERS)
-        if r.status_code != HTTP_OK and r.status_code != POST_OK:
-            LOGGER.error('Could not create stations due to: {}'.format(r.text)) # noqa
-        else:
-            LOGGER.info('Created the stations index')
+
+        index_name = 'ahccd_stations'
+        if es.indices.exists(index_name):
+            es.indices.delete(index_name)
+            LOGGER.info('Deleted the AHCCD stations index')
+        es.indices.create(index=index_name, body=mapping)
 
     if index == 'trends':
-        r = requests.delete('{}/ahccd_trends'.format(es),
-                            auth=AUTH, verify=VERIFY)
-        if r.status_code != HTTP_OK and r.status_code != POST_OK:
-            LOGGER.error('Could not delete trends due to: {}'.format(r.text)) # noqa
-        else:
-            LOGGER.info('Deleted the trends index')
         mapping =\
             {
                 "settings": {
@@ -677,70 +639,71 @@ def create_index(es, index, AUTH):
                     }
                 }
             }
-        r = requests.put('{}/ahccd_trends'.format(es),
-                         data=json.dumps(mapping),
-                         auth=AUTH, verify=VERIFY,
-                         headers=HEADERS)
-        if r.status_code != HTTP_OK and r.status_code != POST_OK:
-            LOGGER.error('Could not create trends due to: {}'.format(r.text)) # noqa
-        else:
-            LOGGER.info('Created the trends index')
+
+        index_name = 'ahccd_trends'
+        if es.indices.exists(index_name):
+            es.indices.delete(index_name)
+            LOGGER.info('Deleted the AHCCD trends index')
+        es.indices.create(index=index_name, body=mapping)
 
 
-def generic_loader(fp, es, index, AUTH):
+def generate_docs(fp, index):
     """
-    Loads AHCCD and CMIP5 data from file(s) at fp into the elasticsearch
-    index specified by index at es.
+    Reads AHCCD and CMIP5 data from file(s) at fp and reformats them
+    so they can be nserted into Elasticsearch.
+
+    Returns a generator of dictionaries that represent upsert actions
+    into Elasticsearch's bulk API.
 
     :param fp: the location of the raw data file(s) to load.
-    :param es: path to Elasticsearch.
     :param index: name of index to load.
-    :param AUTH: tuple of username and password used to authorize the
-                 HTTP request.
+    :returns: generator of bulk API upsert actions.
     """
+
+    if index not in ['stations', 'monthly', 'annual', 'seasonal', 'trends']:
+        LOGGER.error('Unrecognized AHCCD data type {}'.format(index))
+        return
 
     try:
         with open(fp, 'r') as f:
             json_source = f.read()
-            data = json.loads(json_source)
-
-        for record in data['features']:
-            if index == 'monthly':
-                record['properties']['date'] = '{}-{}'.format(record['properties']['identifier__identifiant'].split('.')[1], record['properties']['identifier__identifiant'].split('.')[2]) # noqa
-                del record['properties']['year__annee']
-                r = requests.put('{}/ahccd_monthly/_doc/{}'.format(es, record['properties']['identifier__identifiant']), data=json.dumps(record), auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
-                if r.status_code != POST_OK and r.status_code != HTTP_OK:
-                    LOGGER.error('Could not insert into monthly due to: {}'.format(r.text)) # noqa
-                else:
-                    LOGGER.info('Successfully inserted a record into the monthly index') # noqa
-            if index == 'stations':
-                record['properties']['identifier__identifiant'] = record['properties']['station_id__id_station'] # noqa
-                r = requests.put('{}/ahccd_stations/_doc/{}'.format(es, record['properties']['identifier__identifiant']), data=json.dumps(record), auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
-                if r.status_code != POST_OK and r.status_code != HTTP_OK:
-                    LOGGER.error('Could not insert into stations due to: {}'.format(r.text)) # noqa
-                else:
-                    LOGGER.info('Successfully inserted a record into the stations index') # noqa
-            if index == 'annual':
-                r = requests.put('{}/ahccd_annual/_doc/{}'.format(es, record['properties']['identifier__identifiant']), data=json.dumps(record), auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
-                if r.status_code != POST_OK and r.status_code != HTTP_OK:
-                    LOGGER.error('Could not insert into annual due to: {}'.format(r.text)) # noqa
-                else:
-                    LOGGER.info('Successfully inserted a record into the annual index') # noqa
-            if index == 'seasonal':
-                r = requests.put('{}/ahccd_seasonal/_doc/{}'.format(es, record['properties']['identifier__identifiant']), data=json.dumps(record), auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
-                if r.status_code != POST_OK and r.status_code != HTTP_OK:
-                    LOGGER.error('Could not insert into seasonal due to: {}'.format(r.text)) # noqa
-                else:
-                    LOGGER.info('Successfully inserted a record into the seasonal index') # noqa
-            if index == 'trends':
-                record['properties']['identifier__identifiant'] = '{}.{}.{}'.format(record['properties']['station_id__id_station'], record['properties']['period__periode'], record['properties']['measurement_type__type_mesure']) # noqa
-                r = requests.put('{}/ahccd_trends/_doc/{}'.format(es, record['properties']['identifier__identifiant']), data=json.dumps(record), auth=AUTH, verify=VERIFY, headers=HEADERS) # noqa
-                if r.status_code != POST_OK and r.status_code != HTTP_OK:
-                    LOGGER.error('Could not insert into trends due to: {}'.format(r.text)) # noqa
-                else:
-                    LOGGER.info('Successfully inserted a record into the trends index') # noqa
+            contents = json.loads(json_source)
     except Exception as err:
-        LOGGER.error('Could not open JSON file due to: {}.'.format(str(err))) # noqa
+        LOGGER.error('Could not open JSON file due to: {}.'
+                     .format(str(err)))
+        return
+
+    for record in contents['features']:
+        if index == 'annual':
+            index_name = 'ahccd_annual'
+        elif index == 'seasonal':
+            index_name = 'ahccd_seasonal'
+        elif index == 'stations':
+            index_name = 'ahccd_stations'
+            stn_id = record['properties']['station_id__id_station']
+            record['properties']['identifier__identifiant'] = stn_id
+        elif index == 'monthly':
+            index_name = 'ahccd_monthly'
+            record['properties']['date'] = '{}-{}'.format(
+                record['properties']['identifier__identifiant'].split('.')[1],
+                record['properties']['identifier__identifiant'].split('.')[2])
+            del record['properties']['year__annee']
+        elif index == 'trends':
+            index_name = 'ahccd_trends'
+            identifier = '{}.{}.{}'.format(
+                record['properties']['station_id__id_station'],
+                record['properties']['period__periode'],
+                record['properties']['measurement_type__type_mesure'])
+            record['properties']['identifier__identifiant'] = identifier
+
+        action = {
+            '_id': record['properties']['identifier__identifiant'],
+            '_index': index_name,
+            '_op_type': 'update',
+            'doc': record,
+            'doc_as_upsert': True
+        }
+        yield action
 
 
 @click.command('ahccd')
@@ -773,98 +736,132 @@ def ahccd(ctx, path, es, username, password, dataset):
     :param password: password for HTTP authentication.
     :param dataset: name of dataset to load, or all for all datasets.
     """
-    AUTH = (username, password)
+
+    auth = (username, password)
+    es_client = util.get_es(es, auth)
+
     try:
         with open(path, 'r') as f:
             path_dict = json.loads(f.read())
     except Exception as err:
-        LOGGER.error('Could not open JSON location file due to: {}.'.format(str(err))) # noqa
+        LOGGER.error('Could not open JSON location file due to: {}.'
+                     .format(str(err)))
 
     if dataset == 'all':
         try:
             LOGGER.info('Populating stations...')
-            create_index(es, 'stations', AUTH)
-            generic_loader(path_dict['stations'], es, 'stations', AUTH)
+            create_index(es_client, 'stations')
+            stations = generate_docs(path_dict['stations'], 'stations')
+
+            util.submit_elastic_package(es_client, stations)
             LOGGER.info('Stations populated.')
         except Exception as err:
-            LOGGER.error('Could not populate stations due to: {}.'.format(str(err))) # noqa
+            LOGGER.error('Could not populate stations due to: {}.'
+                         .format(str(err)))
 
         try:
             LOGGER.info('Populating trends...')
-            create_index(es, 'trends', AUTH)
-            generic_loader(path_dict['trends'], es, 'trends', AUTH)
+            create_index(es_client, 'trends')
+            trends = generate_docs(path_dict['trends'], 'trends')
+
+            util.submit_elastic_package(es_client, trends)
             LOGGER.info('Trends populated.')
         except Exception as err:
-            LOGGER.error('Could not populate trends due to: {}.'.format(str(err))) # noqa    
+            LOGGER.error('Could not populate trends due to: {}.'
+                         .format(str(err)))
 
         try:
             LOGGER.info('Populating annual...')
-            create_index(es, 'annual', AUTH)
-            generic_loader(path_dict['annual'], es, 'annual', AUTH)
+            create_index(es_client, 'annual')
+            annuals = generate_docs(path_dict['annual'], 'annual')
+
+            util.submit_elastic_package(es_client, annuals)
             LOGGER.info('Annual populated.')
         except Exception as err:
-            LOGGER.error('Could not populate annual due to: {}.'.format(str(err))) # noqa
+            LOGGER.error('Could not populate annual due to: {}.'
+                         .format(str(err)))
 
         try:
             LOGGER.info('Populating seasonal...')
-            create_index(es, 'seasonal', AUTH)
-            generic_loader(path_dict['seasonal'], es, 'seasonal', AUTH)
+            create_index(es_client, 'seasonal')
+            seasonals = generate_docs(path_dict['seasonal'], 'seasonal')
+
+            util.submit_elastic_package(es_client, seasonals)
             LOGGER.info('Seasonal populated.')
         except Exception as err:
-            LOGGER.error('Could not populate seasonal due to: {}.'.format(str(err))) # noqa
+            LOGGER.error('Could not populate seasonal due to: {}.'
+                         .format(str(err)))
 
         try:
             LOGGER.info('Populating monthly...')
-            create_index(es, 'monthly', AUTH)
-            generic_loader(path_dict['monthly'], es, 'monthly', AUTH)
+            create_index(es_client, 'monthly')
+            monthlies = generate_docs(path_dict['monthly'], 'monthly')
+
+            util.submit_elastic_package(es_client, monthlies)
             LOGGER.info('Monthly populated.')
         except Exception as err:
-            LOGGER.error('Could not populate monthly due to: {}.'.format(str(err))) # noqa
+            LOGGER.error('Could not populate monthly due to: {}.'
+                         .format(str(err)))
 
     elif dataset == 'stations':
         try:
             LOGGER.info('Populating stations...')
-            create_index(es, 'stations', AUTH)
-            generic_loader(path_dict['stations'], es, 'stations', AUTH)
+            create_index(es_client, 'stations')
+            stations = generate_docs(path_dict['stations'], 'stations')
+
+            util.submit_elastic_package(es_client, stations)
             LOGGER.info('Stations populated.')
         except Exception as err:
-            LOGGER.error('Could not populate stations due to: {}.'.format(str(err))) # noqa
+            LOGGER.error('Could not populate stations due to: {}.'
+                         .format(str(err)))
 
     elif dataset == 'trends':
         try:
             LOGGER.info('Populating trends...')
-            create_index(es, 'trends', AUTH)
-            generic_loader(path_dict['trends'], es, 'trends', AUTH)
+            create_index(es_client, 'trends')
+            trends = generate_docs(path_dict['trends'], 'trends')
+
+            util.submit_elastic_package(es_client, trends)
             LOGGER.info('Trends populated.')
         except Exception as err:
-            LOGGER.error('Could not populate trends due to: {}.'.format(str(err))) # noqa    
+            LOGGER.error('Could not populate trends due to: {}.'
+                         .format(str(err)))
 
     elif dataset == 'annual':
         try:
             LOGGER.info('Populating annual...')
-            create_index(es, 'annual', AUTH)
-            generic_loader(path_dict['annual'], es, 'annual', AUTH)
+            create_index(es_client, 'annual')
+            annuals = generate_docs(path_dict['annual'], 'annual')
+
+            util.submit_elastic_package(es_client, annuals)
             LOGGER.info('Annual populated.')
         except Exception as err:
-            LOGGER.error('Could not populate annual due to: {}.'.format(str(err))) # noqa
+            LOGGER.error('Could not populate annual due to: {}.'
+                         .format(str(err)))
 
     elif dataset == 'seasonal':
         try:
             LOGGER.info('Populating seasonal...')
-            create_index(es, 'seasonal', AUTH)
-            generic_loader(path_dict['seasonal'], es, 'seasonal', AUTH)
+            create_index(es_client, 'seasonal')
+            seasonals = generate_docs(path_dict['seasonal'], 'seasonal')
+
+            util.submit_elastic_package(es_client, seasonals)
             LOGGER.info('Seasonal populated.')
         except Exception as err:
-            LOGGER.error('Could not populate seasonal due to: {}.'.format(str(err))) # noqa
+            LOGGER.error('Could not populate seasonal due to: {}.'
+                         .format(str(err)))
 
     elif dataset == 'monthly':
         try:
             LOGGER.info('Populating monthly...')
-            create_index(es, 'monthly', AUTH)
-            generic_loader(path_dict['monthly'], es, 'monthly', AUTH)
+            create_index(es_client, 'monthly')
+            monthlies = generate_docs(path_dict['monthly'], 'monthly')
+
+            util.submit_elastic_package(es_client, monthlies)
             LOGGER.info('Monthly populated.')
         except Exception as err:
-            LOGGER.error('Could not populate monthly due to: {}.'.format(str(err))) # noqa
+            LOGGER.error('Could not populate monthly due to: {}.'
+                         .format(str(err)))
 
     else:
         LOGGER.critical('Unknown dataset parameter {}, skipping index population.'.format(dataset)) # noqa
