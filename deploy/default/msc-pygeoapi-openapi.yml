@@ -2978,7 +2978,7 @@ servers:
 - description: The weather can have an incredible influence on our daily lives. It
     affects the growth of crops and the availability of water. It dictates which regions
     of the world are habitable or uninhabitable
-  url: https://geo.wxod-dev.cmc.ec.gc.ca/geomet/features/
+  url: https://api.wxod-dev.cmc.ec.gc.ca/
 tags:
 - description: The weather can have an incredible influence on our daily lives. It
     affects the growth of crops and the availability of water. It dictates which regions

@@ -2,8 +2,8 @@ server:
     bind:
         host: 0.0.0.0
         port: 5000
-    url: https://geo.wxod-dev.cmc.ec.gc.ca/geomet/features/
-    basepath: /geomet/features
+    url: https://api.wxod-dev.cmc.ec.gc.ca/
+    basepath: /
     mimetype: application/json; charset=UTF-8
     encoding: utf-8
     language: en-CA
@@ -103,7 +103,7 @@ datasets:
                 end: null # or empty
         provider:
             name: Elasticsearch
-            data: http://localhost:9200/hydrometric_stations/FeatureCollection
+            data: http://localhost:9200/hydrometric_stations
             id_field: IDENTIFIER
 
     hydrometric-daily-mean:
@@ -147,7 +147,7 @@ datasets:
                 end: null # or empty
         provider:
             name: Elasticsearch
-            data: http://localhost:9200/hydrometric_daily_mean/FeatureCollection
+            data: http://localhost:9200/hydrometric_daily_mean
             id_field: IDENTIFIER
             time_field: DATE
             properties:
@@ -204,7 +204,7 @@ datasets:
                 end: null # or empty
         provider:
             name: Elasticsearch
-            data: http://localhost:9200/hydrometric_monthly_mean/FeatureCollection
+            data: http://localhost:9200/hydrometric_monthly_mean
             id_field: IDENTIFIER
             time_field: DATE
             properties:
@@ -257,7 +257,7 @@ datasets:
                 end: null # or empty
         provider:
             name: Elasticsearch
-            data: http://localhost:9200/hydrometric_annual_statistics/FeatureCollection
+            data: http://localhost:9200/hydrometric_annual_statistics
             id_field: IDENTIFIER
             time_field: MAX_DATE
             properties:
@@ -317,7 +317,7 @@ datasets:
                 end: null # or empty
         provider:
             name: Elasticsearch
-            data: http://localhost:9200/hydrometric_annual_peaks/FeatureCollection
+            data: http://localhost:9200/hydrometric_annual_peaks
             id_field: IDENTIFIER
             time_field: DATE
             properties:
@@ -358,7 +358,7 @@ datasets:
                 end: 2010-12-31
         provider:
             name: Elasticsearch
-            data: http://localhost:9200/climate_normals_data/FeatureCollection
+            data: http://localhost:9200/climate_normals_data
             id_field: ID
             time_field: DATE_CALCULATED
             properties:
@@ -410,7 +410,7 @@ datasets:
                 end: null # or empty
         provider:
             name: Elasticsearch
-            data: http://localhost:9200/climate_station_information/FeatureCollection
+            data: http://localhost:9200/climate_station_information
             id_field: CLIMATE_IDENTIFIER
 
     climate-monthly:
@@ -434,7 +434,7 @@ datasets:
                 end: null # or empty
         provider:
             name: Elasticsearch
-            data: http://localhost:9200/climate_public_climate_summary/FeatureCollection
+            data: http://localhost:9200/climate_public_climate_summary
             id_field: ID
             time_field: LOCAL_DATE
             properties:
@@ -492,7 +492,7 @@ datasets:
                 end: null # or empty
         provider:
             name: Elasticsearch
-            data: http://localhost:9200/climate_public_daily_data/FeatureCollection
+            data: http://localhost:9200/climate_public_daily_data
             id_field: ID
             time_field: LOCAL_DATE
             properties:
@@ -549,7 +549,7 @@ datasets:
                 crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
         provider:
             name: Elasticsearch
-            data: http://localhost:9200/ahccd_stations/FeatureCollection
+            data: http://localhost:9200/ahccd_stations
             id_field: identifier__identifiant
 
     ahccd-annual:
@@ -573,7 +573,7 @@ datasets:
                 end: 2017-12-31
         provider:
             name: Elasticsearch
-            data: http://localhost:9200/ahccd_annual/FeatureCollection
+            data: http://localhost:9200/ahccd_annual
             id_field: identifier__identifiant
             time_field: year__annee
             properties:
@@ -625,7 +625,7 @@ datasets:
                 end: 2017-12-31
         provider:
             name: Elasticsearch
-            data: http://localhost:9200/ahccd_seasonal/FeatureCollection
+            data: http://localhost:9200/ahccd_seasonal
             id_field: identifier__identifiant
             time_field: year__annee
             properties:
@@ -677,7 +677,7 @@ datasets:
                 end: 2017-12-31
         provider:
             name: Elasticsearch
-            data: http://localhost:9200/ahccd_monthly/FeatureCollection
+            data: http://localhost:9200/ahccd_monthly
             id_field: identifier__identifiant
             time_field: date
             properties:
@@ -729,7 +729,7 @@ datasets:
                 end: 2017-12-31
         provider:
             name: Elasticsearch
-            data: http://localhost:9200/ahccd_trends/FeatureCollection
+            data: http://localhost:9200/ahccd_trends
             id_field: identifier__identifiant
             properties:
                 - identifier__identifiant
