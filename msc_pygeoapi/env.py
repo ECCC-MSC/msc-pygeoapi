@@ -38,3 +38,13 @@ LOGGER.info('Fetching environment variables')
 MSC_PYGEOAPI_ES_URL = os.getenv('MSC_PYGEOAPI_ES_URL', None)
 MSC_PYGEOAPI_ES_TIMEOUT = int(os.getenv('MSC_PYGEOAPI_ES_TIMEOUT', 90))
 MSC_PYGEOAPI_CACHEDIR = os.getenv('MSC_PYGEOAPI_CACHEDIR', '/tmp')
+
+MSC_PYGEOAPI_ES_USERNAME = os.getenv('MSC_PYGEOAPI_ES_USERNAME', None)
+MSC_PYGEOAPI_ES_PASSWORD = os.getenv('MSC_PYGEOAPI_ES_PASSWORD', None)
+
+if None in (MSC_PYGEOAPI_ES_USERNAME, MSC_PYGEOAPI_ES_PASSWORD):
+    LOGGER.warning('Missing Elasticsearch authentication information:'
+                   ' Continuing without authentication')
+    MSC_PYGEOAPI_ES_AUTH = None
+else:
+    MSC_PYGEOAPI_ES_AUTH = (MSC_PYGEOAPI_ES_USERNAME, MSC_PYGEOAPI_ES_PASSWORD)

@@ -48,21 +48,20 @@ def get_es(url, auth=None):
     """
 
     url_parsed = urlparse(url)
+    url_settings = {
+        'host': url_parsed.netloc
+    }
 
     LOGGER.debug('Connecting to Elasticsearch')
 
     if url_parsed.port is None:  # proxy to default HTTP(S) port
         if url_parsed.scheme == 'https':
-            port = 443
+            url_settings['port'] = 443
+            url_settings['scheme'] = url_parsed.scheme
         else:
-            port = 80
+            url_settings['port'] = 80
     else:  # was set explictly
-        port = url_parsed.port
-
-    url_settings = {
-        'host': url_parsed.hostname,
-        'port': port
-    }
+        url_settings['port'] = url_parsed.port
 
     if url_parsed.path:
         url_settings['url_prefix'] = url_parsed.path

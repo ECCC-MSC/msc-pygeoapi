@@ -31,7 +31,8 @@ import click
 from datetime import datetime, timedelta
 import logging
 
-from msc_pygeoapi.env import MSC_PYGEOAPI_ES_TIMEOUT, MSC_PYGEOAPI_ES_URL
+from msc_pygeoapi.env import (MSC_PYGEOAPI_ES_TIMEOUT, MSC_PYGEOAPI_ES_URL,
+                              MSC_PYGEOAPI_ES_AUTH)
 from msc_pygeoapi.loader.base import BaseLoader
 from msc_pygeoapi.util import click_abort_if_false, get_es
 
@@ -76,7 +77,7 @@ class BulletinsRealtimeLoader(BaseLoader):
         BaseLoader.__init__(self)
 
         self.DD_URL = 'https://dd.weather.gc.ca/bulletins/alphanumeric'
-        self.ES = get_es(MSC_PYGEOAPI_ES_URL)
+        self.ES = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
 
         if not self.ES.indices.exists(INDEX_NAME):
             self.ES.indices.create(index=INDEX_NAME, body=SETTINGS,
@@ -180,7 +181,7 @@ def bulletins():
 def clean_records(ctx, days):
     """Delete old documents"""
 
-    es = get_es(MSC_PYGEOAPI_ES_URL)
+    es = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
 
     older_than = (datetime.now() - timedelta(days=days)).strftime(
         '%Y-%m-%d %H:%M')
@@ -208,7 +209,7 @@ def clean_records(ctx, days):
 def delete_index(ctx):
     """Delete bulletins index"""
 
-    es = get_es(MSC_PYGEOAPI_ES_URL)
+    es = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
 
     if es.indices.exists(INDEX_NAME):
         es.indices.delete(INDEX_NAME)
