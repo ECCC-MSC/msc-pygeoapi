@@ -103,6 +103,13 @@ msc-pygeoapi data load ahccd_cmip5 <rest of flags/parameters>
 
 # bulletins - delete index
 msc-pygeoapi data load bulletins delete-index  # use --yes flag to bypass prompt
+
+# realtime - standard workflow
+msc-pygeoapi data load hydrometric-realtime cache-stations  # download stations list to $MSC_PYGEOAPI_CACHEDIR location
+
+sr_subscribe start deploy/default/sarracenia/hydrometric_realtime.conf  # begin realtime update process
+
+msc-pygeoapi data load hydrometric-realtime clean-records --days 30  # use --yes flag to bypass prompt (usually in crontab)
 ```
 
 ## Running processes

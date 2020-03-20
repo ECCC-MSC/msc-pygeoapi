@@ -35,7 +35,7 @@ LOGGER = logging.getLogger(__name__)
 PLUGINS = {
     'loader': {
         'hydrometric_realtime': {
-            'filename_pattern': 'hydrometric/csv',
+            'filename_pattern': 'hydrometric',
             'handler': 'msc_pygeoapi.loader.hydrometric_realtime.HydrometricRealtimeLoader'  # noqa
         },
         'bulletins_realtime': {
