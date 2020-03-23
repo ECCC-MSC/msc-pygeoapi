@@ -44,15 +44,15 @@ from yaml import CLoader
 LOGGER = logging.getLogger(__name__)
 
 UNITS = {
-    'PR': '%',
-    'TM': 'Celsius',
-    'TN': 'Celsius',
-    'TX': 'Celsius',
-    'TT': 'Celsius',
-    'SIC': '%',
-    'SIT': 'm',
-    'SFCWIND': 'm s-1',
-    'SND': 'm'
+    'PR': {'ANO': '%', 'ABS': 'mm'},
+    'TM': {'ANO': 'Celsius', 'ABS': 'Celsius'},
+    'TN': {'ANO': 'Celsius', 'ABS': 'Celsius'},
+    'TX': {'ANO': 'Celsius', 'ABS': 'Celsius'},
+    'TT': {'ANO': 'Celsius', 'ABS': 'Celsius'},
+    'SIC': {'ANO': '%', 'ABS': '%'},
+    'SIT': {'ANO': '%', 'ABS': 'm'},
+    'SFCWIND': {'ANO': '%', 'ABS': 'm s-1'},
+    'SND': {'ANO': '%', 'ABS': 'm'}
 }
 
 PROCESS_METADATA = {
@@ -230,7 +230,7 @@ def get_location_info(file_, x, y, cfg, layer_keys):
         dict_['time_step'] = cfg['timestep']
 
         dict_['metadata'] = layer_keys
-        dict_['uom'] = UNITS[layer_keys['Variable']]
+        dict_['uom'] = UNITS[layer_keys['Variable']][layer_keys['Type']]
 
         ds = gdal.Open(file_)
         LOGGER.debug('Transforming map coordinates into image coordinates')
