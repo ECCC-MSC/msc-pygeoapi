@@ -36,7 +36,7 @@ import logging
 import os
 import re
 
-from osgeo import gdal
+from osgeo import gdal, osr
 from pyproj import Proj, transform
 import yaml
 from yaml import CLoader
@@ -197,8 +197,8 @@ def geo2xy(ds, x, y):
     width = geotransform[1]
     height = geotransform[5]
 
-    x = int((x - origin_x) / width) - 1
-    y = int((y - origin_y) / height) - 1
+    x = int((x - origin_x) / width)
+    y = int((y - origin_y) / height)
 
     return (x, y)
 
@@ -431,7 +431,6 @@ def raster_drill(layer, x, y, format_):
         inter_path = os.path.join(climate_model_path, file_path)
 
         file_name = cfg['layers'][layer]['filename']
-        _x, _y = x, y
 
     elif 'TREND' not in layer and layer.startswith('CANGRD') is True:
         keys = ['Model', 'Type', 'Variable', 'Period']
@@ -446,16 +445,16 @@ def raster_drill(layer, x, y, format_):
 
         file_name = '{}.vrt'.format(cfg['layers'][layer]['filename'])
 
-        src_epsg = '+proj=stere +lat_0=90 +lat_ts=71 +lon_0=0 \
-                   +k=1 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs'
-        inProj = Proj(init='epsg:4326')
-        outProj = Proj(src_epsg)
-        _x, _y = transform(inProj, outProj, x, y)
-
     else:
         msg = 'Not a valid or time enabled layer: {}'.format(layer)
         LOGGER.error(msg)
         raise ValueError(msg)
+
+    srs = osr.SpatialReference()
+    srs.ImportFromWkt(cfg['layers'][layer]['climate_model']['projection'])
+    inProj = Proj(init='epsg:4326')
+    outProj = Proj(srs.ExportToProj4())
+    _x, _y = transform(inProj, outProj, x, y)
 
     ds = os.path.join(data_basepath, inter_path, file_name)
 
