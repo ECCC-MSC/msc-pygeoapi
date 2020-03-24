@@ -45,15 +45,17 @@ LOGGER = logging.getLogger(__name__)
 
 UNITS = {
     'PR': {'ANO': '%', 'ABS': 'mm'},
-    'TM': {'ANO': 'Celsius', 'ABS': 'Celsius'},
-    'TN': {'ANO': 'Celsius', 'ABS': 'Celsius'},
-    'TX': {'ANO': 'Celsius', 'ABS': 'Celsius'},
-    'TT': {'ANO': 'Celsius', 'ABS': 'Celsius'},
+    'SFCWIND': {'ANO': '%', 'ABS': 'm s-1'},
     'SIC': {'ANO': '%', 'ABS': '%'},
     'SIT': {'ANO': '%', 'ABS': 'm'},
-    'SFCWIND': {'ANO': '%', 'ABS': 'm s-1'},
-    'SND': {'ANO': '%', 'ABS': 'm'}
-}
+    'SND': {'ANO': '%', 'ABS': 'm'},
+    'SPEI': {'ABS': 'Standardized Precipitation Evapotranspiration Index / ' +
+             'Indice de précipitations et d’évapotranspiration normalisé'},
+    'TM': {'ANO': 'Celsius', 'ABS': 'Celsius'},
+    'TN': {'ANO': 'Celsius', 'ABS': 'Celsius'},
+    'TT': {'ANO': 'Celsius', 'ABS': 'Celsius'},
+    'TX': {'ANO': 'Celsius', 'ABS': 'Celsius'}
+    }
 
 PROCESS_METADATA = {
     'version': '0.1.0',
@@ -166,7 +168,7 @@ def get_time_info(cfg):
         begin = (int(begin_year) * 12) + int(begin_month)
         end = (int(end_year) * 12) + int(end_month)
         for i in range(begin, end + 1):
-            year = (i / 12)
+            year = int(i / 12)
             month = (i - (year * 12))
             if month == 0:
                 year = year - 1
@@ -289,9 +291,14 @@ def serialize(values_dict, cfg, output_format, x, y):
 
             split_en = cfg['label_en'].split('/')
             split_fr = cfg['label_fr'].split('/')
-            var_en, sce_en, seas_en, type_en, label_en = split_en
 
-            var_fr, sce_fr, seas_fr, type_fr, label_fr = split_fr
+            if 'SPEI' in cfg['label_en']:
+                var_en, sce_en, seas_en, label_en = split_en
+                var_fr, sce_fr, seas_fr, label_fr = split_fr
+                type_en = type_fr = ''
+            else:
+                var_en, sce_en, seas_en, type_en, label_en = split_en
+                var_fr, sce_fr, seas_fr, type_fr, label_fr = split_fr
 
             pctl_en = re.findall(r' \((.*?)\)', label_en)[-1]
             pctl_fr = re.findall(r' \((.*?)\)', label_fr)[-1]
@@ -412,6 +419,11 @@ def raster_drill(layer, x, y, format_):
     with open(GEOMET_CLIMATE_CONFIG) as fh:
         cfg = yaml.load(fh, Loader=CLoader)
 
+    data_basepath = GEOMET_CLIMATE_BASEPATH
+    climate_model_path = cfg['layers'][layer]['climate_model']['basepath']
+    file_path = cfg['layers'][layer]['filepath']
+    inter_path = os.path.join(climate_model_path, file_path)
+
     if ('ABS' in layer or 'ANO' in layer and
        layer.startswith('CANGRD') is False):
 
@@ -424,26 +436,27 @@ def raster_drill(layer, x, y, format_):
         values = layer.replace('_', '.').split('.')
         layer_keys = dict(zip(keys, values))
 
-        data_basepath = GEOMET_CLIMATE_BASEPATH
-
-        climate_model_path = cfg['layers'][layer]['climate_model']['basepath']
-        file_path = cfg['layers'][layer]['filepath']
-        inter_path = os.path.join(climate_model_path, file_path)
-
         file_name = cfg['layers'][layer]['filename']
 
-    elif 'TREND' not in layer and layer.startswith('CANGRD') is True:
+    elif 'TREND' not in layer and layer.startswith('CANGRD'):
         keys = ['Model', 'Type', 'Variable', 'Period']
         values = layer.replace('_', '.').split('.')
         layer_keys = dict(zip(keys, values))
 
         data_basepath = GEOMET_CLIMATE_BASEPATH_VRT
-
         climate_model_path = cfg['layers'][layer]['climate_model']['basepath']
         file_path = cfg['layers'][layer]['filepath']
         inter_path = os.path.join(climate_model_path, file_path)
 
         file_name = '{}.vrt'.format(cfg['layers'][layer]['filename'])
+
+    elif layer.startswith('SPEI'):
+        keys = ['Variable', 'Variation', 'Scenario', 'Period', 'Percentile']
+        values = layer.replace('-', '.').replace('_', '.').split('.')
+        layer_keys = dict(zip(keys, values))
+        layer_keys['Type'] = 'ABS'
+
+        file_name = cfg['layers'][layer]['filename']
 
     else:
         msg = 'Not a valid or time enabled layer: {}'.format(layer)
