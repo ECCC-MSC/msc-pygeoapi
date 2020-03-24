@@ -44,7 +44,14 @@ from yaml import CLoader
 LOGGER = logging.getLogger(__name__)
 
 UNITS = {
+    'CDD': {'ABS': 'Cooling degree days / ' +
+            'Degrés-jours de climatisation'},
+    'GSC': {'ABS': 'Days / Jours'},
+    'GSO': {'ABS': 'Days / Jours'},
+    'GSW': {'ABS': 'Days / Jours'},
+    'HDD': {'ABS': 'Heating degree days / Degrés-jours de chauffe'},
     'PR': {'ANO': '%', 'ABS': 'mm'},
+    'PREP1': {'ABS': 'Days / Jours'},
     'SFCWIND': {'ANO': '%', 'ABS': 'm s-1'},
     'SIC': {'ANO': '%', 'ABS': '%'},
     'SIT': {'ANO': '%', 'ABS': 'm'},
@@ -53,8 +60,10 @@ UNITS = {
              'Indice de précipitations et d’évapotranspiration normalisé'},
     'TM': {'ANO': 'Celsius', 'ABS': 'Celsius'},
     'TN': {'ANO': 'Celsius', 'ABS': 'Celsius'},
+    'TN20': {'ABS': 'Nights / Nuits'},
     'TT': {'ANO': 'Celsius', 'ABS': 'Celsius'},
-    'TX': {'ANO': 'Celsius', 'ABS': 'Celsius'}
+    'TX': {'ANO': 'Celsius', 'ABS': 'Celsius'},
+    'TX30': {'ABS': 'Days / Jours'}
     }
 
 PROCESS_METADATA = {
@@ -296,6 +305,10 @@ def serialize(values_dict, cfg, output_format, x, y):
                 var_en, sce_en, seas_en, label_en = split_en
                 var_fr, sce_fr, seas_fr, label_fr = split_fr
                 type_en = type_fr = ''
+            elif 'Index' in cfg['label_en']:
+                var_en, sce_en, label_en = split_en
+                var_fr, sce_fr, label_fr = split_fr
+                type_en = type_fr = seas_en = seas_fr = ''
             else:
                 var_en, sce_en, seas_en, type_en, label_en = split_en
                 var_fr, sce_fr, seas_fr, type_fr, label_fr = split_fr
@@ -453,6 +466,14 @@ def raster_drill(layer, x, y, format_):
     elif layer.startswith('SPEI'):
         keys = ['Variable', 'Variation', 'Scenario', 'Period', 'Percentile']
         values = layer.replace('-', '.').replace('_', '.').split('.')
+        layer_keys = dict(zip(keys, values))
+        layer_keys['Type'] = 'ABS'
+
+        file_name = cfg['layers'][layer]['filename']
+
+    elif layer.startswith('INDICES'):
+        keys = ['Model', 'Variable', 'Scenario', 'Percentile']
+        values = layer.replace('_', '.').split('.')
         layer_keys = dict(zip(keys, values))
         layer_keys['Type'] = 'ABS'
 
