@@ -45,6 +45,10 @@ PLUGINS = {
         'citypageweather_realtime': {
             'filename_pattern': 'citypage_weather/xml',
             'handler': 'msc_pygeoapi.loader.citypageweather.CitypageweatherRealtimeLoader' # noqa
+        },
+        'hurricanes': {
+            'filename_pattern': 'trajectoires/hurricane',
+            'handler': 'msc_pygeoapi.loader.hurricanes_realtime.HurricanesRealtimeLoader'  # noqa
         }
     }
 }

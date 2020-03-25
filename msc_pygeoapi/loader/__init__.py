@@ -40,6 +40,7 @@ try:
     from msc_pygeoapi.loader.climate_archive import climate_archive
     from msc_pygeoapi.loader.ahccd import ahccd
     from msc_pygeoapi.loader.hydrometric_realtime import hydrometric_realtime
+    from msc_pygeoapi.loader.hurricanes_realtime import hurricanes
 except ImportError as err:
     LOGGER.info('loaders not imported')
     LOGGER.debug(err)
@@ -54,6 +55,7 @@ try:
     load.add_command(bulletins)
     load.add_command(citypageweather)
     load.add_command(hydat)
+    load.add_command(hurricanes)
     load.add_command(climate_archive)
     load.add_command(ahccd)
     load.add_command(hydrometric_realtime)
