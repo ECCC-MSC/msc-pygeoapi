@@ -49,7 +49,7 @@ def get_es(url, auth=None):
 
     url_parsed = urlparse(url)
     url_settings = {
-        'host': url_parsed.netloc
+        'host': url_parsed.hostname
     }
 
     LOGGER.debug('Connecting to Elasticsearch')
