@@ -161,7 +161,7 @@ def delocalize_date(date_string):
 class HydrometricRealtimeLoader(BaseLoader):
     """Hydrometric Real-time loader"""
 
-    def __init__(self, filepath):
+    def __init__(self, plugin_def):
         """initializer"""
 
         BaseLoader.__init__(self)
