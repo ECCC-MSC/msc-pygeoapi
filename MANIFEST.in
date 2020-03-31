@@ -1,1 +1,2 @@
 include README.md LICENSE.md requirements.txt
+recursive-include msc_pygeoapi *.json
