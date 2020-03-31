@@ -35,6 +35,7 @@ LOGGER = logging.getLogger(__name__)
 
 try:
     from msc_pygeoapi.loader.bulletins import bulletins
+    from msc_pygeoapi.loader.citypageweather import citypageweather
     from msc_pygeoapi.loader.hydat import hydat
     from msc_pygeoapi.loader.climate_archive import climate_archive
     from msc_pygeoapi.loader.ahccd import ahccd
@@ -51,6 +52,7 @@ def load():
 
 try:
     load.add_command(bulletins)
+    load.add_command(citypageweather)
     load.add_command(hydat)
     load.add_command(climate_archive)
     load.add_command(ahccd)

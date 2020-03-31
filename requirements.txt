@@ -1,6 +1,7 @@
 click
 elasticsearch
 gdal
+lxml
 pyproj
 pyyaml
 requests

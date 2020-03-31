@@ -35,6 +35,8 @@ LOGGER = logging.getLogger(__name__)
 
 LOGGER.info('Fetching environment variables')
 
+MSC_PYGEOAPI_BASEPATH = os.getenv('MSC_PYGEOAPI_BASEPATH', None)
+
 MSC_PYGEOAPI_ES_URL = os.getenv('MSC_PYGEOAPI_ES_URL', None)
 MSC_PYGEOAPI_ES_TIMEOUT = int(os.getenv('MSC_PYGEOAPI_ES_TIMEOUT', 90))
 MSC_PYGEOAPI_CACHEDIR = os.getenv('MSC_PYGEOAPI_CACHEDIR', '/tmp')
