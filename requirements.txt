@@ -2,6 +2,7 @@ click
 elasticsearch
 gdal
 lxml
+parse
 pyproj
 pyyaml
 requests

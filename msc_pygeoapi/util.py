@@ -27,6 +27,8 @@
 #
 # =================================================================
 
+from datetime import datetime, date, time
+import json
 import logging
 from urllib.parse import urlparse
 
@@ -144,3 +146,31 @@ def click_abort_if_false(ctx, param, value):
 
     if not value:
         ctx.abort()
+
+
+def json_pretty_print(data):
+    """
+    Pretty print a JSON serialization
+    :param data: `dict` of JSON
+    :returns: `str` of pretty printed JSON representation
+    """
+
+    return json.dumps(data, indent=4, default=json_serial)
+
+
+def json_serial(obj):
+    """
+    helper function to convert to JSON non-default
+    types (source: https://stackoverflow.com/a/22238613)
+    :param obj: `object` to be evaluate
+    :returns: JSON non-default type to `str`
+    """
+
+    if isinstance(obj, (datetime, date, time)):
+        return obj.isoformat()
+    elif isinstance(obj, bytes):
+        return obj.decode('utf-8')
+
+    msg = '{} type {} not serializable'.format(obj, type(obj))
+    LOGGER.error(msg)
+    raise TypeError(msg)
