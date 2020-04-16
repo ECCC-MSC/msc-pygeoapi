@@ -190,7 +190,6 @@ datasets:
               href: https://www.canada.ca/fr/environnement-changement-climatique/services/eau-apercu/volume/surveillance/releves/produits-donnees-services/archives-nationales-hydat.html
               hreflang: fr-CA
             - type: application/zip
-              hreflang: en-CA
               rel: download
               title: download data
               href: https://collaboration.cmc.ec.gc.ca/cmc/hydrometrics/www
