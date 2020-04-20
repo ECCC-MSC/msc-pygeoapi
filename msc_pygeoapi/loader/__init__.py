@@ -41,6 +41,7 @@ try:
     from msc_pygeoapi.loader.ahccd import ahccd
     from msc_pygeoapi.loader.hydrometric_realtime import hydrometric_realtime
     from msc_pygeoapi.loader.hurricanes_realtime import hurricanes
+    from msc_pygeoapi.loader.forecast_polygons import forecast_polygons
 except ImportError as err:
     LOGGER.info('loaders not imported')
     LOGGER.debug(err)
@@ -59,6 +60,7 @@ try:
     load.add_command(climate_archive)
     load.add_command(ahccd)
     load.add_command(hydrometric_realtime)
+    load.add_command(forecast_polygons)
 except NameError as err:
     LOGGER.info('loaders not found')
     LOGGER.debug(err)

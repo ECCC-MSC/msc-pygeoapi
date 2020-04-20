@@ -49,6 +49,10 @@ PLUGINS = {
         'hurricanes': {
             'filename_pattern': 'trajectoires/hurricane',
             'handler': 'msc_pygeoapi.loader.hurricanes_realtime.HurricanesRealtimeLoader'  # noqa
+        },
+        'forecast_polygon': {
+            'filename_pattern': 'meteocode/geodata/',
+            'handler': 'msc_pygeoapi.loader.forecast_polygons.ForecastPolygonsLoader'  # noqa
         }
     }
 }
