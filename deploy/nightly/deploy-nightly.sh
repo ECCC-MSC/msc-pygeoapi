@@ -20,7 +20,7 @@
 
 BASEDIR=/data/web/msc-pygeoapi-nightly
 PYGEOAPI_GITREPO=https://github.com/geopython/pygeoapi.git
-MSC_PYGEOAPI_GITREPO=https://gccode.ssc-spc.gc.ca/ec-msc/msc-pygeoapi.git
+MSC_PYGEOAPI_GITREPO=https://github.com/ECCC-MSC/msc-pygeoapi.git
 DAYSTOKEEP=7
 
 # you should be okay from here

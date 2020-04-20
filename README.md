@@ -40,7 +40,7 @@ cd msc-pygeoapi
 source bin/activate
 
 # clone codebase and install
-git clone https://gccode.ssc-spc.gc.ca/ec-msc/msc-pygeoapi.git
+git clone https://github.com/ECCC-MSC/msc-pygeoapi.git
 cd msc-pygeoapi
 python setup.py build
 python setup.py install
@@ -154,8 +154,8 @@ twine upload dist/*
 
 ### Bugs and Issues
 
-All bugs, enhancements and issues are managed on [GCcode](https://gccode.ssc-spc.gc.ca/ec-msc/msc-pygeoapi/issues).
+All bugs, enhancements and issues are managed on [GitHub](https://github.com/ECCC-MSC/msc-pygeoapi/issues).
 
 ## Contact
 
-* [Tom Kralidis](https://gccode.ssc-spc.gc.ca/tomkralidis)
+* [Tom Kralidis](https://github.com/tomkralidis)

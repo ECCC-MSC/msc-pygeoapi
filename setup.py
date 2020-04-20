@@ -152,7 +152,7 @@ setup(
     author_email='tom.kralidis@canada.ca',
     maintainer='Tom Kralidis',
     maintainer_email='tom.kralidis@canada.ca',
-    url='https://gccode.ssc-spc.gc.ca/ec-msc/msc-pygeoapi',
+    url='https://github.com/ECCC-MSC/msc-pygeoapi',
     install_requires=read('requirements.txt').splitlines(),
     packages=find_packages(exclude=['msc_pygeoapi.tests']),
     include_package_data=True,

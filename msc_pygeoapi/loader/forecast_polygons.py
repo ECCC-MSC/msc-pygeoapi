@@ -439,6 +439,7 @@ def add(ctx, file_, directory):
             click.echo('File properties: {}'.format(
                 json_pretty_print(loader.items)))
 
+
 @click.command()
 @click.pass_context
 @click.option('--index_name', '-i',
@@ -459,10 +460,9 @@ def delete_index(ctx, index_name):
             return True
     else:
         if click.confirm(
-                'Are you sure you want to delete {} forecast polygon'
-                ' indices ({})?'.format(click.style('ALL', fg='red'),
-                                       click.style(", ".join(INDICES),
-                                                   fg='red')),
+            'Are you sure you want to delete {} forecast polygon'
+            ' indices ({})?'.format(click.style('ALL', fg='red'),
+                                    click.style(", ".join(INDICES), fg='red')),
                 abort=True):
             es.indices.delete(index=",".join(INDICES))
             return True

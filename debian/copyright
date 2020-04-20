@@ -1,5 +1,5 @@
 Upstream: msc-pygeoapi
-Source: https://gccode.ssc-spc.gc.ca/ec-msc/msc-pygeoapi
+Source: https://github.com/ECCC-MSC/msc-pygeoapi
 Files: *
 Copyright: 2018 Government of Canada
 License: GPL-3+
