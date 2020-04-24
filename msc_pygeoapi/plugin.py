@@ -53,6 +53,10 @@ PLUGINS = {
         'forecast_polygon': {
             'filename_pattern': 'meteocode/geodata/',
             'handler': 'msc_pygeoapi.loader.forecast_polygons.ForecastPolygonsLoader'  # noqa
+        },
+        'marine_weather': {
+            'filename_pattern': 'marine_weather/xml/',
+            'handler': 'msc_pygeoapi.loader.marine_weather_realtime.MarineWeatherRealtimeLoader'  # noqa
         }
     }
 }

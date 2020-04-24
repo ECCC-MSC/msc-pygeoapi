@@ -514,7 +514,7 @@ def add(ctx, file_, directory):
         loader = HurricanesRealtimeLoader(plugin_def)
         result = loader.load_data(file_to_process)
         if result:
-            click.echo('File properties: {}'.format(
+            click.echo('GeoJSON features generated: {}'.format(
                 json_pretty_print(loader.items)))
 
 
@@ -565,8 +565,10 @@ def delete_index(ctx, index_name):
             return True
     else:
         if click.confirm(
-                'Are you sure you want to delete {} hurricane '
-                'indices?'.format(click.style('ALL', fg='red')),
+                'Are you sure you want to delete {} marine forecast'
+                ' indices ({})?'.format(click.style('ALL', fg='red'),
+                                        click.style(", ".join(INDICES),
+                                                    fg='red')),
                 abort=True):
             es.indices.delete(index=",".join(INDICES))
             return True
