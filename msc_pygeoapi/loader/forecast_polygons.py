@@ -450,8 +450,7 @@ def add(ctx, file_, directory):
     for file_to_process in files_to_process:
         plugin_def = {
             'filename_pattern': 'meteocode/geodata/',
-            'handler': 'msc_pygeoapi.loader.forecast_polygons.ForecastPolygonsLoader'
-            # noqa
+            'handler': 'msc_pygeoapi.loader.forecast_polygons.ForecastPolygonsLoader'  # noqa
         }
         loader = ForecastPolygonsLoader(plugin_def)
         result = loader.load_data(file_to_process)

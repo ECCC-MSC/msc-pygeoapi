@@ -38,10 +38,4 @@ def process():
     pass
 
 
-@click.group()
-def execute():
-    pass
-
-
-process.add_command(execute)
-execute.add_command(cccs)
+process.add_command(cccs)

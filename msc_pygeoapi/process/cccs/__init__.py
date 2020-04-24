@@ -30,7 +30,7 @@
 
 import click
 
-from msc_pygeoapi.process.cccs.raster_drill import cli
+from msc_pygeoapi.process.cccs.raster_drill import raster_drill_execute
 
 GEOMET_CLIMATE_CONFIG = '/opt/geomet-climate/geomet-climate.yml'
 GEOMET_CLIMATE_BASEPATH = '/data/geomet/amqp/climate'
@@ -42,4 +42,4 @@ def cccs():
     pass
 
 
-cccs.add_command(cli)
+cccs.add_command(raster_drill_execute)
