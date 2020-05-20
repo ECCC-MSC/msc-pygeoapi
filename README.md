@@ -22,7 +22,7 @@ Dependencies of note:
 ### Installing msc-pygeoapi
 ```bash
 # setup virtualenv
-virtualenv --system-site-packages -p python3 msc-pygeoapi
+python3 -m venv --system-site-packages msc-pygeoapi
 cd msc-pygeoapi
 source bin/activate
 
