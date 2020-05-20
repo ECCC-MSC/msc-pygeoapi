@@ -61,8 +61,9 @@ metadata:
         instructions: During hours of service
         role: pointOfContact
 
-datasets:
+resources:
     hydrometric-stations:
+        type: collection
         title: Hydrometric Monitoring Stations
         description: A station is a site on a river or lake where water quantity (water level and flow) are collected and recorded.
         keywords: [station, hydrometric station]
@@ -107,6 +108,7 @@ datasets:
             id_field: IDENTIFIER
 
     hydrometric-daily-mean:
+        type: collection
         title: Daily Mean of Water Level or Flow
         description: The daily mean is the average of all unit values for a given day.
         keywords: [Daily, Daily Mean, Water Level, Flow, Discharge]
@@ -164,6 +166,7 @@ datasets:
                 - LEVEL_SYMBOL_FR
 
     hydrometric-monthly-mean:
+        type: collection
         title: Monthly Mean of Water Level or Flow
         description: The monthly mean is the average of daily mean values for a given month.
         keywords: [Monthly, Monthly Mean, Water Level, Flow, Discharge]
@@ -216,6 +219,7 @@ datasets:
                 - MONTHLY_MEAN_DISCHARGE
 
     hydrometric-annual-statistics:
+        type: collection
         title: Annual Maximum and Minimum Daily Water Level or Flow
         description: The annual maximum and minimum daily data are the maximum and minimum daily mean values for a given year.
         keywords: [Annual maximum, Annual Minimum, Water Level, Flow, Discharge]
@@ -276,6 +280,7 @@ datasets:
                 - MIN_VALUE
 
     hydrometric-annual-peaks:
+        type: collection
         title: Annual Maximum and Minimum Instantaneous Water Level or Flow
         description: The annual maximum and minimum instantaneous data are the maximum and minimum instantaneous values for a given year.
         keywords: [Annual maximum, Annual Minimum, Water Level, Flow, Discharge]
@@ -337,6 +342,7 @@ datasets:
                 - PEAK
 
     climate-normals:
+        type: collection
         title: 1981-2010 Climate Normals
         description: 1981-2010 Climate Normals
         keywords: [climate, normals]
@@ -389,6 +395,7 @@ datasets:
                 - VALUE
 
     climate-stations:
+        type: collection
         title: Climate Stations
         description: Climate Stations
         keywords: [climate, stations]
@@ -413,6 +420,7 @@ datasets:
             id_field: CLIMATE_IDENTIFIER
 
     climate-monthly:
+        type: collection
         title: Monthly Climate Observation Summaries
         description: A cross-country summary of the averages and extremes for the month, including precipitation totals, max-min temperatures, and degree days. This data is available from stations that produce daily data.
         keywords: [Climate, Climate archives, Climate change]
@@ -471,6 +479,7 @@ datasets:
                 - HEATING_DEGREE_DAYS
 
     climate-daily:
+        type: collection
         title: Daily Climate Observations
         description: "Daily climate observations are derived from two sources of data. The first are Daily Climate Stations producing one or two observations per day of temperature, precipitation. The second are hourly stations that typically produce more weather elements e.g. wind or snow on ground. Only a subset of the total stations is shown due to size limitations. The criteria for station selection are listed as below. The priorities for inclusion are as follows: (1) Station is currently operational, (2) Stations with long periods of record, (3) Stations that are co-located with the categories above and supplement the period of record"
         keywords: [Climate, Climate archives, Climate change]
@@ -531,6 +540,7 @@ datasets:
                 - MAX_REL_HUMIDITY_FLAG
 
     ahccd-stations:
+        type: collection
         title: Adjusted and Homogenized Canadian Climate Data (AHCCD) Stations
         description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Stations
         keywords: [ahccd, stations]
@@ -552,6 +562,7 @@ datasets:
             id_field: identifier__identifiant
 
     ahccd-annual:
+        type: collection
         title: Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual
         description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual
         keywords: [ahccd, annual]
@@ -604,6 +615,7 @@ datasets:
                 - wind_speed_units__vitesse_vent_unites
 
     ahccd-seasonal:
+        type: collection
         title: Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal
         description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal
         keywords: [ahccd, seasonal]
@@ -656,6 +668,7 @@ datasets:
                 - wind_speed_units__vitesse_vent_unites
 
     ahccd-monthly:
+        type: collection
         title: Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
         description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
         keywords: [ahccd, monthly]
@@ -708,6 +721,7 @@ datasets:
                 - wind_speed_units__vitesse_vent_unites
 
     ahccd-trends:
+        type: collection
         title: Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends
         description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends
         keywords: [ahccd, trends]
@@ -742,7 +756,7 @@ datasets:
                 - measurement_type__type_mesure
                 - trend_value__valeur_tendance
 
-processes:
     raster-drill:
+        type: process
         processor:
             name: msc_pygeoapi.process.cccs.raster_drill.RasterDrillProcessor

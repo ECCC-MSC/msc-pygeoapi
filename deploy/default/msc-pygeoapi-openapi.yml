@@ -1,29 +1,5 @@
 components:
   parameters:
-    bbox:
-      description: The bbox parameter indicates the minimum bounding rectangle upon
-        which to query the collection in WFS84 (minx, miny, maxx, maxy).
-      explode: false
-      in: query
-      name: bbox
-      required: false
-      schema:
-        items:
-          type: number
-        maxItems: 6
-        minItems: 4
-        type: array
-      style: form
-    datetime:
-      description: The time parameter indicates an RFC3339 formatted datetime (single,
-        interval, open).
-      explode: false
-      in: query
-      name: datetime
-      required: false
-      schema:
-        type: string
-      style: form
     f:
       description: The optional f parameter indicates the output format which the
         server shall provide as part of the response document.  The default format
@@ -36,31 +12,9 @@ components:
         default: json
         enum:
         - json
-        - csv
+        - html
+        - jsonld
         type: string
-      style: form
-    id:
-      description: The id of a feature
-      in: path
-      name: id
-      required: true
-      schema:
-        type: string
-    limit:
-      description: The optional limit parameter limits the number of items that are
-        presented in the response document. Only items are counted that are on the
-        first level of the collection in the response document. Nested objects contained
-        within the explicitly requested items shall not be counted. Minimum = 1. Maximum
-        = 10000. Default = 500.
-      explode: false
-      in: query
-      name: limit
-      required: false
-      schema:
-        default: 500
-        maximum: 10000
-        minimum: 1
-        type: integer
       style: form
     sortby:
       description: The optional sortby parameter indicates the sort property and order
@@ -88,6 +42,15 @@ components:
         minimum: 0
         type: integer
       style: form
+  responses:
+    '200':
+      description: successful operation
+    default:
+      content:
+        application/json:
+          schema:
+            $ref: https://raw.githubusercontent.com/opengeospatial/wps-rest-binding/master/core/openapi/schemas/exception.yaml
+      description: Unexpected error
 info:
   contact:
     email: ec.ecweather-meteo.ec@canada.ca
@@ -120,87 +83,80 @@ openapi: 3.0.2
 paths:
   /:
     get:
-      description: API
+      description: Landing page
+      parameters:
+      - $ref: '#/components/parameters/f'
       responses:
         200:
-          description: successful operation
-      summary: API
-      tags:
-      - server
-  /api:
-    get:
-      description: This document
-      responses:
-        200:
-          description: successful operation
-      summary: This document
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/LandingPage
+        400:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Landing page
       tags:
       - server
   /collections:
     get:
-      description: Feature Collections
+      description: Collections
+      parameters:
+      - $ref: '#/components/parameters/f'
       responses:
         200:
-          description: successful operation
-      summary: Feature Collections
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collections
+        400:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Collections
       tags:
       - server
   /collections/ahccd-annual:
     get:
       description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual
+      parameters:
+      - $ref: '#/components/parameters/f'
       responses:
         200:
-          description: successful operation
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
         400:
-          description: Invalid id supplied
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
         404:
-          description: not found
-      summary: Get feature collection metadata
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get collection metadata
       tags:
       - ahccd-annual
   /collections/ahccd-annual/items:
     get:
       description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual
       parameters:
-      - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/bbox'
-      - $ref: '#/components/parameters/time'
-      - $ref: '#/components/parameters/limit'
-      - $ref: '#/components/parameters/sortby'
-      - $ref: '#/components/parameters/startindex'
-      - explode: false
+      - &id001
+        description: The optional f parameter indicates the output format which the
+          server shall provide as part of the response document.  The default format
+          is GeoJSON.
+        explode: false
         in: query
-        name: temp_min__temp_min
+        name: f
         required: false
         schema:
-          format: float
-          type: number
+          default: json
+          enum:
+          - json
+          - html
+          - jsonld
+          - csv
+          type: string
         style: form
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
+      - $ref: '#/components/parameters/sortby'
+      - $ref: '#/components/parameters/startindex'
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
       - explode: false
         in: query
         name: identifier__identifiant
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: rain__pluie
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: total_precip_units__precip_totale_unites
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: wind_speed_units__vitesse_vent_unites
         required: false
         schema:
           type: string
@@ -215,21 +171,6 @@ paths:
         style: form
       - explode: false
         in: query
-        name: wind_speed__vitesse_vent
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: temp_max_units__temp_max_unites
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
         name: lon__long
         required: false
         schema:
@@ -238,7 +179,21 @@ paths:
         style: form
       - explode: false
         in: query
-        name: temp_mean__temp_moyenne
+        name: period_group__groupe_periode
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: period_value__valeur_periode
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: pressure_sea_level__pression_niveau_mer
         required: false
         schema:
           format: float
@@ -246,7 +201,36 @@ paths:
         style: form
       - explode: false
         in: query
-        name: total_precip__precip_totale
+        name: pressure_sea_level_units__pression_niveau_mer_unite
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: pressure_station__pression_station
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: pressure_station_units__pression_station_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: province__province
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: rain__pluie
         required: false
         schema:
           format: float
@@ -261,49 +245,15 @@ paths:
         style: form
       - explode: false
         in: query
-        name: period_value__valeur_periode
+        name: snow__neige
         required: false
         schema:
-          type: string
+          format: float
+          type: number
         style: form
       - explode: false
         in: query
-        name: province__province
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: period_group__groupe_periode
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: year__annee
-        required: false
-        schema:
-          type: integer
-        style: form
-      - explode: false
-        in: query
-        name: pressure_station_units__pression_station_unites
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: temp_mean_units__temp_moyenne_unites
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: pressure_sea_level_units__pression_niveau_mer_unite
+        name: snow_units__neige_unites
         required: false
         schema:
           type: string
@@ -325,7 +275,29 @@ paths:
         style: form
       - explode: false
         in: query
-        name: pressure_sea_level__pression_niveau_mer
+        name: temp_max_units__temp_max_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: temp_mean__temp_moyenne
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: temp_mean_units__temp_moyenne_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: temp_min__temp_min
         required: false
         schema:
           format: float
@@ -340,95 +312,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: snow__neige
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: pressure_station__pression_station
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: snow_units__neige_unites
-        required: false
-        schema:
-          type: string
-        style: form
-      responses:
-        200:
-          description: successful operation
-        400:
-          description: Invalid id supplied
-        404:
-          description: not found
-      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual features
-      tags:
-      - ahccd-annual
-  /collections/ahccd-annual/items/{featureId}:
-    get:
-      description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual
-      parameters:
-      - $ref: '#/components/parameters/id'
-      - $ref: '#/components/parameters/f'
-      responses:
-        200:
-          description: successful operation
-        400:
-          description: Invalid id supplied
-        404:
-          description: not found
-      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual feature
-        by id
-      tags:
-      - ahccd-annual
-  /collections/ahccd-monthly:
-    get:
-      description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
-      responses:
-        200:
-          description: successful operation
-        400:
-          description: Invalid id supplied
-        404:
-          description: not found
-      summary: Get feature collection metadata
-      tags:
-      - ahccd-monthly
-  /collections/ahccd-monthly/items:
-    get:
-      description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
-      parameters:
-      - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/bbox'
-      - $ref: '#/components/parameters/time'
-      - $ref: '#/components/parameters/limit'
-      - $ref: '#/components/parameters/sortby'
-      - $ref: '#/components/parameters/startindex'
-      - explode: false
-        in: query
-        name: temp_min__temp_min
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: identifier__identifiant
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: rain__pluie
+        name: total_precip__precip_totale
         required: false
         schema:
           format: float
@@ -443,21 +327,6 @@ paths:
         style: form
       - explode: false
         in: query
-        name: wind_speed_units__vitesse_vent_unites
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: lat__lat
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
         name: wind_speed__vitesse_vent
         required: false
         schema:
@@ -466,59 +335,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: temp_max_units__temp_max_unites
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: lon__long
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: temp_mean__temp_moyenne
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: total_precip__precip_totale
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: rain_units__pluie_unites
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: period_value__valeur_periode
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: province__province
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: period_group__groupe_periode
+        name: wind_speed_units__vitesse_vent_unites
         required: false
         schema:
           type: string
@@ -530,20 +347,81 @@ paths:
         schema:
           type: integer
         style: form
-      - explode: false
-        in: query
-        name: pressure_station_units__pression_station_unites
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: temp_mean_units__temp_moyenne_unites
-        required: false
-        schema:
-          type: string
-        style: form
+      responses:
+        200:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
+        400:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        404:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual items
+      tags:
+      - ahccd-annual
+  /collections/ahccd-annual/items/{featureId}:
+    get:
+      description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual
+      parameters:
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
+      - $ref: '#/components/parameters/f'
+      responses:
+        200:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
+        400:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        404:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual item
+        by id
+      tags:
+      - ahccd-annual
+  /collections/ahccd-annual/queryables:
+    get:
+      description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual
+      parameters:
+      - *id001
+      responses:
+        200:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
+        400:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        404:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual queryables
+      tags:
+      - ahccd-annual
+  /collections/ahccd-monthly:
+    get:
+      description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
+      parameters:
+      - $ref: '#/components/parameters/f'
+      responses:
+        200:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
+        400:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        404:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get collection metadata
+      tags:
+      - ahccd-monthly
+  /collections/ahccd-monthly/items:
+    get:
+      description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
+      parameters:
+      - *id001
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
+      - $ref: '#/components/parameters/sortby'
+      - $ref: '#/components/parameters/startindex'
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
       - explode: false
         in: query
         name: date
@@ -554,148 +432,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: pressure_sea_level_units__pression_niveau_mer_unite
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: station_id__id_station
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: temp_max__temp_max
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: pressure_sea_level__pression_niveau_mer
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: temp_min_units__temp_min_unites
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: snow__neige
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: pressure_station__pression_station
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: snow_units__neige_unites
-        required: false
-        schema:
-          type: string
-        style: form
-      responses:
-        200:
-          description: successful operation
-        400:
-          description: Invalid id supplied
-        404:
-          description: not found
-      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
-        features
-      tags:
-      - ahccd-monthly
-  /collections/ahccd-monthly/items/{featureId}:
-    get:
-      description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
-      parameters:
-      - $ref: '#/components/parameters/id'
-      - $ref: '#/components/parameters/f'
-      responses:
-        200:
-          description: successful operation
-        400:
-          description: Invalid id supplied
-        404:
-          description: not found
-      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
-        feature by id
-      tags:
-      - ahccd-monthly
-  /collections/ahccd-seasonal:
-    get:
-      description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal
-      responses:
-        200:
-          description: successful operation
-        400:
-          description: Invalid id supplied
-        404:
-          description: not found
-      summary: Get feature collection metadata
-      tags:
-      - ahccd-seasonal
-  /collections/ahccd-seasonal/items:
-    get:
-      description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal
-      parameters:
-      - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/bbox'
-      - $ref: '#/components/parameters/time'
-      - $ref: '#/components/parameters/limit'
-      - $ref: '#/components/parameters/sortby'
-      - $ref: '#/components/parameters/startindex'
-      - explode: false
-        in: query
-        name: temp_min__temp_min
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
         name: identifier__identifiant
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: rain__pluie
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: total_precip_units__precip_totale_unites
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: wind_speed_units__vitesse_vent_unites
         required: false
         schema:
           type: string
@@ -710,21 +447,6 @@ paths:
         style: form
       - explode: false
         in: query
-        name: wind_speed__vitesse_vent
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: temp_max_units__temp_max_unites
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
         name: lon__long
         required: false
         schema:
@@ -733,7 +455,21 @@ paths:
         style: form
       - explode: false
         in: query
-        name: temp_mean__temp_moyenne
+        name: period_group__groupe_periode
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: period_value__valeur_periode
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: pressure_sea_level__pression_niveau_mer
         required: false
         schema:
           format: float
@@ -741,7 +477,36 @@ paths:
         style: form
       - explode: false
         in: query
-        name: total_precip__precip_totale
+        name: pressure_sea_level_units__pression_niveau_mer_unite
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: pressure_station__pression_station
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: pressure_station_units__pression_station_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: province__province
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: rain__pluie
         required: false
         schema:
           format: float
@@ -756,49 +521,15 @@ paths:
         style: form
       - explode: false
         in: query
-        name: period_value__valeur_periode
+        name: snow__neige
         required: false
         schema:
-          type: string
+          format: float
+          type: number
         style: form
       - explode: false
         in: query
-        name: province__province
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: period_group__groupe_periode
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: year__annee
-        required: false
-        schema:
-          type: integer
-        style: form
-      - explode: false
-        in: query
-        name: pressure_station_units__pression_station_unites
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: temp_mean_units__temp_moyenne_unites
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: pressure_sea_level_units__pression_niveau_mer_unite
+        name: snow_units__neige_unites
         required: false
         schema:
           type: string
@@ -820,7 +551,29 @@ paths:
         style: form
       - explode: false
         in: query
-        name: pressure_sea_level__pression_niveau_mer
+        name: temp_max_units__temp_max_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: temp_mean__temp_moyenne
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: temp_mean_units__temp_moyenne_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: temp_min__temp_min
         required: false
         schema:
           format: float
@@ -835,7 +588,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: snow__neige
+        name: total_precip__precip_totale
         required: false
         schema:
           format: float
@@ -843,7 +596,195 @@ paths:
         style: form
       - explode: false
         in: query
+        name: total_precip_units__precip_totale_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: wind_speed__vitesse_vent
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: wind_speed_units__vitesse_vent_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        200:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
+        400:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        404:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
+        items
+      tags:
+      - ahccd-monthly
+  /collections/ahccd-monthly/items/{featureId}:
+    get:
+      description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
+      parameters:
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
+      - $ref: '#/components/parameters/f'
+      responses:
+        200:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
+        400:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        404:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
+        item by id
+      tags:
+      - ahccd-monthly
+  /collections/ahccd-monthly/queryables:
+    get:
+      description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
+      parameters:
+      - *id001
+      responses:
+        200:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
+        400:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        404:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
+        queryables
+      tags:
+      - ahccd-monthly
+  /collections/ahccd-seasonal:
+    get:
+      description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal
+      parameters:
+      - $ref: '#/components/parameters/f'
+      responses:
+        200:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
+        400:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        404:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get collection metadata
+      tags:
+      - ahccd-seasonal
+  /collections/ahccd-seasonal/items:
+    get:
+      description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal
+      parameters:
+      - *id001
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
+      - $ref: '#/components/parameters/sortby'
+      - $ref: '#/components/parameters/startindex'
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
+      - explode: false
+        in: query
+        name: identifier__identifiant
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: lat__lat
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: lon__long
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: period_group__groupe_periode
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: period_value__valeur_periode
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: pressure_sea_level__pression_niveau_mer
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: pressure_sea_level_units__pression_niveau_mer_unite
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
         name: pressure_station__pression_station
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: pressure_station_units__pression_station_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: province__province
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: rain__pluie
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: rain_units__pluie_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: snow__neige
         required: false
         schema:
           format: float
@@ -856,57 +797,222 @@ paths:
         schema:
           type: string
         style: form
+      - explode: false
+        in: query
+        name: station_id__id_station
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: temp_max__temp_max
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: temp_max_units__temp_max_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: temp_mean__temp_moyenne
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: temp_mean_units__temp_moyenne_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: temp_min__temp_min
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: temp_min_units__temp_min_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: total_precip__precip_totale
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: total_precip_units__precip_totale_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: wind_speed__vitesse_vent
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: wind_speed_units__vitesse_vent_unites
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: year__annee
+        required: false
+        schema:
+          type: integer
+        style: form
       responses:
         200:
-          description: successful operation
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
         400:
-          description: Invalid id supplied
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
         404:
-          description: not found
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
       summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal
-        features
+        items
       tags:
       - ahccd-seasonal
   /collections/ahccd-seasonal/items/{featureId}:
     get:
       description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal
       parameters:
-      - $ref: '#/components/parameters/id'
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
       responses:
         200:
-          description: successful operation
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
         400:
-          description: Invalid id supplied
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
         404:
-          description: not found
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
       summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal
-        feature by id
+        item by id
+      tags:
+      - ahccd-seasonal
+  /collections/ahccd-seasonal/queryables:
+    get:
+      description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal
+      parameters:
+      - *id001
+      responses:
+        200:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
+        400:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        404:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal
+        queryables
       tags:
       - ahccd-seasonal
   /collections/ahccd-stations:
     get:
       description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Stations
+      parameters:
+      - $ref: '#/components/parameters/f'
       responses:
         200:
-          description: successful operation
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
         400:
-          description: Invalid id supplied
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
         404:
-          description: not found
-      summary: Get feature collection metadata
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get collection metadata
       tags:
       - ahccd-stations
   /collections/ahccd-stations/items:
     get:
       description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Stations
       parameters:
-      - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/bbox'
-      - $ref: '#/components/parameters/time'
-      - $ref: '#/components/parameters/limit'
+      - *id001
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - $ref: '#/components/parameters/sortby'
       - $ref: '#/components/parameters/startindex'
+      - explode: false
+        in: query
+        name: elevation__elevation
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: end_date__date_fin
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: identifier__identifiant
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: joined__rejoint
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: measurement_type__type_mesure
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: period__periode
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: province__province
+        required: false
+        schema:
+          type: string
+        style: form
       - explode: false
         in: query
         name: start_date__date_debut
@@ -924,65 +1030,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: elevation__elevation
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: measurement_type__type_mesure
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
         name: station_name__nom_station
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: province__province
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: year_range__annees
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: end_date__date_fin
-        required: false
-        schema:
-          format: date
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: period__periode
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: joined__rejoint
-        required: false
-        schema:
-          type: integer
-        style: form
-      - explode: false
-        in: query
-        name: identifier__identifiant
         required: false
         schema:
           type: string
@@ -995,72 +1043,89 @@ paths:
           format: float
           type: number
         style: form
+      - explode: false
+        in: query
+        name: year_range__annees
+        required: false
+        schema:
+          type: string
+        style: form
       responses:
         200:
-          description: successful operation
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
         400:
-          description: Invalid id supplied
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
         404:
-          description: not found
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
       summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Stations
-        features
+        items
       tags:
       - ahccd-stations
   /collections/ahccd-stations/items/{featureId}:
     get:
       description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Stations
       parameters:
-      - $ref: '#/components/parameters/id'
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
       responses:
         200:
-          description: successful operation
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
         400:
-          description: Invalid id supplied
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
         404:
-          description: not found
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
       summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Stations
-        feature by id
+        item by id
+      tags:
+      - ahccd-stations
+  /collections/ahccd-stations/queryables:
+    get:
+      description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Stations
+      parameters:
+      - *id001
+      responses:
+        200:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
+        400:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        404:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Stations
+        queryables
       tags:
       - ahccd-stations
   /collections/ahccd-trends:
     get:
       description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends
+      parameters:
+      - $ref: '#/components/parameters/f'
       responses:
         200:
-          description: successful operation
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
         400:
-          description: Invalid id supplied
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
         404:
-          description: not found
-      summary: Get feature collection metadata
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get collection metadata
       tags:
       - ahccd-trends
   /collections/ahccd-trends/items:
     get:
       description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends
       parameters:
-      - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/bbox'
-      - $ref: '#/components/parameters/time'
-      - $ref: '#/components/parameters/limit'
+      - *id001
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - $ref: '#/components/parameters/sortby'
       - $ref: '#/components/parameters/startindex'
-      - explode: false
-        in: query
-        name: start_date__date_debut
-        required: false
-        schema:
-          format: date
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: station_id__id_station
-        required: false
-        schema:
-          type: string
-        style: form
       - explode: false
         in: query
         name: elevation__elevation
@@ -1071,43 +1136,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: measurement_type__type_mesure
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: station_name__nom_station
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: province__province
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: year_range__annees
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: end_date__date_fin
-        required: false
-        schema:
-          format: date
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: period__periode
+        name: identifier__identifiant
         required: false
         schema:
           type: string
@@ -1121,7 +1150,35 @@ paths:
         style: form
       - explode: false
         in: query
-        name: identifier__identifiant
+        name: measurement_type__type_mesure
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: period__periode
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: province__province
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: station_id__id_station
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: station_name__nom_station
         required: false
         schema:
           type: string
@@ -1134,31 +1191,59 @@ paths:
           format: float
           type: number
         style: form
+      - explode: false
+        in: query
+        name: year_range__annees
+        required: false
+        schema:
+          type: string
+        style: form
       responses:
         200:
-          description: successful operation
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
         400:
-          description: Invalid id supplied
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
         404:
-          description: not found
-      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends features
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends items
       tags:
       - ahccd-trends
   /collections/ahccd-trends/items/{featureId}:
     get:
       description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends
       parameters:
-      - $ref: '#/components/parameters/id'
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
       responses:
         200:
-          description: successful operation
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
         400:
-          description: Invalid id supplied
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
         404:
-          description: not found
-      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends feature
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends item
         by id
+      tags:
+      - ahccd-trends
+  /collections/ahccd-trends/queryables:
+    get:
+      description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends
+      parameters:
+      - *id001
+      responses:
+        200:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
+        400:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        404:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends queryables
       tags:
       - ahccd-trends
   /collections/climate-daily:
@@ -1172,14 +1257,18 @@ paths:
         (1) Station is currently operational, (2) Stations with long periods of record,
         (3) Stations that are co-located with the categories above and supplement
         the period of record'
+      parameters:
+      - $ref: '#/components/parameters/f'
       responses:
         200:
-          description: successful operation
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
         400:
-          description: Invalid id supplied
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
         404:
-          description: not found
-      summary: Get feature collection metadata
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get collection metadata
       tags:
       - climate-daily
   /collections/climate-daily/items:
@@ -1194,96 +1283,15 @@ paths:
         (3) Stations that are co-located with the categories above and supplement
         the period of record'
       parameters:
-      - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/bbox'
-      - $ref: '#/components/parameters/time'
-      - $ref: '#/components/parameters/limit'
+      - *id001
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - $ref: '#/components/parameters/sortby'
       - $ref: '#/components/parameters/startindex'
-      - explode: false
-        in: query
-        name: MIN_REL_HUMIDITY
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
       - explode: false
         in: query
         name: CLIMATE_IDENTIFIER
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: MAX_REL_HUMIDITY
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: SPEED_MAX_GUST
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: TOTAL_RAIN_FLAG
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: MIN_TEMPERATURE_FLAG
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: PROVINCE_CODE
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: LOCAL_YEAR
-        required: false
-        schema:
-          type: integer
-        style: form
-      - explode: false
-        in: query
-        name: TOTAL_PRECIPITATION_FLAG
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: MEAN_TEMPERATURE
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: SOURCE
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: MAX_TEMPERATURE_FLAG
         required: false
         schema:
           type: string
@@ -1297,17 +1305,18 @@ paths:
         style: form
       - explode: false
         in: query
-        name: MIN_REL_HUMIDITY_FLAG
+        name: COOLING_DEGREE_DAYS_FLAG
         required: false
         schema:
           type: string
         style: form
       - explode: false
         in: query
-        name: STATION_NAME
+        name: DIRECTION_MAX_GUST
         required: false
         schema:
-          type: string
+          format: float
+          type: number
         style: form
       - explode: false
         in: query
@@ -1325,7 +1334,14 @@ paths:
         style: form
       - explode: false
         in: query
-        name: MAX_REL_HUMIDITY_FLAG
+        name: HEATING_DEGREE_DAYS_FLAG
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: ID
         required: false
         schema:
           type: string
@@ -1340,11 +1356,39 @@ paths:
         style: form
       - explode: false
         in: query
-        name: TOTAL_RAIN
+        name: LOCAL_DAY
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: LOCAL_MONTH
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: LOCAL_YEAR
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: MAX_REL_HUMIDITY
         required: false
         schema:
           format: float
           type: number
+        style: form
+      - explode: false
+        in: query
+        name: MAX_REL_HUMIDITY_FLAG
+        required: false
+        schema:
+          type: string
         style: form
       - explode: false
         in: query
@@ -1356,28 +1400,59 @@ paths:
         style: form
       - explode: false
         in: query
-        name: LOCAL_MONTH
-        required: false
-        schema:
-          type: integer
-        style: form
-      - explode: false
-        in: query
-        name: SNOW_ON_GROUND_FLAG
+        name: MAX_TEMPERATURE_FLAG
         required: false
         schema:
           type: string
         style: form
       - explode: false
         in: query
-        name: COOLING_DEGREE_DAYS_FLAG
+        name: MEAN_TEMPERATURE
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: MEAN_TEMPERATURE_FLAG
         required: false
         schema:
           type: string
         style: form
       - explode: false
         in: query
-        name: ID
+        name: MIN_REL_HUMIDITY
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: MIN_REL_HUMIDITY_FLAG
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: MIN_TEMPERATURE
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: MIN_TEMPERATURE_FLAG
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: PROVINCE_CODE
         required: false
         schema:
           type: string
@@ -1392,21 +1467,14 @@ paths:
         style: form
       - explode: false
         in: query
-        name: HEATING_DEGREE_DAYS_FLAG
+        name: SNOW_ON_GROUND_FLAG
         required: false
         schema:
           type: string
         style: form
       - explode: false
         in: query
-        name: LOCAL_DAY
-        required: false
-        schema:
-          type: integer
-        style: form
-      - explode: false
-        in: query
-        name: DIRECTION_MAX_GUST
+        name: SPEED_MAX_GUST
         required: false
         schema:
           format: float
@@ -1414,21 +1482,14 @@ paths:
         style: form
       - explode: false
         in: query
-        name: TOTAL_SNOW_FLAG
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: MEAN_TEMPERATURE_FLAG
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
         name: SPEED_MAX_GUST_FLAG
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: STATION_NAME
         required: false
         schema:
           type: string
@@ -1443,11 +1504,25 @@ paths:
         style: form
       - explode: false
         in: query
-        name: MIN_TEMPERATURE
+        name: TOTAL_PRECIPITATION_FLAG
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: TOTAL_RAIN
         required: false
         schema:
           format: float
           type: number
+        style: form
+      - explode: false
+        in: query
+        name: TOTAL_RAIN_FLAG
+        required: false
+        schema:
+          type: string
         style: form
       - explode: false
         in: query
@@ -1457,14 +1532,23 @@ paths:
           format: float
           type: number
         style: form
+      - explode: false
+        in: query
+        name: TOTAL_SNOW_FLAG
+        required: false
+        schema:
+          type: string
+        style: form
       responses:
         200:
-          description: successful operation
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
         400:
-          description: Invalid id supplied
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
         404:
-          description: not found
-      summary: Get Daily Climate Observations features
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Daily Climate Observations items
       tags:
       - climate-daily
   /collections/climate-daily/items/{featureId}:
@@ -1479,16 +1563,43 @@ paths:
         (3) Stations that are co-located with the categories above and supplement
         the period of record'
       parameters:
-      - $ref: '#/components/parameters/id'
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
       responses:
         200:
-          description: successful operation
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
         400:
-          description: Invalid id supplied
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
         404:
-          description: not found
-      summary: Get Daily Climate Observations feature by id
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Daily Climate Observations item by id
+      tags:
+      - climate-daily
+  /collections/climate-daily/queryables:
+    get:
+      description: 'Daily climate observations are derived from two sources of data.
+        The first are Daily Climate Stations producing one or two observations per
+        day of temperature, precipitation. The second are hourly stations that typically
+        produce more weather elements e.g. wind or snow on ground. Only a subset of
+        the total stations is shown due to size limitations. The criteria for station
+        selection are listed as below. The priorities for inclusion are as follows:
+        (1) Station is currently operational, (2) Stations with long periods of record,
+        (3) Stations that are co-located with the categories above and supplement
+        the period of record'
+      parameters:
+      - *id001
+      responses:
+        200:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
+        400:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        404:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Daily Climate Observations queryables
       tags:
       - climate-daily
   /collections/climate-monthly:
@@ -1496,14 +1607,18 @@ paths:
       description: A cross-country summary of the averages and extremes for the month,
         including precipitation totals, max-min temperatures, and degree days. This
         data is available from stations that produce daily data.
+      parameters:
+      - $ref: '#/components/parameters/f'
       responses:
         200:
-          description: successful operation
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
         400:
-          description: Invalid id supplied
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
         404:
-          description: not found
-      summary: Get feature collection metadata
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get collection metadata
       tags:
       - climate-monthly
   /collections/climate-monthly/items:
@@ -1512,56 +1627,12 @@ paths:
         including precipitation totals, max-min temperatures, and degree days. This
         data is available from stations that produce daily data.
       parameters:
-      - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/bbox'
-      - $ref: '#/components/parameters/time'
-      - $ref: '#/components/parameters/limit'
+      - *id001
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - $ref: '#/components/parameters/sortby'
       - $ref: '#/components/parameters/startindex'
-      - explode: false
-        in: query
-        name: NORMAL_SUNSHINE
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: NORMAL_MEAN_TEMPERATURE
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: DAYS_WITH_VALID_SNOWFALL
-        required: false
-        schema:
-          type: integer
-        style: form
-      - explode: false
-        in: query
-        name: DAYS_WITH_VALID_PRECIP
-        required: false
-        schema:
-          type: integer
-        style: form
-      - explode: false
-        in: query
-        name: CLIMATE_IDENTIFIER
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: PROVINCE_CODE
-        required: false
-        schema:
-          type: string
-        style: form
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
       - explode: false
         in: query
         name: BRIGHT_SUNSHINE
@@ -1572,30 +1643,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: LOCAL_YEAR
-        required: false
-        schema:
-          type: integer
-        style: form
-      - explode: false
-        in: query
-        name: NORMAL_PRECIPITATION
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: MEAN_TEMPERATURE
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: FRE_PROVINCE_NAME
+        name: CLIMATE_IDENTIFIER
         required: false
         schema:
           type: string
@@ -1616,54 +1664,17 @@ paths:
         style: form
       - explode: false
         in: query
-        name: STATION_NAME
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: HEATING_DEGREE_DAYS
+        name: DAYS_WITH_VALID_MAX_TEMP
         required: false
         schema:
           type: integer
         style: form
       - explode: false
         in: query
-        name: LOCAL_DATE
-        required: false
-        schema:
-          format: date
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: MAX_TEMPERATURE
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: LOCAL_MONTH
+        name: DAYS_WITH_VALID_MEAN_TEMP
         required: false
         schema:
           type: integer
-        style: form
-      - explode: false
-        in: query
-        name: LONGITUDE
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: ENG_PROVINCE_NAME
-        required: false
-        schema:
-          type: string
         style: form
       - explode: false
         in: query
@@ -1674,38 +1685,14 @@ paths:
         style: form
       - explode: false
         in: query
-        name: ID
+        name: DAYS_WITH_VALID_PRECIP
         required: false
         schema:
-          type: string
+          type: integer
         style: form
       - explode: false
         in: query
-        name: TOTAL_SNOWFALL
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: SNOW_ON_GROUND_LAST_DAY
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: LAST_UPDATED
-        required: false
-        schema:
-          format: date
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: DAYS_WITH_VALID_MAX_TEMP
+        name: DAYS_WITH_VALID_SNOWFALL
         required: false
         schema:
           type: integer
@@ -1719,6 +1706,118 @@ paths:
         style: form
       - explode: false
         in: query
+        name: ENG_PROVINCE_NAME
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: FRE_PROVINCE_NAME
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: HEATING_DEGREE_DAYS
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: ID
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: LAST_UPDATED
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: LATITUDE
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: LOCAL_DATE
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: LOCAL_MONTH
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: LOCAL_YEAR
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: LONGITUDE
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: MAX_TEMPERATURE
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: MEAN_TEMPERATURE
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: MIN_TEMPERATURE
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: NORMAL_MEAN_TEMPERATURE
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: NORMAL_PRECIPITATION
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
         name: NORMAL_SNOWFALL
         required: false
         schema:
@@ -1727,14 +1826,30 @@ paths:
         style: form
       - explode: false
         in: query
-        name: DAYS_WITH_VALID_MEAN_TEMP
+        name: NORMAL_SUNSHINE
         required: false
         schema:
-          type: integer
+          format: float
+          type: number
         style: form
       - explode: false
         in: query
-        name: LATITUDE
+        name: PROVINCE_CODE
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: SNOW_ON_GROUND_LAST_DAY
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: STATION_NAME
         required: false
         schema:
           type: string
@@ -1749,7 +1864,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: MIN_TEMPERATURE
+        name: TOTAL_SNOWFALL
         required: false
         schema:
           format: float
@@ -1757,12 +1872,14 @@ paths:
         style: form
       responses:
         200:
-          description: successful operation
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
         400:
-          description: Invalid id supplied
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
         404:
-          description: not found
-      summary: Get Monthly Climate Observation Summaries features
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Monthly Climate Observation Summaries items
       tags:
       - climate-monthly
   /collections/climate-monthly/items/{featureId}:
@@ -1771,44 +1888,169 @@ paths:
         including precipitation totals, max-min temperatures, and degree days. This
         data is available from stations that produce daily data.
       parameters:
-      - $ref: '#/components/parameters/id'
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
       responses:
         200:
-          description: successful operation
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
         400:
-          description: Invalid id supplied
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
         404:
-          description: not found
-      summary: Get Monthly Climate Observation Summaries feature by id
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Monthly Climate Observation Summaries item by id
+      tags:
+      - climate-monthly
+  /collections/climate-monthly/queryables:
+    get:
+      description: A cross-country summary of the averages and extremes for the month,
+        including precipitation totals, max-min temperatures, and degree days. This
+        data is available from stations that produce daily data.
+      parameters:
+      - *id001
+      responses:
+        200:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
+        400:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        404:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Monthly Climate Observation Summaries queryables
       tags:
       - climate-monthly
   /collections/climate-normals:
     get:
       description: 1981-2010 Climate Normals
+      parameters:
+      - $ref: '#/components/parameters/f'
       responses:
         200:
-          description: successful operation
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
         400:
-          description: Invalid id supplied
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
         404:
-          description: not found
-      summary: Get feature collection metadata
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get collection metadata
       tags:
       - climate-normals
   /collections/climate-normals/items:
     get:
       description: 1981-2010 Climate Normals
       parameters:
-      - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/bbox'
-      - $ref: '#/components/parameters/time'
-      - $ref: '#/components/parameters/limit'
+      - *id001
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - $ref: '#/components/parameters/sortby'
       - $ref: '#/components/parameters/startindex'
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
+      - explode: false
+        in: query
+        name: CLIMATE_IDENTIFIER
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: CURRENT_FLAG
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: DATE_CALCULATED
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: E_NORMAL_ELEMENT_NAME
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: FIRST_OCCURRENCE_DATE
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: FIRST_YEAR
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: FIRST_YEAR_NORMAL_PERIOD
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: F_NORMAL_ELEMENT_NAME
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: ID
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: LAST_YEAR
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: LAST_YEAR_NORMAL_PERIOD
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: MAX_DURATION_MISSING_YEARS
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: MONTH
+        required: false
+        schema:
+          type: integer
+        style: form
       - explode: false
         in: query
         name: NORMAL_CODE
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: NORMAL_ID
         required: false
         schema:
           type: string
@@ -1822,13 +2064,6 @@ paths:
         style: form
       - explode: false
         in: query
-        name: FIRST_YEAR
-        required: false
-        schema:
-          type: integer
-        style: form
-      - explode: false
-        in: query
         name: PERCENT_OF_POSSIBLE_OBS
         required: false
         schema:
@@ -1836,21 +2071,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: CLIMATE_IDENTIFIER
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: F_NORMAL_ELEMENT_NAME
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: PERIOD_END
+        name: PERIOD
         required: false
         schema:
           type: string
@@ -1858,6 +2079,13 @@ paths:
       - explode: false
         in: query
         name: PERIOD_BEGIN
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: PERIOD_END
         required: false
         schema:
           type: string
@@ -1878,60 +2106,10 @@ paths:
         style: form
       - explode: false
         in: query
-        name: FIRST_YEAR_NORMAL_PERIOD
-        required: false
-        schema:
-          type: integer
-        style: form
-      - explode: false
-        in: query
-        name: LAST_YEAR
-        required: false
-        schema:
-          type: integer
-        style: form
-      - explode: false
-        in: query
         name: STATION_NAME
         required: false
         schema:
           type: string
-        style: form
-      - explode: false
-        in: query
-        name: CURRENT_FLAG
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: MAX_DURATION_MISSING_YEARS
-        required: false
-        schema:
-          type: integer
-        style: form
-      - explode: false
-        in: query
-        name: DATE_CALCULATED
-        required: false
-        schema:
-          format: date
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: E_NORMAL_ELEMENT_NAME
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: LAST_YEAR_NORMAL_PERIOD
-        required: false
-        schema:
-          type: integer
         style: form
       - explode: false
         in: query
@@ -1942,43 +2120,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: PERIOD
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
         name: VALUE
-        required: false
-        schema:
-          type: integer
-        style: form
-      - explode: false
-        in: query
-        name: NORMAL_ID
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: ID
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: FIRST_OCCURRENCE_DATE
-        required: false
-        schema:
-          format: date
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: MONTH
         required: false
         schema:
           type: integer
@@ -1992,63 +2134,80 @@ paths:
         style: form
       responses:
         200:
-          description: successful operation
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
         400:
-          description: Invalid id supplied
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
         404:
-          description: not found
-      summary: Get 1981-2010 Climate Normals features
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get 1981-2010 Climate Normals items
       tags:
       - climate-normals
   /collections/climate-normals/items/{featureId}:
     get:
       description: 1981-2010 Climate Normals
       parameters:
-      - $ref: '#/components/parameters/id'
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
       responses:
         200:
-          description: successful operation
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
         400:
-          description: Invalid id supplied
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
         404:
-          description: not found
-      summary: Get 1981-2010 Climate Normals feature by id
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get 1981-2010 Climate Normals item by id
+      tags:
+      - climate-normals
+  /collections/climate-normals/queryables:
+    get:
+      description: 1981-2010 Climate Normals
+      parameters:
+      - *id001
+      responses:
+        200:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
+        400:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        404:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get 1981-2010 Climate Normals queryables
       tags:
       - climate-normals
   /collections/climate-stations:
     get:
       description: Climate Stations
+      parameters:
+      - $ref: '#/components/parameters/f'
       responses:
         200:
-          description: successful operation
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
         400:
-          description: Invalid id supplied
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
         404:
-          description: not found
-      summary: Get feature collection metadata
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get collection metadata
       tags:
       - climate-stations
   /collections/climate-stations/items:
     get:
       description: Climate Stations
       parameters:
-      - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/bbox'
-      - $ref: '#/components/parameters/time'
-      - $ref: '#/components/parameters/limit'
+      - *id001
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - $ref: '#/components/parameters/sortby'
       - $ref: '#/components/parameters/startindex'
       - explode: false
         in: query
-        name: NORMAL_CODE
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: FRE_STN_OPERATOR_ACRONYM
+        name: CLIMATE_IDENTIFIER
         required: false
         schema:
           type: string
@@ -2062,57 +2221,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: WMO_IDENTIFIER
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: CLIMATE_IDENTIFIER
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: HAS_MONTHLY_SUMMARY
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: TIMEZONE
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: PROV_STATE_TERR_CODE
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: ELEVATION
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: FIRST_DATE
-        required: false
-        schema:
-          format: date
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: PUBLICATION_CODE
+        name: DISPLAY_CODE
         required: false
         schema:
           type: integer
@@ -2127,7 +2236,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: LAST_DATE
+        name: DLY_LAST_DATE
         required: false
         schema:
           format: date
@@ -2135,35 +2244,14 @@ paths:
         style: form
       - explode: false
         in: query
+        name: ELEVATION
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
         name: ENG_PROV_NAME
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: STATION_NAME
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: DISPLAY_CODE
-        required: false
-        schema:
-          type: integer
-        style: form
-      - explode: false
-        in: query
-        name: FRE_PROV_NAME
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: STATION_TYPE
         required: false
         schema:
           type: string
@@ -2177,20 +2265,6 @@ paths:
         style: form
       - explode: false
         in: query
-        name: LONGITUDE
-        required: false
-        schema:
-          type: integer
-        style: form
-      - explode: false
-        in: query
-        name: HAS_NORMALS_DATA
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
         name: ENG_STN_OPERATOR_NAME
         required: false
         schema:
@@ -2198,7 +2272,22 @@ paths:
         style: form
       - explode: false
         in: query
-        name: TC_IDENTIFIER
+        name: FIRST_DATE
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: FRE_PROV_NAME
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: FRE_STN_OPERATOR_ACRONYM
         required: false
         schema:
           type: string
@@ -2212,6 +2301,28 @@ paths:
         style: form
       - explode: false
         in: query
+        name: HAS_MONTHLY_SUMMARY
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: HAS_NORMALS_DATA
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: LAST_DATE
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: false
+        in: query
         name: LATITUDE
         required: false
         schema:
@@ -2219,50 +2330,137 @@ paths:
         style: form
       - explode: false
         in: query
-        name: DLY_LAST_DATE
+        name: LONGITUDE
         required: false
         schema:
-          format: date
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: NORMAL_CODE
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: PROV_STATE_TERR_CODE
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: PUBLICATION_CODE
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: STATION_NAME
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: STATION_TYPE
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: STN_ID
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: TC_IDENTIFIER
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: TIMEZONE
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: WMO_IDENTIFIER
+        required: false
+        schema:
           type: string
         style: form
       responses:
         200:
-          description: successful operation
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
         400:
-          description: Invalid id supplied
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
         404:
-          description: not found
-      summary: Get Climate Stations features
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Climate Stations items
       tags:
       - climate-stations
   /collections/climate-stations/items/{featureId}:
     get:
       description: Climate Stations
       parameters:
-      - $ref: '#/components/parameters/id'
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
       responses:
         200:
-          description: successful operation
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
         400:
-          description: Invalid id supplied
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
         404:
-          description: not found
-      summary: Get Climate Stations feature by id
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Climate Stations item by id
+      tags:
+      - climate-stations
+  /collections/climate-stations/queryables:
+    get:
+      description: Climate Stations
+      parameters:
+      - *id001
+      responses:
+        200:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
+        400:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        404:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Climate Stations queryables
       tags:
       - climate-stations
   /collections/hydrometric-annual-peaks:
     get:
       description: The annual maximum and minimum instantaneous data are the maximum
         and minimum instantaneous values for a given year.
+      parameters:
+      - $ref: '#/components/parameters/f'
       responses:
         200:
-          description: successful operation
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
         400:
-          description: Invalid id supplied
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
         404:
-          description: not found
-      summary: Get feature collection metadata
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get collection metadata
       tags:
       - hydrometric-annual-peaks
   /collections/hydrometric-annual-peaks/items:
@@ -2270,15 +2468,73 @@ paths:
       description: The annual maximum and minimum instantaneous data are the maximum
         and minimum instantaneous values for a given year.
       parameters:
-      - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/bbox'
-      - $ref: '#/components/parameters/time'
-      - $ref: '#/components/parameters/limit'
+      - *id001
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - $ref: '#/components/parameters/sortby'
       - $ref: '#/components/parameters/startindex'
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
       - explode: false
         in: query
-        name: UNITS_FR
+        name: DATA_TYPE_EN
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: DATA_TYPE_FR
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: DATE
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: IDENTIFIER
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: PEAK
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: PEAK_CODE_EN
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: PEAK_CODE_FR
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: PROV_TERR_STATE_LOC
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: STATION_NAME
         required: false
         schema:
           type: string
@@ -2299,21 +2555,14 @@ paths:
         style: form
       - explode: false
         in: query
+        name: SYMBOL_FR
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
         name: TIMEZONE_OFFSET
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: DATA_TYPE_FR
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: PEAK_CODE_EN
         required: false
         schema:
           type: string
@@ -2327,70 +2576,21 @@ paths:
         style: form
       - explode: false
         in: query
-        name: PEAK
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: DATE
-        required: false
-        schema:
-          format: date
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: IDENTIFIER
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: PEAK_CODE_FR
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: DATA_TYPE_EN
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: STATION_NAME
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: SYMBOL_FR
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: PROV_TERR_STATE_LOC
+        name: UNITS_FR
         required: false
         schema:
           type: string
         style: form
       responses:
         200:
-          description: successful operation
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
         400:
-          description: Invalid id supplied
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
         404:
-          description: not found
-      summary: Get Annual Maximum and Minimum Instantaneous Water Level or Flow features
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Annual Maximum and Minimum Instantaneous Water Level or Flow items
       tags:
       - hydrometric-annual-peaks
   /collections/hydrometric-annual-peaks/items/{featureId}:
@@ -2398,31 +2598,55 @@ paths:
       description: The annual maximum and minimum instantaneous data are the maximum
         and minimum instantaneous values for a given year.
       parameters:
-      - $ref: '#/components/parameters/id'
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
       responses:
         200:
-          description: successful operation
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
         400:
-          description: Invalid id supplied
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
         404:
-          description: not found
-      summary: Get Annual Maximum and Minimum Instantaneous Water Level or Flow feature
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Annual Maximum and Minimum Instantaneous Water Level or Flow item
         by id
+      tags:
+      - hydrometric-annual-peaks
+  /collections/hydrometric-annual-peaks/queryables:
+    get:
+      description: The annual maximum and minimum instantaneous data are the maximum
+        and minimum instantaneous values for a given year.
+      parameters:
+      - *id001
+      responses:
+        200:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
+        400:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        404:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Annual Maximum and Minimum Instantaneous Water Level or Flow queryables
       tags:
       - hydrometric-annual-peaks
   /collections/hydrometric-annual-statistics:
     get:
       description: The annual maximum and minimum daily data are the maximum and minimum
         daily mean values for a given year.
+      parameters:
+      - $ref: '#/components/parameters/f'
       responses:
         200:
-          description: successful operation
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
         400:
-          description: Invalid id supplied
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
         404:
-          description: not found
-      summary: Get feature collection metadata
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get collection metadata
       tags:
       - hydrometric-annual-statistics
   /collections/hydrometric-annual-statistics/items:
@@ -2430,47 +2654,18 @@ paths:
       description: The annual maximum and minimum daily data are the maximum and minimum
         daily mean values for a given year.
       parameters:
-      - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/bbox'
-      - $ref: '#/components/parameters/time'
-      - $ref: '#/components/parameters/limit'
+      - *id001
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - $ref: '#/components/parameters/sortby'
       - $ref: '#/components/parameters/startindex'
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
       - explode: false
         in: query
-        name: STATION_NUMBER
+        name: DATA_TYPE_EN
         required: false
         schema:
           type: string
-        style: form
-      - explode: false
-        in: query
-        name: IDENTIFIER
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: MAX_SYMBOL_FR
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: MIN_SYMBOL_EN
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: MIN_VALUE
-        required: false
-        schema:
-          format: float
-          type: number
         style: form
       - explode: false
         in: query
@@ -2481,22 +2676,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: MIN_DATE
-        required: false
-        schema:
-          format: date
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: MAX_SYMBOL_EN
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: MIN_SYMBOL_FR
+        name: IDENTIFIER
         required: false
         schema:
           type: string
@@ -2511,11 +2691,62 @@ paths:
         style: form
       - explode: false
         in: query
+        name: MAX_SYMBOL_EN
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: MAX_SYMBOL_FR
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
         name: MAX_VALUE
         required: false
         schema:
           format: float
           type: number
+        style: form
+      - explode: false
+        in: query
+        name: MIN_DATE
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: MIN_SYMBOL_EN
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: MIN_SYMBOL_FR
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: MIN_VALUE
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: PROV_TERR_STATE_LOC
+        required: false
+        schema:
+          type: string
         style: form
       - explode: false
         in: query
@@ -2526,26 +2757,21 @@ paths:
         style: form
       - explode: false
         in: query
-        name: DATA_TYPE_EN
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: PROV_TERR_STATE_LOC
+        name: STATION_NUMBER
         required: false
         schema:
           type: string
         style: form
       responses:
         200:
-          description: successful operation
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
         400:
-          description: Invalid id supplied
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
         404:
-          description: not found
-      summary: Get Annual Maximum and Minimum Daily Water Level or Flow features
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Annual Maximum and Minimum Daily Water Level or Flow items
       tags:
       - hydrometric-annual-statistics
   /collections/hydrometric-annual-statistics/items/{featureId}:
@@ -2553,85 +2779,65 @@ paths:
       description: The annual maximum and minimum daily data are the maximum and minimum
         daily mean values for a given year.
       parameters:
-      - $ref: '#/components/parameters/id'
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
       responses:
         200:
-          description: successful operation
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
         400:
-          description: Invalid id supplied
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
         404:
-          description: not found
-      summary: Get Annual Maximum and Minimum Daily Water Level or Flow feature by
-        id
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Annual Maximum and Minimum Daily Water Level or Flow item by id
+      tags:
+      - hydrometric-annual-statistics
+  /collections/hydrometric-annual-statistics/queryables:
+    get:
+      description: The annual maximum and minimum daily data are the maximum and minimum
+        daily mean values for a given year.
+      parameters:
+      - *id001
+      responses:
+        200:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
+        400:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        404:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Annual Maximum and Minimum Daily Water Level or Flow queryables
       tags:
       - hydrometric-annual-statistics
   /collections/hydrometric-daily-mean:
     get:
       description: The daily mean is the average of all unit values for a given day.
+      parameters:
+      - $ref: '#/components/parameters/f'
       responses:
         200:
-          description: successful operation
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
         400:
-          description: Invalid id supplied
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
         404:
-          description: not found
-      summary: Get feature collection metadata
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get collection metadata
       tags:
       - hydrometric-daily-mean
   /collections/hydrometric-daily-mean/items:
     get:
       description: The daily mean is the average of all unit values for a given day.
       parameters:
-      - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/bbox'
-      - $ref: '#/components/parameters/time'
-      - $ref: '#/components/parameters/limit'
+      - *id001
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - $ref: '#/components/parameters/sortby'
       - $ref: '#/components/parameters/startindex'
-      - explode: false
-        in: query
-        name: STATION_NUMBER
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: LEVEL
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: DISCHARGE_SYMBOL_EN
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: LEVEL_SYMBOL_EN
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: DISCHARGE_SYMBOL_FR
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: LEVEL_SYMBOL_FR
-        required: false
-        schema:
-          type: string
-        style: form
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
       - explode: false
         in: query
         name: DATE
@@ -2650,7 +2856,14 @@ paths:
         style: form
       - explode: false
         in: query
-        name: STATION_NAME
+        name: DISCHARGE_SYMBOL_EN
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: DISCHARGE_SYMBOL_FR
         required: false
         schema:
           type: string
@@ -2664,62 +2877,40 @@ paths:
         style: form
       - explode: false
         in: query
+        name: LEVEL
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: LEVEL_SYMBOL_EN
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: LEVEL_SYMBOL_FR
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
         name: PROV_TERR_STATE_LOC
         required: false
         schema:
           type: string
         style: form
-      responses:
-        200:
-          description: successful operation
-        400:
-          description: Invalid id supplied
-        404:
-          description: not found
-      summary: Get Daily Mean of Water Level or Flow features
-      tags:
-      - hydrometric-daily-mean
-  /collections/hydrometric-daily-mean/items/{featureId}:
-    get:
-      description: The daily mean is the average of all unit values for a given day.
-      parameters:
-      - $ref: '#/components/parameters/id'
-      - $ref: '#/components/parameters/f'
-      responses:
-        200:
-          description: successful operation
-        400:
-          description: Invalid id supplied
-        404:
-          description: not found
-      summary: Get Daily Mean of Water Level or Flow feature by id
-      tags:
-      - hydrometric-daily-mean
-  /collections/hydrometric-monthly-mean:
-    get:
-      description: The monthly mean is the average of daily mean values for a given
-        month.
-      responses:
-        200:
-          description: successful operation
-        400:
-          description: Invalid id supplied
-        404:
-          description: not found
-      summary: Get feature collection metadata
-      tags:
-      - hydrometric-monthly-mean
-  /collections/hydrometric-monthly-mean/items:
-    get:
-      description: The monthly mean is the average of daily mean values for a given
-        month.
-      parameters:
-      - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/bbox'
-      - $ref: '#/components/parameters/time'
-      - $ref: '#/components/parameters/limit'
-      - $ref: '#/components/parameters/sortby'
-      - $ref: '#/components/parameters/startindex'
+      - explode: false
+        in: query
+        name: STATION_NAME
+        required: false
+        schema:
+          type: string
+        style: form
       - explode: false
         in: query
         name: STATION_NUMBER
@@ -2727,13 +2918,96 @@ paths:
         schema:
           type: string
         style: form
+      responses:
+        200:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
+        400:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        404:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Daily Mean of Water Level or Flow items
+      tags:
+      - hydrometric-daily-mean
+  /collections/hydrometric-daily-mean/items/{featureId}:
+    get:
+      description: The daily mean is the average of all unit values for a given day.
+      parameters:
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
+      - $ref: '#/components/parameters/f'
+      responses:
+        200:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
+        400:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        404:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Daily Mean of Water Level or Flow item by id
+      tags:
+      - hydrometric-daily-mean
+  /collections/hydrometric-daily-mean/queryables:
+    get:
+      description: The daily mean is the average of all unit values for a given day.
+      parameters:
+      - *id001
+      responses:
+        200:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
+        400:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        404:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Daily Mean of Water Level or Flow queryables
+      tags:
+      - hydrometric-daily-mean
+  /collections/hydrometric-monthly-mean:
+    get:
+      description: The monthly mean is the average of daily mean values for a given
+        month.
+      parameters:
+      - $ref: '#/components/parameters/f'
+      responses:
+        200:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
+        400:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        404:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get collection metadata
+      tags:
+      - hydrometric-monthly-mean
+  /collections/hydrometric-monthly-mean/items:
+    get:
+      description: The monthly mean is the average of daily mean values for a given
+        month.
+      parameters:
+      - *id001
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
+      - $ref: '#/components/parameters/sortby'
+      - $ref: '#/components/parameters/startindex'
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
       - explode: false
         in: query
-        name: MONTHLY_MEAN_LEVEL
+        name: DATE
         required: false
         schema:
-          format: float
-          type: number
+          format: date
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: IDENTIFIER
+        required: false
+        schema:
+          type: string
         style: form
       - explode: false
         in: query
@@ -2745,15 +3019,120 @@ paths:
         style: form
       - explode: false
         in: query
-        name: DATE
+        name: MONTHLY_MEAN_LEVEL
         required: false
         schema:
-          format: date
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: PROV_TERR_STATE_LOC
+        required: false
+        schema:
           type: string
         style: form
       - explode: false
         in: query
         name: STATION_NAME
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: STATION_NUMBER
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        200:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
+        400:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        404:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Monthly Mean of Water Level or Flow items
+      tags:
+      - hydrometric-monthly-mean
+  /collections/hydrometric-monthly-mean/items/{featureId}:
+    get:
+      description: The monthly mean is the average of daily mean values for a given
+        month.
+      parameters:
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
+      - $ref: '#/components/parameters/f'
+      responses:
+        200:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
+        400:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        404:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Monthly Mean of Water Level or Flow item by id
+      tags:
+      - hydrometric-monthly-mean
+  /collections/hydrometric-monthly-mean/queryables:
+    get:
+      description: The monthly mean is the average of daily mean values for a given
+        month.
+      parameters:
+      - *id001
+      responses:
+        200:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
+        400:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        404:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Monthly Mean of Water Level or Flow queryables
+      tags:
+      - hydrometric-monthly-mean
+  /collections/hydrometric-stations:
+    get:
+      description: A station is a site on a river or lake where water quantity (water
+        level and flow) are collected and recorded.
+      parameters:
+      - $ref: '#/components/parameters/f'
+      responses:
+        200:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
+        400:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        404:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get collection metadata
+      tags:
+      - hydrometric-stations
+  /collections/hydrometric-stations/items:
+    get:
+      description: A station is a site on a river or lake where water quantity (water
+        level and flow) are collected and recorded.
+      parameters:
+      - *id001
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
+      - $ref: '#/components/parameters/sortby'
+      - $ref: '#/components/parameters/startindex'
+      - explode: false
+        in: query
+        name: CONTRIBUTOR_EN
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: CONTRIBUTOR_FR
         required: false
         schema:
           type: string
@@ -2772,61 +3151,16 @@ paths:
         schema:
           type: string
         style: form
-      responses:
-        200:
-          description: successful operation
-        400:
-          description: Invalid id supplied
-        404:
-          description: not found
-      summary: Get Monthly Mean of Water Level or Flow features
-      tags:
-      - hydrometric-monthly-mean
-  /collections/hydrometric-monthly-mean/items/{featureId}:
-    get:
-      description: The monthly mean is the average of daily mean values for a given
-        month.
-      parameters:
-      - $ref: '#/components/parameters/id'
-      - $ref: '#/components/parameters/f'
-      responses:
-        200:
-          description: successful operation
-        400:
-          description: Invalid id supplied
-        404:
-          description: not found
-      summary: Get Monthly Mean of Water Level or Flow feature by id
-      tags:
-      - hydrometric-monthly-mean
-  /collections/hydrometric-stations:
-    get:
-      description: A station is a site on a river or lake where water quantity (water
-        level and flow) are collected and recorded.
-      responses:
-        200:
-          description: successful operation
-        400:
-          description: Invalid id supplied
-        404:
-          description: not found
-      summary: Get feature collection metadata
-      tags:
-      - hydrometric-stations
-  /collections/hydrometric-stations/items:
-    get:
-      description: A station is a site on a river or lake where water quantity (water
-        level and flow) are collected and recorded.
-      parameters:
-      - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/bbox'
-      - $ref: '#/components/parameters/time'
-      - $ref: '#/components/parameters/limit'
-      - $ref: '#/components/parameters/sortby'
-      - $ref: '#/components/parameters/startindex'
       - explode: false
         in: query
-        name: CONTRIBUTOR_FR
+        name: STATION_NAME
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: STATION_NUMBER
         required: false
         schema:
           type: string
@@ -2840,14 +3174,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: STATION_NUMBER
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: CONTRIBUTOR_EN
+        name: STATUS_FR
         required: false
         schema:
           type: string
@@ -2859,42 +3186,16 @@ paths:
         schema:
           type: string
         style: form
-      - explode: false
-        in: query
-        name: STATUS_FR
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: STATION_NAME
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: IDENTIFIER
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: PROV_TERR_STATE_LOC
-        required: false
-        schema:
-          type: string
-        style: form
       responses:
         200:
-          description: successful operation
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
         400:
-          description: Invalid id supplied
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
         404:
-          description: not found
-      summary: Get Hydrometric Monitoring Stations features
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Hydrometric Monitoring Stations items
       tags:
       - hydrometric-stations
   /collections/hydrometric-stations/items/{featureId}:
@@ -2902,46 +3203,91 @@ paths:
       description: A station is a site on a river or lake where water quantity (water
         level and flow) are collected and recorded.
       parameters:
-      - $ref: '#/components/parameters/id'
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
       responses:
         200:
-          description: successful operation
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
         400:
-          description: Invalid id supplied
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
         404:
-          description: not found
-      summary: Get Hydrometric Monitoring Stations feature by id
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Hydrometric Monitoring Stations item by id
+      tags:
+      - hydrometric-stations
+  /collections/hydrometric-stations/queryables:
+    get:
+      description: A station is a site on a river or lake where water quantity (water
+        level and flow) are collected and recorded.
+      parameters:
+      - *id001
+      responses:
+        200:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
+        400:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        404:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Hydrometric Monitoring Stations queryables
       tags:
       - hydrometric-stations
   /conformance:
     get:
       description: API conformance definition
+      parameters:
+      - $ref: '#/components/parameters/f'
       responses:
         200:
-          description: successful operation
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ConformanceDeclaration
+        400:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
       summary: API conformance definition
+      tags:
+      - server
+  /openapi:
+    get:
+      description: This document
+      parameters:
+      - $ref: '#/components/parameters/f'
+      responses:
+        200:
+          $ref: '#/components/responses/200'
+        400:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        default:
+          $ref: '#/components/responses/default'
+      summary: This document
       tags:
       - server
   /processes:
     get:
       description: Processes
+      parameters:
+      - $ref: '#/components/parameters/f'
       responses:
         200:
-          description: successful operation
+          $ref: '#/components/responses/200'
+        default:
+          $ref: '#/components/responses/default'
       summary: Processes
       tags:
       - server
   /processes/raster-drill:
     get:
       description: Raster Drill process
+      parameters:
+      - $ref: '#/components/parameters/f'
       responses:
         200:
-          description: successful operation
-        400:
-          description: Invalid id supplied
-        404:
-          description: not found
+          $ref: '#/components/responses/200'
+        default:
+          $ref: '#/components/responses/default'
       summary: Get process metadata
       tags:
       - raster-drill
@@ -2950,7 +3296,9 @@ paths:
       description: Raster Drill process
       responses:
         200:
-          description: successful operation
+          $ref: '#/components/responses/200'
+        default:
+          $ref: '#/components/responses/default'
       summary: Retrieve job list for process
       tags:
       - raster-drill
@@ -2966,14 +3314,24 @@ paths:
         required: true
       responses:
         200:
-          description: successful operation
-        400:
-          description: Invalid id supplied
-        404:
-          description: not found
+          $ref: '#/components/responses/200'
+        default:
+          $ref: '#/components/responses/default'
       summary: Process Raster Drill process execution
       tags:
       - raster-drill
+  /stac:
+    get:
+      description: SpatioTemporal Asset Catalog
+      parameters: []
+      responses:
+        200:
+          $ref: '#/components/responses/200'
+        default:
+          $ref: '#/components/responses/default'
+      summary: SpatioTemporal Asset Catalog
+      tags:
+      - stac
 servers:
 - description: The weather can have an incredible influence on our daily lives. It
     affects the growth of crops and the availability of water. It dictates which regions
@@ -2987,35 +3345,27 @@ tags:
     description: information
     url: https://www.canada.ca/en/services/environment/weather.html
   name: server
-- description: The monthly mean is the average of daily mean values for a given month.
-  name: hydrometric-monthly-mean
 - description: A station is a site on a river or lake where water quantity (water
     level and flow) are collected and recorded.
   name: hydrometric-stations
-- description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Stations
-  name: ahccd-stations
 - description: The daily mean is the average of all unit values for a given day.
   name: hydrometric-daily-mean
-- description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual
-  name: ahccd-annual
-- description: The annual maximum and minimum instantaneous data are the maximum and
-    minimum instantaneous values for a given year.
-  name: hydrometric-annual-peaks
-- description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal
-  name: ahccd-seasonal
-- description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends
-  name: ahccd-trends
-- description: A cross-country summary of the averages and extremes for the month,
-    including precipitation totals, max-min temperatures, and degree days. This data
-    is available from stations that produce daily data.
-  name: climate-monthly
+- description: The monthly mean is the average of daily mean values for a given month.
+  name: hydrometric-monthly-mean
 - description: The annual maximum and minimum daily data are the maximum and minimum
     daily mean values for a given year.
   name: hydrometric-annual-statistics
+- description: The annual maximum and minimum instantaneous data are the maximum and
+    minimum instantaneous values for a given year.
+  name: hydrometric-annual-peaks
 - description: 1981-2010 Climate Normals
   name: climate-normals
 - description: Climate Stations
   name: climate-stations
+- description: A cross-country summary of the averages and extremes for the month,
+    including precipitation totals, max-min temperatures, and degree days. This data
+    is available from stations that produce daily data.
+  name: climate-monthly
 - description: 'Daily climate observations are derived from two sources of data. The
     first are Daily Climate Stations producing one or two observations per day of
     temperature, precipitation. The second are hourly stations that typically produce
@@ -3025,8 +3375,16 @@ tags:
     is currently operational, (2) Stations with long periods of record, (3) Stations
     that are co-located with the categories above and supplement the period of record'
   name: climate-daily
+- description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Stations
+  name: ahccd-stations
+- description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual
+  name: ahccd-annual
+- description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal
+  name: ahccd-seasonal
 - description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
   name: ahccd-monthly
+- description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends
+  name: ahccd-trends
 - description: Raster Drill process
   name: raster-drill
 
