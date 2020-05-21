@@ -36,8 +36,9 @@ from elasticsearch import helpers, logger as elastic_logger
 from parse import parse
 from gdal import ogr
 
-from msc_pygeoapi.env import (MSC_PYGEOAPI_ES_TIMEOUT, MSC_PYGEOAPI_ES_URL,
-                              MSC_PYGEOAPI_ES_AUTH)
+from msc_pygeoapi.env import (
+    MSC_PYGEOAPI_ES_TIMEOUT, MSC_PYGEOAPI_ES_URL,
+    MSC_PYGEOAPI_ES_AUTH)
 from msc_pygeoapi.loader.base import BaseLoader
 from msc_pygeoapi.util import get_es, json_pretty_print
 
@@ -76,13 +77,17 @@ FILE_PROPERTIES = {
         'NAME': {
             'type': 'text',
             'fields': {
-                'raw': {'type': 'keyword'}
+                'raw': {'type': 'keyword'},
+                'normalize': {'type': 'keyword',
+                              'normalizer': 'name_normalizer'}
             }
         },
         'NOM': {
             'type': 'text',
             'fields': {
-                'raw': {'type': 'keyword'}
+                'raw': {'type': 'keyword'},
+                'normalize': {'type': 'keyword',
+                              'normalizer': 'name_normalizer'}
             }
         },
         'PERIM_KM': {
@@ -174,13 +179,17 @@ FILE_PROPERTIES = {
         'NAME': {
             'type': 'text',
             'fields': {
-                'raw': {'type': 'keyword'}
+                'raw': {'type': 'keyword'},
+                'normalize': {'type': 'keyword',
+                              'normalizer': 'name_normalizer'}
             }
         },
         'NOM': {
             'type': 'text',
             'fields': {
-                'raw': {'type': 'keyword'}
+                'raw': {'type': 'keyword'},
+                'normalize': {'type': 'keyword',
+                              'normalizer': 'name_normalizer'}
             }
         },
         'PERIM_KM': {
@@ -249,7 +258,18 @@ FILE_PROPERTIES = {
 SETTINGS = {
     'settings': {
         'number_of_shards': 1,
-        'number_of_replicas': 0
+        'number_of_replicas': 0,
+        'analysis': {
+            'normalizer': {
+                'name_normalizer': {
+                    'type': 'custom',
+                    'filter': [
+                        'lowercase',
+                        'asciifolding'
+                    ],
+                }
+            }
+        }
     },
     'mappings': {
         'properties': {
@@ -287,10 +307,9 @@ class ForecastPolygonsLoader(BaseLoader):
         self.zone = None
         self.items = []
 
-        # create storm variable indices if it don't exist
+        # create forecast polygon indices if they don't exist
         for item in FILE_PROPERTIES:
             if not self.ES.indices.exists(INDEX_NAME.format(item)):
-
                 SETTINGS['mappings']['properties'][
                     'properties']['properties'] = FILE_PROPERTIES[item]
 
@@ -317,9 +336,9 @@ class ForecastPolygonsLoader(BaseLoader):
 
     def generate_geojson_features(self, shapefile_name):
         """
-        Generates and yields a series of meteocode geodata polygons,
+        Generates and yields a series of meteocode geodata features,
         one for each feature in <self.filepath/self.filepath.stem/
-        shapefile_name>. Observations are returned as ElasticSearch bulk API
+        shapefile_name>. Features are returned as ElasticSearch bulk API
         upsert actions, with documents in GeoJSON to match the ElasticSearch
         index mappings.
         :returns: Generator of ElasticSearch actions to upsert the forecast
@@ -431,12 +450,13 @@ def add(ctx, file_, directory):
     for file_to_process in files_to_process:
         plugin_def = {
             'filename_pattern': 'meteocode/geodata/',
-            'handler': 'msc_pygeoapi.loader.forecast_polygons.ForecastPolygonsLoader'  # noqa
+            'handler': 'msc_pygeoapi.loader.forecast_polygons.ForecastPolygonsLoader'
+            # noqa
         }
         loader = ForecastPolygonsLoader(plugin_def)
         result = loader.load_data(file_to_process)
         if result:
-            click.echo('File properties: {}'.format(
+            click.echo('GeoJSON features generated: {}'.format(
                 json_pretty_print(loader.items)))
 
 
@@ -444,7 +464,7 @@ def add(ctx, file_, directory):
 @click.pass_context
 @click.option('--index_name', '-i',
               type=click.Choice(INDICES),
-              help='msc-geousage elasticsearch index name to delete')
+              help='msc-pygeoapi forecast polygon index name to delete')
 def delete_index(ctx, index_name):
     """
     Delete a particular ES index with a given name as argument or all if no
@@ -460,9 +480,10 @@ def delete_index(ctx, index_name):
             return True
     else:
         if click.confirm(
-            'Are you sure you want to delete {} forecast polygon'
-            ' indices ({})?'.format(click.style('ALL', fg='red'),
-                                    click.style(", ".join(INDICES), fg='red')),
+                'Are you sure you want to delete {} forecast polygon'
+                ' indices ({})?'.format(click.style('ALL', fg='red'),
+                                        click.style(", ".join(INDICES),
+                                                    fg='red')),
                 abort=True):
             es.indices.delete(index=",".join(INDICES))
             return True
