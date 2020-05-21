@@ -57,6 +57,10 @@ PLUGINS = {
         'marine_weather': {
             'filename_pattern': 'marine_weather/xml/',
             'handler': 'msc_pygeoapi.loader.marine_weather_realtime.MarineWeatherRealtimeLoader'  # noqa
+        },
+        'capalerts_realtime': {
+            'filename_pattern': 'alerts/cap',
+            'handler': 'msc_pygeoapi.loader.cap_alerts.CapAlertsRealtimeLoader'
         }
     }
 }
