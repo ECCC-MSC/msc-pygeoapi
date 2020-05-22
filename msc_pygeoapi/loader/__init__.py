@@ -43,6 +43,7 @@ try:
     from msc_pygeoapi.loader.hurricanes_realtime import hurricanes
     from msc_pygeoapi.loader.forecast_polygons import forecast_polygons
     from msc_pygeoapi.loader.marine_weather_realtime import marine_weather
+    from msc_pygeoapi.loader.cap_alerts import cap_alerts
 except ImportError as err:
     LOGGER.info('loaders not imported')
     LOGGER.debug(err)
@@ -63,6 +64,7 @@ try:
     load.add_command(hydrometric_realtime)
     load.add_command(forecast_polygons)
     load.add_command(marine_weather)
+    load.add_command(cap_alerts)
 except NameError as err:
     LOGGER.info('loaders not found')
     LOGGER.debug(err)

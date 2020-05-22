@@ -174,3 +174,39 @@ def json_serial(obj):
     msg = '{} type {} not serializable'.format(obj, type(obj))
     LOGGER.error(msg)
     raise TypeError(msg)
+
+
+def _get_date_format(date):
+    """
+    Convenience function to parse dates
+
+    :param date: date form
+
+    returns: date as datetime object
+    """
+    for char in ["T", "-", ":"]:
+        if char in date:
+            date = date.replace(char, '')
+    date = date[:14]
+    date = datetime.strptime(date, "%Y%m%d%H%M%S")
+
+    return date
+
+
+def _get_element(node, path, attrib=None):
+    """
+    Convenience function to resolve lxml.etree.Element handling
+
+    :param node: xml node
+    :param path: path in the xml node
+    :param attrib: attribute to get in the node
+
+    returns: attribute as text or None
+    """
+
+    val = node.find(path)
+    if attrib is not None and val is not None:
+        return val.attrib.get(attrib)
+    if hasattr(val, 'text') and val.text not in [None, '']:
+        return val.text
+    return None
