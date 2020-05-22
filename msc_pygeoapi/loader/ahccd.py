@@ -706,7 +706,7 @@ def generate_docs(fp, index):
         yield action
 
 
-@click.command('ahccd')
+@click.command()
 @click.pass_context
 @click.option('--path', type=click.Path(exists=True, resolve_path=True),
               help='Path to file with raw JSON locations')

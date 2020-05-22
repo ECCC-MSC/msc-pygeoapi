@@ -35,7 +35,7 @@ LOGGER = logging.getLogger(__name__)
 
 try:
     from msc_pygeoapi.loader.bulletins import bulletins
-    from msc_pygeoapi.loader.citypageweather import citypageweather
+    from msc_pygeoapi.loader.citypageweather_realtime import citypageweather
     from msc_pygeoapi.loader.hydat import hydat
     from msc_pygeoapi.loader.climate_archive import climate_archive
     from msc_pygeoapi.loader.ahccd import ahccd
@@ -43,28 +43,29 @@ try:
     from msc_pygeoapi.loader.hurricanes_realtime import hurricanes
     from msc_pygeoapi.loader.forecast_polygons import forecast_polygons
     from msc_pygeoapi.loader.marine_weather_realtime import marine_weather
-    from msc_pygeoapi.loader.cap_alerts import cap_alerts
+    from msc_pygeoapi.loader.cap_alerts_realtime import cap_alerts
 except ImportError as err:
     LOGGER.info('loaders not imported')
     LOGGER.debug(err)
 
 
 @click.group()
-def load():
+def data():
     pass
 
 
+# add load commands
 try:
-    load.add_command(bulletins)
-    load.add_command(citypageweather)
-    load.add_command(hydat)
-    load.add_command(hurricanes)
-    load.add_command(climate_archive)
-    load.add_command(ahccd)
-    load.add_command(hydrometric_realtime)
-    load.add_command(forecast_polygons)
-    load.add_command(marine_weather)
-    load.add_command(cap_alerts)
+    data.add_command(bulletins)
+    data.add_command(citypageweather)
+    data.add_command(hydat)
+    data.add_command(hurricanes)
+    data.add_command(climate_archive)
+    data.add_command(ahccd)
+    data.add_command(hydrometric_realtime)
+    data.add_command(forecast_polygons)
+    data.add_command(marine_weather)
+    data.add_command(cap_alerts)
 except NameError as err:
     LOGGER.info('loaders not found')
     LOGGER.debug(err)

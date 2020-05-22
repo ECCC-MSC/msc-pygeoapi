@@ -1024,7 +1024,7 @@ def get_normals_periods(cur):
     return period_dict
 
 
-@click.command('climate-archive')
+@click.command()
 @click.pass_context
 @click.option('--db', help='Oracle database connection string.')
 @click.option('--es', help='URL to Elasticsearch.')

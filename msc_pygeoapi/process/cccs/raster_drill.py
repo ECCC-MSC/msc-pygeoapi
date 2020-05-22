@@ -498,14 +498,19 @@ def raster_drill(layer, x, y, format_):
     return output
 
 
+@click.group('execute')
+def raster_drill_execute():
+    pass
+
+
 @click.command('raster-drill')
 @click.pass_context
-@click.option('--layer', help='Layer name to process')
-@click.option('--x', help='x coordinate')
-@click.option('--y', help='y coordinate')
+@click.option('--layer', help='Layer name to process', required=True)
+@click.option('--x', help='x coordinate', required=True)
+@click.option('--y', help='y coordinate', required=True)
 @click.option('--format', 'format_', type=click.Choice(['GeoJSON', 'CSV']),
               default='GeoJSON', help='output format')
-def cli(ctx, layer, x, y, format_='GeoJSON'):
+def raster_drill_cli(ctx, layer, x, y, format_='GeoJSON'):
 
     output = raster_drill(layer, float(x), float(y), format_)
     if format_ == 'GeoJSON':
@@ -513,6 +518,8 @@ def cli(ctx, layer, x, y, format_='GeoJSON'):
     elif format_ == 'CSV':
         click.echo(output.getvalue())
 
+
+raster_drill_execute.add_command(raster_drill_cli)
 
 try:
     from pygeoapi.process.base import BaseProcessor, ProcessorExecuteError

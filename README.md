@@ -84,29 +84,29 @@ http://localhost/features/collections/hydrometric-stations/items?STATUS_EN=Activ
 ```bash
 pip install -r requirements-oracle.txt
 
-msc-pygeoapi data load hydat <rest of flags/parameters>
-msc-pygeoapi data load climate-archive <rest of flags/parameters>
-msc-pygeoapi data load ahccd_cmip5 <rest of flags/parameters>
+msc-pygeoapi load hydat <rest of flags/parameters>
+msc-pygeoapi load climate-archive <rest of flags/parameters>
+msc-pygeoapi load ahccd_cmip5 <rest of flags/parameters>
 
 # bulletins - delete index
-msc-pygeoapi data load bulletins delete-index  # use --yes flag to bypass prompt
+msc-pygeoapi load bulletins delete-index  # use --yes flag to bypass prompt
 
 # realtime - standard workflow
-msc-pygeoapi data load hydrometric-realtime cache-stations  # download stations list to $MSC_PYGEOAPI_CACHEDIR location
+msc-pygeoapi load hydrometric-realtime cache-stations  # download stations list to $MSC_PYGEOAPI_CACHEDIR location
 
 sr_subscribe start deploy/default/sarracenia/hydrometric_realtime.conf  # begin realtime update process
 
-msc-pygeoapi data load hydrometric-realtime clean-records --days 30  # use --yes flag to bypass prompt (usually in crontab)
+msc-pygeoapi load hydrometric-realtime clean-records --days 30  # use --yes flag to bypass prompt (usually in crontab)
 ```
 
 ## Running processes
 ```bash
 
 # run the CCCS Raster drill process (returns GeoJSON by default)
-msc-pygeoapi process execute cccs raster-drill --y=45 --x=-75 --layer=CMIP5.SFCWIND.HISTO.WINTER.ABS_PCTL95
+msc-pygeoapi process cccs execute raster-drill --y=45 --x=-75 --layer=CMIP5.SFCWIND.HISTO.WINTER.ABS_PCTL95
 
 # run the CCCS Raster drill process returning CSV
-msc-pygeoapi process execute cccs raster-drill --y=45 --x=-75 --layer=CMIP5.SFCWIND.HISTO.WINTER.ABS_PCTL95 --format=CSV
+msc-pygeoapi process cccs execute raster-drill --y=45 --x=-75 --layer=CMIP5.SFCWIND.HISTO.WINTER.ABS_PCTL95 --format=CSV
 ```
 
 ## Development
