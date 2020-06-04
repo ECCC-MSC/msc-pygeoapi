@@ -1,3 +1,16 @@
+msc-pygeoapi (0.7.0) trusty; urgency=medium
+
+  * implement event based processing
+  * optimize ES loaders with bulk API workflow
+  * processing: raster drill update, add INDICES and SPEI data
+  * add event based data loaders: citypage, realtime hydrometric, hurricanes
+    forecast polygons, marine forecast, CAP XML alerts
+  * refactor CLI commands/subcommands
+  * repo move to GitHub
+
+ -- Tom Kralidis <tom.kralidis@canada.ca>  Thu, 04 Jun 2020 11:18:27 +0000
+
+
 msc-pygeoapi (0.6.0) trusty; urgency=medium
 
   * change FLOW to DISCHARGE for hydrometric data
