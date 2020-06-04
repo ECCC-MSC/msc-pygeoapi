@@ -3097,8 +3097,8 @@ paths:
       - hydrometric-monthly-mean
   /collections/hydrometric-realtime:
     get:
-      description: Explore real-time water level and flow (discharge) data collected
-        at over 1900 hydrometric stations across Canada.
+      description: Real-time water level and flow (discharge) data collected at over
+        1900 hydrometric stations across Canada (last 30 days).
       parameters:
       - $ref: '#/components/parameters/f'
       responses:
@@ -3115,8 +3115,8 @@ paths:
       - hydrometric-realtime
   /collections/hydrometric-realtime/items:
     get:
-      description: Explore real-time water level and flow (discharge) data collected
-        at over 1900 hydrometric stations across Canada.
+      description: Real-time water level and flow (discharge) data collected at over
+        1900 hydrometric stations across Canada (last 30 days).
       parameters:
       - *id001
       - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
@@ -3218,8 +3218,8 @@ paths:
       - hydrometric-realtime
   /collections/hydrometric-realtime/items/{featureId}:
     get:
-      description: Explore real-time water level and flow (discharge) data collected
-        at over 1900 hydrometric stations across Canada.
+      description: Real-time water level and flow (discharge) data collected at over
+        1900 hydrometric stations across Canada (last 30 days).
       parameters:
       - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
@@ -3237,8 +3237,8 @@ paths:
       - hydrometric-realtime
   /collections/hydrometric-realtime/queryables:
     get:
-      description: Explore real-time water level and flow (discharge) data collected
-        at over 1900 hydrometric stations across Canada.
+      description: Real-time water level and flow (discharge) data collected at over
+        1900 hydrometric stations across Canada (last 30 days).
       parameters:
       - *id001
       responses:
@@ -3516,8 +3516,8 @@ tags:
 - description: The annual maximum and minimum instantaneous data are the maximum and
     minimum instantaneous values for a given year.
   name: hydrometric-annual-peaks
-- description: Explore real-time water level and flow (discharge) data collected at
-    over 1900 hydrometric stations across Canada.
+- description: Real-time water level and flow (discharge) data collected at over 1900
+    hydrometric stations across Canada (last 30 days).
   name: hydrometric-realtime
 - description: 1981-2010 Climate Normals
   name: climate-normals

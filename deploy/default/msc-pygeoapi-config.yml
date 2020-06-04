@@ -344,7 +344,7 @@ resources:
     hydrometric-realtime:
         type: collection
         title: Real-time hydrometric data
-        description: Explore real-time water level and flow (discharge) data collected at over 1900 hydrometric stations across Canada.
+        description: Real-time water level and flow (discharge) data collected at over 1900 hydrometric stations across Canada (last 30 days).
         keywords: [Real-Time, Water Level, Flow, Discharge]
         crs:
             - CRS84
