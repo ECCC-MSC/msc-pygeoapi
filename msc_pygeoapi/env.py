@@ -44,6 +44,9 @@ MSC_PYGEOAPI_CACHEDIR = os.getenv('MSC_PYGEOAPI_CACHEDIR', '/tmp')
 MSC_PYGEOAPI_ES_USERNAME = os.getenv('MSC_PYGEOAPI_ES_USERNAME', None)
 MSC_PYGEOAPI_ES_PASSWORD = os.getenv('MSC_PYGEOAPI_ES_PASSWORD', None)
 
+SR_LOGGING_DIR = os.getenv('XDG_CACHE_DIR', None)
+
+
 if None in (MSC_PYGEOAPI_ES_USERNAME, MSC_PYGEOAPI_ES_PASSWORD):
     LOGGER.warning('Missing Elasticsearch authentication information:'
                    ' Continuing without authentication')

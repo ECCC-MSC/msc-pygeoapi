@@ -36,7 +36,8 @@ import urllib.request
 from elasticsearch import helpers, logger as elastic_logger
 
 from msc_pygeoapi.env import (MSC_PYGEOAPI_CACHEDIR, MSC_PYGEOAPI_ES_TIMEOUT,
-                              MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
+                              MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH,
+                              SR_LOGGING_DIR)
 from msc_pygeoapi.loader.base import BaseLoader
 from msc_pygeoapi.util import click_abort_if_false, get_es
 
@@ -469,6 +470,15 @@ def clean_records(ctx, days):
     if len(response['failures']) > 0:
         click.echo('Failed to delete {} documents in time range'
                    .format(len(response['failures'])))
+
+    # Also delete old Sarracenia logs from before the cutoff date.
+    for filename in os.listdir(SR_LOGGING_DIR):
+        if not filename.endswith('.log'):
+            date_ = filename.split('.')[-1]
+
+            if date_ <= older_than:
+                fullpath = os.path.join(SR_LOGGING_DIR, filename)
+                os.remove(fullpath)
 
 
 @click.command()
