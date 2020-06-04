@@ -46,7 +46,7 @@ LOGGER = logging.getLogger(__name__)
 elastic_logger.setLevel(logging.WARNING)
 
 # index settings
-INDEX_NAME = 'forecast_polygons_{}'
+INDEX_NAME = 'forecast_polygons_{}_{}'
 
 FILE_PROPERTIES = {
     'water': {
@@ -283,13 +283,19 @@ SETTINGS = {
     }
 }
 
-INDICES = [INDEX_NAME.format(weather_var) for weather_var in FILE_PROPERTIES]
+INDICES = [
+    INDEX_NAME.format(forecast_zone, detail_level)
+    for forecast_zone in FILE_PROPERTIES
+    for detail_level in ['coarse', 'detail']
+]
 
 SHAPEFILES_TO_LOAD = {
     'MSC_Geography_Pkg_V6_3_0_Water_Unproj':
-        ['water_MarStdZone_detail_unproj.shp'],
+        ['water_MarStdZone_coarse_unproj.shp',
+         'water_MarStdZone_detail_unproj.shp'],
     'MSC_Geography_Pkg_V6_3_0_Land_Unproj':
-        ['land_CLCBaseZone_detail_unproj.shp']
+        ['land_CLCBaseZone_coarse_unproj.shp',
+         'land_CLCBaseZone_detail_unproj.shp']
 }
 
 
@@ -308,14 +314,16 @@ class ForecastPolygonsLoader(BaseLoader):
         self.items = []
 
         # create forecast polygon indices if they don't exist
-        for item in FILE_PROPERTIES:
-            if not self.ES.indices.exists(INDEX_NAME.format(item)):
+        for index in INDICES:
+            zone = index.split('_')[2]
+            if not self.ES.indices.exists(index):
                 SETTINGS['mappings']['properties'][
-                    'properties']['properties'] = FILE_PROPERTIES[item]
+                    'properties']['properties'] = FILE_PROPERTIES[zone]
 
-                self.ES.indices.create(index=INDEX_NAME.format(
-                    item), body=SETTINGS,
-                    request_timeout=MSC_PYGEOAPI_ES_TIMEOUT)
+                self.ES.indices.create(index=index,
+                                       body=SETTINGS,
+                                       request_timeout=MSC_PYGEOAPI_ES_TIMEOUT
+                                       )
 
     def parse_filename(self):
         """
@@ -354,17 +362,15 @@ class ForecastPolygonsLoader(BaseLoader):
                                                 options=['RFC7946=YES'])
             feature_json['properties']['version'] = self.version
 
-            # set id to appropriate field depending if land/water polygon
-            if self.zone == 'Water':
-                _id = feature_json['properties']['F_MARSTDZA']
-            elif self.zone == 'Land':
-                _id = feature_json['properties']['F_CLCBZA']
+            _id = feature_json['properties']['FEATURE_ID']
 
             self.items.append(feature_json)
 
             action = {
                 '_id': '{}'.format(_id),
-                '_index': INDEX_NAME.format(self.zone.lower()),
+                '_index': INDEX_NAME.format(self.zone.lower(),
+                                            shapefile_name.split('_')[2]
+                                            ),
                 '_op_type': 'update',
                 'doc': feature_json,
                 'doc_as_upsert': True
@@ -413,7 +419,8 @@ class ForecastPolygonsLoader(BaseLoader):
                         'inserts, {} updates, {} no-ops, {} rejects)'
                         .format(total, self.zone, inserts, updates,
                                 noops, fails))
-            return True
+
+        return True
 
 
 @click.group()
@@ -443,7 +450,7 @@ def add(ctx, file_, directory):
         files_to_process = [file_]
     elif directory is not None:
         for root, dirs, files in os.walk(directory):
-            for f in [file for file in files if file.endswith('.shp')]:
+            for f in [file for file in files if file.endswith('.zip')]:
                 files_to_process.append(os.path.join(root, f))
         files_to_process.sort(key=os.path.getmtime)
 
