@@ -2,4 +2,5 @@ deploy/default/msc-pygeoapi-config.yml opt/msc-pygeoapi/conf
 deploy/default/msc-pygeoapi-openapi.yml opt/msc-pygeoapi/conf
 deploy/default/msc-pygeoapi.conf opt/msc-pygeoapi/etc/apache2
 deploy/default/msc-pygeoapi.wsgi opt/msc-pygeoapi/app
-deploy/default/sarracenia/bulletins.conf opt/msc-pygeoapi/etc/sarracenia
+deploy/default/sarracenia/*.conf opt/msc-pygeoapi/etc/sarracenia
+msc_pygeoapi/event.py opt/msc-pygeoapi
