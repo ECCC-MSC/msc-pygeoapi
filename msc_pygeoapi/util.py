@@ -123,13 +123,15 @@ def submit_elastic_package(es, package, request_size=10000):
                      .format(err.errors))
         return False
 
-    if len(errors) != 0:
-        LOGGER.error('Errors encountered in bulk insert: {}'.format(errors))
-        return False
-
     total = inserts + updates + noops
     LOGGER.info('Inserted package of {} observations ({} inserts, {} updates,'
                 ' {} no-ops'.format(total, inserts, updates, noops))
+
+    if len(errors) > 0:
+        LOGGER.warning('{} errors encountered in bulk insert: {}'.format(
+            len(errors), errors))
+        return False
+
     return True
 
 
