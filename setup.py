@@ -54,7 +54,8 @@ class PyCleanBuild(Command):
         ]
 
         remove_dirs = [
-            'debian/msc-pygeoapi'
+            'debian/msc-pygeoapi',
+            'debian/.debhelper'
         ]
 
         for file_ in remove_files:
