@@ -3095,6 +3095,164 @@ paths:
       summary: Get Monthly Mean of Water Level or Flow queryables
       tags:
       - hydrometric-monthly-mean
+  /collections/hydrometric-realtime:
+    get:
+      description: Real-time water level and flow (discharge) data collected at over
+        1900 hydrometric stations across Canada (last 30 days).
+      parameters:
+      - $ref: '#/components/parameters/f'
+      responses:
+        200:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
+        400:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        404:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get collection metadata
+      tags:
+      - hydrometric-realtime
+  /collections/hydrometric-realtime/items:
+    get:
+      description: Real-time water level and flow (discharge) data collected at over
+        1900 hydrometric stations across Canada (last 30 days).
+      parameters:
+      - *id001
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
+      - $ref: '#/components/parameters/sortby'
+      - $ref: '#/components/parameters/startindex'
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
+      - explode: false
+        in: query
+        name: DATETIME
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: DISCHARGE
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: DISCHARGE_SYMBOL_EN
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: DISCHARGE_SYMBOL_FR
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: IDENTIFIER
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: LEVEL
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: LEVEL_SYMBOL_EN
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: LEVEL_SYMBOL_FR
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: PROV_TERR_STATE_LOC
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: STATION_NAME
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: STATION_NUMBER
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        200:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
+        400:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        404:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Real-time hydrometric data items
+      tags:
+      - hydrometric-realtime
+  /collections/hydrometric-realtime/items/{featureId}:
+    get:
+      description: Real-time water level and flow (discharge) data collected at over
+        1900 hydrometric stations across Canada (last 30 days).
+      parameters:
+      - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
+      - $ref: '#/components/parameters/f'
+      responses:
+        200:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
+        400:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        404:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Real-time hydrometric data item by id
+      tags:
+      - hydrometric-realtime
+  /collections/hydrometric-realtime/queryables:
+    get:
+      description: Real-time water level and flow (discharge) data collected at over
+        1900 hydrometric stations across Canada (last 30 days).
+      parameters:
+      - *id001
+      responses:
+        200:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
+        400:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        404:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        500:
+          $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Real-time hydrometric data queryables
+      tags:
+      - hydrometric-realtime
   /collections/hydrometric-stations:
     get:
       description: A station is a site on a river or lake where water quantity (water
@@ -3358,6 +3516,9 @@ tags:
 - description: The annual maximum and minimum instantaneous data are the maximum and
     minimum instantaneous values for a given year.
   name: hydrometric-annual-peaks
+- description: Real-time water level and flow (discharge) data collected at over 1900
+    hydrometric stations across Canada (last 30 days).
+  name: hydrometric-realtime
 - description: 1981-2010 Climate Normals
   name: climate-normals
 - description: Climate Stations

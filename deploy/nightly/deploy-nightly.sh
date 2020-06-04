@@ -22,6 +22,7 @@ BASEDIR=/data/web/msc-pygeoapi-nightly
 PYGEOAPI_GITREPO=https://github.com/geopython/pygeoapi.git
 MSC_PYGEOAPI_GITREPO=https://github.com/ECCC-MSC/msc-pygeoapi.git
 DAYSTOKEEP=7
+MSC_PYGEOAPI_OGC_API_URL=http://geomet-dev-03-nightly.cmc.ec.gc.ca/msc-pygeoapi/nightly/latest
 
 # you should be okay from here
 

@@ -48,6 +48,8 @@ import sys
 
 os.environ['PYGEOAPI_CONFIG'] = '/data/web/msc-pygeoapi-nightly/latest/msc-pygeoapi/deploy/nightly/msc-pygeoapi-config.yml'
 os.environ['PYGEOAPI_OPENAPI'] = '/data/web/msc-pygeoapi-nightly/latest/msc-pygeoapi/deploy/nightly/msc-pygeoapi-openapi.yml'
+os.environ['MSC_PYGEOAPI_OGC_API_URL'] = 'http://geomet-dev-03-nightly.cmc.ec.gc.ca/msc-pygeoapi/nightly/latest/'
+os.environ['MSC_PYGEOAPI_OGC_API_URL_BASEPATH'] = '/'
 
 sys.path.insert(0, '/data/web/msc-pygeoapi-nightly/latest/lib/python3.6/site-packages')
 

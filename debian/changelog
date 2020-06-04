@@ -1,3 +1,10 @@
+msc-pygeoapi (0.7.1) bionic; urgency=medium
+
+  * bionic updates
+  * add setup for real-time hydrometric deployment
+
+ -- Tom Kralidis <tom.kralidis@canada.ca>  Thu, 04 Jun 2020 11:29:03 +0000
+
 msc-pygeoapi (0.7.0) trusty; urgency=medium
 
   * implement event based processing
@@ -9,7 +16,6 @@ msc-pygeoapi (0.7.0) trusty; urgency=medium
   * repo move to GitHub
 
  -- Tom Kralidis <tom.kralidis@canada.ca>  Thu, 04 Jun 2020 11:18:27 +0000
-
 
 msc-pygeoapi (0.6.0) trusty; urgency=medium
 

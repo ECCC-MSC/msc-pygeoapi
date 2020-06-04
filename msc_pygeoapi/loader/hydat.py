@@ -28,21 +28,6 @@ HEADERS = {'Content-type': 'application/json'}
 VERIFY = False
 
 
-def get_wfs3_url(url):
-    """return WFS3 URL based on running environment"""
-
-    if 'geomet-dev' in url:
-        url2 = 'https://geo.wxod-dev.cmc.ec.gc.ca/geomet/features'
-    elif 'geomet-stage' in url:
-        url2 = 'https://geo.wxod-stage.cmc.ec.gc.ca/geomet/features'
-    elif 'geomet-beta' in url:
-        url2 = 'https://geo.weather.gc.ca/geomet-beta/features'
-    elif 'geomet-ops' in url:
-        url2 = 'https://geo.weather.gc.ca/geomet/features'
-
-    return url2
-
-
 def zero_pad(val):
     """
     If val is one character long, returns val left padded with a zero.
@@ -747,7 +732,7 @@ def generate_stations(session, metadata, path, station_table):
     :returns: generator of bulk API upsert actions.
     """
 
-    url = get_wfs3_url(path)
+    url = 'https://api.geo.weather.gc.ca'
 
     station_codes = [x[0] for x in session.query(distinct(station_table.c['STATION_NUMBER'])).all()] # noqa
     for station in station_codes:
