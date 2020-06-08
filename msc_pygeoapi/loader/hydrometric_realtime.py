@@ -94,7 +94,7 @@ SETTINGS = {
                     },
                     'DATETIME': {
                         'type': 'date',
-                        'format': 'strict_date_hour_minute_second'
+                        'format': 'date_time_no_millis'
                     },
                     'LEVEL': {
                         'type': 'float'
@@ -166,6 +166,7 @@ class HydrometricRealtimeLoader(BaseLoader):
 
         BaseLoader.__init__(self)
 
+        LOGGER.info('Creating index with name {}'.format(INDEX_NAME))
         self.ES = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
 
         if not self.ES.indices.exists(INDEX_NAME):
@@ -292,7 +293,7 @@ class HydrometricRealtimeLoader(BaseLoader):
                     # Generate an ID now that all fields are known.
                     observation_id = '{}.{}'.format(station, utc_datestamp)
 
-                    utc_datestamp = utc_datestamp.replace('.', 'T')
+                    utc_datestamp = utc_datestamp.replace('.', 'T') +'Z'
                 except Exception as err:
                     LOGGER.error('Cannot interpret datetime value {} in {}'
                                  ' due to: {} (skipping)'
@@ -447,7 +448,7 @@ def clean_records(ctx, days):
     es = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
 
     today = datetime.now().replace(hour=0, minute=0)
-    older_than = (today - timedelta(days=days)).strftime('%Y-%m-%dT%H:%M')
+    older_than = (today - timedelta(days=days)).strftime('%Y-%m-%dT%H:%M:%SZ')
     click.echo('Deleting documents older than {} ({} full days)'
                .format(older_than.replace('T', ' '), days))
 
@@ -456,7 +457,7 @@ def clean_records(ctx, days):
             'range': {
                 'properties.DATETIME': {
                     'lt': older_than,
-                    'format': 'strict_date_hour_minute'
+                    'format': 'date_time_no_millis'
                 }
             }
         }
