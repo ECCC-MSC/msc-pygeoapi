@@ -38,7 +38,7 @@ from elasticsearch import helpers, logger as elastic_logger
 from msc_pygeoapi.env import (MSC_PYGEOAPI_CACHEDIR, MSC_PYGEOAPI_ES_TIMEOUT,
                               MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
 from msc_pygeoapi.loader.base import BaseLoader
-from msc_pygeoapi.util import click_abort_if_false, get_es
+from msc_pygeoapi.util import click_abort_if_false, get_es, strftime_rfc3339
 
 
 LOGGER = logging.getLogger(__name__)
@@ -55,6 +55,7 @@ DAYS_TO_KEEP = 30
 
 # index settings
 INDEX_NAME = 'hydrometric_realtime'
+DATETIME_FORMAT = 'date_time_no_millis'
 
 SETTINGS = {
     'settings': {
@@ -94,7 +95,7 @@ SETTINGS = {
                     },
                     'DATETIME': {
                         'type': 'date',
-                        'format': 'date_time_no_millis'
+                        'format': DATETIME_FORMAT
                     },
                     'LEVEL': {
                         'type': 'float'
@@ -289,11 +290,11 @@ class HydrometricRealtimeLoader(BaseLoader):
                 try:
                     # Convert timestamp to UTC time.
                     utc_datetime = delocalize_date(date)
-                    utc_datestamp = utc_datetime.strftime('%Y-%m-%d.%H:%M:%S')
-                    # Generate an ID now that all fields are known.
-                    observation_id = '{}.{}'.format(station, utc_datestamp)
+                    utc_datestamp = strftime_rfc3339(utc_datetime)
+                    id_datestamp = utc_datetime.strftime('%Y-%m-%d.%H:%M:%S')
 
-                    utc_datestamp = utc_datestamp.replace('.', 'T') +'Z'
+                    # Generate an ID now that all fields are known.
+                    observation_id = '{}.{}'.format(station, id_datestamp)
                 except Exception as err:
                     LOGGER.error('Cannot interpret datetime value {} in {}'
                                  ' due to: {} (skipping)'
@@ -448,7 +449,8 @@ def clean_records(ctx, days):
     es = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
 
     today = datetime.now().replace(hour=0, minute=0)
-    older_than = (today - timedelta(days=days)).strftime('%Y-%m-%dT%H:%M:%SZ')
+    older_than = strftime_rfc3339(today - timedelta(days=days))
+
     click.echo('Deleting documents older than {} ({} full days)'
                .format(older_than.replace('T', ' '), days))
 
@@ -457,7 +459,7 @@ def clean_records(ctx, days):
             'range': {
                 'properties.DATETIME': {
                     'lt': older_than,
-                    'format': 'date_time_no_millis'
+                    'format': DATETIME_FORMAT
                 }
             }
         }
