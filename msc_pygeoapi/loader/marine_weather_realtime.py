@@ -45,7 +45,7 @@ from msc_pygeoapi.env import (
     MSC_PYGEOAPI_ES_AUTH,
 )
 from msc_pygeoapi.loader.base import BaseLoader
-from msc_pygeoapi.util import get_es, json_pretty_print
+from msc_pygeoapi.util import get_es, json_pretty_print, strftime_rfc3339
 
 LOGGER = logging.getLogger(__name__)
 elastic_logger.setLevel(logging.WARNING)
@@ -415,7 +415,7 @@ class MarineWeatherRealtimeLoader(BaseLoader):
 
         try:
             result = self.ES.get(
-                index='forecast_polygons_water',
+                index='forecast_polygons_water_detail',
                 id=forecast_id,
                 _source=['geometry'],
             )
@@ -474,14 +474,10 @@ class MarineWeatherRealtimeLoader(BaseLoader):
                     'location_{}'.format(self.language): elem.attrib['name'],
                     'issued_datetime_utc_{}'.format(
                         self.language
-                    ): datetime.strftime(
-                        datetimes['utc'], '%Y-%m-%dT%H:%M:%SZ'
-                    ),
+                    ): strftime_rfc3339(datetimes['utc']),
                     'issued_datetime_local_{}'.format(
                         self.language
-                    ): datetime.strftime(
-                        datetimes['local'], '%Y-%m-%dT%H:%M:%S%z'
-                    ),
+                    ): strftime_rfc3339(datetimes['local']),
                     'event_type_{}'.format(self.language): elem.find(
                         'event'
                     ).attrib['type'],
@@ -543,11 +539,11 @@ class MarineWeatherRealtimeLoader(BaseLoader):
                     if element.tag == 'dateTime'
                 ]
             )
-            feature['properties']['issued_datetime_utc'] = datetime.strftime(
-                datetimes['utc'], '%Y-%m-%dT%H:%M:%SZ'
+            feature['properties']['issued_datetime_utc'] = strftime_rfc3339(
+                datetimes['utc']
             )
-            feature['properties']['issued_datetime_local'] = datetime.strftime(
-                datetimes['local'], '%Y-%m-%dT%H:%M:%S%z'
+            feature['properties']['issued_datetime_local'] = strftime_rfc3339(
+                datetimes['local']
             )
 
             locations = [
@@ -647,11 +643,11 @@ class MarineWeatherRealtimeLoader(BaseLoader):
                     if element.tag == 'dateTime'
                 ]
             )
-            feature['properties']['issued_datetime_utc'] = datetime.strftime(
-                datetimes['utc'], '%Y-%m-%dT%H:%M:%SZ'
+            feature['properties']['issued_datetime_utc'] = strftime_rfc3339(
+                datetimes['utc']
             )
-            feature['properties']['issued_datetime_local'] = datetime.strftime(
-                datetimes['local'], '%Y-%m-%dT%H:%M:%S%z'
+            feature['properties']['issued_datetime_local'] = strftime_rfc3339(
+                datetimes['local']
             )
 
             locations = [

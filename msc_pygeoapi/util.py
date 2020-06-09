@@ -39,6 +39,8 @@ LOGGER = logging.getLogger(__name__)
 
 VERIFY = False
 
+DATETIME_RFC3339_FMT = '%Y-%m-%dT%H:%M:%SZ'
+
 
 def get_es(url, auth=None):
     """
@@ -212,3 +214,13 @@ def _get_element(node, path, attrib=None):
     if hasattr(val, 'text') and val.text not in [None, '']:
         return val.text
     return None
+
+
+def strftime_rfc3339(datetimeobj: datetime) -> str:
+    """
+    helper function to convert datetime object to RFC3393 compliant string.
+
+    :param datetimeobj: `datetime` object
+    :returns: RFC3339 compliant datetime `str`
+    """
+    return datetimeobj.strftime(DATETIME_RFC3339_FMT)
