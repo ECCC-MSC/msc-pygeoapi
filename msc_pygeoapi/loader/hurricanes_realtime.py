@@ -42,7 +42,7 @@ from gdal import ogr
 from msc_pygeoapi.env import (MSC_PYGEOAPI_ES_TIMEOUT, MSC_PYGEOAPI_ES_URL,
                               MSC_PYGEOAPI_ES_AUTH)
 from msc_pygeoapi.loader.base import BaseLoader
-from msc_pygeoapi.util import get_es, json_pretty_print
+from msc_pygeoapi.util import get_es, json_pretty_print, strftime_rfc3339
 
 LOGGER = logging.getLogger(__name__)
 elastic_logger.setLevel(logging.WARNING)
@@ -69,7 +69,8 @@ FILE_PROPERTIES = {
         },
         'ADVDATE': {
             'type': 'date',
-            'format': 'yyMMdd/HHmm'
+            'format': 'date_time_no_millis',
+            'ignore_malformed': False,
         },
         'STORMFORCE': {
             'type': 'byte'
@@ -82,7 +83,8 @@ FILE_PROPERTIES = {
         },
         'TIMESTAMP': {
             'type': 'date',
-            'format': 'yyyy-MM-dd\'T\'HH:mm\'Z\''
+            'format': 'date_time_no_millis',
+            'ignore_malformed': False,
         },
         'VALIDTIME': {
             'type': 'text',
@@ -167,7 +169,8 @@ FILE_PROPERTIES = {
         },
         'filedate': {
             'type': 'date',
-            'format': 'yyyy-MM-dd'
+            'format': 'date_time_no_millis',
+            'ignore_malformed': False,
         }
     },
     'rad': {
@@ -182,7 +185,8 @@ FILE_PROPERTIES = {
         },
         'TIMESTAMP': {
             'type': 'date',
-            'format': 'yyyy-MM-dd\'T\'HH:mm\'Z\''
+            'format': 'date_time_no_millis',
+            'ignore_malformed': False,
         },
         'VALIDTIME': {
             'type': 'text',
@@ -201,7 +205,8 @@ FILE_PROPERTIES = {
         },
         'filedate': {
             'type': 'date',
-            'format': 'yyyy-MM-dd'
+            'format': 'date_time_no_millis',
+            'ignore_malformed': False,
         }
     },
     'err': {
@@ -222,7 +227,8 @@ FILE_PROPERTIES = {
         },
         'filedate': {
             'type': 'date',
-            'format': 'yyyy-MM-dd'
+            'format': 'date_time_no_millis',
+            'ignore_malformed': False,
         }
     },
     'lin': {
@@ -252,7 +258,8 @@ FILE_PROPERTIES = {
         },
         'filedate': {
             'type': 'date',
-            'format': 'yyyy-MM-dd'
+            'format': 'date_time_no_millis',
+            'ignore_malformed': False,
         }
     }
 }
@@ -389,6 +396,7 @@ class HurricanesRealtimeLoader(BaseLoader):
         filepath = str(self.filepath.resolve())
         data = driver.Open(filepath, 0)
         lyr = data.GetLayer(0)
+        file_datetime_str = strftime_rfc3339(self.date_)
 
         for feature in lyr:
             feature_json = feature.ExportToJson(as_object=True)
@@ -396,7 +404,7 @@ class HurricanesRealtimeLoader(BaseLoader):
             feature_json['properties'][
                 'filename'] = self.filepath.stem
             feature_json['properties'][
-                'filedate'] = self.date_.strftime('%Y-%m-%d')  # noqa
+                'filedate'] = file_datetime_str  # noqa
 
             # TODO: Remove once upstream data is patched
             # clean rad consecutive coordinates in geometry (temporary fix)
@@ -405,12 +413,22 @@ class HurricanesRealtimeLoader(BaseLoader):
                     'coordinates'] = self.clean_consecutive_coordinates(
                     feature_json['geometry']['coordinates'])
 
+            # format pts ADVDATE
+            if self.storm_variable == 'pts':
+                feature_json['properties']['ADVDATE'] = \
+                    strftime_rfc3339(
+                        datetime.strptime(
+                            feature_json['properties']['ADVDATE'],
+                            '%y%m%d/%H%M'
+                        )
+                    )
+
             self.items.append(feature_json)
 
             action = {
                 '_id': '{}-{}-{}-{}-{}'.format(self.storm_name,
                                                self.storm_variable,
-                                               self.date_.strftime('%Y-%m-%d'),
+                                               file_datetime_str,
                                                self.fh,
                                                feature_json['id']),
                 '_index': INDEX_NAME.format(self.storm_variable),
