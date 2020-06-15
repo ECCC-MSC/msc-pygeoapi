@@ -45,7 +45,8 @@ from msc_pygeoapi.env import (
     MSC_PYGEOAPI_ES_AUTH,
 )
 from msc_pygeoapi.loader.base import BaseLoader
-from msc_pygeoapi.util import get_es, json_pretty_print, strftime_rfc3339
+from msc_pygeoapi.util import (get_es, json_pretty_print, strftime_rfc3339,
+                               DATETIME_RFC3339_MAPPING)
 
 LOGGER = logging.getLogger(__name__)
 elastic_logger.setLevel(logging.WARNING)
@@ -55,16 +56,8 @@ INDEX_NAME = 'marine_weather_{}'
 
 MAPPINGS = {
     'regular-forecasts': {
-        'issued_datetime_utc': {
-            'type': 'date',
-            'format': 'date_time_no_millis',
-            'ignore_malformed': False,
-        },
-        'issued_datetime_local': {
-            'type': 'date',
-            'format': 'date_time_no_millis',
-            'ignore_malformed': False,
-        },
+        'issued_datetime_utc': DATETIME_RFC3339_MAPPING,
+        'issued_datetime_local': DATETIME_RFC3339_MAPPING,
         'area_e': {'type': 'text', 'fields': {'raw': {'type': 'keyword'}}},
         'area_f': {'type': 'text', 'fields': {'raw': {'type': 'keyword'}}},
         'region_e': {'type': 'text', 'fields': {'raw': {'type': 'keyword'}}},
@@ -145,16 +138,8 @@ MAPPINGS = {
         },
     },
     'extended-forecasts': {
-        'issued_datetime_utc': {
-            'type': 'date',
-            'format': 'date_time_no_millis',
-            'ignore_malformed': False,
-        },
-        'issued_datetime_local': {
-            'type': 'date',
-            'format': 'date_time_no_millis',
-            'ignore_malformed': False,
-        },
+        'issued_datetime_utc': DATETIME_RFC3339_MAPPING,
+        'issued_datetime_local': DATETIME_RFC3339_MAPPING,
         'area_e': {'type': 'text', 'fields': {'raw': {'type': 'keyword'}}},
         'area_f': {'type': 'text', 'fields': {'raw': {'type': 'keyword'}}},
         'region_e': {'type': 'text', 'fields': {'raw': {'type': 'keyword'}}},
@@ -240,16 +225,8 @@ MAPPINGS = {
                     'type': 'text',
                     'fields': {'raw': {'type': 'keyword'}},
                 },
-                'issued_datetime_utc_e': {
-                    'type': 'date',
-                    'format': 'date_time_no_millis',
-                    'ignore_malformed': False,
-                },
-                'issued_datetime_local_e': {
-                    'type': 'date',
-                    'format': 'date_time_no_millis',
-                    'ignore_malformed': False,
-                },
+                'issued_datetime_utc_e': DATETIME_RFC3339_MAPPING,
+                'issued_datetime_local_e': DATETIME_RFC3339_MAPPING,
                 'event_type_e': {
                     'type': 'text',
                     'fields': {'raw': {'type': 'keyword'}},
@@ -275,16 +252,8 @@ MAPPINGS = {
                     'type': 'text',
                     'fields': {'raw': {'type': 'keyword'}},
                 },
-                'issued_datetime_utc_f': {
-                    'type': 'date',
-                    'format': 'date_time_no_millis',
-                    'ignore_malformed': False,
-                },
-                'issued_datetime_local_f': {
-                    'type': 'date',
-                    'format': 'date_time_no_millis',
-                    'ignore_malformed': False,
-                },
+                'issued_datetime_utc_f': DATETIME_RFC3339_MAPPING,
+                'issued_datetime_local_f': DATETIME_RFC3339_MAPPING,
                 'event_type_f': {
                     'type': 'text',
                     'fields': {'raw': {'type': 'keyword'}},

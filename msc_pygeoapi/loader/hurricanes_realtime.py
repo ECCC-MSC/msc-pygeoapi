@@ -42,7 +42,8 @@ from gdal import ogr
 from msc_pygeoapi.env import (MSC_PYGEOAPI_ES_TIMEOUT, MSC_PYGEOAPI_ES_URL,
                               MSC_PYGEOAPI_ES_AUTH)
 from msc_pygeoapi.loader.base import BaseLoader
-from msc_pygeoapi.util import get_es, json_pretty_print, strftime_rfc3339
+from msc_pygeoapi.util import (get_es, json_pretty_print, strftime_rfc3339,
+                               DATETIME_RFC3339_MAPPING)
 
 LOGGER = logging.getLogger(__name__)
 elastic_logger.setLevel(logging.WARNING)
@@ -67,11 +68,7 @@ FILE_PROPERTIES = {
                 'raw': {'type': 'keyword'}
             }
         },
-        'ADVDATE': {
-            'type': 'date',
-            'format': 'date_time_no_millis',
-            'ignore_malformed': False,
-        },
+        'ADVDATE': DATETIME_RFC3339_MAPPING,
         'STORMFORCE': {
             'type': 'byte'
         },
@@ -81,11 +78,7 @@ FILE_PROPERTIES = {
         'LON': {
             'type': 'float'
         },
-        'TIMESTAMP': {
-            'type': 'date',
-            'format': 'date_time_no_millis',
-            'ignore_malformed': False,
-        },
+        'TIMESTAMP': DATETIME_RFC3339_MAPPING,
         'VALIDTIME': {
             'type': 'text',
             'fields': {
@@ -167,11 +160,7 @@ FILE_PROPERTIES = {
                 'raw': {'type': 'keyword'}
             }
         },
-        'filedate': {
-            'type': 'date',
-            'format': 'date_time_no_millis',
-            'ignore_malformed': False,
-        }
+        'filedate': DATETIME_RFC3339_MAPPING
     },
     'rad': {
         'STORMNAME': {
@@ -183,11 +172,7 @@ FILE_PROPERTIES = {
         'WINDFORCE': {
             'type': 'float'
         },
-        'TIMESTAMP': {
-            'type': 'date',
-            'format': 'date_time_no_millis',
-            'ignore_malformed': False,
-        },
+        'TIMESTAMP': DATETIME_RFC3339_MAPPING,
         'VALIDTIME': {
             'type': 'text',
             'fields': {
@@ -203,11 +188,7 @@ FILE_PROPERTIES = {
                 'raw': {'type': 'keyword'}
             }
         },
-        'filedate': {
-            'type': 'date',
-            'format': 'date_time_no_millis',
-            'ignore_malformed': False,
-        }
+        'filedate': DATETIME_RFC3339_MAPPING
     },
     'err': {
         'STORMNAME': {
@@ -225,11 +206,7 @@ FILE_PROPERTIES = {
                 'raw': {'type': 'keyword'}
             }
         },
-        'filedate': {
-            'type': 'date',
-            'format': 'date_time_no_millis',
-            'ignore_malformed': False,
-        }
+        'filedate': DATETIME_RFC3339_MAPPING
     },
     'lin': {
         'STORMNAME': {
@@ -256,11 +233,7 @@ FILE_PROPERTIES = {
                 'raw': {'type': 'keyword'}
             }
         },
-        'filedate': {
-            'type': 'date',
-            'format': 'date_time_no_millis',
-            'ignore_malformed': False,
-        }
+        'filedate': DATETIME_RFC3339_MAPPING
     }
 }
 
