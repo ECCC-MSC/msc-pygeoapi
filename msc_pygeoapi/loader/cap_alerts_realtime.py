@@ -40,7 +40,8 @@ from msc_pygeoapi.env import (MSC_PYGEOAPI_ES_TIMEOUT, MSC_PYGEOAPI_ES_URL,
 from msc_pygeoapi.loader.base import BaseLoader
 from msc_pygeoapi.util import (click_abort_if_false, get_es,
                                json_pretty_print, _get_date_format,
-                               _get_element)
+                               _get_element, strftime_rfc3339,
+                               DATETIME_RFC3339_MAPPING)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -125,14 +126,8 @@ SETTINGS = {
                             }
                         }
                     },
-                    'effective': {
-                        'type': 'date',
-                        'format': "YYYY-MM-DD'T'HH:mm:ss'Z'"
-                    },
-                    'expires': {
-                        'type': 'date',
-                        'format': "YYYY-MM-DD'T'HH:mm:ss'Z'"
-                    },
+                    'effective': DATETIME_RFC3339_MAPPING,
+                    'expires': DATETIME_RFC3339_MAPPING,
                     'alert_type': {
                         'type': 'text',
                         'fields': {
@@ -268,8 +263,6 @@ class CapAlertsRealtimeLoader(BaseLoader):
         english_alert = {}
         english_alert_remove = []
 
-        timeformat = '%Y-%m-%dT%H:%M:%SZ'
-
         # we want to run a loop on every cap-xml in filepath and add them
         # in the geojson
         # we want to strat by the newest file in the directory
@@ -298,9 +291,9 @@ class CapAlertsRealtimeLoader(BaseLoader):
             self.references_arr.append(ref.split(',')[1])
 
         for grandchild in root.iter('{}info'.format(b_xml)):
-            expires = _get_date_format(_get_element(grandchild,
-                                       '{}expires'.format(b_xml)))\
-                      .strftime(timeformat)
+            expires_dateobj = _get_date_format(_get_element(grandchild,
+                                               '{}expires'.format(b_xml)))
+            expires = strftime_rfc3339(expires_dateobj)
 
             status_alert = _get_element(grandchild,
                                         '{}parameter[last()-4]/'
@@ -350,8 +343,8 @@ class CapAlertsRealtimeLoader(BaseLoader):
                     effective_date =\
                         _get_element(grandchild,
                                      '{}effective'.format(b_xml))
-                    effective = _get_date_format(effective_date)
-                    effective = effective.strftime(timeformat)
+                    effective_dateobj = _get_date_format(effective_date)
+                    effective = strftime_rfc3339(effective_dateobj)
 
                     warning = _get_element(grandchild,
                                            '{}parameter[1]/'

@@ -40,6 +40,11 @@ LOGGER = logging.getLogger(__name__)
 VERIFY = False
 
 DATETIME_RFC3339_FMT = '%Y-%m-%dT%H:%M:%SZ'
+DATETIME_RFC3339_MAPPING = {
+    'type': 'date',
+    'format': 'date_time_no_millis',
+    'ignore_malformed': False
+}
 
 
 def get_es(url, auth=None):

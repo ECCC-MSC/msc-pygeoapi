@@ -38,7 +38,8 @@ from elasticsearch import helpers, logger as elastic_logger
 from msc_pygeoapi.env import (MSC_PYGEOAPI_CACHEDIR, MSC_PYGEOAPI_ES_TIMEOUT,
                               MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
 from msc_pygeoapi.loader.base import BaseLoader
-from msc_pygeoapi.util import click_abort_if_false, get_es, strftime_rfc3339
+from msc_pygeoapi.util import (click_abort_if_false, get_es, strftime_rfc3339,
+                               DATETIME_RFC3339_MAPPING)
 
 
 LOGGER = logging.getLogger(__name__)
@@ -55,7 +56,7 @@ DAYS_TO_KEEP = 30
 
 # index settings
 INDEX_NAME = 'hydrometric_realtime'
-DATETIME_FORMAT = 'date_time_no_millis'
+
 
 SETTINGS = {
     'settings': {
@@ -93,10 +94,7 @@ SETTINGS = {
                             'raw': {'type': 'keyword'}
                         }
                     },
-                    'DATETIME': {
-                        'type': 'date',
-                        'format': DATETIME_FORMAT
-                    },
+                    'DATETIME': DATETIME_RFC3339_MAPPING,
                     'LEVEL': {
                         'type': 'float'
                     },
@@ -458,8 +456,7 @@ def clean_records(ctx, days):
         'query': {
             'range': {
                 'properties.DATETIME': {
-                    'lt': older_than,
-                    'format': DATETIME_FORMAT
+                    'lt': older_than
                 }
             }
         }

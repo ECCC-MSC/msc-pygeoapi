@@ -38,7 +38,8 @@ import os
 from msc_pygeoapi.env import (MSC_PYGEOAPI_ES_TIMEOUT, MSC_PYGEOAPI_ES_URL,
                               MSC_PYGEOAPI_ES_AUTH, MSC_PYGEOAPI_BASEPATH)
 from msc_pygeoapi.loader.base import BaseLoader
-from msc_pygeoapi.util import click_abort_if_false, get_es
+from msc_pygeoapi.util import (click_abort_if_false, get_es, strftime_rfc3339,
+                               DATETIME_RFC3339_MAPPING)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -198,14 +199,7 @@ SETTINGS = {
                     'bearing': {
                         "type": "float"
                     },
-                    'timestamp': {
-                        'type': 'text',
-                        'fields': {
-                            'raw': {
-                                'type': 'keyword'
-                            }
-                        }
-                    },
+                    'timestamp': DATETIME_RFC3339_MAPPING,
                     'url_en': {
                         'type': 'text',
                         'fields': {
@@ -360,7 +354,7 @@ class CitypageweatherRealtimeLoader(BaseLoader):
                 timestamp = dates.find('timeStamp')
                 if timestamp is not None:
                     dt2 = datetime.strptime(timestamp.text, '%Y%m%d%H%M%S')
-                    row['timestamp'] = dt2.strftime('%Y-%m-%dT%H:%M:%SZ')
+                    row['timestamp'] = strftime_rfc3339(dt2)
 
             row['rel_hum'] = self._get_element(
                               root,

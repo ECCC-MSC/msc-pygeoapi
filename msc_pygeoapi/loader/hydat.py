@@ -11,12 +11,14 @@ annual-peaks
 import logging
 import click
 from collections import defaultdict
+from datetime import datetime
 from sqlalchemy import create_engine
 from sqlalchemy.sql import distinct
 from sqlalchemy.schema import MetaData
 from sqlalchemy.orm import sessionmaker
 
 from msc_pygeoapi import util
+from msc_pygeoapi.util import strftime_rfc3339, DATETIME_RFC3339_MAPPING
 
 
 LOGGER = logging.getLogger(__name__)
@@ -124,10 +126,7 @@ def create_index(es, index):
                                 "LEVEL": {
                                     "type": "float"
                                 },
-                                "DATE": {
-                                    "type": "date",
-                                    "format": "yyyy-MM-dd"
-                                }
+                                "DATE": DATETIME_RFC3339_MAPPING
                             }
                         },
                         "geometry": {"type": "geo_shape"}
@@ -181,10 +180,7 @@ def create_index(es, index):
                                         "raw": {"type": "keyword"}
                                     }
                                 },
-                                "DATE": {
-                                    "type": "date",
-                                    "format": "yyyy-MM"
-                                },
+                                "DATE": DATETIME_RFC3339_MAPPING,
                                 "MONTHLY_MEAN_DISCHARGE": {
                                     "type": "float"
                                 },
@@ -245,14 +241,8 @@ def create_index(es, index):
                                         "raw": {"type": "keyword"}
                                     }
                                 },
-                                "MIN_DATE": {
-                                    "type": "date",
-                                    "format": "yyyy-MM-dd"
-                                },
-                                "MAX_DATE": {
-                                    "type": "date",
-                                    "format": "yyyy-MM-dd"
-                                },
+                                "MIN_DATE": DATETIME_RFC3339_MAPPING,
+                                "MAX_DATE": DATETIME_RFC3339_MAPPING,
                                 "MIN_VALUE": {
                                     "type": "float"
                                 },
@@ -427,10 +417,7 @@ def create_index(es, index):
                                         "raw": {"type": "keyword"}
                                     }
                                 },
-                                "DATE": {
-                                    "type": "date",
-                                    "format": "yyyy-MM-dd'T'HH:mm||yyy-MM-dd" # noqa
-                                },
+                                "DATE": DATETIME_RFC3339_MAPPING,
                                 "TIMEZONE_OFFSET": {
                                     "type": "text",
                                     "fields": {
@@ -583,10 +570,9 @@ def generate_obs(session, station, var, symbol_table, discharge=True):
         for i in range(1, no_days + 1):
             insert_dict = {'STATION_NUMBER': row[0], 'DATE': '', word_out: '',
                            'IDENTIFIER': ''}
-            date = '{}-{}-{}'.format(str(row[1]),
-                                     zero_pad(row[2]),
-                                     zero_pad(i))
-            insert_dict['DATE'] = date
+            date_obj = datetime(row[1], zero_pad(row[2]), zero_pad(i))
+            date = date_obj.strftime('%Y-%m-%d')
+            insert_dict['DATE'] = strftime_rfc3339(date_obj)
             insert_dict['IDENTIFIER'] = '{}.{}'.format(row[0], date)
             value = row[keys.index(word_in.upper() + str(i))]
             symbol = row[keys.index(word_in.upper() + '_SYMBOL' + str(i))]
@@ -608,9 +594,9 @@ def generate_obs(session, station, var, symbol_table, discharge=True):
             LOGGER.debug('Generated a daily mean value for date {} and station {}'.format(insert_dict['DATE'], insert_dict['STATION_NUMBER'])) # noqa
 
             mean_dict = {}
-            date = '{}-{}'.format(str(row[1]),
-                                  zero_pad(row[2]))
-            mean_dict['DATE'] = date
+            date_obj = datetime(row[1], zero_pad(row[2]), 1)
+            date = date_obj.strftime('%Y-%m')
+            mean_dict['DATE'] = strftime_rfc3339(date_obj)
             mean_dict['IDENTIFIER'] = '{}.{}'.format(row[0], date)
 
             if row[keys.index('MONTHLY_MEAN')]:
@@ -618,7 +604,7 @@ def generate_obs(session, station, var, symbol_table, discharge=True):
             else:
                 mean_dict['MONTHLY_MEAN_' + word_out] = None
             mean_lst.append(mean_dict)
-            LOGGER.debug('Generated a monthly mean value for date {} and station {}'.format(mean_dict['DATE'], insert_dict['STATION_NUMBER'])) # noqa
+            LOGGER.debug('Generated a monthly mean value for date {} and station {}'.format(date, insert_dict['STATION_NUMBER'])) # noqa
     return (lst, mean_lst)
 
 
@@ -898,14 +884,16 @@ def generate_annual_stats(session, annual_stats_table, data_types_table,
             min_date = None
             LOGGER.warning('Could not find min date for station {}'.format(station_number)) # noqa
         else:
-            min_date = '{}-{}-{}'.format(year, zero_pad(min_month),
-                                         zero_pad(min_day))
+            min_date_obj = datetime(year, zero_pad(min_month),
+                                    zero_pad(min_day))
+            min_date = strftime_rfc3339(min_date_obj)
         if max_month is None or max_day is None:
             max_date = None
             LOGGER.warning('Could not find max date for station {}'.format(station_number)) # noqa
         else:
-            max_date = '{}-{}-{}'.format(year, zero_pad(max_month),
-                                         zero_pad(max_day))
+            max_date_obj = datetime(year, zero_pad(max_month),
+                                    zero_pad(max_day))
+            max_date = strftime_rfc3339(max_date_obj)
         symbol_keys = symbol_table.columns.keys()
         if min_symbol is not None and min_symbol.strip():
             args = {'SYMBOL_ID': min_symbol}
@@ -1008,11 +996,12 @@ def generate_annual_peaks(session, metadata, annual_peaks_table,
             date = None
             LOGGER.warning('Could not find date for station {}'.format(station_number)) # noqa
         elif hour is None or minute is None:
-            date = '{}-{}-{}'.format(year, zero_pad(month), zero_pad(day))
+            date_obj = datetime(year, zero_pad(month), zero_pad(day))
+            date = strftime_rfc3339(date_obj)
         else:
-            date = '{}-{}-{}T{}:{}'.format(year, zero_pad(month),
-                                           zero_pad(day), zero_pad(hour),
-                                           zero_pad(minute))
+            date_obj = datetime(year, zero_pad(month), zero_pad(day),
+                                hour=zero_pad(hour), minute=zero_pad(minute))
+            date = strftime_rfc3339(date_obj)
         args = {'STATION_NUMBER': station_number}
         try:
             station_metadata = list(session.query(station_table).filter_by(**args).all()[0]) # noqa

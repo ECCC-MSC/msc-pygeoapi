@@ -9,7 +9,10 @@ import json
 import logging
 import click
 
+from datetime import datetime
+
 from msc_pygeoapi import util
+from msc_pygeoapi.util import strftime_rfc3339, DATETIME_RFC3339_MAPPING
 
 
 LOGGER = logging.getLogger(__name__)
@@ -197,10 +200,7 @@ def create_index(es, index):
                         "type": {"type": "text"},
                         "properties": {
                             "properties": {
-                                "date": {
-                                   "type": "date",
-                                   "format": "yyyy-MM||yyyy"
-                                },
+                                "date": DATETIME_RFC3339_MAPPING,
                                 "identifier__identifiant": {
                                     "type": "text",
                                     "fields": {
@@ -684,9 +684,11 @@ def generate_docs(fp, index):
             record['properties']['identifier__identifiant'] = stn_id
         elif index == 'monthly':
             index_name = 'ahccd_monthly'
-            record['properties']['date'] = '{}-{}'.format(
+            date_obj = datetime(
                 record['properties']['identifier__identifiant'].split('.')[1],
-                record['properties']['identifier__identifiant'].split('.')[2])
+                record['properties']['identifier__identifiant'].split('.')[2],
+                1)
+            record['properties']['date'] = strftime_rfc3339(date_obj)
             del record['properties']['year__annee']
         elif index == 'trends':
             index_name = 'ahccd_trends'

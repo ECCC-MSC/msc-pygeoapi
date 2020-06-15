@@ -18,6 +18,7 @@ import click
 import collections
 
 from msc_pygeoapi import util
+from msc_pygeoapi.util import strftime_rfc3339, DATETIME_RFC3339_MAPPING
 
 
 logging.basicConfig()
@@ -181,22 +182,10 @@ def create_index(es, index):
                                         "raw": {"type": "keyword"}
                                     }
                                 },
-                                "DLY_FIRST_DATE": {
-                                    "type": "date",
-                                    "format": "yyyy-MM-dd HH:mm:ss"
-                                },
-                                "DLY_LAST_DATE": {
-                                    "type": "date",
-                                    "format": "yyyy-MM-dd HH:mm:ss"
-                                },
-                                "FIRST_DATE": {
-                                    "type": "date",
-                                    "format": "yyyy-MM-dd HH:mm:ss"
-                                },
-                                "LAST_DATE": {
-                                    "type": "date",
-                                    "format": "yyyy-MM-dd HH:mm:ss"
-                                }
+                                "DLY_FIRST_DATE": DATETIME_RFC3339_MAPPING,
+                                "DLY_LAST_DATE": DATETIME_RFC3339_MAPPING,
+                                "FIRST_DATE": DATETIME_RFC3339_MAPPING,
+                                "LAST_DATE": DATETIME_RFC3339_MAPPING
                             }
                         },
                         "geometry": {"type": "geo_shape"}
@@ -342,14 +331,8 @@ def create_index(es, index):
                                         "raw": {"type": "keyword"}
                                     }
                                 },
-                                "FIRST_OCCURRENCE_DATE": {
-                                    "type": "date",
-                                    "format": "yyyy-MM-dd HH:mm:ss"
-                                },
-                                "DATE_CALCULATED": {
-                                    "type": "date",
-                                    "format": "yyyy-MM-dd HH:mm:ss"
-                                }
+                                "FIRST_OCCURRENCE_DATE": DATETIME_RFC3339_MAPPING,  # noqa
+                                "DATE_CALCULATED": DATETIME_RFC3339_MAPPING
                             }
                         },
                         "geometry": {"type": "geo_shape"}
@@ -489,14 +472,8 @@ def create_index(es, index):
                                 "LOCAL_MONTH": {
                                     "type": "integer"
                                 },
-                                "LAST_UPDATED": {
-                                    "type": "date",
-                                    "format": "yyyy-MM-dd HH:mm:ss"
-                                },
-                                "LOCAL_DATE": {
-                                    "type": "date",
-                                    "format": "yyyy-MM"
-                                }
+                                "LAST_UPDATED": DATETIME_RFC3339_MAPPING,
+                                "LOCAL_DATE": DATETIME_RFC3339_MAPPING
                             }
                         },
                         "geometry": {"type": "geo_shape"}
@@ -690,10 +667,7 @@ def create_index(es, index):
                                 "LOCAL_DAY": {
                                     "type": "integer"
                                 },
-                                "LOCAL_DATE": {
-                                    "type": "date",
-                                    "format": "yyyy-MM-dd HH:mm:ss"
-                                }
+                                "LOCAL_DATE": DATETIME_RFC3339_MAPPING
                             }
                         },
                         "geometry": {"type": "geo_shape"}
@@ -738,7 +712,7 @@ def generate_stations(cur):
 
             # Transform Date fields from datetime to string.
             if 'DATE' in key:
-                insert_dict[key] = str(insert_dict[key]) if insert_dict[key] is not None else insert_dict[key] # noqa
+                insert_dict[key] = strftime_rfc3339(insert_dict[key])
 
         coords = [float(insert_dict['LONGITUDE_DECIMAL_DEGREES']),
                   float(insert_dict['LATITUDE_DECIMAL_DEGREES'])]
@@ -788,7 +762,7 @@ def generate_normals(cur, stn_dict, normals_dict, periods_dict):
         for key in insert_dict:
             # Transform Date fields from datetime to string.
             if 'DATE' in key:
-                insert_dict[key] = str(insert_dict[key]) if insert_dict[key] is not None else insert_dict[key] # noqa
+                insert_dict[key] = strftime_rfc3339(insert_dict[key])
         insert_dict['ID'] = '{}.{}.{}'.format(insert_dict['STN_ID'],
                                               insert_dict['NORMAL_ID'],
                                               insert_dict['MONTH'])
@@ -846,7 +820,7 @@ def generate_monthly_data(cur, stn_dict, date=None):
     for row in cur:
         insert_dict = dict(zip([x[0] for x in cur.description], row))
         # Transform Date fields from datetime to string.
-        insert_dict['LAST_UPDATED'] = str(insert_dict['LAST_UPDATED']) if insert_dict['LAST_UPDATED'] is not None else insert_dict['LAST_UPDATED'] # noqa
+        insert_dict['LAST_UPDATED'] = strftime_rfc3339(insert_dict['LAST_UPDATED'])  # noqa
 
         insert_dict['ID'] = '{}.{}.{}'.format(insert_dict['STN_ID'],
                                               insert_dict['LOCAL_YEAR'],
@@ -897,7 +871,7 @@ def generate_daily_data(cur, stn_dict, date=None):
         for row in cur:
             insert_dict = dict(zip([x[0] for x in cur.description], row))
             # Transform Date fields from datetime to string.
-            insert_dict['LOCAL_DATE'] = str(insert_dict['LOCAL_DATE']) if insert_dict['LOCAL_DATE'] is not None else insert_dict['LOCAL_DATE'] # noqa
+            insert_dict['LOCAL_DATE'] = strftime_rfc3339(insert_dict['LOCAL_DATE']) # noqa
 
             insert_dict['ID'] = '{}.{}.{}.{}'.format(
                 insert_dict['CLIMATE_IDENTIFIER'],

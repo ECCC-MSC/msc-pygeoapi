@@ -34,7 +34,8 @@ import logging
 from msc_pygeoapi.env import (MSC_PYGEOAPI_ES_TIMEOUT, MSC_PYGEOAPI_ES_URL,
                               MSC_PYGEOAPI_ES_AUTH)
 from msc_pygeoapi.loader.base import BaseLoader
-from msc_pygeoapi.util import click_abort_if_false, get_es
+from msc_pygeoapi.util import (click_abort_if_false, get_es, strftime_rfc3339,
+                               DATETIME_RFC3339_MAPPING)
 
 
 LOGGER = logging.getLogger(__name__)
@@ -57,10 +58,7 @@ SETTINGS = {
             },
             'properties': {
                 'properties': {
-                    'datetime': {
-                        'type': 'date',
-                        'format': 'yyyy-MM-dd HH:mm'
-                    }
+                    'datetime': DATETIME_RFC3339_MAPPING
                 }
             }
         }
@@ -136,24 +134,21 @@ class BulletinsRealtimeLoader(BaseLoader):
 
         tokens = bulletin_path.split('/')
 
+        filename = tokens[-1]
         yyyymmdd = tokens[0]
         hh = tokens[3]
-        filename = tokens[-1]
-
-        yyyy = yyyymmdd[0:4]
-        mm = yyyymmdd[4:6]
-        dd = yyyymmdd[6:8]
-
         min_ = filename.split('_')[2][-2:]
 
-        datetime = '{}-{}-{} {}:{}'.format(yyyy, mm, dd, hh, min_)
+        datetime_str_raw = '{} {}:{}'.format(yyyymmdd, hh, min_)
+        datetime_obj = datetime.strptime(datetime_str_raw, '%Y%m%d %H:%M')
+        datetime_str_rfc3339 = strftime_rfc3339(datetime_obj)
 
         dict_['geometry'] = {
             'type': 'Point',
             'coordinates': [-75, 45]  # TODO: use real coordinates
         }
 
-        dict_['properties']['datetime'] = datetime
+        dict_['properties']['datetime'] = datetime_str_rfc3339
         dict_['properties']['type'] = tokens[1]
         dict_['properties']['issuer_code'] = tokens[2]
         dict_['properties']['issuer_name'] = issuer_name
