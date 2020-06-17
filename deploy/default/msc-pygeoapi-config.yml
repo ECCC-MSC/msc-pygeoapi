@@ -21,8 +21,8 @@ logging:
 
 metadata:
     identification:
-        title: Meteorological Service of Canada Geospatial Web Services
-        description: The weather can have an incredible influence on our daily lives. It affects the growth of crops and the availability of water. It dictates which regions of the world are habitable or uninhabitable
+        title: MSC GeoMet — GeoMet-OGC-API
+        description: GeoMet-OGC-API provides public access to the Meteorological Service of Canada (MSC) and Environment and Climate Change Canada (ECCC) data via interoperable web services and application programming interfaces (API). Through open standards, users can freely and quickly access thousands of real-time and archived weather, climate and water datasets and products and integrate them in their domain-specific applications and decision support systems. Users can build mobile apps, create interactive web maps, and display and animate MSC data in desktop software. MSC GeoMet also enables on demand raw data clipping and reprojection, on demand format conversion and custom visualization.
         keywords:
             - Weather
             - Meteorology
@@ -38,10 +38,10 @@ metadata:
             - Ice
         keywords_type: theme
         terms_of_service: https://www.canada.ca/en/transparency/terms.html
-        url: https://www.canada.ca/en/services/environment/weather.html
+        url: https://eccc-msc.github.io/open-data/msc-geomet/readme_en/
     license:
         name: Environment and Climate Change Canada Data Server End-use Licence
-        url: https://dd.weather.gc.ca/doc/LICENCE_GENERAL.txt
+        url: https://eccc-msc.github.io/open-data/licence/readme_en/
     provider:
         name: Government of Canada, Environment and Climate Change Canada, Meteorological Service of Canada
         url: https://www.canada.ca/en/services/environment/weather.html
