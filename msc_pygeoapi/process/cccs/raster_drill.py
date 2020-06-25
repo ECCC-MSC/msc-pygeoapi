@@ -414,7 +414,7 @@ def raster_drill(layer, x, y, format_):
     :param layer: layer name
     :param x: x coordinate
     :param y: y coordinate
-    :param format: output format (GeoJSON or CSV)
+    :param format_: output format (GeoJSON or CSV)
 
     :return: return the final file fo a given location
     """

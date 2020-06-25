@@ -31,6 +31,11 @@ git clone https://github.com/ECCC-MSC/msc-pygeoapi.git
 cd msc-pygeoapi
 python setup.py build
 python setup.py install
+
+# configure environment
+cp msc-pygeoapi.env dev.env
+vi dev.env # edit paths accordingly
+. dev.env
 ```
 
 ## Running
