@@ -7,7 +7,7 @@ MSC GeoMet pygeoapi server configuration and utilities
 ## Installation
 
 ### Requirements
-- Python 3.  Works with Python 2.7
+- Python 3
 - [virtualenv](https://virtualenv.pypa.io/)
 
 ### Dependencies
