@@ -12,7 +12,7 @@ MSC GeoMet pygeoapi server configuration and utilities
 
 ### Dependencies
 Dependencies are listed in [requirements.txt](requirements.txt). Dependencies
-are automatically installed during msc_pygeoapi installation.
+are automatically installed during msc-pygeoapi installation.
 
 Dependencies of note:
 - [Elasticsearch](https://elastic.co) (5 or above)
