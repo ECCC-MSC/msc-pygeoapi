@@ -405,12 +405,12 @@ class CapAlertsRealtimeLoader(BaseLoader):
             data = []
             for num_poly in english_alert:
                 poly = []
-                for l in list(reversed(range(0,
-                                             len(english_alert[num_poly][0]),
-                                             2))):
+                for el in list(reversed(range(0,
+                                              len(english_alert[num_poly][0]),
+                                              2))):
                     if len(english_alert[num_poly][0]) > 1:
-                        poly.append([float(english_alert[num_poly][0][l + 1]),
-                                     float(english_alert[num_poly][0][l]),
+                        poly.append([float(english_alert[num_poly][0][el + 1]),
+                                     float(english_alert[num_poly][0][el]),
                                      0.0])
 
                 # for temporary care of the duplicate neighbors coordinate
