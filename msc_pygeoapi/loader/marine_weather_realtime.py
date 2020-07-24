@@ -442,10 +442,10 @@ class MarineWeatherRealtimeLoader(BaseLoader):
         """
         Generates and yields a series of marine weather warnings
         for a given marine weather area. Warnings are returned
-        as ElasticSearch bulk API upsert actions, with a single
+        as Elasticsearch bulk API upsert actions, with a single
         document for the marine weather region in GeoJSON to match the
-        ElasticSearch index mappings.
-        :returns: Generator of ElasticSearch actions to upsert the marine
+        Elasticsearch index mappings.
+        :returns: Generator of Elasticsearch actions to upsert the marine
                   weather warnings.
         """
         warnings = self.root.findall('warnings/')
@@ -511,9 +511,9 @@ class MarineWeatherRealtimeLoader(BaseLoader):
         """
         Generates and yields a series of marine weather regular forecasts
         for a given marine weather area. Each regular forecast is returned
-        as ElasticSearch bulk API upsert actions, with documents in GeoJSON to
-        match the ElasticSearch index mappings.
-        :returns: Generator of ElasticSearch actions to upsert the marine
+        as Elasticsearch bulk API upsert actions, with documents in GeoJSON to
+        match the Elasticsearch index mappings.
+        :returns: Generator of Elasticsearch actions to upsert the marine
                   weather regular forecast.
         """
         regular_forecasts = self.root.findall('regularForecast/')
@@ -613,9 +613,9 @@ class MarineWeatherRealtimeLoader(BaseLoader):
         """
         Generates and yields a series of marine weather extended forecasts
         for a given marine weather area. Each extended forecast is returned
-        as ElasticSearch bulk API upsert actions, with documents in GeoJSON to
-        match the ElasticSearch index mappings.
-        :returns: Generator of ElasticSearch actions to upsert the marine
+        as Elasticsearch bulk API upsert actions, with documents in GeoJSON to
+        match the Elasticsearch index mappings.
+        :returns: Generator of Elasticsearch actions to upsert the marine
                   weather extended forecast.
         """
         extended_forecasts = self.root.findall('extendedForecast/')

@@ -244,12 +244,12 @@ class HydrometricRealtimeLoader(BaseLoader):
     def generate_observations(self, filepath):
         """
         Generates and yields a series of observations, one for each row in
-        <filepath>. Observations are returned as ElasticSearch bulk API
-        upsert actions, with documents in GeoJSON to match the ElasticSearch
+        <filepath>. Observations are returned as Elasticsearch bulk API
+        upsert actions, with documents in GeoJSON to match the Elasticsearch
         index mappings.
 
         :param filename: Path to a data file of realtime hydrometric
-        :returns: Generator of ElasticSearch actions to upsert the observations
+        :returns: Generator of Elasticsearch actions to upsert the observations
         """
 
         today = datetime.utcnow()

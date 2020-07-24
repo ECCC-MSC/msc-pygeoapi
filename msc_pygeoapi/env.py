@@ -45,8 +45,8 @@ MSC_PYGEOAPI_ES_USERNAME = os.getenv('MSC_PYGEOAPI_ES_USERNAME', None)
 MSC_PYGEOAPI_ES_PASSWORD = os.getenv('MSC_PYGEOAPI_ES_PASSWORD', None)
 
 if None in (MSC_PYGEOAPI_ES_USERNAME, MSC_PYGEOAPI_ES_PASSWORD):
-    LOGGER.warning('Missing Elasticsearch authentication information:'
-                   ' Continuing without authentication')
+    LOGGER.debug('Missing Elasticsearch authentication information:'
+                 ' Continuing without authentication')
     MSC_PYGEOAPI_ES_AUTH = None
 else:
     MSC_PYGEOAPI_ES_AUTH = (MSC_PYGEOAPI_ES_USERNAME, MSC_PYGEOAPI_ES_PASSWORD)
