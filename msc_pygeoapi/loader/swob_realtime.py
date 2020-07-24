@@ -218,6 +218,10 @@ def parse_swob(swob_file):
 
         swob_values['properties'] = properties
 
+        for k, v in swob_values['properties'].items():
+            if v == 'MSNG':
+                swob_values['properties'][k] = None
+
         return swob_values
 
 
