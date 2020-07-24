@@ -32,11 +32,9 @@
 # =================================================================
 
 import click
-import csv
 from datetime import datetime, timedelta
 import logging
 import os
-import urllib.request
 
 from elasticsearch import helpers, logger as elastic_logger
 from lxml import etree
@@ -245,7 +243,7 @@ def swob2geojson(swob_file):
 
     # verify dictionary contains the data we need to avoid error
     if 'properties' in swob_dict and 'coordinates' in swob_dict:
-        json_output['id'] = swob_dict['id']
+        json_output['id'] = swob_dict['properties']['id']
         json_output['type'] = 'Feature'
         json_output["geometry"] = (
             {"type": "Point", "coordinates": swob_dict['coordinates']})
@@ -271,56 +269,6 @@ class SWOBRealtimeLoader(BaseLoader):
         if not self.ES.indices.exists(INDEX_NAME):
             self.ES.indices.create(index=INDEX_NAME, body=SETTINGS,
                                    request_timeout=MSC_PYGEOAPI_ES_TIMEOUT)
-
-        self.stations = {}
-        self.read_stations_list()
-
-    def read_stations_list(self):
-        """
-        Parses the local copy of the SWOB stations list, creating
-        a dictionary of station IDs to station info and putting it in
-        <self.stations>.
-
-        :returns: void
-        """
-
-        if not os.path.exists(STATIONS_CACHE):
-            download_stations()
-
-        with open(STATIONS_CACHE) as stations_file:
-            reader = csv.DictReader(stations_file)
-
-            self.stations.clear()
-
-            for row in reader:
-                stn_id = row['MSC_ID']
-                try:
-                    lat = float(row['Latitude'])
-                    lon = float(row['Longitude'])
-                    elevation = float(row['Elevation (m)'])
-                except ValueError:
-                    LOGGER.error('Cannot interpret coordinates ({}, {}) for'
-                                 ' station {} (skipping)'
-                                 .format(lon, lat, row['MSC_ID']))
-                    continue
-
-                stn_info = {
-                    'IATA_ID': row['IATA_ID'],
-                    'Name': row['NAME'],
-                    'WMO_ID': row['WMO_ID'],
-                    'MSC_ID': row['MSC_ID'],
-                    'Data_Provider': row['Data_Provider'],
-                    'Dataset/Network': row['Dataset/Network'],
-                    'AUTO/MAN': row['AUTO/MAN'],
-                    'Province/Territory': row['Province/Territory'],
-                    'coordinates': (lon, lat, elevation)
-                }
-                LOGGER.debug(stn_info)
-
-                self.stations[stn_id] = stn_info
-
-        LOGGER.debug('Collected stations information: loaded {} stations'
-                     .format(len(self.stations)))
 
     def generate_observations(self, filepath):
         """
@@ -357,9 +305,6 @@ class SWOBRealtimeLoader(BaseLoader):
         :returns: `bool` of status result
         """
 
-        if filepath.endswith('hb-xml_station_list.csv'):
-            return True
-
         inserts = 0
         updates = 0
         noops = 0
@@ -390,30 +335,10 @@ class SWOBRealtimeLoader(BaseLoader):
         return True
 
 
-def download_stations():
-    """
-    Download realtime stations
-
-    :returns: void
-    """
-
-    LOGGER.debug('Caching {} to {}'.format(STATIONS_LIST_URL, STATIONS_CACHE))
-    urllib.request.urlretrieve(STATIONS_LIST_URL, STATIONS_CACHE)
-
-
 @click.group()
 def swob_realtime():
     """Manages SWOB realtime index"""
     pass
-
-
-@click.command()
-@click.pass_context
-def cache_stations(ctx):
-    """Cache local copy of SWOB realtime stations index"""
-
-    click.echo('Caching realtime stations to {}'.format(STATIONS_CACHE))
-    download_stations()
 
 
 @click.command()
@@ -468,6 +393,5 @@ def delete_index(ctx):
         es.indices.delete(INDEX_NAME)
 
 
-swob_realtime.add_command(cache_stations)
 swob_realtime.add_command(clean_records)
 swob_realtime.add_command(delete_index)
