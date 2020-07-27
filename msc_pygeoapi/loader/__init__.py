@@ -44,6 +44,7 @@ try:
     from msc_pygeoapi.loader.forecast_polygons import forecast_polygons
     from msc_pygeoapi.loader.marine_weather_realtime import marine_weather
     from msc_pygeoapi.loader.cap_alerts_realtime import cap_alerts
+    from msc_pygeoapi.loader.swob_realtime import swob_realtime
 except ImportError as err:
     LOGGER.info('loaders not imported')
     LOGGER.debug(err)
@@ -66,6 +67,7 @@ try:
     data.add_command(forecast_polygons)
     data.add_command(marine_weather)
     data.add_command(cap_alerts)
+    data.add_command(swob_realtime)
 except NameError as err:
     LOGGER.info('loaders not found')
     LOGGER.debug(err)

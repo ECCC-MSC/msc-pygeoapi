@@ -723,7 +723,7 @@ def generate_stations(session, metadata, path, station_table):
     data so it can be inserted into Elasticsearch.
 
     Returns a generator of dictionaries that represent upsert actions
-    into ElasticSearch's bulk API.
+    into Elasticsearch's bulk API.
 
     :param session: SQLAlchemy session object.
     :param metadata: db metadata returned by connect_db.

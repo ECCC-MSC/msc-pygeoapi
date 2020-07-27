@@ -61,7 +61,11 @@ PLUGINS = {
         'cap_alerts_realtime': {
             'filename_pattern': 'alerts/cap',
             'handler': 'msc_pygeoapi.loader.cap_alerts_realtime.CapAlertsRealtimeLoader'  # noqa
-        }
+        },
+        'swob_realtime': {
+            'filename_pattern': 'observations/swob-ml',
+            'handler': 'msc_pygeoapi.loader.swob_realtime.SWOBRealtimeLoader'  # noqa
+        },
     }
 }
 

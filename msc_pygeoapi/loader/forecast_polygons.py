@@ -346,10 +346,10 @@ class ForecastPolygonsLoader(BaseLoader):
         """
         Generates and yields a series of meteocode geodata features,
         one for each feature in <self.filepath/self.filepath.stem/
-        shapefile_name>. Features are returned as ElasticSearch bulk API
-        upsert actions, with documents in GeoJSON to match the ElasticSearch
+        shapefile_name>. Features are returned as Elasticsearch bulk API
+        upsert actions, with documents in GeoJSON to match the Elasticsearch
         index mappings.
-        :returns: Generator of ElasticSearch actions to upsert the forecast
+        :returns: Generator of Elasticsearch actions to upsert the forecast
                   polygons for given shapefile in zip archive
         """
         filepath = str((self.filepath / self.filepath.stem /

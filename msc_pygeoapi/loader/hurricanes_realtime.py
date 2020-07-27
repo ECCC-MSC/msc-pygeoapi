@@ -387,9 +387,9 @@ class HurricanesRealtimeLoader(BaseLoader):
         """
         Generates and yields a series of storm forecasts,
         one for each feature in <self.filepath>. Observations are returned as
-        ElasticSearch bulk API upsert actions, with documents in GeoJSON to
-        match the ElasticSearch index mappings.
-        :returns: Generator of ElasticSearch actions to upsert the storm
+        Elasticsearch bulk API upsert actions, with documents in GeoJSON to
+        match the Elasticsearch index mappings.
+        :returns: Generator of Elasticsearch actions to upsert the storm
                   forecasts
         """
         driver = ogr.GetDriverByName('ESRI Shapefile')
