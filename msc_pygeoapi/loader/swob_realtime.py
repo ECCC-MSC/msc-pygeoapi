@@ -42,7 +42,7 @@ from lxml import etree
 from msc_pygeoapi.env import (MSC_PYGEOAPI_CACHEDIR, MSC_PYGEOAPI_ES_TIMEOUT,
                               MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
 from msc_pygeoapi.loader.base import BaseLoader
-from msc_pygeoapi.util import click_abort_if_false, get_es
+from msc_pygeoapi.util import click_abort_if_false, get_es, json_pretty_print
 
 
 LOGGER = logging.getLogger(__name__)
@@ -355,6 +355,37 @@ class SWOBRealtimeLoader(BaseLoader):
 def swob_realtime():
     """Manages SWOB realtime index"""
     pass
+
+
+def add(ctx, file_, directory):
+    """adds data to system"""
+
+    if all([file_ is None, directory is None]):
+        raise click.ClickException('Missing --file/-f or --dir/-d option')
+
+    files_to_process = []
+
+    if file_ is not None:
+        files_to_process = [file_]
+    elif directory is not None:
+        for root, dirs, files in os.walk(directory):
+            for f in [file for file in files if file.endswith('.xml')]:
+                files_to_process.append(os.path.join(root, f))
+        files_to_process.sort(key=os.path.getmtime)
+
+    for file_to_process in files_to_process:
+        plugin_def = {
+            'filename_pattern': 'marine_weather/xml',
+            'handler': 'msc_pygeoapi.loader.swob_realtime.SWOBRealtimeLoader',
+        }
+        loader = SWOBRealtimeLoader(plugin_def)
+        result = loader.load_data(file_to_process)
+        if result:
+            click.echo(
+                'GeoJSON features generated: {}'.format(
+                    json_pretty_print(loader.items)
+                )
+            )
 
 
 @click.command()
