@@ -440,5 +440,6 @@ def delete_index(ctx):
         es.indices.delete(INDEX_NAME)
 
 
+swob_realtime.add_command(add)
 swob_realtime.add_command(clean_records)
 swob_realtime.add_command(delete_index)
