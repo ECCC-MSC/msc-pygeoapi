@@ -27,8 +27,11 @@
 #
 # =================================================================
 
-# every day at 0400h, clean bulletin records from ES
-#0 4 * * * geoadm msc-pygeoapi data load bulletins clean-records --yes
+# every day at 0300h, clean bulletin records from ES
+#0 3 * * * geoadm msc-pygeoapi data load bulletins clean-records --yes
 
 # every day at 0400h, clean hydrometric realtime data older than 30 days
 0 4 * * * geoadm msc-pygeoapi data load hydrometric-realtime clean-records --days 30
+
+# every day at 0500h, clean swob realtime data older than 30 days
+0 5 * * * geoadm msc-pygeoapi data load swob-realtime clean-records --days 30

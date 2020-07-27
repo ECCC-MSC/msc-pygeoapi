@@ -69,6 +69,18 @@ SETTINGS = {
         'properties': {
             'geometry': {
                 'type': 'geo_shape'
+            },
+            'properties': {
+                'properties': {
+                    'rmk': {
+                        'type': 'text',
+                        'fields': {
+                            'raw': {
+                                'type': 'keyword'
+                            }
+                        }
+                    }
+                }
             }
         }
     }
