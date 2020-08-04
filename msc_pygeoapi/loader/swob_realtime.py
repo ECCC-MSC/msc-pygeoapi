@@ -357,6 +357,15 @@ def swob_realtime():
     pass
 
 
+@click.command()
+@click.pass_context
+@click.option('--file', '-f', 'file_',
+              type=click.Path(exists=True, resolve_path=True),
+              help='Path to file')
+@click.option('--directory', '-d', 'directory',
+              type=click.Path(exists=True, resolve_path=True,
+                              dir_okay=True, file_okay=False),
+              help='Path to directory')
 def add(ctx, file_, directory):
     """adds data to system"""
 
