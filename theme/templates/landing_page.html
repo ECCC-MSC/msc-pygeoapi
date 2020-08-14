@@ -1,0 +1,138 @@
+{% extends "_base.html" %}
+{% block title %}{{ super() }} Home {% endblock %}
+{% block body %}
+
+<br/>
+<section id="collections">
+<div class="row">
+  <div class="col-md-8 col-sm-12">
+
+  <section id="identification">
+    <h1>{{ config['metadata']['identification']['title'] }}</h1>
+    <p>{{ config['metadata']['identification']['description'] }}</p>
+
+    <p>
+        {% for kw in config['metadata']['identification']['keywords'] %}
+          <mark class="tag">{{ kw }}</mark>
+        {% endfor %}
+    </p>
+
+    <div class="card large">
+      <div class="section">
+        {% if config['metadata']['identification']['terms_of_service'] %}
+          <div class="row">
+              <div class="col-sm-4">
+                Terms of service
+              </div>
+              <div class="col-sm-8">
+                {{ config['metadata']['identification']['terms_of_service'] | urlize() }}
+              </div>
+          </div>
+        {% endif %}
+        {% if config['metadata']['license']['url'] %}
+          <div class="row">
+              <div class="col-sm-4">
+                License
+              </div>
+              <div class="col-sm-8">
+                  <a href="{{ config['metadata']['license']['url'] }}">
+                    {{ config['metadata']['license']['name'] or config['metadata']['license']['url'] }}</a>
+              </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+  <section id="collections">
+    <h2>Collections</h2>
+    <p>
+      <a href="{{ config['server']['url'] }}/collections?f=html">View the collections in this service</a>
+    </p>
+  </section>
+ {% if data['stac'] %}
+  <section id="collections">
+    <h2>SpatioTemporal Assets</h2>
+    <p>
+      <a href="{{ config['server']['url'] }}/stac?f=html">View the SpatioTemporal Assets in this service</a>
+    </p>
+  </section>
+ {% endif %}
+ {% if data['processes'] %}
+  <section id="processes">
+      <h2>Processes</h2>
+      <p>
+        <a href="{{ config['server']['url'] }}/processes?f=html">View the processes in this service</a>
+      </p>
+  </section>
+ {% endif %}
+  <section id="openapi">
+      <h2>API Definition</h2>
+      <p>
+        <a href="{{ config['server']['url'] }}/openapi?f=html">Documentation</a>
+      </p>
+      <p>
+        <a href="{{ config['server']['url'] }}/openapi?f=json">OpenAPI Document</a>
+      </p>
+  </section>
+  <section id="conformance">
+      <h2>Conformance</h2>
+      <p>
+        <a href="{{ config['server']['url'] }}/conformance?f=html">View the conformance classes of this service</a>
+      </p>
+  </section>
+  </div>
+  <div class="col-md-4 col-sm-12">
+    <div class="card fluid">
+      <div class="section dark">
+       <b>Provider</b>
+      </div>
+      <div class="section">
+        <b>{{ config['metadata']['provider']['name'] }}</b><br/>
+        <a href="{{ config['metadata']['provider']['url'] }}">{{ config['metadata']['provider']['url'] }}</a><br/>
+      </div>
+    </div>
+    <div class="card fluid">
+      <div class="section dark">
+          <b>Contact point</b>
+      </div>
+      <div class="section">
+        <b>Address</b><br/>
+        <div class="section">
+          <span>{{ config['metadata']['contact']['address'] }}</span><br/>
+          <span>{{ config['metadata']['contact']['city'] }}</span>,
+          <span>{{ config['metadata']['contact']['stateorprovince'] }}</span><br/>
+          <span>{{ config['metadata']['contact']['postalcode'] }}</span><br/>
+          <span>{{ config['metadata']['contact']['country'] }}</span>
+        </div>
+        <div>
+          <b>Email</b><br/>
+          <span><a href="mailto:{{ config['metadata']['contact']['email'] }}">{{ config['metadata']['contact']['email'] }}</a></span><br/>
+          {% if config['metadata']['contact']['phone'] %}
+            <b>Telephone</b><br/>
+            <span><a href="tel:{{ config['metadata']['contact']['phone'] }}">{{ config['metadata']['contact']['phone'] }}</a></span><br/>
+          {% endif %}
+          {% if config['metadata']['contact']['fax'] %}
+            <b>Fax</b><br/>
+            <span><a href="tel:{{ config['metadata']['contact']['fax'] }}">{{ config['metadata']['contact']['fax'] }}</a></span><br/>
+          {% endif %}
+          {% if config['metadata']['contact']['url'] %}
+            <b>Contact URL</b><br/>
+            <span><a href="{{ config['metadata']['contact']['url'] }}">{{ config['metadata']['contact']['url'] }}</a></span><br/>
+          {% endif %}
+          {% if config['metadata']['contact']['hours'] %}
+            <b>Hours</b><br/>
+            <span>{{ config['metadata']['contact']['hours'] }}</span><br/>
+          {% endif %}
+          {% if config['metadata']['contact']['instructions'] %}
+            <b>Contact instructions</b><br/>
+            <span>{{ config['metadata']['contact']['instructions'] }}</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</section>
+
+{% endblock %}
