@@ -109,132 +109,134 @@ def parse_swob(swob_file):
     swob_name = os.path.basename(swob_file)
 
     # make sure the xml is parse-able
-    try:
-        xml_tree = etree.parse(swob_file)
-    except (FileNotFoundError, etree.ParseError):
-        msg = 'Error: file {} cannot be parsed as xml'.format(swob_file)
-        LOGGER.debug(msg)
-        raise RuntimeError(msg)
+    with open(swob_file) as fh:
+        try:
+            xml_tree = etree.parse(fh)
+        except (FileNotFoundError, etree.ParseError):
+            msg = 'Error: file {} cannot be parsed as xml'.format(swob_file)
+            LOGGER.debug(msg)
+            raise RuntimeError(msg)
 
-    gen_path = './/om:Observation/om:metadata/dset:set/dset:general'
-    general_info_tree = (xml_tree.findall(gen_path, namespaces))
-    general_info_elements = list(general_info_tree[0].iter())
-    properties = {}
+        gen_path = './/om:Observation/om:metadata/dset:set/dset:general'
+        general_info_tree = (xml_tree.findall(gen_path, namespaces))
+        general_info_elements = list(general_info_tree[0].iter())
+        properties = {}
 
-    # extract swob dataset
-    for element in general_info_elements:
-        if 'name' in element.attrib:
-            if element.tag.split('}')[1] == 'dataset':
-                properties[element.tag.split('}')[1]] = (
-                    element.attrib['name'].replace('/', '-'))
+        # extract swob dataset
+        for element in general_info_elements:
+            if 'name' in element.attrib:
+                if element.tag.split('}')[1] == 'dataset':
+                    properties[element.tag.split('}')[1]] = (
+                        element.attrib['name'].replace('/', '-'))
 
-    # add swob source name to properties
-    properties["id"] = swob_name
+        # add swob source name to properties
+        properties["id"] = swob_name
 
-    # extract ID related properties
-    id_path = ('.//om:Observation/om:metadata/' +
-               'dset:set/dset:identification-elements')
-    identification_tree = xml_tree.findall(id_path, namespaces)
-    identification_elements = list(identification_tree[0].iter())
+        # extract ID related properties
+        id_path = ('.//om:Observation/om:metadata/' +
+                   'dset:set/dset:identification-elements')
+        identification_tree = xml_tree.findall(id_path, namespaces)
+        identification_elements = list(identification_tree[0].iter())
 
-    for element in identification_elements:
-        element_name = ''
-        if 'name' in element.attrib:
-            for key in element.attrib:
-                if key == 'name':
-                    if element.attrib[key] == 'stn_elev':
-                        elevation = float(element.attrib['value'])
-                        break
-                    elif element.attrib[key] == 'lat':
-                        latitude = float(element.attrib['value'])
-                        break
-                    elif element.attrib[key] == 'long':
-                        longitude = float(element.attrib['value'])
-                        break
-                    else:
-                        element_name = element.attrib[key]
-                else:
-                    properties["{}-{}".format(element_name, key)] = (
-                            element.attrib[key])
-
-    # set up cords and time stamps
-    swob_values['coordinates'] = [longitude, latitude, elevation]
-
-    s_time = ('.//om:Observation/om:samplingTime/' +
-              'gml:TimeInstant/gml:timePosition')
-    time_sample = list(xml_tree.findall(s_time, namespaces)[0].iter())[0]
-    properties['obs_date_tm'] = time_sample.text
-
-    r_time = ('.//om:Observation/om:resultTime/' +
-              'gml:TimeInstant/gml:timePosition')
-    time_result = list(xml_tree.findall(r_time, namespaces)[0].iter())[0]
-    properties['processed_date_tm'] = time_result.text
-
-    # extract the result data from the swob
-    res_path = './/om:Observation/om:result/dset:elements'
-    result_tree = xml_tree.findall(res_path, namespaces)
-    result_elements = list(result_tree[0].iter())
-
-    last_element = ''
-    for element in result_elements:
-        nested = element.iter()
-        for nest_elem in nested:
-            value = ''
-            uom = ''
-            if 'name' in nest_elem.attrib:
-                name = nest_elem.attrib['name']
-                if 'value' in nest_elem.attrib:
-                    value = nest_elem.attrib['value']
-
-                    # Checks to see if value string can be casted to float/int
-                    try:
-                        if '.' in value:
-                            value = float(value)
+        for element in identification_elements:
+            element_name = ''
+            if 'name' in element.attrib:
+                for key in element.attrib:
+                    if key == 'name':
+                        if element.attrib[key] == 'stn_elev':
+                            elevation = float(element.attrib['value'])
+                            break
+                        elif element.attrib[key] == 'lat':
+                            latitude = float(element.attrib['value'])
+                            break
+                        elif element.attrib[key] == 'long':
+                            longitude = float(element.attrib['value'])
+                            break
                         else:
-                            value = int(value)
-                    except ValueError:
-                        msg = (
-                            f'Warning the value: "{value}" could not be '
-                            f'converted to a number, this can be because '
-                            f'of an improperly formatted number value or '
-                            f'because of an intentional string value'
-                        )
+                            element_name = element.attrib[key]
+                    else:
+                        properties["{}-{}".format(element_name, key)] = (
+                                element.attrib[key])
 
-                        LOGGER.debug(msg)
-                        pass
+        # set up cords and time stamps
+        swob_values['coordinates'] = [longitude, latitude, elevation]
 
-                if 'uom' in nest_elem.attrib:
-                    if nest_elem.attrib['uom'] != 'unitless':
-                        uom = nest_elem.attrib['uom'].replace('\u00c2', '')
+        s_time = ('.//om:Observation/om:samplingTime/' +
+                  'gml:TimeInstant/gml:timePosition')
+        time_sample = list(xml_tree.findall(s_time, namespaces)[0].iter())[0]
+        properties['obs_date_tm'] = time_sample.text
 
-                # element can be 1 of 3 things:
-                #   1. a data piece
-                #   2. a qa summary
-                #   3. a data flag
-                if all([name != 'qa_summary', name != 'data_flag']):
-                    properties[name] = value
-                    if uom:
-                        properties["{}-{}".format(name, 'uom')] = uom
-                    last_element = name
-                elif name == 'qa_summary':
-                    properties["{}-{}".format(last_element, 'qa')] = value
-                elif name == 'data_flag':
-                    properties["{}-{}-{}".format(last_element, 'data_flag',
-                                                 'uom')] = uom
-                    properties["{}-{}-{}".format(last_element, 'data_flag',
-                                                 'code_src')] = (
-                        nest_elem.attrib['code-src'])
-                    properties["{}-{}-{}".format(last_element, 'data_flag',
-                                                 'value')] = (
-                            value)
+        r_time = ('.//om:Observation/om:resultTime/' +
+                  'gml:TimeInstant/gml:timePosition')
+        time_result = list(xml_tree.findall(r_time, namespaces)[0].iter())[0]
+        properties['processed_date_tm'] = time_result.text
 
-        swob_values['properties'] = properties
+        # extract the result data from the swob
+        res_path = './/om:Observation/om:result/dset:elements'
+        result_tree = xml_tree.findall(res_path, namespaces)
+        result_elements = list(result_tree[0].iter())
 
-        for k, v in swob_values['properties'].items():
-            if v == 'MSNG':
-                swob_values['properties'][k] = None
+        last_element = ''
+        for element in result_elements:
+            nested = element.iter()
+            for nest_elem in nested:
+                value = ''
+                uom = ''
+                if 'name' in nest_elem.attrib:
+                    name = nest_elem.attrib['name']
+                    if 'value' in nest_elem.attrib:
+                        value = nest_elem.attrib['value']
 
-        return swob_values
+                        # Checks to see if value string can be cast
+                        # to float/int
+                        try:
+                            if '.' in value:
+                                value = float(value)
+                            else:
+                                value = int(value)
+                        except ValueError:
+                            msg = (
+                                f'Warning the value: "{value}" could not be '
+                                f'converted to a number, this can be because '
+                                f'of an improperly formatted number value or '
+                                f'because of an intentional string value'
+                            )
+
+                            LOGGER.debug(msg)
+                            pass
+
+                    if 'uom' in nest_elem.attrib:
+                        if nest_elem.attrib['uom'] != 'unitless':
+                            uom = nest_elem.attrib['uom'].replace('\u00c2', '')
+
+                    # element can be 1 of 3 things:
+                    #   1. a data piece
+                    #   2. a qa summary
+                    #   3. a data flag
+                    if all([name != 'qa_summary', name != 'data_flag']):
+                        properties[name] = value
+                        if uom:
+                            properties["{}-{}".format(name, 'uom')] = uom
+                        last_element = name
+                    elif name == 'qa_summary':
+                        properties["{}-{}".format(last_element, 'qa')] = value
+                    elif name == 'data_flag':
+                        properties["{}-{}-{}".format(last_element, 'data_flag',
+                                                     'uom')] = uom
+                        properties["{}-{}-{}".format(last_element, 'data_flag',
+                                                     'code_src')] = (
+                            nest_elem.attrib['code-src'])
+                        properties["{}-{}-{}".format(last_element, 'data_flag',
+                                                     'value')] = (
+                                value)
+
+            swob_values['properties'] = properties
+
+            for k, v in swob_values['properties'].items():
+                if v == 'MSNG':
+                    swob_values['properties'][k] = None
+
+            return swob_values
 
 
 def swob2geojson(swob_file):
