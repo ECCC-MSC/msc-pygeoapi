@@ -35,3 +35,6 @@
 
 # every day at 0500h, clean swob realtime data older than 30 days
 0 5 * * * geoadm msc-pygeoapi data load swob-realtime clean-records --days 30
+
+# every day at 0300h, clean out empty MetPX directories
+0 3 * * * geoadm /usr/bin/find $MSC_PYGEOAPI_CACHEDIR -type d -empty -delete > /dev/null 2>&1
