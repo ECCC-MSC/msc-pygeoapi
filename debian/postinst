@@ -40,8 +40,7 @@ export XDG_CACHE_HOME=/tmp/msc-pygeoapi-sarra-logs
 export PYGEOAPI_CONFIG=/opt/msc-pygeoapi/conf/msc-pygeoapi-config.yml
 export PYGEOAPI_OPENAPI=/opt/msc-pygeoapi/conf/msc-pygeoapi-openapi.yml
 
-
-mkdir -p /tmp/msc-pygeoapi-sarra-logs
+mkdir -p $XDG_CACHE_HOME
 
 # prepare hydrometric realtime
 msc-pygeoapi data hydrometric-realtime cache-stations
