@@ -31,6 +31,7 @@
 import click
 
 from msc_pygeoapi.process.cccs import cccs
+from msc_pygeoapi.process.weather import weather
 
 
 @click.group()
@@ -39,3 +40,4 @@ def process():
 
 
 process.add_command(cccs)
+process.add_command(weather)
