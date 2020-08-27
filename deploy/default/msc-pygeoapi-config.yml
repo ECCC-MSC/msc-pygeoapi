@@ -643,7 +643,7 @@ resources:
                 crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
             temporal:
                 begin: 1840-01-01T00:00:00Z
-                end: 2017-12-31
+                end: 2019-12-31T11:59:50Z
         providers:
             - type: feature
               default: true
@@ -698,7 +698,7 @@ resources:
                 crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
             temporal:
                 begin: 1840-01-01T00:00:00Z
-                end: 2017-12-31
+                end: 2019-12-31T11:59:50Z
         providers:
             - type: feature
               default: true
@@ -753,7 +753,7 @@ resources:
                 crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
             temporal:
                 begin: 1840-01-01T00:00:00Z
-                end: 2017-12-31
+                end: 2019-12-31T11:59:50Z
         providers:
             - type: feature
               default: true
@@ -809,7 +809,7 @@ resources:
                 crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
             temporal:
                 begin: 1840-01-01T00:00:00Z
-                end: 2017-12-31
+                end: 2019-12-31T11:59:50Z
         providers:
             - type: feature
               default: true
