@@ -43,6 +43,7 @@ import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import numpy as np
 from osgeo import gdal, osr
+from PIL import Image
 
 LOGGER = logging.getLogger(__name__)
 
@@ -124,7 +125,7 @@ PROCESS_METADATA = {
     }, {
         'id': 'format',
         'title': 'output format',
-        'description': 'PNG or GeoTiff',
+        'description': 'PNG, GeoTiff or GeoPNG',
         'input': {
             'literalDataDomain': {
                 'dataType': 'string',
@@ -553,6 +554,54 @@ def get_geotiff(data, bbox, path):
     return buffer
 
 
+def get_geopng(data, bbox):
+    """
+    transform the vigilance numpy array into Ge oPNG
+
+    param data : vigilance array
+    param bbox : bounding box
+
+    return : buffer : buffer of the geoPng bytes
+
+    """
+    x_pixel_dist = (bbox[2] - bbox[0])/data.shape[1]
+    y_pixel_dist = -1 * (bbox[3] - bbox[1])/data.shape[0]
+    x_top_left = bbox[0]
+    y_top_left = bbox[3]
+
+    pgw = []
+    pgw.append(x_pixel_dist)
+    pgw.append(0)
+    pgw.append(0)
+    pgw.append(y_pixel_dist)
+    pgw.append(x_top_left)
+    pgw.append(y_top_left)
+
+    # for generating the .pgw
+    '''
+    f = open("vigi.pgw", "w")
+    for line in pgw:
+        f.write(str(line) + '\n')
+    f.close()
+    '''
+
+    color = np.zeros((data.shape[0], data.shape[1], 3))
+    color[data == 0] = [255, 255, 255]
+    color[data == 1] = [246, 255, 0]
+    color[data == 2] = [255, 160, 0]
+    color[data == 3] = [255, 0, 0]
+
+    im = Image.fromarray(np.uint8(color), 'RGB')
+    b = BytesIO()
+    im.save(b, format='PNG')
+
+    output = {
+        'pgw': pgw,
+        'png': b.getvalue()
+    }
+    return output
+
+
 def generate_vigilance(layers, fh, mr, bbox, format_):
     """
     generate a vigilance file (with specified format)
@@ -597,6 +646,9 @@ def generate_vigilance(layers, fh, mr, bbox, format_):
                 elif format_ == 'geotiff':
                     tiff_buffer = get_geotiff(vigi_data, bbox, path)
                     return tiff_buffer
+                elif format_ == 'geopng':
+                    geopng_buffer = get_geopng(vigi_data, bbox)
+                    return geopng_buffer
                 else:
                     LOGGER.error('invalid format')
             else:
@@ -661,7 +713,10 @@ try:
                                             fh, mr, bbox.split(','),
                                             format_)
                 if output is not None:
-                    return output.getvalue()
+                    if format_ == "geopng":
+                        return output
+                    else:
+                        return output.getvalue()
                 else:
                     return BytesIO().getvalue()
             except ValueError as err:
