@@ -865,6 +865,11 @@ resources:
         processor:
             name: msc_pygeoapi.process.cccs.raster_drill.RasterDrillProcessor
 
+    rdpa-graph:
+        type: process
+        processor:
+            name: msc_pygeoapi.process.weather.rdpa_graph.RdpaGraphProcessor
+
     generate-vigilance:
         type: process
         processor:
