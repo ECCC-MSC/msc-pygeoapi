@@ -35,11 +35,11 @@ from lxml import etree
 import os
 import re
 
+from msc_pygeoapi import cli_options
 from msc_pygeoapi.env import (MSC_PYGEOAPI_ES_TIMEOUT, MSC_PYGEOAPI_ES_URL,
                               MSC_PYGEOAPI_ES_AUTH)
 from msc_pygeoapi.loader.base import BaseLoader
-from msc_pygeoapi.util import (click_abort_if_false, get_es,
-                               json_pretty_print, _get_date_format,
+from msc_pygeoapi.util import (get_es, json_pretty_print, _get_date_format,
                                _get_element)
 
 LOGGER = logging.getLogger(__name__)
@@ -460,13 +460,8 @@ def cap_alerts():
 
 @click.command()
 @click.pass_context
-@click.option('--file', '-f', 'file_',
-              type=click.Path(exists=True, resolve_path=True),
-              help='Path to file')
-@click.option('--directory', '-d', 'directory',
-              type=click.Path(exists=True, resolve_path=True,
-                              dir_okay=True, file_okay=False),
-              help='Path to directory')
+@cli_options.OPTION_FILE()
+@cli_options.OPTION_DIRECTORY()
 def add(ctx, file_, directory):
     """add data to system"""
 
@@ -497,12 +492,13 @@ def add(ctx, file_, directory):
 
 @click.command()
 @click.pass_context
-@click.option('--days', '-d', default=DAYS_TO_KEEP, type=int,
-              help='delete documents older than n days (default={})'.format(
-                  DAYS_TO_KEEP))
-@click.option('--yes', is_flag=True, callback=click_abort_if_false,
-              expose_value=False,
-              prompt='Are you sure you want to delete old documents?')
+@cli_options.OPTION_DAYS(
+    default=DAYS_TO_KEEP,
+    help=f'Delete documents older than n days (default={DAYS_TO_KEEP})'
+)
+@cli_options.OPTION_YES(
+    prompt='Are you sure you want to delete old documents?'
+)
 def clean_records(ctx, days):
     """Delete old documents"""
 
@@ -528,9 +524,9 @@ def clean_records(ctx, days):
 
 @click.command()
 @click.pass_context
-@click.option('--yes', is_flag=True, callback=click_abort_if_false,
-              expose_value=False,
-              prompt='Are you sure you want to delete this index?')
+@cli_options.OPTION_YES(
+    prompt='Are you sure you want to delete this index?'
+)
 def delete_index(ctx):
     """Delete current conditions index"""
 

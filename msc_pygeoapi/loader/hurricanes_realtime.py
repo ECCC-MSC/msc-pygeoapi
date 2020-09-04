@@ -509,7 +509,7 @@ def hurricanes():
                               dir_okay=True, file_okay=False),
               help='Path to directory')
 def add(ctx, file_, directory):
-    """add data to system"""
+    """Add hurricane data to Elasticsearch"""
 
     if all([file_ is None, directory is None]):
         raise click.ClickException('Missing --file/-f or --dir/-d option')
