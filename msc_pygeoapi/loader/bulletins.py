@@ -31,10 +31,11 @@ import click
 from datetime import datetime, timedelta
 import logging
 
+from msc_pygeoapi import cli_options
 from msc_pygeoapi.env import (MSC_PYGEOAPI_ES_TIMEOUT, MSC_PYGEOAPI_ES_URL,
                               MSC_PYGEOAPI_ES_AUTH)
 from msc_pygeoapi.loader.base import BaseLoader
-from msc_pygeoapi.util import click_abort_if_false, get_es
+from msc_pygeoapi.util import get_es
 
 
 LOGGER = logging.getLogger(__name__)
@@ -172,12 +173,13 @@ def bulletins():
 
 @click.command()
 @click.pass_context
-@click.option('--days', '-d', default=DAYS_TO_KEEP, type=int,
-              help='delete documents older than n days (default={})'.format(
-                  DAYS_TO_KEEP))
-@click.option('--yes', is_flag=True, callback=click_abort_if_false,
-              expose_value=False,
-              prompt='Are you sure you want to delete old documents?')
+@cli_options.OPTION_DAYS(
+    default=DAYS_TO_KEEP,
+    help=f'Delete documents older than n days (default={DAYS_TO_KEEP})'
+)
+@cli_options.OPTION_YES(
+    prompt='Are you sure you want to delete old documents?'
+)
 def clean_records(ctx, days):
     """Delete old documents"""
 
@@ -203,9 +205,9 @@ def clean_records(ctx, days):
 
 @click.command()
 @click.pass_context
-@click.option('--yes', is_flag=True, callback=click_abort_if_false,
-              expose_value=False,
-              prompt='Are you sure you want to delete this index?')
+@cli_options.OPTION_YES(
+    prompt='Are you sure you want to delete this index?'
+)
 def delete_index(ctx):
     """Delete bulletins index"""
 

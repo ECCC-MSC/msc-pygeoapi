@@ -35,10 +35,11 @@ import os
 import urllib.request
 from elasticsearch import helpers, logger as elastic_logger
 
+from msc_pygeoapi import cli_options
 from msc_pygeoapi.env import (MSC_PYGEOAPI_CACHEDIR, MSC_PYGEOAPI_ES_TIMEOUT,
                               MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
 from msc_pygeoapi.loader.base import BaseLoader
-from msc_pygeoapi.util import click_abort_if_false, get_es
+from msc_pygeoapi.util import get_es
 
 
 LOGGER = logging.getLogger(__name__)
@@ -435,12 +436,13 @@ def cache_stations(ctx):
 
 @click.command()
 @click.pass_context
-@click.option('--days', '-d', default=DAYS_TO_KEEP, type=int,
-              help='delete documents older than n days (default={})'.format(
-                  DAYS_TO_KEEP))
-@click.option('--yes', is_flag=True, callback=click_abort_if_false,
-              expose_value=False,
-              prompt='Are you sure you want to delete old documents?')
+@cli_options.OPTION_DAYS(
+    default=DAYS_TO_KEEP,
+    help='Delete documents older than n days (default={})'
+)
+@cli_options.OPTION_YES(
+    prompt='Are you sure you want to delete old documents?'
+)
 def clean_records(ctx, days):
     """Delete old documents"""
 
@@ -473,9 +475,9 @@ def clean_records(ctx, days):
 
 @click.command()
 @click.pass_context
-@click.option('--yes', is_flag=True, callback=click_abort_if_false,
-              expose_value=False,
-              prompt='Are you sure you want to delete these indexes?')
+@cli_options.OPTION_YES(
+    prompt='Are you sure you want to delete these indexes?'
+)
 def delete_index(ctx):
     """Delete hydrometric realtime indexes"""
 

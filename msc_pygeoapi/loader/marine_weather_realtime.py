@@ -38,6 +38,7 @@ from elasticsearch import helpers, exceptions, logger as elastic_logger
 from lxml import etree
 from parse import parse
 
+from msc_pygeoapi import cli_options
 from msc_pygeoapi.env import (
     MSC_PYGEOAPI_BASEPATH,
     MSC_PYGEOAPI_ES_TIMEOUT,
@@ -761,22 +762,8 @@ def marine_weather():
 
 @click.command()
 @click.pass_context
-@click.option(
-    '--file',
-    '-f',
-    'file_',
-    type=click.Path(exists=True, resolve_path=True),
-    help='Path to file',
-)
-@click.option(
-    '--directory',
-    '-d',
-    'directory',
-    type=click.Path(
-        exists=True, resolve_path=True, dir_okay=True, file_okay=False
-    ),
-    help='Path to directory',
-)
+@cli_options.OPTION_FILE()
+@cli_options.OPTION_DIRECTORY()
 def add(ctx, file_, directory):
     """add data to system"""
 
@@ -810,12 +797,7 @@ def add(ctx, file_, directory):
 
 @click.command()
 @click.pass_context
-@click.option(
-    '--index_name',
-    '-i',
-    type=click.Choice(INDICES),
-    help='msc-pygeoapi marine weather  index name to delete',
-)
+@cli_options.OPTION_INDEX_NAME(type=click.Choice(INDICES))
 def delete_index(ctx, index_name):
     """
     Delete a particular ES index with a given name as argument or all if no
