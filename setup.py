@@ -87,7 +87,7 @@ class PyTest(Command):
     def run(self):
         import subprocess
         errno = subprocess.call([sys.executable,
-                                 'msc_pygeoapi/tests/run_tests.py'])
+                                 './tests/run_tests.py'])
         raise SystemExit(errno)
 
 
