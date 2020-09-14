@@ -1,7 +1,7 @@
 server:
     bind:
         host: 0.0.0.0
-        port: 5000
+        port: 5022
     url: ${MSC_PYGEOAPI_OGC_API_URL}
     basepath: ${MSC_PYGEOAPI_OGC_API_URL_BASEPATH}
     mimetype: application/json; charset=UTF-8
@@ -864,3 +864,7 @@ resources:
         type: process
         processor:
             name: msc_pygeoapi.process.cccs.raster_drill.RasterDrillProcessor
+    extract-raster:
+        type: process
+        processor:
+            name: msc_pygeoapi.process.weather.extract_raster.ExtractRasterProcessor

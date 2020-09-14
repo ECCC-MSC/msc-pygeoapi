@@ -1,10 +1,12 @@
 click
 elasticsearch
+fiona
 gdal
 lxml
 parse
 pyproj
 pyyaml
+rasterio
 requests
 sqlalchemy
 unicodecsv
