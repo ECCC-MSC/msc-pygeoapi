@@ -864,3 +864,7 @@ resources:
         type: process
         processor:
             name: msc_pygeoapi.process.cccs.raster_drill.RasterDrillProcessor
+    extract-raster:
+        type: process
+        processor:
+            name: msc_pygeoapi.process.weather.extract_raster.ExtractRasterProcessor
