@@ -134,7 +134,7 @@ PROCESS_METADATA = {
 
 }
 
-ES_INDEX = 'geomet-data-registry'
+ES_INDEX = 'hackathon-lp'
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 
 #initalize dictionary to return and generic metadata
@@ -433,6 +433,7 @@ def write_output(features, forecast_hours, poly, line, point):
                         'Wind Speed Observation': item[key][0].tolist()
                     })
                 i += 1
+        return OUTDATA
                     
     #prepare polygon output
     if poly:
@@ -468,6 +469,7 @@ def write_output(features, forecast_hours, poly, line, point):
                     OUTDATA['Max Wind Speed Data'].append(poly_out("Miax Wind Speed", forecast_hours[i], item[key][1]))
                     OUTDATA['Mean Wind Speed Data'].append(poly_out("Mean Wind Speed", forecast_hours[i], item[key][2]))    
                 i += 1
+        return OUTDATA
                     
     #prepare point output
     if point:
@@ -491,8 +493,7 @@ def write_output(features, forecast_hours, poly, line, point):
                 if 'Wind Speed Data' in item[key][3]:
                     OUTDATA['Wind Speed Data'].append(point_out("Wind Speed Observation", forecast_hours[i], item[key][2]))
                 i += 1
-    
-    return OUTDATA
+        return OUTDATA
 
 @click.command('extract-raster')
 @click.pass_context
