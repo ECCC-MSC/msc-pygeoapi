@@ -34,14 +34,13 @@ import logging
 import os
 import re
 import sys
+import traceback
 import tempfile
 
 from elasticsearch import Elasticsearch, exceptions
-import fiona
-from fiona import transform
 import numpy as np
 from osgeo import gdal, osr
-from pyproj import Proj, transform
+from pyproj import Transformer
 import rasterio
 import rasterio.mask
 from rasterio.io import MemoryFile
@@ -135,7 +134,7 @@ PROCESS_METADATA = {
 
 }
 
-ES_INDEX = 'geomet-data-registry-tileindex-ip'
+ES_INDEX = 'geomet-data-registry'
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 
 #initalize dictionary to return and generic metadata
@@ -211,9 +210,8 @@ def reproject(x, y, inputSRS_wkt, raster_path):
     #reproject the point
     srs = osr.SpatialReference()
     srs.ImportFromWkt(inputSRS_wkt)
-    inProj = Proj(init='epsg:4326')
-    outProj = Proj(srs.ExportToProj4())
-    _x, _y = transform(inProj, outProj, x, y)
+    transformer = Transformer.from_crs("epsg:4326", srs.ExportToProj4())
+    _x, _y = transformer.transform(x, y)
     
     ds = gdal.Open(raster_path, gdal.GA_ReadOnly)
     geotransform = ds.GetGeoTransform()
@@ -505,7 +503,6 @@ def write_output(features, forecast_hours, poly, line, point):
               help='model run to use for the time series')
 @click.option('--input_geojson', 'input_geojson', help='shape to clip by')
 def cli(ctx, model, forecast_hours_, model_run, input_geojson):
-
     output_geojson = extract_raster_main(model, forecast_hours_, model_run, input_geojson)
 
     return output_geojson
