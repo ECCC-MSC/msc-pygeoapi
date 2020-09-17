@@ -5,6 +5,7 @@ lxml
 parse
 pyproj
 pyyaml
+rasterio
 requests
 sqlalchemy
 unicodecsv
