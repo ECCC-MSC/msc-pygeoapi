@@ -1,7 +1,7 @@
 server:
     bind:
         host: 0.0.0.0
-        port: 5022
+        port: 5000
     url: ${MSC_PYGEOAPI_OGC_API_URL}
     basepath: ${MSC_PYGEOAPI_OGC_API_URL_BASEPATH}
     mimetype: application/json; charset=UTF-8

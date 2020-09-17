@@ -1,6 +1,5 @@
 click
 elasticsearch
-fiona
 gdal
 lxml
 parse

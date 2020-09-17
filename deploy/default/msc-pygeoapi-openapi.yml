@@ -1,3 +1,7 @@
+[2020-09-17T18:37:07Z] DEBUG - Logging initialized
+[2020-09-17T18:37:07Z] DEBUG - Plugins: {'HelloWorld': 'pygeoapi.process.hello_world.HelloWorldProcessor'}
+[2020-09-17T18:37:07Z] DEBUG - package name: msc_pygeoapi.process.weather.extract_raster
+[2020-09-17T18:37:07Z] DEBUG - class name: ExtractRasterProcessor
 components:
   parameters:
     f:
