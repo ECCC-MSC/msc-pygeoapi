@@ -42,9 +42,9 @@ index ed21350..fc87017 100644
              data = p.query(**query_args)
 ```
 
+Sample configuration
 
 ```yaml
-
 hrdps-temperature:
     type: collection
     title: Global Deterministic Prediction System sample
