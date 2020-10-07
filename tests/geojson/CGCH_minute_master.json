@@ -1,4 +1,5 @@
 {
+    "id": "2020-07-01-0007-CGCH-AUTO-minute-swob.xml",
     "type": "Feature",
     "geometry": {
         "type": "Point",
@@ -69,7 +70,7 @@
         "stn_pres": 970.5,
         "stn_pres-uom": "hPa",
         "stn_pres-qa": 100,
-        "avg_cum_pcpn_gag_wt_fltrd_pst5mts": "MSNG",
+        "avg_cum_pcpn_gag_wt_fltrd_pst5mts": null,
         "avg_cum_pcpn_gag_wt_fltrd_pst5mts-uom": "kg/m²",
         "avg_cum_pcpn_gag_wt_fltrd_pst5mts-qa": -1,
         "snw_dpth": -1,
