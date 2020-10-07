@@ -1,4 +1,5 @@
 {
+    "id": "2020-07-01-0007-CAFC-AUTO-minute-swob.xml",
     "type": "Feature",
     "geometry": {
         "type": "Point",
@@ -89,7 +90,7 @@
         "max_rel_hum_pst1hr-data_flag-uom": "code",
         "max_rel_hum_pst1hr-data_flag-code_src": "std_code_src",
         "max_rel_hum_pst1hr-data_flag-value": 4,
-        "avg_wnd_dir_10m_pst1hr": "MSNG",
+        "avg_wnd_dir_10m_pst1hr": null,
         "avg_wnd_dir_10m_pst1hr-uom": "°",
         "avg_wnd_dir_10m_pst1hr-data_flag-uom": "code",
         "avg_wnd_dir_10m_pst1hr-data_flag-code_src": "std_code_src",
@@ -260,13 +261,13 @@
         "snw_dpth_1-uom": "cm",
         "snw_dpth_2": 0,
         "snw_dpth_2-uom": "cm",
-        "snw_dpth_3": "MSNG",
+        "snw_dpth_3": null,
         "snw_dpth_3-uom": "cm",
         "avg_snw_dpth_pst5mts_1": 11,
         "avg_snw_dpth_pst5mts_1-uom": "cm",
         "avg_snw_dpth_pst5mts_2": 0,
         "avg_snw_dpth_pst5mts_2-uom": "cm",
-        "avg_snw_dpth_pst5mts_3": "MSNG",
+        "avg_snw_dpth_pst5mts_3": null,
         "avg_snw_dpth_pst5mts_3-uom": "cm"
     }
 }
