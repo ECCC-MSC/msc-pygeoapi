@@ -1,10 +1,12 @@
 # =================================================================
 #
-# Author: Etienne Pelletier <etienne.pelletier@canada.ca>
 # Author: Alex Hurka <alex.hurka@canada.ca>
+# Author: Etienne Pelletier <etienne.pelletier@canada.ca>
+# Author: Tom Kralidis <tom.kralidis@canada.ca>
 #
-# Copyright (c) 2020 Etienne Pelletier
 # Copyright (c) 2019 Alex Hurka
+# Copyright (c) 2020 Etienne Pelletier
+# Copyright (c) 2020 Tom Kralidis
 
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -29,20 +31,14 @@
 #
 # =================================================================
 
-# Example Usage:
-# Load all datasets from scratch:
-# msc-pygeoapi data load ahccd --path /path/to/json/locations.json --es https://path/to/elasticsearch --username user --password pass --dataset all # noqa
-#
-# Load a single dataset from scratch:
-# msc-pygeoapi data load ahccd --path /path/to/json/locations.json --es https://path/to/elasticsearch --username user --password pass --dataset trends # noqa
-
 import json
 import logging
+
 import click
 
 from msc_pygeoapi import cli_options
-from msc_pygeoapi.loader.base import BaseLoader
 from msc_pygeoapi.env import MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH
+from msc_pygeoapi.loader.base import BaseLoader
 from msc_pygeoapi.util import get_es, submit_elastic_package
 
 
@@ -557,9 +553,21 @@ def ahccd():
     pass
 
 
+CTL_HELP = '''
+    The control file should be a JSON of the form:
+    {
+        "stations": "/path/to/stations.json",
+        "annual": "/path/to/annual.json",
+        "monthly": "/path/to/monthly.json",
+        "seasonal": "/path/to/seasonal.json",
+        "trends": "/path/to/trends.json"
+    }
+    '''
+
+
 @click.command()
 @click.pass_context
-@cli_options.OPTION_FILE('--path', help='Path to file with raw JSON')
+@cli_options.OPTION_FILE('--ctl', help=CTL_HELP)
 @cli_options.OPTION_ELASTICSEARCH()
 @cli_options.OPTION_ES_USERNAME()
 @cli_options.OPTION_ES_PASSWORD()
@@ -568,25 +576,8 @@ def ahccd():
         ['all', 'stations', 'trends', 'annual', 'seasonal', 'monthly']
     )
 )
-def add(ctx, path, es, username, password, dataset):
-    """
-    Loads AHCCD data from Oracle into Elasticsearch.
-
-    The JSON locations file should be a JSON of the form:
-    {
-        "stations": "/path/to/stations.json",
-        "annual": "/path/to/annual.json",
-        "monthly": "/path/to/monthly.json",
-        "seasonal": "/path/to/seasonal.json",
-        "trends": "/path/to/trends.json"
-    }
-
-    :param path: path to file with raw JSON locations
-    :param es: path to Elasticsearch index.
-    :param username: username for HTTP authentication.
-    :param password: password for HTTP authentication.
-    :param dataset: name of dataset to load, or all for all datasets.
-    """
+def add(ctx, ctl, es, username, password, dataset):
+    """Loads AHCCD data from JSON into Elasticsearch"""
 
     plugin_def = {
         'es_conn_dict': {'host': es, 'auth': (username, password)}
@@ -598,127 +589,34 @@ def add(ctx, path, es, username, password, dataset):
     loader = AhccdLoader(plugin_def)
 
     try:
-        with open(path, 'r') as f:
-            path_dict = json.loads(f.read())
+        with open(ctl, 'r') as f:
+            ctl_dict = json.loads(f.read())
     except Exception as err:
-        LOGGER.error(
-            f'Could not open JSON location file due to: {str(err)}.'.format(
-                str(err)
-            )
-        )
+        msg = 'Could not open JSON location file: {}'.format(err)
+        click.ClickException(err)
 
     if dataset == 'all':
-        try:
-            LOGGER.info('Populating stations...')
-            loader.create_index('stations')
-            stations = loader.generate_docs(path_dict['stations'], 'stations')
-
-            submit_elastic_package(loader.ES, stations)
-            LOGGER.info('Stations populated.')
-        except Exception as err:
-            LOGGER.error(f'Could not populate stations due to: {str(err)}.')
-
-        try:
-            LOGGER.info('Populating trends...')
-            loader.create_index('trends')
-            trends = loader.generate_docs(path_dict['trends'], 'trends')
-
-            submit_elastic_package(loader.ES, trends)
-            LOGGER.info('Trends populated.')
-        except Exception as err:
-            LOGGER.error(f'Could not populate trends due to: {str(err)}.')
-
-        try:
-            LOGGER.info('Populating annual...')
-            loader.create_index('annual')
-            annuals = loader.generate_docs(path_dict['annual'], 'annual')
-
-            submit_elastic_package(loader.ES, annuals)
-            LOGGER.info('Annual populated.')
-        except Exception as err:
-            LOGGER.error(f'Could not populate annual due to: {str(err)}.')
-
-        try:
-            LOGGER.info('Populating seasonal...')
-            loader.create_index('seasonal')
-            seasonals = loader.generate_docs(path_dict['seasonal'], 'seasonal')
-
-            submit_elastic_package(loader.ES, seasonals)
-            LOGGER.info('Seasonal populated.')
-        except Exception as err:
-            LOGGER.error(f'Could not populate seasonal due to: {str(err)}.')
-
-        try:
-            LOGGER.info('Populating monthly...')
-            loader.create_index('monthly')
-            monthlies = loader.generate_docs(path_dict['monthly'], 'monthly')
-
-            submit_elastic_package(loader.ES, monthlies)
-            LOGGER.info('Monthly populated.')
-        except Exception as err:
-            LOGGER.error(f'Could not populate monthly due to: {str(err)}.')
-
-    elif dataset == 'stations':
-        try:
-            LOGGER.info('Populating stations...')
-            loader.create_index('stations')
-            stations = loader.generate_docs(path_dict['stations'], 'stations')
-
-            submit_elastic_package(loader.ES, stations)
-            LOGGER.info('Stations populated.')
-        except Exception as err:
-            LOGGER.error(f'Could not populate stations due to: {str(err)}.')
-
-    elif dataset == 'trends':
-        try:
-            LOGGER.info('Populating trends...')
-            loader.create_index('trends')
-            trends = loader.generate_docs(path_dict['trends'], 'trends')
-
-            submit_elastic_package(loader.ES, trends)
-            LOGGER.info('Trends populated.')
-        except Exception as err:
-            LOGGER.error(f'Could not populate trends due to: {str(err)}.')
-
-    elif dataset == 'annual':
-        try:
-            LOGGER.info('Populating annual...')
-            loader.create_index('annual')
-            annuals = loader.generate_docs(path_dict['annual'], 'annual')
-
-            submit_elastic_package(loader.ES, annuals)
-            LOGGER.info('Annual populated.')
-        except Exception as err:
-            LOGGER.error(f'Could not populate annual due to: {str(err)}.')
-
-    elif dataset == 'seasonal':
-        try:
-            LOGGER.info('Populating seasonal...')
-            loader.create_index('seasonal')
-            seasonals = loader.generate_docs(path_dict['seasonal'], 'seasonal')
-
-            submit_elastic_package(loader.ES, seasonals)
-            LOGGER.info('Seasonal populated.')
-        except Exception as err:
-            LOGGER.error(f'Could not populate seasonal due to: {str(err)}.')
-
-    elif dataset == 'monthly':
-        try:
-            LOGGER.info('Populating monthly...')
-            loader.create_index('monthly')
-            monthlies = loader.generate_docs(path_dict['monthly'], 'monthly')
-
-            submit_elastic_package(loader.ES, monthlies)
-            LOGGER.info('Monthly populated.')
-        except Exception as err:
-            LOGGER.error(f'Could not populate monthly due to: {str(err)}.')
-
+        datasets_to_process = [
+            'annual',
+            'monthly',
+            'seasonal',
+            'stations',
+            'trends'
+        ]
     else:
-        LOGGER.critical(
-            f'Unknown dataset parameter {dataset}, skipping index population.'
-        )
+        datasets_to_process = [dataset]
 
-    LOGGER.info('Finished populating indices.')
+    click.echo('Processing dataset(s): {}'.format(datasets_to_process))
+
+    for dtp in datasets_to_process:
+        try:
+            click.echo('Populating {} index'.format(dtp))
+            loader.create_index(dtp)
+            dtp_data = loader.generate_docs(ctl_dict[dtp], dtp)
+            submit_elastic_package(loader.ES, dtp_data)
+        except Exception as err:
+            msg = 'Could not populate {} index: {}'.format(dtp, err)
+            raise click.ClickException(msg)
 
 
 ahccd.add_command(add)
