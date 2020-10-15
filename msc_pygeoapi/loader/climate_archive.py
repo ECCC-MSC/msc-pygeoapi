@@ -1,10 +1,12 @@
 # =================================================================
 #
-# Author: Etienne Pelletier <etienne.pelletier@canada.ca>
 # Author: Alex Hurka <alex.hurka@canada.ca>
+# Author: Etienne Pelletier <etienne.pelletier@canada.ca>
+# Author: Tom Kralidis <tom.kralidis@canada.ca>
 #
 # Copyright (c) 2020 Etienne Pelletier
 # Copyright (c) 2019 Alex Hurka
+# Copyright (c) 2020 Tom Kralidis
 
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -29,24 +31,11 @@
 #
 # =================================================================
 
-# Example Usage:
-# Load all datasets from scratch:
-# python es_loader_msc_climate_archive.py --db <oracle db connection string> --es https://path/to/elasticsearch --username user --password pass --dataset all # noqa
-#
-# Load a single dataset from scratch:
-# python es_loader_msc_climate_archive.py --db <oracle db connection string> --es https://path/to/elasticsearch --username user --password pass --dataset daily # noqa
-#
-# Update a dataset starting from a point in time
-# python es_loader_msc_climate_archive.py --db <oracle db connection string> --es https://path/to/elasticsearch --username user --password pass --dataset daily --date 2018-08-22 # noqa
-#
-# Update a dataset on a regular basis (e.g. update based on new data in last 7 days)  # noqa
-# python es_loader_msc_climate_archive.py --db <oracle db connection string> --es https://path/to/elasticsearch --username user --password pass --dataset daily --date $(date -d '-7day' +"%Y-%m-%d") # noqa
-
-
-import logging
-import cx_Oracle
-import click
 import collections
+import logging
+
+import click
+import cx_Oracle
 
 from msc_pygeoapi import cli_options
 from msc_pygeoapi.loader.base import BaseLoader
@@ -81,13 +70,13 @@ class ClimateArchiveLoader(BaseLoader):
 
         # setup DB connection
         try:
-            self.con = cx_Oracle.connect(plugin_def['db_conn_string'])
+            self.conn = cx_Oracle.connect(plugin_def['db_conn_string'])
         except Exception as err:
             msg = f'Could not connect to Oracle: {err}'
             LOGGER.critical(msg)
             raise click.ClickException(msg)
 
-        self.cur = self.con.cursor()
+        self.cur = self.conn.cursor()
 
     def create_index(self, index):
         """
@@ -982,32 +971,11 @@ def climate_archive():
     help=' Load all stations starting from specified station',
     required=False,
 )
-@click.option('--date', help='Start date to fetch updates', required=False)
-def add(
-    ctx,
-    db,
-    es,
-    username,
-    password,
-    dataset,
-    station=None,
-    starting_from=False,
-    date=None,
-):
-    """
-    Loads MSC Climate Archive data into Elasticsearch.
-
-    Controls transformation from oracle to Elasticsearch.
-
-    :param db: database connection string.
-    :param es: path to Elasticsearch.
-    :param username: username for HTTP authentication.
-    :param password: password for HTTP authentication.
-    :param dataset: name of dataset to load, or all for all datasets.
-    :param station: STN_ID of station to index for daily.
-    :param starting_from: load all stations after specified station
-    :param date: date to start fetching daily and monthly data from.
-    """
+@click.option('--date', help='Start date to fetch updates (YYYY-MM-DD)',
+              required=False)
+def add(ctx, db, es, username, password, dataset, station=None,
+        starting_from=False, date=None):
+    """Loads MSC Climate Archive data from Oracle into Elasticsearch"""
 
     plugin_def = {
         'db_conn_string': db,
@@ -1020,122 +988,61 @@ def add(
     loader = ClimateArchiveLoader(plugin_def)
 
     if dataset == 'all':
-        stn_dict = loader.get_station_data(station, starting_from)
-        normals_dict = loader.get_normals_data()
-        periods_dict = loader.get_normals_periods()
+        datasets_to_process = ['daily', 'monthly', 'normals', 'stations']
+    else:
+        datasets_to_process = [dataset]
 
+    click.echo('Processing dataset(s): {}'.format(datasets_to_process))
+
+    if 'stations' in datasets_to_process:
         try:
-            LOGGER.info('Populating stations...')
+            click.echo('Populating stations index')
             loader.create_index('stations')
             stations = loader.generate_stations()
-
             submit_elastic_package(loader.ES, stations)
-            LOGGER.info('Stations populated.')
         except Exception as err:
-            LOGGER.error(f'Could not populate stations due to: {str(err)}.')
+            msg = 'Could not populate stations index: {}'.format(err)
+            raise click.ClickException(msg)
+
+    if 'normals' in datasets_to_process:
         try:
-            LOGGER.info('Populating normals...')
-            loader.create_index('normals')
-            normals = loader.generate_normals(
-                stn_dict, normals_dict, periods_dict
-            )
-
-            submit_elastic_package(loader.ES, normals)
-            LOGGER.info('Normals populated.')
-        except Exception as err:
-            LOGGER.error(f'Could not populate normals due to: {str(err)}.')
-
-        try:
-            LOGGER.info('Populating monthly summary...')
-            if not date:
-                loader.create_index('monthly_summary')
-            monthlies = loader.generate_monthly_data(stn_dict, date)
-
-            submit_elastic_package(loader.ES, monthlies)
-            LOGGER.info('Monthly Summary populated.')
-        except Exception as err:
-            LOGGER.error(
-                f'Could not populate monthly summary due to: {str(err)}.'
-            )
-
-        try:
-            LOGGER.info('Populating daily summary...')
-            if not date:
-                loader.create_index('daily_summary')
-            dailies = loader.generate_daily_data(stn_dict, date)
-
-            submit_elastic_package(loader.ES, dailies)
-            LOGGER.info('Daily Summary populated.')
-        except Exception as err:
-            LOGGER.error(
-                f'Could not populate daily summary due to: {str(err)}.'
-            )
-
-    elif dataset == 'stations':
-        try:
-            LOGGER.info('Populating stations...')
-            loader.create_index('stations')
-            stations = loader.generate_stations()
-
-            submit_elastic_package(loader.ES, stations)
-            LOGGER.info('Stations populated.')
-        except Exception as err:
-            LOGGER.error(f'Could not populate stations due to: {str(err)}.')
-
-    elif dataset == 'normals':
-        try:
-            LOGGER.info('Populating normals...')
+            click.echo('Populating normals index')
             stn_dict = loader.get_station_data(station, starting_from)
             normals_dict = loader.get_normals_data()
             periods_dict = loader.get_normals_periods()
             loader.create_index('normals')
-            normals = loader.generate_normals(
-                stn_dict, normals_dict, periods_dict
-            )
-
+            normals = loader.generate_normals(stn_dict, normals_dict,
+                                              periods_dict)
             submit_elastic_package(loader.ES, normals)
-            LOGGER.info('Normals populated.')
         except Exception as err:
-            LOGGER.error(f'Could not populate normals due to: {str(err)}.')
+            msg = 'Could not populate normals index: {}'.format(err)
+            raise click.ClickException(msg)
 
-    elif dataset == 'monthly':
+    if 'monthly' in datasets_to_process:
         try:
-            LOGGER.info('Populating monthly summary...')
+            click.echo('Populating monthly index')
             stn_dict = loader.get_station_data(station, starting_from)
             if not (date or station or starting_from):
                 loader.create_index('monthly_summary')
             monthlies = loader.generate_monthly_data(stn_dict, date)
-
             submit_elastic_package(loader.ES, monthlies)
-            LOGGER.info('Monthly Summary populated.')
         except Exception as err:
-            LOGGER.error(
-                f'Could not populate monthly summary due to: {str(err)}.'
-            )
+            msg = 'Could not populate montly index: {}'.format(err)
+            raise click.ClickException(msg)
 
-    elif dataset == 'daily':
+    if 'daily' in datasets_to_process:
         try:
-            LOGGER.info('Populating daily summary...')
+            click.echo('Populating daily index')
             stn_dict = loader.get_station_data(station, starting_from)
             if not (date or station or starting_from):
                 loader.create_index('daily_summary')
             dailies = loader.generate_daily_data(stn_dict, date)
-
             submit_elastic_package(loader.ES, dailies)
-            LOGGER.info('Daily Summary populated.')
         except Exception as err:
-            LOGGER.error(
-                f'Could not populate daily summary due to: {str(err)}.'
-            )
+            msg = 'Could not populate daily index: {}'.format(err)
+            raise click.ClickException(msg)
 
-    else:
-        LOGGER.critical(
-            f'Unknown dataset parameter {dataset}, skipping index population.'
-        )
-
-    LOGGER.info('Finished populating indices.')
-
-    loader.con.close()
+    loader.conn.close()
 
 
 climate_archive.add_command(add)
