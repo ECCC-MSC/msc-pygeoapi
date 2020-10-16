@@ -45,7 +45,7 @@ done
 
 rm -fr latest
 echo "Generating nightly build for $TIMESTAMP"
-python3 -m venv $NIGHTLYDIR && cd $NIGHTLYDIR
+python3.6 -m venv --system-site-packages $NIGHTLYDIR && cd $NIGHTLYDIR
 source bin/activate
 git clone $MSC_PYGEOAPI_GITREPO
 git clone $PYGEOAPI_GITREPO
@@ -53,7 +53,8 @@ cd pygeoapi
 pip3 install -r requirements.txt
 pip3 install elasticsearch
 python3 setup.py install
-
+cd ../msc-pygeoapi
+python3 setup.py install
 cd ..
 
 cp msc-pygeoapi/deploy/default/msc-pygeoapi-config.yml msc-pygeoapi/deploy/nightly
