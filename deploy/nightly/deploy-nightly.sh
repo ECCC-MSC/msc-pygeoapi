@@ -22,7 +22,7 @@ BASEDIR=/data/web/msc-pygeoapi-nightly
 PYGEOAPI_GITREPO=https://github.com/geopython/pygeoapi.git
 MSC_PYGEOAPI_GITREPO=https://github.com/ECCC-MSC/msc-pygeoapi.git
 DAYSTOKEEP=7
-MSC_PYGEOAPI_OGC_API_URL=http://geomet-dev-03-nightly.cmc.ec.gc.ca/msc-pygeoapi/nightly/latest
+MSC_PYGEOAPI_OGC_API_URL=https://geomet-dev-03-nightly.cmc.ec.gc.ca/msc-pygeoapi/nightly/latest
 
 # you should be okay from here
 
@@ -58,11 +58,11 @@ python3 setup.py install
 cd ..
 
 cp msc-pygeoapi/deploy/default/msc-pygeoapi-config.yml msc-pygeoapi/deploy/nightly
-sed -i 's#https://api.wxod-dev.cmc.ec.gc.ca/#http://geomet-dev-03-nightly/msc-pygeoapi/nightly/latest#g' msc-pygeoapi/deploy/nightly/msc-pygeoapi-config.yml
+sed -i 's#https://api.wxod-dev.cmc.ec.gc.ca/#https://geomet-dev-03-nightly/msc-pygeoapi/nightly/latest#g' msc-pygeoapi/deploy/nightly/msc-pygeoapi-config.yml
 sed -i 's#basepath: /#basepath: /msc-pygeoapi/nightly/latest#' msc-pygeoapi/deploy/nightly/msc-pygeoapi-config.yml
 
 cp msc-pygeoapi/deploy/default/msc-pygeoapi-openapi.yml msc-pygeoapi/deploy/nightly
-sed -i 's#https://api.wxod-dev.cmc.ec.gc.ca/#http://geomet-dev-03-nightly/msc-pygeoapi/nightly/latest#g' msc-pygeoapi/deploy/nightly/msc-pygeoapi-openapi.yml
+sed -i 's#https://api.wxod-dev.cmc.ec.gc.ca/#https://geomet-dev-03-nightly/msc-pygeoapi/nightly/latest#g' msc-pygeoapi/deploy/nightly/msc-pygeoapi-openapi.yml
 
 cd ..
 
