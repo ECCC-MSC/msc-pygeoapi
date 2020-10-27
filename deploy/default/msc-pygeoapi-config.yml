@@ -494,7 +494,7 @@ resources:
                 bbox: [-142, 52, -52, 84]
                 crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
             temporal:
-                begin: 1969-01-01T00:00:00Z
+                begin: 1865-01-01T00:00:00Z
                 end: null # or empty
         providers:
             - type: feature
@@ -555,7 +555,7 @@ resources:
                 bbox: [-142, 52, -52, 84]
                 crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
             temporal:
-                begin: 1969-01-01T00:00:00Z
+                begin: 1840-01-01T00:00:00Z
                 end: null # or empty
         providers:
             - type: feature
