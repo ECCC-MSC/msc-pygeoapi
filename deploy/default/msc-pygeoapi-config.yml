@@ -21,7 +21,7 @@ logging:
 
 metadata:
     identification:
-        title: MSC GeoMet — GeoMet-OGC-API
+        title: MSC GeoMet - GeoMet-OGC-API
         description: GeoMet-OGC-API provides public access to the Meteorological Service of Canada (MSC) and Environment and Climate Change Canada (ECCC) data via interoperable web services and application programming interfaces (API). Through open standards, users can freely and quickly access thousands of real-time and archived weather, climate and water datasets and products and integrate them in their domain-specific applications and decision support systems. Users can build mobile apps, create interactive web maps, and display and animate MSC data in desktop software. MSC GeoMet also enables on demand raw data clipping and reprojection, on demand format conversion and custom visualization.
         keywords:
             - Weather
@@ -859,6 +859,91 @@ resources:
               data: http://localhost:9200/swob_realtime
               id_field: id
               time_field: date_tm-value
+
+    ltce-stations:
+        type: collection
+        title:  Virtual Climate Stations (LTCE)
+        description: A Virtual Climate station is the result of threading together pieces of the climate record of proximate current and historical stations to construct a long term threaded data set. For the purpose of identifying and tabulating daily extremes of record for temperature, precipitation and snow on ground, the Meteorological Service of Canada has threaded or put together data from closely related stations to compile a long time series of data for over 800 locations in Canada to monitor for record-breaking weather. The length of the time series of virtual stations is often greater than 100 years. A Virtual Climate station will always be named for an “Area” rather than a point, e.g. Winnipeg Area, to indicate that the data are drawn from that area rather than a single precise location.
+        keywords: [Weather and Climate, Atmosphere, Climate]
+        crs:
+            - CRS84
+        links: []  # TODO
+        extents:
+            spatial:
+                bbox: [-140.8689, 42.04301, 52.70000, 82.51778]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+            temporal:
+                begin: 1840-03-01
+                end: null # or empty
+        providers:
+            - type: feature
+              name: Elasticsearch
+              data: http://localhost:9200/ltce_stations
+              id_field: IDENTIFIER
+
+    ltce-temperature:
+        type: collection
+        title: Daily Extremes of Records (LTCE) – Temperature
+        description: "Anomalous weather resulting in Temperature and Precipitation extremes occurs almost every day somewhere in Canada. For the purpose of identifying and tabulating daily extremes of record for temperature, precipitation and snow on ground, the Meteorological Service of Canada has threaded or put together data from closely related stations to compile a long time series of data for over 800 locations in Canada to monitor for record-breaking weather. Virtual Climate stations correspond with the city pages of weather.gc.ca. This data provides the daily extremes of record for Temperature for each day of the year. Daily elements include: High Maximum, Low Maximum, High Minimum, Low Minimum."
+        keywords: [Weather and Climate, Atmosphere, Climate]
+        crs:
+            - CRS84
+        links: []  # TODO
+        extents:
+            spatial:
+                bbox: [-140.8689, 42.04301, 52.70000, 82.51778]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+            temporal:
+                begin: 1840-03-01
+                end: null # or empty
+        providers:
+            - type: feature
+              name: Elasticsearch
+              data: http://localhost:9200/ltce_temp_extremes
+              id_field: IDENTIFIER
+
+    ltce-precipitation:
+        type: collection
+        title: Daily Extremes of Records (LTCE) – Precipitation
+        description: "Anomalous weather resulting in Temperature and Precipitation extremes occurs almost every day somewhere in Canada. For the purpose of identifying and tabulating daily extremes of record for temperature, precipitation and snow on ground, the Meteorological Service of Canada has threaded or put together data from closely related stations to compile a long time series of data for over 800 locations in Canada to monitor for record-breaking weather. Virtual Climate stations correspond with the city pages of weather.gc.ca. This data provides the daily extremes of record for Precipitation for each day of the year. Daily elements include: Greatest Precipitation."
+        keywords: [Weather and Climate, Atmosphere, Climate]
+        crs:
+            - CRS84
+        links: []  # TODO
+        extents:
+            spatial:
+                bbox: [-140.8675, 42.04307, -52.70000, 82.51778]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+            temporal:
+                begin: 1840-05-01
+                end: null # or empty
+        providers:
+            - type: feature
+              name: Elasticsearch
+              data: http://localhost:9200/ltce_precip_extremes
+              id_field: IDENTIFIER
+
+    ltce-snowfall:
+        type: collection
+        title: Daily Extremes of Records (LTCE) – Snowfall
+        description: "Anomalous weather resulting in Temperature and Precipitation extremes occurs almost every day somewhere in Canada. For the purpose of identifying and tabulating daily extremes of record for temperature, precipitation and snow on ground, the Meteorological Service of Canada has threaded or put together data from closely related stations to compile a long time series of data for over 800 locations in Canada to monitor for record-breaking weather. Virtual Climate stations correspond with the city pages of weather.gc.ca. This data provides the daily extremes of record for Snowfall for each day of the year. Daily elements include: Greatest Snowfall."
+        keywords: [Weather and Climate, Atmosphere, Climate]
+        crs:
+            - CRS84
+        links: []  # TODO
+        extents:
+            spatial:
+                bbox: [-140.8675, 42.04307, -52.70000, 82.51778]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+            temporal:
+                begin: 1840-05-01
+                end: null # or empty
+        providers:
+            - type: feature
+              name: Elasticsearch
+              data: http://localhost:9200/ltce_precip_extremes
+              id_field: IDENTIFIER
+
 
     raster-drill:
         type: process
