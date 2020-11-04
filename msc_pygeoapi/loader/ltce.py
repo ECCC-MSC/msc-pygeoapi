@@ -220,18 +220,6 @@ MAPPINGS = {
             'format': 'date_time_no_millis',
             'ignore_malformed': False,
         },
-        'CLIMATE_IDENTIFIER': {
-            'type': 'text',
-            'fields': {'raw': {'type': 'keyword'}},
-        },
-        'ENG_STN_NAME': {
-            'type': 'text',
-            'fields': {'raw': {'type': 'keyword'}},
-        },
-        'FRE_STN_NAME': {
-            'type': 'text',
-            'fields': {'raw': {'type': 'keyword'}},
-        },
         'IDENTIFIER': {
             'type': 'text',
             'fields': {'raw': {'type': 'keyword'}},
@@ -286,18 +274,6 @@ MAPPINGS = {
             'format': 'date_time_no_millis',
             'ignore_malformed': False,
         },
-        'CLIMATE_IDENTIFIER': {
-            'type': 'text',
-            'fields': {'raw': {'type': 'keyword'}},
-        },
-        'ENG_STN_NAME': {
-            'type': 'text',
-            'fields': {'raw': {'type': 'keyword'}},
-        },
-        'FRE_STN_NAME': {
-            'type': 'text',
-            'fields': {'raw': {'type': 'keyword'}},
-        },
         'IDENTIFIER': {
             'type': 'text',
             'fields': {'raw': {'type': 'keyword'}},
@@ -351,18 +327,6 @@ MAPPINGS = {
             'type': 'date',
             'format': 'date_time_no_millis',
             'ignore_malformed': False,
-        },
-        'CLIMATE_IDENTIFIER': {
-            'type': 'text',
-            'fields': {'raw': {'type': 'keyword'}},
-        },
-        'ENG_STN_NAME': {
-            'type': 'text',
-            'fields': {'raw': {'type': 'keyword'}},
-        },
-        'FRE_STN_NAME': {
-            'type': 'text',
-            'fields': {'raw': {'type': 'keyword'}},
         },
         'IDENTIFIER': {
             'type': 'text',
@@ -587,6 +551,8 @@ class LtceLoader(BaseLoader):
             # cleanup unwanted fields retained from SQL join
             fields_to_delete = [
                 'STN_ID',
+                'ENG_PROV_NAME',
+                'FRE_PROV_NAME',
                 'REGION_CODE',
                 'CRITERIA',
                 'NOTES',
@@ -596,7 +562,7 @@ class LtceLoader(BaseLoader):
                 'LAT',
             ]
             for field in fields_to_delete:
-                del insert_dict[field]
+                insert_dict.pop(field)
 
             # set properties.IDENTIFIER
             insert_dict['IDENTIFIER'] = es_id
@@ -748,8 +714,16 @@ class LtceLoader(BaseLoader):
                 ] = stations_dict[virtual_climate_id][level]['record_end']
 
             # cleanup unwanted fields retained from SQL join
-            del insert_dict['LOCAL_TIME']
-            del insert_dict['VIRTUAL_MEAS_DISPLAY_CODE']
+            # cleanup unwanted fields retained from SQL join
+            fields_to_delete = [
+                'LOCAL_TIME',
+                'VIRTUAL_MEAS_DISPLAY_CODE',
+                'ENG_STN_NAME',
+                'FRE_STN_NAME',
+                'CLIMATE_IDENTIFIER',
+            ]
+            for field in fields_to_delete:
+                insert_dict.pop(field)
 
             # set properties.IDENTIFIER
             insert_dict['IDENTIFIER'] = es_id
@@ -850,8 +824,16 @@ class LtceLoader(BaseLoader):
             ]
 
             # cleanup unwanted fields retained from SQL join
-            del insert_dict['LOCAL_TIME']
-            del insert_dict['VIRTUAL_MEAS_DISPLAY_CODE']
+            fields_to_delete = [
+                'LOCAL_TIME',
+                'VIRTUAL_MEAS_DISPLAY_CODE',
+                'ENG_STN_NAME',
+                'FRE_STN_NAME',
+                'CLIMATE_IDENTIFIER',
+                'LAST_UPDATED',
+            ]
+            for field in fields_to_delete:
+                insert_dict.pop(field)
 
             # set properties.IDENTIFIER
             insert_dict['IDENTIFIER'] = es_id
@@ -950,8 +932,8 @@ class LtceLoader(BaseLoader):
             ]
 
             # cleanup unwanted fields retained from SQL join
-            del insert_dict['LOCAL_TIME']
-            del insert_dict['VIRTUAL_MEAS_DISPLAY_CODE']
+            insert_dict.pop('LOCAL_TIME')
+            insert_dict.pop('VIRTUAL_MEAS_DISPLAY_CODE')
 
             # set properties.IDENTIFIER
             insert_dict['IDENTIFIER'] = es_id
