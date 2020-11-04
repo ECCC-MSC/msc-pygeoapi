@@ -562,7 +562,7 @@ class LtceLoader(BaseLoader):
                 'LAT',
             ]
             for field in fields_to_delete:
-                del insert_dict[field]
+                insert_dict.pop(field)
 
             # set properties.IDENTIFIER
             insert_dict['IDENTIFIER'] = es_id
@@ -723,7 +723,7 @@ class LtceLoader(BaseLoader):
                 'CLIMATE_IDENTIFIER',
             ]
             for field in fields_to_delete:
-                del insert_dict[field]
+                insert_dict.pop(field)
 
             # set properties.IDENTIFIER
             insert_dict['IDENTIFIER'] = es_id
@@ -833,7 +833,7 @@ class LtceLoader(BaseLoader):
                 'LAST_UPDATED',
             ]
             for field in fields_to_delete:
-                del insert_dict[field]
+                insert_dict.pop(field)
 
             # set properties.IDENTIFIER
             insert_dict['IDENTIFIER'] = es_id
@@ -932,8 +932,8 @@ class LtceLoader(BaseLoader):
             ]
 
             # cleanup unwanted fields retained from SQL join
-            del insert_dict['LOCAL_TIME']
-            del insert_dict['VIRTUAL_MEAS_DISPLAY_CODE']
+            insert_dict.pop('LOCAL_TIME')
+            insert_dict.pop('VIRTUAL_MEAS_DISPLAY_CODE')
 
             # set properties.IDENTIFIER
             insert_dict['IDENTIFIER'] = es_id
