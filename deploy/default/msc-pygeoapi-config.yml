@@ -941,7 +941,7 @@ resources:
         providers:
             - type: feature
               name: Elasticsearch
-              data: http://localhost:9200/ltce_precip_extremes
+              data: http://localhost:9200/ltce_snow_extremes
               id_field: IDENTIFIER
 
 
