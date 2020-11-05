@@ -993,7 +993,7 @@ def add(ctx, db, es, username, password, dataset):
         'es_conn_dict': {'host': es, 'auth': (username, password)}
         if all([es, username, password])
         else None,
-        'handler': 'msc_pygeoapi.loader.marine_weather_realtime.MarineWeatherRealtimeLoader',  # noqa
+        'handler': 'msc_pygeoapi.loader.ltce.LtceLoader'
     }
     loader = LtceLoader(plugin_def)
 
