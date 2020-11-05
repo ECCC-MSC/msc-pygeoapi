@@ -33,6 +33,7 @@ import cx_Oracle
 import click
 from elasticsearch import logger as elastic_logger
 
+from msc_pygeoapi import cli_options
 from msc_pygeoapi.env import (
     MSC_PYGEOAPI_ES_TIMEOUT,
     MSC_PYGEOAPI_ES_URL,
@@ -993,7 +994,7 @@ def add(ctx, db, es, username, password, dataset):
         'es_conn_dict': {'host': es, 'auth': (username, password)}
         if all([es, username, password])
         else None,
-        'handler': 'msc_pygeoapi.loader.ltce.LtceLoader'
+        'handler': 'msc_pygeoapi.loader.ltce.LtceLoader',
     }
     loader = LtceLoader(plugin_def)
 
@@ -1062,6 +1063,25 @@ def add(ctx, db, es, username, password, dataset):
     loader.con.close()
 
 
+def confirm(ctx, param, value):
+    if not value and ctx.params['index_name']:
+        click.confirm(
+            'Are you sure you want to delete ES index named: {}?'.format(
+                click.style(ctx.params['index_name'], fg='red')
+            ),
+            abort=True,
+        )
+    elif not value:
+        click.confirm(
+            'Are you sure you want to delete {} LTCE'
+            ' indices ({})?'.format(
+                click.style('ALL', fg='red'),
+                click.style(", ".join(INDICES), fg='red'),
+            ),
+            abort=True,
+        )
+
+
 @click.command()
 @click.pass_context
 @click.option(
@@ -1070,33 +1090,22 @@ def add(ctx, db, es, username, password, dataset):
     type=click.Choice(INDICES),
     help='msc-pygeoapi LTCE index name to delete',
 )
+@cli_options.OPTION_YES(callback=confirm)
 def delete_index(ctx, index_name):
     """
     Delete a particular ES index with a given name as argument or all if no
     argument is passed
     """
     es = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
+
     if index_name:
-        if click.confirm(
-            'Are you sure you want to delete ES index named: {}?'.format(
-                click.style(index_name, fg='red')
-            ),
-            abort=True,
-        ):
-            LOGGER.info('Deleting ES index {}'.format(index_name))
-            es.indices.delete(index=index_name)
-            return True
+        LOGGER.info('Deleting ES index {}'.format(index_name))
+        es.indices.delete(index=index_name)
+        return True
     else:
-        if click.confirm(
-            'Are you sure you want to delete {} LTCE'
-            ' indices ({})?'.format(
-                click.style('ALL', fg='red'),
-                click.style(", ".join(INDICES), fg='red'),
-            ),
-            abort=True,
-        ):
-            es.indices.delete(index=",".join(INDICES))
-            return True
+        LOGGER.info('Deleting all LTCE ES indices')
+        es.indices.delete(index=",".join(INDICES))
+        return True
 
 
 ltce.add_command(add)
