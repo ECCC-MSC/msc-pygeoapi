@@ -37,7 +37,7 @@ import click
 from elasticsearch import helpers, logger as elastic_logger
 from elasticsearch.exceptions import ConflictError
 from parse import parse
-from gdal import ogr
+from osgeo import ogr
 
 from msc_pygeoapi.env import (MSC_PYGEOAPI_ES_TIMEOUT, MSC_PYGEOAPI_ES_URL,
                               MSC_PYGEOAPI_ES_AUTH)
