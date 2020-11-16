@@ -357,14 +357,17 @@ class LtceLoader(BaseLoader):
         self.con = None
 
         # setup DB connection
-        try:
-            self.con = cx_Oracle.connect(plugin_def['db_conn_string'])
-        except Exception as err:
-            msg = 'Could not connect to Oracle: {}'.format(err)
-            LOGGER.critical(msg)
-            raise click.ClickException(msg)
-
-        self.cur = self.con.cursor()
+        if 'db_conn_string' in plugin_def:
+            try:
+                self.con = cx_Oracle.connect(plugin_def['db_conn_string'])
+                self.cur = self.con.cursor()
+            except Exception as err:
+                msg = 'Could not connect to Oracle: {}'.format(err)
+                LOGGER.critical(msg)
+                raise click.ClickException(msg)
+        else:
+            LOGGER.debug("No DB connection string passed. Indexing disabled.")
+            self.con = self.cur = None
 
         for item in MAPPINGS:
             if not self.ES.indices.exists(INDEX_NAME.format(item)):
@@ -1090,21 +1093,32 @@ def confirm(ctx, param, value):
     type=click.Choice(INDICES),
     help='msc-pygeoapi LTCE index name to delete',
 )
+@click.option('--es', help='URL to Elasticsearch.')
+@click.option('--username', help='Username to connect to HTTPS')
+@click.option('--password', help='Password to connect to HTTPS')
 @cli_options.OPTION_YES(callback=confirm)
-def delete_index(ctx, index_name):
+def delete_index(ctx, index_name, es, username, password):
     """
     Delete a particular ES index with a given name as argument or all if no
     argument is passed
     """
-    es = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
+
+    plugin_def = {
+        'es_conn_dict': {'host': es, 'auth': (username, password)}
+        if all([es, username, password])
+        else None,
+        'handler': 'msc_pygeoapi.loader.ltce.LtceLoader',
+    }
+
+    loader = LtceLoader(plugin_def)
 
     if index_name:
         LOGGER.info('Deleting ES index {}'.format(index_name))
-        es.indices.delete(index=index_name)
+        loader.ES.indices.delete(index=index_name)
         return True
     else:
         LOGGER.info('Deleting all LTCE ES indices')
-        es.indices.delete(index=",".join(INDICES))
+        loader.ES.indices.delete(index=",".join(INDICES))
         return True
 
 
