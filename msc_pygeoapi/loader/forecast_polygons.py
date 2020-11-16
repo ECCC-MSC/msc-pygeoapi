@@ -34,7 +34,7 @@ from pathlib import Path
 import click
 from elasticsearch import helpers, logger as elastic_logger
 from parse import parse
-from gdal import ogr
+from osgeo import ogr
 
 from msc_pygeoapi import cli_options
 from msc_pygeoapi.env import (
