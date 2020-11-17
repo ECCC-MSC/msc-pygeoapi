@@ -37,6 +37,7 @@ import os
 import re
 
 from osgeo import gdal, osr
+import pyproj
 from pyproj import Proj, transform
 import yaml
 from yaml import CLoader
@@ -421,7 +422,11 @@ def raster_drill(layer, x, y, format_):
 
     from msc_pygeoapi.process.cccs import (GEOMET_CLIMATE_CONFIG,
                                            GEOMET_CLIMATE_BASEPATH,
-                                           GEOMET_CLIMATE_BASEPATH_VRT)
+                                           GEOMET_CLIMATE_BASEPATH_VRT,
+                                           GEOMET_CLIMATE_EPSG)
+
+    pyproj.set_datapath(GEOMET_CLIMATE_EPSG)
+
     LOGGER.info('start raster drilling')
 
     if format_ not in ['CSV', 'GeoJSON']:
@@ -429,7 +434,7 @@ def raster_drill(layer, x, y, format_):
         LOGGER.error(msg)
         raise ValueError(msg)
 
-    with open(GEOMET_CLIMATE_CONFIG) as fh:
+    with open(GEOMET_CLIMATE_CONFIG, encoding='utf-8') as fh:
         cfg = yaml.load(fh, Loader=CLoader)
 
     data_basepath = GEOMET_CLIMATE_BASEPATH
