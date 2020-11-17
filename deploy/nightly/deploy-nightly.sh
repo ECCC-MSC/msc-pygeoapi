@@ -51,7 +51,7 @@ git clone $MSC_PYGEOAPI_GITREPO
 git clone $PYGEOAPI_GITREPO
 cd pygeoapi
 pip3 install -r requirements.txt
-pip3 install elasticsearch
+pip3 install flask_cors elasticsearch
 python3 setup.py install
 cd ../msc-pygeoapi
 python3 setup.py install
@@ -60,6 +60,7 @@ cd ..
 cp msc-pygeoapi/deploy/default/msc-pygeoapi-config.yml msc-pygeoapi/deploy/nightly
 sed -i 's#https://api.wxod-dev.cmc.ec.gc.ca/#https://geomet-dev-03-nightly/msc-pygeoapi/nightly/latest#g' msc-pygeoapi/deploy/nightly/msc-pygeoapi-config.yml
 sed -i 's#basepath: /#basepath: /msc-pygeoapi/nightly/latest#' msc-pygeoapi/deploy/nightly/msc-pygeoapi-config.yml
+sed -i 's^# cors: true^cors: true^' msc-pygeoapi/deploy/nightly/msc-pygeoapi-config.yml
 
 cp msc-pygeoapi/deploy/default/msc-pygeoapi-openapi.yml msc-pygeoapi/deploy/nightly
 sed -i 's#https://api.wxod-dev.cmc.ec.gc.ca/#https://geomet-dev-03-nightly/msc-pygeoapi/nightly/latest#g' msc-pygeoapi/deploy/nightly/msc-pygeoapi-openapi.yml
