@@ -149,7 +149,22 @@ PROCESS_METADATA = {
                 'mimeType': 'text/csv'
             }]
         }
-    }]
+    }],
+    'example': {
+        "inputs": [{
+            "id": "layer",
+            "value": "CMIP5.TT.RCP26.YEAR.ANO_PCTL50"
+        }, {
+            "id": "y",
+            "value": 51.132831196692806
+        }, {
+            "id": "x",
+            "value": -114.74968888274337
+        }, {
+            "id": "format",
+            "value": "CSV"
+        }]
+    }
 }
 
 
