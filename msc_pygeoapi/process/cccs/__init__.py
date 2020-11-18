@@ -29,12 +29,15 @@
 # =================================================================
 
 import click
+import imp
 
 from msc_pygeoapi.process.cccs.raster_drill import raster_drill_execute
 
 GEOMET_CLIMATE_CONFIG = '/opt/geomet-climate/geomet-climate.yml'
-GEOMET_CLIMATE_BASEPATH = '/data/geomet/amqp/climate'
+GEOMET_CLIMATE_BASEPATH = '/data/geomet/feeds/dd.ops/climate'
 GEOMET_CLIMATE_BASEPATH_VRT = '/opt/geomet-climate/vrt'
+GEOMET_CLIMATE_EPSG = '{}/{}'.format(imp.find_module('geomet_climate')[1],
+                                     '/resources/mapserv')
 
 
 @click.group()
