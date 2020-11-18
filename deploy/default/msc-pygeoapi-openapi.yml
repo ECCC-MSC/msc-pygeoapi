@@ -4065,15 +4065,12 @@ paths:
         schema:
           items:
             enum:
-            - CLIMATE_IDENTIFIER
-            - ENG_STN_NAME
             - FIFTH_PRECIPITATION
             - FIFTH_PRECIPITATION_YEAR
             - FIRST_PRECIPITATION
             - FIRST_PRECIPITATION_YEAR
             - FOURTH_PRECIPITATION
             - FOURTH_PRECIPITATION_YEAR
-            - FRE_STN_NAME
             - IDENTIFIER
             - LAST_UPDATED
             - LOCAL_DAY
@@ -4099,20 +4096,6 @@ paths:
       - $ref: '#/components/parameters/skipGeometry'
       - $ref: '#/components/parameters/sortby'
       - $ref: '#/components/parameters/startindex'
-      - explode: false
-        in: query
-        name: CLIMATE_IDENTIFIER
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: ENG_STN_NAME
-        required: false
-        schema:
-          type: string
-        style: form
       - explode: false
         in: query
         name: FIFTH_PRECIPITATION
@@ -4154,13 +4137,6 @@ paths:
         required: false
         schema:
           type: short
-        style: form
-      - explode: false
-        in: query
-        name: FRE_STN_NAME
-        required: false
-        schema:
-          type: string
         style: form
       - explode: false
         in: query
@@ -4419,10 +4395,16 @@ paths:
             - ENG_STN_NAME
             - FIFTH_PRECIPITATION
             - FIFTH_PRECIPITATION_YEAR
+            - FIFTH_SNOWFALL
+            - FIFTH_SNOWFALL_YEAR
             - FIRST_PRECIPITATION
             - FIRST_PRECIPITATION_YEAR
+            - FIRST_SNOWFALL
+            - FIRST_SNOWFALL_YEAR
             - FOURTH_PRECIPITATION
             - FOURTH_PRECIPITATION_YEAR
+            - FOURTH_SNOWFALL
+            - FOURTH_SNOWFALL_YEAR
             - FRE_STN_NAME
             - IDENTIFIER
             - LAST_UPDATED
@@ -4430,14 +4412,22 @@ paths:
             - LOCAL_MONTH
             - PREV_RECORD_PRECIPITATION
             - PREV_RECORD_PRECIPITATION_YR
+            - PREV_RECORD_SNOWFALL
+            - PREV_RECORD_SNOWFALL_YR
             - RECORD_BEGIN
             - RECORD_END
             - RECORD_PRECIPITATION
             - RECORD_PRECIPITATION_YR
+            - RECORD_SNOWFALL
+            - RECORD_SNOWFALL_YR
             - SECOND_PRECIPITATION
             - SECOND_PRECIPITATION_YEAR
+            - SECOND_SNOWFALL
+            - SECOND_SNOWFALL_YEAR
             - THIRD_PRECIPITATION
             - THIRD_PRECIPITATION_YEAR
+            - THIRD_SNOWFALL
+            - THIRD_SNOWFALL_YEAR
             - VIRTUAL_CLIMATE_ID
             - VIRTUAL_MEAS_DISPLAY_CODE
             - VIRTUAL_STATION_NAME_E
@@ -4479,6 +4469,22 @@ paths:
         style: form
       - explode: false
         in: query
+        name: FIFTH_SNOWFALL
+        required: false
+        schema:
+          format: int64
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: FIFTH_SNOWFALL_YEAR
+        required: false
+        schema:
+          format: int64
+          type: integer
+        style: form
+      - explode: false
+        in: query
         name: FIRST_PRECIPITATION
         required: false
         schema:
@@ -4493,6 +4499,22 @@ paths:
         style: form
       - explode: false
         in: query
+        name: FIRST_SNOWFALL
+        required: false
+        schema:
+          format: int64
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: FIRST_SNOWFALL_YEAR
+        required: false
+        schema:
+          format: int64
+          type: integer
+        style: form
+      - explode: false
+        in: query
         name: FOURTH_PRECIPITATION
         required: false
         schema:
@@ -4504,6 +4526,22 @@ paths:
         required: false
         schema:
           type: short
+        style: form
+      - explode: false
+        in: query
+        name: FOURTH_SNOWFALL
+        required: false
+        schema:
+          format: int64
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: FOURTH_SNOWFALL_YEAR
+        required: false
+        schema:
+          format: int64
+          type: integer
         style: form
       - explode: false
         in: query
@@ -4557,6 +4595,22 @@ paths:
         style: form
       - explode: false
         in: query
+        name: PREV_RECORD_SNOWFALL
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: PREV_RECORD_SNOWFALL_YR
+        required: false
+        schema:
+          format: int64
+          type: integer
+        style: form
+      - explode: false
+        in: query
         name: RECORD_BEGIN
         required: false
         schema:
@@ -4587,6 +4641,22 @@ paths:
         style: form
       - explode: false
         in: query
+        name: RECORD_SNOWFALL
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: RECORD_SNOWFALL_YR
+        required: false
+        schema:
+          format: int64
+          type: integer
+        style: form
+      - explode: false
+        in: query
         name: SECOND_PRECIPITATION
         required: false
         schema:
@@ -4601,6 +4671,22 @@ paths:
         style: form
       - explode: false
         in: query
+        name: SECOND_SNOWFALL
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: SECOND_SNOWFALL_YEAR
+        required: false
+        schema:
+          format: int64
+          type: integer
+        style: form
+      - explode: false
+        in: query
         name: THIRD_PRECIPITATION
         required: false
         schema:
@@ -4612,6 +4698,22 @@ paths:
         required: false
         schema:
           type: short
+        style: form
+      - explode: false
+        in: query
+        name: THIRD_SNOWFALL
+        required: false
+        schema:
+          format: int64
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: THIRD_SNOWFALL_YEAR
+        required: false
+        schema:
+          format: int64
+          type: integer
         style: form
       - explode: false
         in: query
@@ -4772,9 +4874,7 @@ paths:
             - DATA_SOURCE
             - ELEMENT_NAME_E
             - END_DATE
-            - ENG_PROV_NAME
             - ENG_STN_NAME
-            - FRE_PROV_NAME
             - FRE_STN_NAME
             - IDENTIFIER
             - PROVINCECODE
@@ -4820,21 +4920,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: ENG_PROV_NAME
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
         name: ENG_STN_NAME
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: FRE_PROV_NAME
         required: false
         schema:
           type: string
@@ -5018,8 +5104,6 @@ paths:
         schema:
           items:
             enum:
-            - CLIMATE_IDENTIFIER
-            - ENG_STN_NAME
             - FIFTH_HIGH_MAX_TEMP
             - FIFTH_HIGH_MAX_TEMP_YEAR
             - FIFTH_HIGH_MAX_TEMP_YR
@@ -5056,7 +5140,6 @@ paths:
             - FOURTH_LOW_MIN_TEMP
             - FOURTH_LOW_MIN_TEMP_YEAR
             - FOURTH_LOW_MIN_TEMP_YR
-            - FRE_STN_NAME
             - IDENTIFIER
             - LAST_UPDATED
             - LOCAL_DAY
@@ -5116,20 +5199,6 @@ paths:
       - $ref: '#/components/parameters/skipGeometry'
       - $ref: '#/components/parameters/sortby'
       - $ref: '#/components/parameters/startindex'
-      - explode: false
-        in: query
-        name: CLIMATE_IDENTIFIER
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: ENG_STN_NAME
-        required: false
-        schema:
-          type: string
-        style: form
       - explode: false
         in: query
         name: FIFTH_HIGH_MAX_TEMP
@@ -5393,13 +5462,6 @@ paths:
         required: false
         schema:
           type: short
-        style: form
-      - explode: false
-        in: query
-        name: FRE_STN_NAME
-        required: false
-        schema:
-          type: string
         style: form
       - explode: false
         in: query
@@ -11810,6 +11872,16 @@ paths:
       requestBody:
         content:
           application/json:
+            example:
+              inputs:
+              - id: layer
+                value: CMIP5.TT.RCP26.YEAR.ANO_PCTL50
+              - id: y
+                value: 51.132831196692806
+              - id: x
+                value: -114.74968888274337
+              - id: format
+                value: CSV
             schema:
               $ref: https://raw.githubusercontent.com/opengeospatial/wps-rest-binding/master/core/openapi/schemas/execute.yaml
         description: Mandatory execute request JSON
@@ -11838,7 +11910,7 @@ servers:
     interactive web maps, and display and animate MSC data in desktop software. MSC
     GeoMet also enables on demand raw data clipping and reprojection, on demand format
     conversion and custom visualization.
-  url: http://geomet-dev-03.cmc.ec.gc.ca:5000
+  url: https://geomet-dev-03-nightly.cmc.ec.gc.ca/msc-pygeoapi/nightly/latest
 tags:
 - description: GeoMet-OGC-API provides public access to the Meteorological Service
     of Canada (MSC) and Environment and Climate Change Canada (ECCC) data via interoperable
