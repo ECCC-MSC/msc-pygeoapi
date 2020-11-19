@@ -29,7 +29,8 @@
 
 import click
 
-from msc_pygeoapi.env import LOGGING_LOGLEVEL, LOGGING_LOGFILE
+from msc_pygeoapi.env import (
+    MSC_PYGEOAPI_LOGGING_LOGLEVEL, MSC_PYGEOAPI_LOGGING_LOGFILE)
 from msc_pygeoapi.loader import data
 from msc_pygeoapi.log import setup_logger
 from msc_pygeoapi.process import process
@@ -37,7 +38,7 @@ from msc_pygeoapi.process import process
 
 __version__ = '0.7.0'
 
-setup_logger(LOGGING_LOGLEVEL, LOGGING_LOGFILE)
+setup_logger(MSC_PYGEOAPI_LOGGING_LOGLEVEL, MSC_PYGEOAPI_LOGGING_LOGFILE)
 
 
 @click.group()

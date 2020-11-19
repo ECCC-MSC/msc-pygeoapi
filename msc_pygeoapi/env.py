@@ -35,8 +35,10 @@ LOGGER = logging.getLogger(__name__)
 
 LOGGER.info('Fetching environment variables')
 
-LOGGING_LOGLEVEL = os.getenv('MSC_PYGEOAPI_LOGGING_LOGLEVEL', 'ERROR')
-LOGGING_LOGFILE = os.getenv('MSC_PYGEOAPI_LOGGING_LOGFILE', None)
+MSC_PYGEOAPI_LOGGING_LOGLEVEL = os.getenv('MSC_PYGEOAPI_LOGGING_LOGLEVEL',
+                                          'ERROR')
+MSC_PYGEOAPI_LOGGING_LOGFILE = os.getenv('MSC_PYGEOAPI_LOGGING_LOGFILE',
+                                         None)
 
 MSC_PYGEOAPI_BASEPATH = os.getenv('MSC_PYGEOAPI_BASEPATH', None)
 

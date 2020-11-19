@@ -37,13 +37,14 @@ from elasticsearch import helpers, logger as elastic_logger
 
 from msc_pygeoapi import cli_options
 from msc_pygeoapi.env import (MSC_PYGEOAPI_CACHEDIR, MSC_PYGEOAPI_ES_TIMEOUT,
-                              MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
+                              MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH,
+                              MSC_PYGEOAPI_LOGGING_LOGLEVEL)
 from msc_pygeoapi.loader.base import BaseLoader
 from msc_pygeoapi.util import get_es
 
 
 LOGGER = logging.getLogger(__name__)
-elastic_logger.setLevel(logging.WARNING)
+elastic_logger.setLevel(getattr(logging, MSC_PYGEOAPI_LOGGING_LOGLEVEL))
 
 STATIONS_LIST_NAME = 'hydrometric_StationList.csv'
 STATIONS_LIST_URL = 'https://dd.weather.gc.ca/hydrometric/doc/{}' \
