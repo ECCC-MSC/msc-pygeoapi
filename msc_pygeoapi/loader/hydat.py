@@ -876,6 +876,12 @@ class HydatLoader(BaseLoader):
             max_day = result[annual_stats_keys.index('MAX_DAY')]
             max_value = result[annual_stats_keys.index('MAX')]
             max_symbol = result[annual_stats_keys.index('MAX_SYMBOL')]
+
+            if min_value is not None:
+                min_value = float(min_value)
+            if max_value is not None:
+                max_value = float(max_value)
+
             args = {'STATION_NUMBER': station_number}
             station_metadata = list(
                 self.session.query(station_table).filter_by(**args).all()[0]
@@ -963,11 +969,11 @@ class HydatLoader(BaseLoader):
                     'DATA_TYPE_EN': data_type_en,
                     'DATA_TYPE_FR': data_type_fr,
                     'MIN_DATE': min_date,
-                    'MIN_VALUE': float(min_value) if min_value else None,
+                    'MIN_VALUE': min_value,
                     'MIN_SYMBOL_EN': min_symbol_en,
                     'MIN_SYMBOL_FR': min_symbol_fr,
                     'MAX_DATE': max_date,
-                    'MAX_VALUE': float(max_value) if max_value else None,
+                    'MAX_VALUE': max_value,
                     'MAX_SYMBOL_EN': max_symbol_en,
                     'MAX_SYMBOL_FR': max_symbol_fr,
                 },
