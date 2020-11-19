@@ -1,9 +1,14 @@
-msc-pygeoapi (0.7.1) bionic; urgency=medium
+msc-pygeoapi (0.8.0) bionic; urgency=medium
 
+  * add LTCE data loader
   * bionic updates
-  * add setup for real-time hydrometric deployment
+  * add setup for real-time hydrometric and swob deployment
+  * numerous data loader updates
+  * add event-based setup
+  * pygeoapi config updates for multiple provider collection publishing
+  * adjust AHCCD collection temporal extents
 
- -- Tom Kralidis <tom.kralidis@canada.ca>  Thu, 04 Jun 2020 11:29:03 +0000
+ -- Tom Kralidis <tom.kralidis@canada.ca>  Thu, 19 Nov 2020 16:31:45 +0000
 
 msc-pygeoapi (0.7.0) trusty; urgency=medium
 
