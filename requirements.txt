@@ -9,3 +9,4 @@ rasterio
 requests
 sqlalchemy
 unicodecsv
+dask[complete]

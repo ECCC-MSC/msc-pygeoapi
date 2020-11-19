@@ -39,6 +39,13 @@ import rasterio
 import rasterio.mask
 from rasterio.io import MemoryFile
 
+import dask
+import dask.distributed
+import dask.array as da
+
+DASK_N_WORKERS = 10
+DASK_N_THREADS = 1
+
 LOGGER = logging.getLogger(__name__)
 
 PROCESS_METADATA = {
@@ -352,6 +359,15 @@ def get_point(raster_list, input_geojson):
     :returns: dict with values of clipped points, original point
     geometry, and query type
     """
+    in_coords = input_geojson['features'][0]['geometry']['coordinates']
+    coords = reproject_point(input_geojson, raster_list[0])
+
+    files_point = { i: get_file_point(raster_list[i], in_coords, coords) for i in range(len(raster_list)) }
+    result = dask.compute(files_point)[0]
+
+    return result
+
+    """
     to_return = {}
     i = 0
 
@@ -378,6 +394,26 @@ def get_point(raster_list, input_geojson):
         i += 1
 
     return to_return
+    """
+    
+
+@dask.delayed
+def get_file_point(raster_path, in_coords, coords):
+    if "TMP" in raster_path:
+        data_type = "Temperature Data"
+    if "WDIR" in raster_path:
+        data_type = "Wind Direction Data"
+    if "WIND" in raster_path:
+        data_type = "Wind Speed Data"
+    try:
+        x = int(coords[0][0])
+        y = int(coords[0][1])
+        ds = gdal.Open(raster_path, gdal.GA_ReadOnly)
+        band = ds.GetRasterBand(1)
+        arr = band.ReadAsArray()
+        return [in_coords[0], in_coords[1], arr[y][x], data_type]
+    except FileNotFoundError as err:
+        LOGGER.debug(err)
 
 
 def get_line(raster_list, input_geojson):
@@ -387,6 +423,21 @@ def get_line(raster_list, input_geojson):
     :param raster_path: path to queried raster file on disk
     :returns: dict with values along clipped lines, original line
     geometry, and query type
+    """
+    input_line = input_geojson['features'][0]['geometry']['coordinates']
+    input_line = str(input_line).replace(" ", "")
+
+    shapes = []
+    shapes.append({
+        'type': 'LineString',
+        'coordinates': reproject_line(input_geojson, raster_list[0])
+    })
+
+    files_line = { i: get_file_line(raster_list[i], input_line, shapes) for i in range(len(raster_list)) }
+    result = dask.compute(files_line)[0]
+
+    return result
+
     """
     to_return = {}
     i = 0
@@ -423,6 +474,34 @@ def get_line(raster_list, input_geojson):
         except FileNotFoundError as err:
             LOGGER.debug(err)
     return to_return
+    """
+
+
+@dask.delayed
+def get_file_line(raster_path, input_line, shapes):
+    if "TMP" in raster_path:
+        data_type = "Temperature Data"
+    if "WDIR" in raster_path:
+        data_type = "Wind Direction Data"
+    if "WIND" in raster_path:
+        data_type = "Wind Speed Data"
+
+    try:
+        with rasterio.open(raster_path) as src:
+            out_image, out_transform = rasterio.mask.mask(
+                src, shapes, crop=True)
+            with MemoryFile() as memfile:
+                with memfile.open(driver="GTiff",
+                                    height=out_image.shape[1],
+                                    width=out_image.shape[2], count=1,
+                                    dtype=rasterio.float64,
+                                    transform=out_transform) as dataset:
+                    dataset.write(out_image)
+                    ds = dataset.read()
+                    ds = ds[ds != src.nodata]
+                    return [ds, data_type, input_line]
+    except FileNotFoundError as err:
+        LOGGER.debug(err)
 
 
 def summ_stats_poly(raster_list, input_geojson):
@@ -432,6 +511,18 @@ def summ_stats_poly(raster_list, input_geojson):
     :param raster_path: path to queried raster file on disk
     :returns: dict with min, max, and mean value for each query type
     and each forecast hour
+    """
+    shapes = []
+    shapes.append({
+        'type': 'Polygon',
+        'coordinates': reproject_poly(input_geojson, raster_list[0])
+    })
+
+    files_poly = { i: get_file_poly(raster_list[i], shapes) for i in range(len(raster_list)) }
+    result = dask.compute(files_poly)[0]
+
+    return result
+
     """
     to_return = {}
     i = 0
@@ -471,6 +562,37 @@ def summ_stats_poly(raster_list, input_geojson):
         except FileNotFoundError as err:
             LOGGER.debug(err)
     return to_return
+    """
+
+
+@dask.delayed
+def get_file_poly(raster_path, shapes):
+    if "TMP" in raster_path:
+        data_type = "Temperature Data"
+    if "WDIR" in raster_path:
+        data_type = "Wind Direction Data"
+    if "WIND" in raster_path:
+        data_type = "Wind Speed Data"
+
+    try:
+        with rasterio.open(raster_path) as src:
+            out_image, out_transform = rasterio.mask.mask(
+                src, shapes, crop=True)
+            with MemoryFile() as memfile:
+                with memfile.open(driver="GTiff",
+                                    height=out_image.shape[1],
+                                    width=out_image.shape[2], count=1,
+                                    dtype=rasterio.float64,
+                                    transform=out_transform) as dataset:
+                    dataset.write(out_image)
+                    ds = dataset.read()
+                    ds = ds[ds != src.nodata]
+                    min_val = np.min(ds, axis=None)
+                    max_val = np.max(ds, axis=None)
+                    mean_val = np.mean(ds, axis=None)
+                    return [min_val, max_val, mean_val, data_type]
+    except FileNotFoundError as err:
+        LOGGER.debug(err)
 
 
 def poly_out(string_name, forecast_hour, value):
@@ -684,6 +806,9 @@ def extract_raster_main(model, forecast_hours_, model_run, input_geojson):
     line = False
     point = False
 
+    cluster = dask.distributed.LocalCluster(processes=True, n_workers=DASK_N_WORKERS, threads_per_worker=DASK_N_THREADS)
+    client = dask.distributed.Client(cluster)
+
     for feature in input_geojson['features']:
         if (feature['geometry']['type'] == "Polygon" or
                 feature['geometry']['type'] == "MultiPolygon"):
@@ -699,6 +824,9 @@ def extract_raster_main(model, forecast_hours_, model_run, input_geojson):
                 feature['geometry']['type'] == "MultiPoint"):
             point = True
             features.append(get_point(raster_list, input_geojson))
+
+    client.close()
+    cluster.close()
 
     output_geojson = write_output(features, forecast_hours, poly, line, point)
 
