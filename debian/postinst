@@ -43,4 +43,4 @@ export PYGEOAPI_OPENAPI=/opt/msc-pygeoapi/conf/msc-pygeoapi-openapi.yml
 mkdir -p $XDG_CACHE_HOME
 
 # prepare hydrometric realtime
-msc-pygeoapi data hydrometric-realtime cache-stations
+# msc-pygeoapi data hydrometric-realtime cache-stations
