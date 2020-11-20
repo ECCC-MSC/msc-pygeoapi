@@ -1,3 +1,9 @@
+msc-pygeoapi (0.8.2) bionic; urgency=medium
+
+  * remove realtime postinst command
+
+ -- Tom Kralidis <tom.kralidis@canada.ca>  Thu, 20 Nov 2020 15:02:30 +0000
+
 msc-pygeoapi (0.8.1) bionic; urgency=medium
 
   * move python3-elasticsearch back to Suggests in debian
