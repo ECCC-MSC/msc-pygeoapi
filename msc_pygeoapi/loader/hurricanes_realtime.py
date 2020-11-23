@@ -583,7 +583,7 @@ def delete_index(ctx, index_name):
             return True
     else:
         if click.confirm(
-                'Are you sure you want to delete {} marine forecast'
+                'Are you sure you want to delete {} hurricane'
                 ' indices ({})?'.format(click.style('ALL', fg='red'),
                                         click.style(", ".join(INDICES),
                                                     fg='red')),
