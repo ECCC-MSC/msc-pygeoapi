@@ -60,5 +60,3 @@ def setup_logger(loglevel, logfile=None):
                 format=log_format,
                 filename=logfile,
             )
-
-        LOGGER.debug('Logging initialized')
