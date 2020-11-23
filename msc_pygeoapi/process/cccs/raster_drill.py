@@ -440,7 +440,10 @@ def raster_drill(layer, x, y, format_):
                                            GEOMET_CLIMATE_BASEPATH_VRT,
                                            GEOMET_CLIMATE_EPSG)
 
-    pyproj.set_datapath(GEOMET_CLIMATE_EPSG)
+    if GEOMET_CLIMATE_EPSG is not None:
+        pyproj.set_datapath(GEOMET_CLIMATE_EPSG)
+    else:
+        raise Exception("Could not locate geomet-climate EPSG file.")
 
     LOGGER.info('start raster drilling')
 
