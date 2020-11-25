@@ -32,7 +32,7 @@
 # =================================================================
 
 import click
-from datetime import datetime, timedelta
+from datetime import datetime
 import logging
 import os
 
@@ -40,11 +40,13 @@ from elasticsearch import helpers, logger as elastic_logger
 from lxml import etree
 
 from msc_pygeoapi import cli_options
-from msc_pygeoapi.env import (MSC_PYGEOAPI_CACHEDIR, MSC_PYGEOAPI_ES_TIMEOUT,
-                              MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH,
+from msc_pygeoapi.env import (MSC_PYGEOAPI_CACHEDIR, MSC_PYGEOAPI_ES_URL,
+                              MSC_PYGEOAPI_ES_AUTH,
                               MSC_PYGEOAPI_LOGGING_LOGLEVEL)
 from msc_pygeoapi.loader.base import BaseLoader
-from msc_pygeoapi.util import get_es, json_pretty_print
+from msc_pygeoapi.util import (check_es_indexes_to_delete, get_es,
+                               delete_es_indexes, json_pretty_print,
+                               DATETIME_RFC3339_MILLIS_FMT)
 
 
 LOGGER = logging.getLogger(__name__)
@@ -60,9 +62,12 @@ STATIONS_CACHE = os.path.join(MSC_PYGEOAPI_CACHEDIR, STATIONS_LIST_NAME)
 DAYS_TO_KEEP = 30
 
 # index settings
-INDEX_NAME = 'swob_realtime'
+INDEX_BASENAME = 'swob_realtime.'
 
 SETTINGS = {
+    'order': 0,
+    'version': 1,
+    'index_patterns': ['{}*'.format(INDEX_BASENAME)],
     'settings': {
         'number_of_shards': 1,
         'number_of_replicas': 0
@@ -286,9 +291,8 @@ class SWOBRealtimeLoader(BaseLoader):
 
         self.ES = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
 
-        if not self.ES.indices.exists(INDEX_NAME):
-            self.ES.indices.create(index=INDEX_NAME, body=SETTINGS,
-                                   request_timeout=MSC_PYGEOAPI_ES_TIMEOUT)
+        if not self.ES.indices.exists_template(INDEX_BASENAME):
+            self.ES.indices.put_template(INDEX_BASENAME, SETTINGS)
 
     def generate_observations(self, filepath):
         """
@@ -306,9 +310,15 @@ class SWOBRealtimeLoader(BaseLoader):
 
         LOGGER.debug('Observation {} created successfully'
                      .format(observation_id))
+
+        obs_dt = datetime.strptime(observation['properties']['date_tm-value'],
+                                   DATETIME_RFC3339_MILLIS_FMT)
+        obs_dt2 = obs_dt.strftime('%Y-%m-%d')
+        es_index = '{}{}'.format(INDEX_BASENAME, obs_dt2)
+
         action = {
             '_id': observation_id,
-            '_index': INDEX_NAME,
+            '_index': es_index,
             '_op_type': 'update',
             'doc': observation,
             'doc_as_upsert': True
@@ -405,39 +415,25 @@ def add(ctx, file_, directory):
 @click.pass_context
 @cli_options.OPTION_DAYS(
     default=DAYS_TO_KEEP,
-    help=f'Delete documents older than n days (default={DAYS_TO_KEEP})'
+    help='Delete indexes older than n days (default={})'
 )
 @cli_options.OPTION_YES(
-    prompt='Are you sure you want to delete old documents?'
+    prompt='Are you sure you want to delete old indexes?'
 )
-def clean_records(ctx, days):
-    """Delete old documents"""
+def clean_indexes(ctx, days):
+    """Delete old indexes"""
 
     es = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
 
-    today = datetime.now().replace(hour=0, minute=0)
-    older_than = (today - timedelta(days=days)).strftime('%Y-%m-%dT%H:%M')
-    click.echo('Deleting documents older than {} ({} full days)'
-               .format(older_than.replace('T', ' '), days))
+    indexes = list(es.indices.get('{}*'.format(INDEX_BASENAME)).keys())
 
-    query = {
-        'query': {
-            'range': {
-                'properties.DATETIME': {
-                    'lt': older_than,
-                    'format': 'strict_date_hour_minute'
-                }
-            }
-        }
-    }
+    if indexes:
+        indexes_to_delete = check_es_indexes_to_delete(indexes, days)
+        if indexes_to_delete:
+            click.echo('Deleting indexes {}'.format(indexes_to_delete))
+            delete_es_indexes(','.join(indexes))
 
-    response = es.delete_by_query(index=INDEX_NAME, body=query,
-                                  request_timeout=90)
-
-    click.echo('Deleted {} documents'.format(response['deleted']))
-    if len(response['failures']) > 0:
-        click.echo('Failed to delete {} documents in time range'
-                   .format(len(response['failures'])))
+    click.echo('Done')
 
 
 @click.command()
@@ -445,15 +441,17 @@ def clean_records(ctx, days):
 @cli_options.OPTION_YES(
     prompt='Are you sure you want to delete these indexes?'
 )
-def delete_index(ctx):
-    """Delete SWOB realtime indexes"""
+def delete_indexes(ctx):
+    """Delete all hydrometric realtime indexes"""
 
-    es = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
+    all_indexes = '{}*'.format(INDEX_BASENAME)
 
-    if es.indices.exists(INDEX_NAME):
-        es.indices.delete(INDEX_NAME)
+    click.echo('Deleting indexes {}'.format(all_indexes))
+    delete_es_indexes(all_indexes)
+
+    click.echo('Done')
 
 
 swob_realtime.add_command(add)
-swob_realtime.add_command(clean_records)
-swob_realtime.add_command(delete_index)
+swob_realtime.add_command(clean_indexes)
+swob_realtime.add_command(delete_indexes)

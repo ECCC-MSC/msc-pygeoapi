@@ -27,19 +27,23 @@
 #
 # =================================================================
 
-from datetime import datetime, date, time
+from datetime import datetime, date, time, timedelta
 import json
 import logging
 from urllib.parse import urlparse
 
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import streaming_bulk, BulkIndexError
+from parse import parse
+
+from msc_pygeoapi.env import MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH
 
 LOGGER = logging.getLogger(__name__)
 
 VERIFY = False
 
 DATETIME_RFC3339_FMT = '%Y-%m-%dT%H:%M:%SZ'
+DATETIME_RFC3339_MILLIS_FMT = '%Y-%m-%dT%H:%M:%S.%fZ'
 
 
 def get_es(url, auth=None):
@@ -224,3 +228,48 @@ def strftime_rfc3339(datetimeobj: datetime) -> str:
     :returns: RFC3339 compliant datetime `str`
     """
     return datetimeobj.strftime(DATETIME_RFC3339_FMT)
+
+
+def check_es_indexes_to_delete(indexes, days):
+    """
+    helper function to determine ES indexes that are older than a certain date
+
+    :param indexes: list of ES index names
+    :param days: number of days used to determine deletion criteria
+
+    :returns: list of indexes to delete
+    """
+
+    today = datetime.utcnow()
+    pattern = '{index_name}.{YYYY:d}-{MM:d}-{dd:d}'
+    to_delete = []
+
+    for index in indexes:
+        parsed = parse(pattern, index)
+        index_date = datetime(parsed.named['YYYY'], parsed.named['MM'],
+                              parsed.named['dd'])
+        if index_date < (today - timedelta(days=days)):
+            to_delete.append(index)
+
+    return to_delete
+
+
+def delete_es_indexes(indexes):
+    """
+    helper function to delete a series of ES indexes
+
+    :param indexes: indexes to delete
+
+    :returns: None
+    """
+
+    if indexes in ['*', '_all']:
+        msg = 'Cannot delete {}'.format(indexes)
+        LOGGER.error(msg)
+        raise ValueError(msg)
+
+    es = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
+
+    if es.indices.exists(indexes):
+        LOGGER.info('Deleting indexes {}'.format(indexes))
+        es.indices.delete(indexes)
