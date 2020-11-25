@@ -136,7 +136,7 @@ info:
     url: https://eccc-msc.github.io/open-data/licence/readme_en/
   termsOfService: https://www.canada.ca/en/transparency/terms.html
   title: MSC GeoMet - GeoMet-OGC-API
-  version: 0.9.dev0
+  version: 0.9.0
   x-keywords:
   - Weather
   - Meteorology
@@ -4019,9 +4019,9 @@ paths:
       description: 'Anomalous weather resulting in Temperature and Precipitation extremes
         occurs almost every day somewhere in Canada. For the purpose of identifying
         and tabulating daily extremes of record for temperature, precipitation and
-        snow on ground, the Meteorological Service of Canada has threaded or put together
+        snowfall, the Meteorological Service of Canada has threaded or put together
         data from closely related stations to compile a long time series of data for
-        over 800 locations in Canada to monitor for record-breaking weather. Virtual
+        about 750 locations in Canada to monitor for record-breaking weather. Virtual
         Climate stations correspond with the city pages of weather.gc.ca. This data
         provides the daily extremes of record for Precipitation for each day of the
         year. Daily elements include: Greatest Precipitation.'
@@ -4045,9 +4045,9 @@ paths:
       description: 'Anomalous weather resulting in Temperature and Precipitation extremes
         occurs almost every day somewhere in Canada. For the purpose of identifying
         and tabulating daily extremes of record for temperature, precipitation and
-        snow on ground, the Meteorological Service of Canada has threaded or put together
+        snowfall, the Meteorological Service of Canada has threaded or put together
         data from closely related stations to compile a long time series of data for
-        over 800 locations in Canada to monitor for record-breaking weather. Virtual
+        about 750 locations in Canada to monitor for record-breaking weather. Virtual
         Climate stations correspond with the city pages of weather.gc.ca. This data
         provides the daily extremes of record for Precipitation for each day of the
         year. Daily elements include: Greatest Precipitation.'
@@ -4291,9 +4291,9 @@ paths:
       description: 'Anomalous weather resulting in Temperature and Precipitation extremes
         occurs almost every day somewhere in Canada. For the purpose of identifying
         and tabulating daily extremes of record for temperature, precipitation and
-        snow on ground, the Meteorological Service of Canada has threaded or put together
+        snowfall, the Meteorological Service of Canada has threaded or put together
         data from closely related stations to compile a long time series of data for
-        over 800 locations in Canada to monitor for record-breaking weather. Virtual
+        about 750 locations in Canada to monitor for record-breaking weather. Virtual
         Climate stations correspond with the city pages of weather.gc.ca. This data
         provides the daily extremes of record for Precipitation for each day of the
         year. Daily elements include: Greatest Precipitation.'
@@ -4319,9 +4319,9 @@ paths:
       description: 'Anomalous weather resulting in Temperature and Precipitation extremes
         occurs almost every day somewhere in Canada. For the purpose of identifying
         and tabulating daily extremes of record for temperature, precipitation and
-        snow on ground, the Meteorological Service of Canada has threaded or put together
+        snowfall, the Meteorological Service of Canada has threaded or put together
         data from closely related stations to compile a long time series of data for
-        over 800 locations in Canada to monitor for record-breaking weather. Virtual
+        about 750 locations in Canada to monitor for record-breaking weather. Virtual
         Climate stations correspond with the city pages of weather.gc.ca. This data
         provides the daily extremes of record for Precipitation for each day of the
         year. Daily elements include: Greatest Precipitation.'
@@ -4345,9 +4345,9 @@ paths:
       description: 'Anomalous weather resulting in Temperature and Precipitation extremes
         occurs almost every day somewhere in Canada. For the purpose of identifying
         and tabulating daily extremes of record for temperature, precipitation and
-        snow on ground, the Meteorological Service of Canada has threaded or put together
+        snowfall, the Meteorological Service of Canada has threaded or put together
         data from closely related stations to compile a long time series of data for
-        over 800 locations in Canada to monitor for record-breaking weather. Virtual
+        about 750 locations in Canada to monitor for record-breaking weather. Virtual
         Climate stations correspond with the city pages of weather.gc.ca. This data
         provides the daily extremes of record for Snowfall for each day of the year.
         Daily elements include: Greatest Snowfall.'
@@ -4371,9 +4371,9 @@ paths:
       description: 'Anomalous weather resulting in Temperature and Precipitation extremes
         occurs almost every day somewhere in Canada. For the purpose of identifying
         and tabulating daily extremes of record for temperature, precipitation and
-        snow on ground, the Meteorological Service of Canada has threaded or put together
+        snowfall, the Meteorological Service of Canada has threaded or put together
         data from closely related stations to compile a long time series of data for
-        over 800 locations in Canada to monitor for record-breaking weather. Virtual
+        about 750 locations in Canada to monitor for record-breaking weather. Virtual
         Climate stations correspond with the city pages of weather.gc.ca. This data
         provides the daily extremes of record for Snowfall for each day of the year.
         Daily elements include: Greatest Snowfall.'
@@ -4502,8 +4502,8 @@ paths:
         name: FIRST_SNOWFALL
         required: false
         schema:
-          format: int64
-          type: integer
+          format: float
+          type: number
         style: form
       - explode: false
         in: query
@@ -4704,8 +4704,8 @@ paths:
         name: THIRD_SNOWFALL
         required: false
         schema:
-          format: int64
-          type: integer
+          format: float
+          type: number
         style: form
       - explode: false
         in: query
@@ -4767,9 +4767,9 @@ paths:
       description: 'Anomalous weather resulting in Temperature and Precipitation extremes
         occurs almost every day somewhere in Canada. For the purpose of identifying
         and tabulating daily extremes of record for temperature, precipitation and
-        snow on ground, the Meteorological Service of Canada has threaded or put together
+        snowfall, the Meteorological Service of Canada has threaded or put together
         data from closely related stations to compile a long time series of data for
-        over 800 locations in Canada to monitor for record-breaking weather. Virtual
+        about 750 locations in Canada to monitor for record-breaking weather. Virtual
         Climate stations correspond with the city pages of weather.gc.ca. This data
         provides the daily extremes of record for Snowfall for each day of the year.
         Daily elements include: Greatest Snowfall.'
@@ -4794,9 +4794,9 @@ paths:
       description: 'Anomalous weather resulting in Temperature and Precipitation extremes
         occurs almost every day somewhere in Canada. For the purpose of identifying
         and tabulating daily extremes of record for temperature, precipitation and
-        snow on ground, the Meteorological Service of Canada has threaded or put together
+        snowfall, the Meteorological Service of Canada has threaded or put together
         data from closely related stations to compile a long time series of data for
-        over 800 locations in Canada to monitor for record-breaking weather. Virtual
+        about 750 locations in Canada to monitor for record-breaking weather. Virtual
         Climate stations correspond with the city pages of weather.gc.ca. This data
         provides the daily extremes of record for Snowfall for each day of the year.
         Daily elements include: Greatest Snowfall.'
@@ -4818,16 +4818,17 @@ paths:
   /collections/ltce-stations:
     get:
       description: "A Virtual Climate station is the result of threading together\
-        \ pieces of the climate record of proximate current and historical stations\
-        \ to construct a long term threaded data set. For the purpose of identifying\
-        \ and tabulating daily extremes of record for temperature, precipitation and\
-        \ snow on ground, the Meteorological Service of Canada has threaded or put\
-        \ together data from closely related stations to compile a long time series\
-        \ of data for over 800 locations in Canada to monitor for record-breaking\
-        \ weather. The length of the time series of virtual stations is often greater\
-        \ than 100 years. A Virtual Climate station will always be named for an \u201C\
-        Area\u201D rather than a point, e.g. Winnipeg Area, to indicate that the data\
-        \ are drawn from that area rather than a single precise location."
+        \ climate data from proximate current and historical stations to construct\
+        \ a long term threaded data set. For the purpose of identifying and tabulating\
+        \ daily extremes of record for temperature, precipitation and snowfall, the\
+        \ Meteorological Service of Canada has threaded or put together data from\
+        \ closely related stations to compile a long time series of data for about\
+        \ 750 locations in Canada to monitor for record-breaking weather. The length\
+        \ of the time series of virtual stations is often greater than 100 years.\
+        \ A Virtual Climate station is always named for an \u201CArea\u201D rather\
+        \ than a point, e.g. Winnipeg Area, to indicate that the data are drawn from\
+        \ that area(within a 20km radius from the urban center) rather than a single\
+        \ precise location."
       operationId: describeLtce-stationsCollection
       parameters:
       - $ref: '#/components/parameters/f'
@@ -4846,16 +4847,17 @@ paths:
   /collections/ltce-stations/items:
     get:
       description: "A Virtual Climate station is the result of threading together\
-        \ pieces of the climate record of proximate current and historical stations\
-        \ to construct a long term threaded data set. For the purpose of identifying\
-        \ and tabulating daily extremes of record for temperature, precipitation and\
-        \ snow on ground, the Meteorological Service of Canada has threaded or put\
-        \ together data from closely related stations to compile a long time series\
-        \ of data for over 800 locations in Canada to monitor for record-breaking\
-        \ weather. The length of the time series of virtual stations is often greater\
-        \ than 100 years. A Virtual Climate station will always be named for an \u201C\
-        Area\u201D rather than a point, e.g. Winnipeg Area, to indicate that the data\
-        \ are drawn from that area rather than a single precise location."
+        \ climate data from proximate current and historical stations to construct\
+        \ a long term threaded data set. For the purpose of identifying and tabulating\
+        \ daily extremes of record for temperature, precipitation and snowfall, the\
+        \ Meteorological Service of Canada has threaded or put together data from\
+        \ closely related stations to compile a long time series of data for about\
+        \ 750 locations in Canada to monitor for record-breaking weather. The length\
+        \ of the time series of virtual stations is often greater than 100 years.\
+        \ A Virtual Climate station is always named for an \u201CArea\u201D rather\
+        \ than a point, e.g. Winnipeg Area, to indicate that the data are drawn from\
+        \ that area(within a 20km radius from the urban center) rather than a single\
+        \ precise location."
       operationId: getLtce-stationsFeatures
       parameters:
       - *id001
@@ -4997,16 +4999,17 @@ paths:
   /collections/ltce-stations/items/{featureId}:
     get:
       description: "A Virtual Climate station is the result of threading together\
-        \ pieces of the climate record of proximate current and historical stations\
-        \ to construct a long term threaded data set. For the purpose of identifying\
-        \ and tabulating daily extremes of record for temperature, precipitation and\
-        \ snow on ground, the Meteorological Service of Canada has threaded or put\
-        \ together data from closely related stations to compile a long time series\
-        \ of data for over 800 locations in Canada to monitor for record-breaking\
-        \ weather. The length of the time series of virtual stations is often greater\
-        \ than 100 years. A Virtual Climate station will always be named for an \u201C\
-        Area\u201D rather than a point, e.g. Winnipeg Area, to indicate that the data\
-        \ are drawn from that area rather than a single precise location."
+        \ climate data from proximate current and historical stations to construct\
+        \ a long term threaded data set. For the purpose of identifying and tabulating\
+        \ daily extremes of record for temperature, precipitation and snowfall, the\
+        \ Meteorological Service of Canada has threaded or put together data from\
+        \ closely related stations to compile a long time series of data for about\
+        \ 750 locations in Canada to monitor for record-breaking weather. The length\
+        \ of the time series of virtual stations is often greater than 100 years.\
+        \ A Virtual Climate station is always named for an \u201CArea\u201D rather\
+        \ than a point, e.g. Winnipeg Area, to indicate that the data are drawn from\
+        \ that area(within a 20km radius from the urban center) rather than a single\
+        \ precise location."
       operationId: getLtce-stationsFeature
       parameters:
       - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
@@ -5026,16 +5029,17 @@ paths:
   /collections/ltce-stations/queryables:
     get:
       description: "A Virtual Climate station is the result of threading together\
-        \ pieces of the climate record of proximate current and historical stations\
-        \ to construct a long term threaded data set. For the purpose of identifying\
-        \ and tabulating daily extremes of record for temperature, precipitation and\
-        \ snow on ground, the Meteorological Service of Canada has threaded or put\
-        \ together data from closely related stations to compile a long time series\
-        \ of data for over 800 locations in Canada to monitor for record-breaking\
-        \ weather. The length of the time series of virtual stations is often greater\
-        \ than 100 years. A Virtual Climate station will always be named for an \u201C\
-        Area\u201D rather than a point, e.g. Winnipeg Area, to indicate that the data\
-        \ are drawn from that area rather than a single precise location."
+        \ climate data from proximate current and historical stations to construct\
+        \ a long term threaded data set. For the purpose of identifying and tabulating\
+        \ daily extremes of record for temperature, precipitation and snowfall, the\
+        \ Meteorological Service of Canada has threaded or put together data from\
+        \ closely related stations to compile a long time series of data for about\
+        \ 750 locations in Canada to monitor for record-breaking weather. The length\
+        \ of the time series of virtual stations is often greater than 100 years.\
+        \ A Virtual Climate station is always named for an \u201CArea\u201D rather\
+        \ than a point, e.g. Winnipeg Area, to indicate that the data are drawn from\
+        \ that area(within a 20km radius from the urban center) rather than a single\
+        \ precise location."
       operationId: getLtce-stationsQueryables
       parameters:
       - *id001
@@ -5056,9 +5060,9 @@ paths:
       description: 'Anomalous weather resulting in Temperature and Precipitation extremes
         occurs almost every day somewhere in Canada. For the purpose of identifying
         and tabulating daily extremes of record for temperature, precipitation and
-        snow on ground, the Meteorological Service of Canada has threaded or put together
+        snowfall, the Meteorological Service of Canada has threaded or put together
         data from closely related stations to compile a long time series of data for
-        over 800 locations in Canada to monitor for record-breaking weather. Virtual
+        about 750 locations in Canada to monitor for record-breaking weather. Virtual
         Climate stations correspond with the city pages of weather.gc.ca. This data
         provides the daily extremes of record for Temperature for each day of the
         year. Daily elements include: High Maximum, Low Maximum, High Minimum, Low
@@ -5083,9 +5087,9 @@ paths:
       description: 'Anomalous weather resulting in Temperature and Precipitation extremes
         occurs almost every day somewhere in Canada. For the purpose of identifying
         and tabulating daily extremes of record for temperature, precipitation and
-        snow on ground, the Meteorological Service of Canada has threaded or put together
+        snowfall, the Meteorological Service of Canada has threaded or put together
         data from closely related stations to compile a long time series of data for
-        over 800 locations in Canada to monitor for record-breaking weather. Virtual
+        about 750 locations in Canada to monitor for record-breaking weather. Virtual
         Climate stations correspond with the city pages of weather.gc.ca. This data
         provides the daily extremes of record for Temperature for each day of the
         year. Daily elements include: High Maximum, Low Maximum, High Minimum, Low
@@ -5864,9 +5868,9 @@ paths:
       description: 'Anomalous weather resulting in Temperature and Precipitation extremes
         occurs almost every day somewhere in Canada. For the purpose of identifying
         and tabulating daily extremes of record for temperature, precipitation and
-        snow on ground, the Meteorological Service of Canada has threaded or put together
+        snowfall, the Meteorological Service of Canada has threaded or put together
         data from closely related stations to compile a long time series of data for
-        over 800 locations in Canada to monitor for record-breaking weather. Virtual
+        about 750 locations in Canada to monitor for record-breaking weather. Virtual
         Climate stations correspond with the city pages of weather.gc.ca. This data
         provides the daily extremes of record for Temperature for each day of the
         year. Daily elements include: High Maximum, Low Maximum, High Minimum, Low
@@ -5892,9 +5896,9 @@ paths:
       description: 'Anomalous weather resulting in Temperature and Precipitation extremes
         occurs almost every day somewhere in Canada. For the purpose of identifying
         and tabulating daily extremes of record for temperature, precipitation and
-        snow on ground, the Meteorological Service of Canada has threaded or put together
+        snowfall, the Meteorological Service of Canada has threaded or put together
         data from closely related stations to compile a long time series of data for
-        over 800 locations in Canada to monitor for record-breaking weather. Virtual
+        about 750 locations in Canada to monitor for record-breaking weather. Virtual
         Climate stations correspond with the city pages of weather.gc.ca. This data
         provides the daily extremes of record for Temperature for each day of the
         year. Daily elements include: High Maximum, Low Maximum, High Minimum, Low
@@ -11972,47 +11976,47 @@ tags:
   name: ahccd-trends
 - description: TBD
   name: swob-realtime
-- description: "A Virtual Climate station is the result of threading together pieces\
-    \ of the climate record of proximate current and historical stations to construct\
-    \ a long term threaded data set. For the purpose of identifying and tabulating\
-    \ daily extremes of record for temperature, precipitation and snow on ground,\
-    \ the Meteorological Service of Canada has threaded or put together data from\
-    \ closely related stations to compile a long time series of data for over 800\
-    \ locations in Canada to monitor for record-breaking weather. The length of the\
-    \ time series of virtual stations is often greater than 100 years. A Virtual Climate\
-    \ station will always be named for an \u201CArea\u201D rather than a point, e.g.\
-    \ Winnipeg Area, to indicate that the data are drawn from that area rather than\
-    \ a single precise location."
+- description: "A Virtual Climate station is the result of threading together climate\
+    \ data from proximate current and historical stations to construct a long term\
+    \ threaded data set. For the purpose of identifying and tabulating daily extremes\
+    \ of record for temperature, precipitation and snowfall, the Meteorological Service\
+    \ of Canada has threaded or put together data from closely related stations to\
+    \ compile a long time series of data for about 750 locations in Canada to monitor\
+    \ for record-breaking weather. The length of the time series of virtual stations\
+    \ is often greater than 100 years. A Virtual Climate station is always named for\
+    \ an \u201CArea\u201D rather than a point, e.g. Winnipeg Area, to indicate that\
+    \ the data are drawn from that area(within a 20km radius from the urban center)\
+    \ rather than a single precise location."
   name: ltce-stations
 - description: 'Anomalous weather resulting in Temperature and Precipitation extremes
     occurs almost every day somewhere in Canada. For the purpose of identifying and
-    tabulating daily extremes of record for temperature, precipitation and snow on
-    ground, the Meteorological Service of Canada has threaded or put together data
-    from closely related stations to compile a long time series of data for over 800
-    locations in Canada to monitor for record-breaking weather. Virtual Climate stations
-    correspond with the city pages of weather.gc.ca. This data provides the daily
-    extremes of record for Temperature for each day of the year. Daily elements include:
-    High Maximum, Low Maximum, High Minimum, Low Minimum.'
+    tabulating daily extremes of record for temperature, precipitation and snowfall,
+    the Meteorological Service of Canada has threaded or put together data from closely
+    related stations to compile a long time series of data for about 750 locations
+    in Canada to monitor for record-breaking weather. Virtual Climate stations correspond
+    with the city pages of weather.gc.ca. This data provides the daily extremes of
+    record for Temperature for each day of the year. Daily elements include: High
+    Maximum, Low Maximum, High Minimum, Low Minimum.'
   name: ltce-temperature
 - description: 'Anomalous weather resulting in Temperature and Precipitation extremes
     occurs almost every day somewhere in Canada. For the purpose of identifying and
-    tabulating daily extremes of record for temperature, precipitation and snow on
-    ground, the Meteorological Service of Canada has threaded or put together data
-    from closely related stations to compile a long time series of data for over 800
-    locations in Canada to monitor for record-breaking weather. Virtual Climate stations
-    correspond with the city pages of weather.gc.ca. This data provides the daily
-    extremes of record for Precipitation for each day of the year. Daily elements
-    include: Greatest Precipitation.'
+    tabulating daily extremes of record for temperature, precipitation and snowfall,
+    the Meteorological Service of Canada has threaded or put together data from closely
+    related stations to compile a long time series of data for about 750 locations
+    in Canada to monitor for record-breaking weather. Virtual Climate stations correspond
+    with the city pages of weather.gc.ca. This data provides the daily extremes of
+    record for Precipitation for each day of the year. Daily elements include: Greatest
+    Precipitation.'
   name: ltce-precipitation
 - description: 'Anomalous weather resulting in Temperature and Precipitation extremes
     occurs almost every day somewhere in Canada. For the purpose of identifying and
-    tabulating daily extremes of record for temperature, precipitation and snow on
-    ground, the Meteorological Service of Canada has threaded or put together data
-    from closely related stations to compile a long time series of data for over 800
-    locations in Canada to monitor for record-breaking weather. Virtual Climate stations
-    correspond with the city pages of weather.gc.ca. This data provides the daily
-    extremes of record for Snowfall for each day of the year. Daily elements include:
-    Greatest Snowfall.'
+    tabulating daily extremes of record for temperature, precipitation and snowfall,
+    the Meteorological Service of Canada has threaded or put together data from closely
+    related stations to compile a long time series of data for about 750 locations
+    in Canada to monitor for record-breaking weather. Virtual Climate stations correspond
+    with the city pages of weather.gc.ca. This data provides the daily extremes of
+    record for Snowfall for each day of the year. Daily elements include: Greatest
+    Snowfall.'
   name: ltce-snowfall
 - description: Raster Drill process
   name: raster-drill
