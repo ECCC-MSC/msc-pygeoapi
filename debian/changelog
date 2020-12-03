@@ -1,3 +1,13 @@
+msc-pygeoapi (0.8.4) bionic; urgency=medium
+
+  * add STAC setup
+  * add fiona and rasterio deps for STAC setup
+  * config updates
+  * safeguard geomet climate import error
+  * fix realtime index workflow
+
+ -- Tom Kralidis <tom.kralidis@canada.ca>  Thu, 03 Dec 2020 16:05:52 +0000
+
 msc-pygeoapi (0.8.3) bionic; urgency=medium
 
   * add more environment variables to default WSGI
