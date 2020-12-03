@@ -106,7 +106,7 @@ msc-pygeoapi data hydrometric-realtime cache-stations  # download stations list 
 
 sr_subscribe start deploy/default/sarracenia/hydrometric_realtime.conf  # begin realtime update process
 
-msc-pygeoapi data hydrometric-realtime clean-records --days 30  # use --yes flag to bypass prompt (usually in crontab)
+msc-pygeoapi data hydrometric-realtime clean-indexes --days 30  # use --yes flag to bypass prompt (usually in crontab)
 ```
 
 ## Running processes
