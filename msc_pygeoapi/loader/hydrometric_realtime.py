@@ -362,7 +362,7 @@ class HydrometricRealtimeLoader(BaseLoader):
                              .format(observation_id))
 
                 es_index = '{}{}'.format(INDEX_BASENAME,
-                                         utc_datetime.format('%Y-%m-%d'))
+                                         utc_datetime.strftime('%Y-%m-%d'))
 
                 action = {
                     '_id': observation_id,
@@ -435,6 +435,42 @@ def hydrometric_realtime():
 
 @click.command()
 @click.pass_context
+@click.option('--file', '-f', 'file_',
+              type=click.Path(exists=True, resolve_path=True),
+              help='Path to file')
+@click.option('--directory', '-d', 'directory',
+              type=click.Path(exists=True, resolve_path=True,
+                              dir_okay=True, file_okay=False),
+              help='Path to directory')
+def add(ctx, file_, directory):
+    """adds data to system"""
+
+    if all([file_ is None, directory is None]):
+        raise click.ClickException('Missing --file/-f or --dir/-d option')
+
+    files_to_process = []
+
+    if file_ is not None:
+        files_to_process = [file_]
+    elif directory is not None:
+        for root, dirs, files in os.walk(directory):
+            for f in [file for file in files if file.endswith('.csv')]:
+                files_to_process.append(os.path.join(root, f))
+        files_to_process.sort(key=os.path.getmtime)
+
+    for file_to_process in files_to_process:
+        plugin_def = {
+            'filename_pattern': 'hydrometric_realtime',
+            'handler': 'msc_pygeoapi.loader.hydrometric_realtime.HydrometricRealtimeLoader'  # noqa
+        }
+        loader = HydrometricRealtimeLoader(plugin_def)
+        _ = loader.load_data(file_to_process)
+
+    click.echo('Done')
+
+
+@click.command()
+@click.pass_context
 def cache_stations(ctx):
     """Cache local copy of hydrometric realtime stations index"""
 
@@ -483,6 +519,7 @@ def delete_indexes(ctx):
     click.echo('Done')
 
 
+hydrometric_realtime.add_command(add)
 hydrometric_realtime.add_command(cache_stations)
 hydrometric_realtime.add_command(clean_indexes)
 hydrometric_realtime.add_command(delete_indexes)
