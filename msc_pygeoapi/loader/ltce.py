@@ -32,6 +32,7 @@ import logging
 import cx_Oracle
 import click
 from elasticsearch import logger as elastic_logger
+from slugify import slugify
 
 from msc_pygeoapi import cli_options
 from msc_pygeoapi.env import (
@@ -541,12 +542,14 @@ class LtceLoader(BaseLoader):
                         else insert_dict[key]
                     )
 
-            es_id = '{}-{}-{}-{}-{}'.format(
-                insert_dict['VIRTUAL_CLIMATE_ID'],
-                insert_dict["ELEMENT_NAME_E"],
-                insert_dict["CLIMATE_IDENTIFIER"],
-                insert_dict["START_DATE"],
-                insert_dict["END_DATE"],
+            es_id = slugify(
+                '{}-{}-{}-{}-{}'.format(
+                    insert_dict['VIRTUAL_CLIMATE_ID'],
+                    insert_dict["ELEMENT_NAME_E"],
+                    insert_dict["CLIMATE_IDENTIFIER"],
+                    insert_dict["START_DATE"],
+                    insert_dict["END_DATE"],
+                )
             )
 
             coords = [
