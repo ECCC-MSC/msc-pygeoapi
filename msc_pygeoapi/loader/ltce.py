@@ -114,7 +114,7 @@ MAPPINGS = {
             'type': 'text',
             'fields': {'raw': {'type': 'keyword'}},
         },
-        'PROVINCECODE': {
+        'PROVINCE_CODE': {
             'type': 'text',
             'fields': {'raw': {'type': 'keyword'}},
         },
@@ -146,7 +146,6 @@ MAPPINGS = {
         'RECORD_HIGH_MAX_TEMP': {'type': 'half_float'},
         'PREV_RECORD_HIGH_MAX_TEMP_YR': {'type': 'short'},
         'PREV_RECORD_HIGH_MAX_TEMP': {'type': 'half_float'},
-        'VIRTUAL_MEAS_DISPLAY_CODE': {'type': 'short'},
         'RECORD_LOW_MAX_TEMP_YR': {'type': 'short'},
         'RECORD_LOW_MAX_TEMP': {'type': 'half_float'},
         'PREV_RECORD_LOW_MAX_TEMP_YR': {'type': 'short'},
@@ -228,6 +227,10 @@ MAPPINGS = {
             'type': 'text',
             'fields': {'raw': {'type': 'keyword'}},
         },
+        'PROVINCE_CODE': {
+            'type': 'text',
+            'fields': {'raw': {'type': 'keyword'}},
+        },
     },
     'precip_extremes': {
         'WXO_CITY_CODE': {
@@ -252,7 +255,6 @@ MAPPINGS = {
         'RECORD_PRECIPITATION': {'type': 'half_float'},
         'PREV_RECORD_PRECIPITATION_YR': {'type': 'short'},
         'PREV_RECORD_PRECIPITATION': {'type': 'half_float'},
-        'VIRTUAL_MEAS_DISPLAY_CODE': {'type': 'short'},
         'FIRST_PRECIPITATION': {'type': 'half_float'},
         'FIRST_PRECIPITATION_YEAR': {'type': 'short'},
         'SECOND_PRECIPITATION': {'type': 'half_float'},
@@ -279,6 +281,10 @@ MAPPINGS = {
             'ignore_malformed': False,
         },
         'IDENTIFIER': {
+            'type': 'text',
+            'fields': {'raw': {'type': 'keyword'}},
+        },
+        'PROVINCE_CODE': {
             'type': 'text',
             'fields': {'raw': {'type': 'keyword'}},
         },
@@ -302,21 +308,20 @@ MAPPINGS = {
         },
         'LOCAL_DAY': {'type': 'short'},
         'LOCAL_MONTH': {'type': 'byte'},
-        'RECORD_PRECIPITATION_YR': {'type': 'short'},
-        'RECORD_PRECIPITATION': {'type': 'half_float'},
-        'PREV_RECORD_PRECIPITATION_YR': {'type': 'short'},
-        'PREV_RECORD_PRECIPITATION': {'type': 'half_float'},
-        'VIRTUAL_MEAS_DISPLAY_CODE': {'type': 'short'},
-        'FIRST_PRECIPITATION': {'type': 'half_float'},
-        'FIRST_PRECIPITATION_YEAR': {'type': 'short'},
-        'SECOND_PRECIPITATION': {'type': 'half_float'},
-        'SECOND_PRECIPITATION_YEAR': {'type': 'short'},
-        'THIRD_PRECIPITATION': {'type': 'half_float'},
-        'THIRD_PRECIPITATION_YEAR': {'type': 'short'},
-        'FOURTH_PRECIPITATION': {'type': 'half_float'},
-        'FOURTH_PRECIPITATION_YEAR': {'type': 'short'},
-        'FIFTH_PRECIPITATION': {'type': 'half_float'},
-        'FIFTH_PRECIPITATION_YEAR': {'type': 'short'},
+        'RECORD_SNOWFALL_YR': {'type': 'short'},
+        'RECORD_SNOWFALL': {'type': 'half_float'},
+        'PREV_RECORD_SNOWFALL_YR': {'type': 'short'},
+        'PREV_RECORD_SNOWFALL': {'type': 'half_float'},
+        'FIRST_SNOWFALL': {'type': 'half_float'},
+        'FIRST_SNOWFALL_YEAR': {'type': 'short'},
+        'SECOND_SNOWFALL': {'type': 'half_float'},
+        'SECOND_SNOWFALL_YEAR': {'type': 'short'},
+        'THIRD_SNOWFALL': {'type': 'half_float'},
+        'THIRD_SNOWFALL_YEAR': {'type': 'short'},
+        'FOURTH_SNOWFALL': {'type': 'half_float'},
+        'FOURTH_SNOWFALL_YEAR': {'type': 'short'},
+        'FIFTH_SNOWFALL': {'type': 'half_float'},
+        'FIFTH_SNOWFALL_YEAR': {'type': 'short'},
         'LAST_UPDATED': {
             'type': 'date',
             'format': 'date_time_no_millis',
@@ -333,6 +338,10 @@ MAPPINGS = {
             'ignore_malformed': False,
         },
         'IDENTIFIER': {
+            'type': 'text',
+            'fields': {'raw': {'type': 'keyword'}},
+        },
+        'PROVINCE_CODE': {
             'type': 'text',
             'fields': {'raw': {'type': 'keyword'}},
         },
@@ -427,6 +436,7 @@ class LtceLoader(BaseLoader):
                 'properties.FRE_STN_NAME',
                 'properties.START_DATE',
                 'properties.END_DATE',
+                'properties.PROVINCE_CODE',
                 'geometry.coordinates',
             ],
         )
@@ -486,6 +496,9 @@ class LtceLoader(BaseLoader):
             'coords': [
                 most_recent_station['geometry']['coordinates'][0],
                 most_recent_station['geometry']['coordinates'][1],
+            ],
+            'province_code': most_recent_station['properties'][
+                'PROVINCE_CODE'
             ],
         }
 
@@ -557,6 +570,9 @@ class LtceLoader(BaseLoader):
                 float(insert_dict['LAT']),
             ]
 
+            # rename PROVINCECODE field to PROVINCE_CODE
+            insert_dict['PROVINCE_CODE'] = insert_dict['PROVINCECODE']
+
             # cleanup unwanted fields retained from SQL join
             fields_to_delete = [
                 'STN_ID',
@@ -569,6 +585,7 @@ class LtceLoader(BaseLoader):
                 'CURRENT_FLAG',
                 'LON',
                 'LAT',
+                'PROVINCECODE',
             ]
             for field in fields_to_delete:
                 insert_dict.pop(field)
@@ -701,6 +718,9 @@ class LtceLoader(BaseLoader):
                 insert_dict['FRE_STN_NAME'] = stations_dict[
                     virtual_climate_id
                 ]['MAX']['fre_stn_name']
+                insert_dict['PROVINCE_CODE'] = stations_dict[
+                    virtual_climate_id
+                ]['MAX']['province_code']
 
             else:
                 LOGGER.error(
@@ -722,7 +742,6 @@ class LtceLoader(BaseLoader):
                     '{}_TEMP_RECORD_END'.format(level)
                 ] = stations_dict[virtual_climate_id][level]['record_end']
 
-            # cleanup unwanted fields retained from SQL join
             # cleanup unwanted fields retained from SQL join
             fields_to_delete = [
                 'LOCAL_TIME',
@@ -832,6 +851,9 @@ class LtceLoader(BaseLoader):
                 'fre_stn_name'
             ]
 
+            insert_dict['PROVINCE_CODE'] = stations_dict[virtual_climate_id][
+                'province_code'
+            ]
             # cleanup unwanted fields retained from SQL join
             fields_to_delete = [
                 'LOCAL_TIME',
@@ -940,9 +962,21 @@ class LtceLoader(BaseLoader):
                 'fre_stn_name'
             ]
 
+            insert_dict['PROVINCE_CODE'] = stations_dict[virtual_climate_id][
+                'province_code'
+            ]
+
             # cleanup unwanted fields retained from SQL join
-            insert_dict.pop('LOCAL_TIME')
-            insert_dict.pop('VIRTUAL_MEAS_DISPLAY_CODE')
+            fields_to_delete = [
+                'LOCAL_TIME',
+                'VIRTUAL_MEAS_DISPLAY_CODE',
+                'ENG_STN_NAME',
+                'FRE_STN_NAME',
+                'CLIMATE_IDENTIFIER',
+                'LAST_UPDATED',
+            ]
+            for field in fields_to_delete:
+                insert_dict.pop(field)
 
             # set properties.IDENTIFIER
             insert_dict['IDENTIFIER'] = es_id
