@@ -1,8 +1,10 @@
 # =================================================================
 #
 # Author: Tom Kralidis <tom.kralidis@canada.ca>
+#         Felix Laframboise <felix.laframboise@canada.ca>
 #
 # Copyright (c) 2020 Tom Kralidis
+# Copyright (c) 2021 Felix Laframboise
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -66,6 +68,10 @@ PLUGINS = {
             'filename_pattern': 'observations/swob-ml',
             'handler': 'msc_pygeoapi.loader.swob_realtime.SWOBRealtimeLoader'  # noqa
         },
+        'aqhi_realtime': {
+            'filename_pattern': 'air_quality/aqhi',
+            'handler': 'msc_pygeoapi.loader.aqhi_realtime.AQHIRealtimeLoader'  # noqa
+        }
     }
 }
 

@@ -1067,6 +1067,70 @@ resources:
                   - RECORD_END
                   - IDENTIFIER
 
+    aqhi-forecasts-realtime:
+        type: collection
+        title: Air Quality Health Index – Forecasts
+        description: The Air Quality Health Index (AQHI) is a scale designed to help quantify the quality of the air in a certain region on a scale from 1 to 10. When the amount of air pollution is very high, the number is reported as 10+. It also includes a category that describes the health risk associated with the index reading (e.g. Low, Moderate, High, or Very High Health Risk). The AQHI is calculated based on the relative risks of a combination of common air pollutants that are known to harm human health, including ground-level ozone, particulate matter, and nitrogen dioxide. The AQHI formulation captures only the short term or acute health risk (exposure of hour or days at a maximum). The formulation of the AQHI may change over time to reflect new understanding associated with air pollution health effects. The AQHI is calculated from data observed in real time, without being verified (quality control).
+        keywords: [air, quality, health, index, realtime, forecasts]
+        crs:
+            - CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title: Data and Products of the Air Quality Health Index (AQHI) observation and forecast
+              href: https://eccc-msc.github.io/open-data/msc-data/aqhi/readme_aqhi_en/
+              hreflang: en-CA
+            - type: text/html
+              rel: alternate
+              title: Données et produits d'observations et prévisions qui sont générés pour le programme Cote Air Santé (CAS)
+              href: https://eccc-msc.github.io/open-data/msc-data/aqhi/readme_aqhi_fr/
+              hreflang: fr-CA
+        extents:
+            spatial:
+                bbox: [-141, 41.68, -52.62, 83.11]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+            temporal:
+                begin: 2013-01-01T00:00:00Z
+                end: null # or empty
+        providers:
+            - type: feature
+              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
+              data: http://localhost:9200/aqhi-forecasts-realtime.*
+              id_field: ID
+              time_field: datetime_utc
+
+    aqhi-observations-realtime:
+        type: collection
+        title: Air Quality Health Index – Observations
+        description: The Air Quality Health Index (AQHI) is a scale designed to help quantify the quality of the air in a certain region on a scale from 1 to 10. When the amount of air pollution is very high, the number is reported as 10+. It also includes a category that describes the health risk associated with the index reading (e.g. Low, Moderate, High, or Very High Health Risk). The AQHI is calculated based on the relative risks of a combination of common air pollutants that are known to harm human health, including ground-level ozone, particulate matter, and nitrogen dioxide. The AQHI formulation captures only the short term or acute health risk (exposure of hour or days at a maximum). The formulation of the AQHI may change over time to reflect new understanding associated with air pollution health effects. The AQHI is calculated from data observed in real time, without being verified (quality control).
+        keywords: [air, quality, health, index, realtime, observations]
+        crs:
+            - CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title: Data and Products of the Air Quality Health Index (AQHI) observation and forecast
+              href: https://eccc-msc.github.io/open-data/msc-data/aqhi/readme_aqhi_en/
+              hreflang: en-CA
+            - type: text/html
+              rel: alternate
+              title: Données et produits d'observations et prévisions qui sont générés pour le programme Cote Air Santé (CAS)
+              href: https://eccc-msc.github.io/open-data/msc-data/aqhi/readme_aqhi_fr/
+              hreflang: fr-CA
+        extents:
+            spatial:
+                bbox: [-141, 41.68, -52.62, 83.11]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+            temporal:
+                begin: 2013-01-01T00:00:00Z
+                end: null # or empty
+        providers:
+            - type: feature
+              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
+              data: http://localhost:9200/aqhi-observations-realtime.*
+              id_field: ID
+              time_field: datetime_utc
+
     msc-datamart:
         type: stac-collection
         title: MSC Datamart (experimental)
