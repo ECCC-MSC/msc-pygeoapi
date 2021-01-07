@@ -2,7 +2,7 @@
 #
 # Author: Tom Kralidis <tom.kralidis@canada.ca>
 #
-# Copyright (c) 2020 Tom Kralidis
+# Copyright (c) 2021 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -39,6 +39,9 @@ MSC_PYGEOAPI_LOGGING_LOGLEVEL = os.getenv('MSC_PYGEOAPI_LOGGING_LOGLEVEL',
                                           'ERROR')
 MSC_PYGEOAPI_LOGGING_LOGFILE = os.getenv('MSC_PYGEOAPI_LOGGING_LOGFILE',
                                          None)
+
+MSC_PYGEOAPI_OGC_API_URL = os.getenv('MSC_PYGEOAPI_OGC_API_URL'.rstrip('/'),
+                                     None)
 
 MSC_PYGEOAPI_BASEPATH = os.getenv('MSC_PYGEOAPI_BASEPATH', None)
 
