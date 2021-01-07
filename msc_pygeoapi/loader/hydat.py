@@ -6,7 +6,7 @@
 #
 # Copyright (c) 2019 Alex Hurka
 # Copyright (c) 2020 Etienne Pelletier
-# Copyright (c) 2020 Tom Kralidis
+# Copyright (c) 2021 Tom Kralidis
 
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -43,7 +43,8 @@ from sqlalchemy.sql import distinct
 
 from msc_pygeoapi import cli_options
 from msc_pygeoapi.env import (MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH,
-                              MSC_PYGEOAPI_LOGGING_LOGLEVEL)
+                              MSC_PYGEOAPI_LOGGING_LOGLEVEL,
+                              MSC_PYGEOAPI_OGC_API_URL)
 from msc_pygeoapi.loader.base import BaseLoader
 from msc_pygeoapi.util import get_es, submit_elastic_package
 
@@ -682,7 +683,7 @@ class HydatLoader(BaseLoader):
         :returns: generator of bulk API upsert actions.
         """
 
-        url = 'https://api.geo.weather.gc.ca'
+        url = MSC_PYGEOAPI_OGC_API_URL
 
         station_codes = [
             x[0]
@@ -1270,6 +1271,9 @@ def add(ctx, db, es, username, password, dataset):
     click.echo('Processing dataset(s): {}'.format(datasets_to_process))
 
     if 'stations' in datasets_to_process:
+        if MSC_PYGEOAPI_OGC_API_URL is None:
+            msg = 'MSC_PYGEOAPI_OGC_API_URL environment variable not set'
+            raise click.ClickException(msg)
         try:
             click.echo('Populating stations index')
             loader.create_index('stations')
