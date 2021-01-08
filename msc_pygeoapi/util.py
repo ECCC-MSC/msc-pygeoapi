@@ -254,12 +254,12 @@ def check_es_indexes_to_delete(indexes, days):
     return to_delete
 
 
-def delete_es_indexes(indexes):
+def delete_es_indexes(indexes, conn_dict={}):
     """
     helper function to delete a series of ES indexes
-
     :param indexes: indexes to delete
-
+    :param conn_dict: `dict` containing a host key and a auth key comprised of
+                      a tuple containing username and password.
     :returns: None
     """
 
@@ -268,7 +268,12 @@ def delete_es_indexes(indexes):
         LOGGER.error(msg)
         raise ValueError(msg)
 
-    es = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
+    # if a non-empty conn_dict kwarg was passed in call, use to connect to ES
+    if conn_dict:
+        es = get_es(conn_dict['host'], conn_dict['auth'])
+    # otherwise use environment variables
+    else:
+        es = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
 
     if es.indices.exists(indexes):
         LOGGER.info('Deleting indexes {}'.format(indexes))

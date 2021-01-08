@@ -417,13 +417,26 @@ def add(ctx, file_, directory):
     default=DAYS_TO_KEEP,
     help='Delete indexes older than n days (default={})'
 )
+@cli_options.OPTION_ELASTICSEARCH()
+@cli_options.OPTION_ES_USERNAME()
+@cli_options.OPTION_ES_PASSWORD()
 @cli_options.OPTION_YES(
     prompt='Are you sure you want to delete old indexes?'
 )
-def clean_indexes(ctx, days):
-    """Delete old indexes"""
+def clean_indexes(ctx, days, es, username, password):
+    """Clean SWOB realtime indexes older than n number of days"""
 
-    es = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
+    # if es, username and and password passed, use to create ES connection
+    if all([es, username, password]):
+        es_conn_dict = {
+            'host': es,
+            'auth': (username, password)
+        }
+        es = get_es(es_conn_dict['host'], es_conn_dict['auth'])
+    # otherwise use environment variables
+    else:
+        es_conn_dict = {}
+        es = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
 
     indexes = list(es.indices.get('{}*'.format(INDEX_BASENAME)).keys())
 
@@ -431,23 +444,34 @@ def clean_indexes(ctx, days):
         indexes_to_delete = check_es_indexes_to_delete(indexes, days)
         if indexes_to_delete:
             click.echo('Deleting indexes {}'.format(indexes_to_delete))
-            delete_es_indexes(','.join(indexes))
+            delete_es_indexes(','.join(indexes), conn_dict=es_conn_dict)
 
     click.echo('Done')
 
 
 @click.command()
 @click.pass_context
+@cli_options.OPTION_ELASTICSEARCH()
+@cli_options.OPTION_ES_USERNAME()
+@cli_options.OPTION_ES_PASSWORD()
 @cli_options.OPTION_YES(
     prompt='Are you sure you want to delete these indexes?'
 )
-def delete_indexes(ctx):
-    """Delete all hydrometric realtime indexes"""
+def delete_indexes(ctx, es, username, password):
+    """Delete all SWOB realtime indexes"""
 
     all_indexes = '{}*'.format(INDEX_BASENAME)
 
     click.echo('Deleting indexes {}'.format(all_indexes))
-    delete_es_indexes(all_indexes)
+
+    if all([es, username, password]):
+        es_conn_dict = {
+            'host': es,
+            'auth': (username, password)
+        }
+        delete_es_indexes(all_indexes, conn_dict=es_conn_dict)
+    else:
+        delete_es_indexes(all_indexes)
 
     click.echo('Done')
 

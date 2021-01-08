@@ -950,7 +950,7 @@ class ClimateArchiveLoader(BaseLoader):
 
 @click.group()
 def climate_archive():
-    """Manages Cliamte Archive indices"""
+    """Manages climate archive indices"""
     pass
 
 
