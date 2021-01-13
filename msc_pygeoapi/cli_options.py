@@ -38,7 +38,7 @@ def OPTION_DATASET(*args, **kwargs):
 
     default_kwargs = {
         'required': True,
-        'help': 'ES dataset to load, or all if loading everything',
+        'help': 'Dataset to load, or all if loading everything',
     }
 
     if not args:
@@ -79,7 +79,7 @@ def OPTION_DB(*args, **kwargs):
 
 def OPTION_DIRECTORY(*args, **kwargs):
 
-    default_args = ['--directory', '-d', 'directory_']
+    default_args = ['--directory', '-d']
 
     default_kwargs = {
         'type': click.Path(exists=True, resolve_path=True),
@@ -141,6 +141,18 @@ def OPTION_ES_USERNAME(*args, **kwargs):
     kwargs = {**default_kwargs, **kwargs} if kwargs else default_kwargs
 
     return click.option(*args, **kwargs)
+
+
+def OPTION_ES_IGNORE_CERTS(**kwargs):
+
+    default_kwargs = {
+        'is_flag': True,
+        'help': 'Ignore certificate verification when connecting to ES'
+    }
+
+    kwargs = {**default_kwargs, **kwargs} if kwargs else default_kwargs
+
+    return click.option('--ignore-certs', **kwargs)
 
 
 def OPTION_FILE(*args, **kwargs):

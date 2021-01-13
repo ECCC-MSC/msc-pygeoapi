@@ -38,9 +38,9 @@ import click
 import cx_Oracle
 
 from msc_pygeoapi import cli_options
+from msc_pygeoapi.connector.elasticsearch_ import ElasticsearchConnector
 from msc_pygeoapi.loader.base import BaseLoader
-from msc_pygeoapi.env import MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH
-from msc_pygeoapi.util import get_es, submit_elastic_package
+from msc_pygeoapi.util import configure_es_connection
 
 
 logging.basicConfig()
@@ -48,35 +48,27 @@ LOGGER = logging.getLogger(__name__)
 HTTP_OK = 200
 POST_OK = 201
 HEADERS = {'Content-type': 'application/json'}
-# Needs to be fixed.
-VERIFY = False
 
 
 class ClimateArchiveLoader(BaseLoader):
     """Climat Archive Loader"""
 
-    def __init__(self, plugin_def):
+    def __init__(self, db_conn_string, conn_config={}):
         """initializer"""
 
         super().__init__()
 
-        if plugin_def['es_conn_dict']:
-            self.ES = get_es(
-                plugin_def['es_conn_dict']['host'],
-                plugin_def['es_conn_dict']['auth'],
-            )
-        else:
-            self.ES = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
+        self.conn = ElasticsearchConnector(conn_config)
 
         # setup DB connection
         try:
-            self.conn = cx_Oracle.connect(plugin_def['db_conn_string'])
+            self.db_conn = cx_Oracle.connect(db_conn_string)
         except Exception as err:
             msg = f'Could not connect to Oracle: {err}'
             LOGGER.critical(msg)
             raise click.ClickException(msg)
 
-        self.cur = self.conn.cursor()
+        self.cur = self.db_conn.cursor()
 
     def create_index(self, index):
         """
@@ -197,11 +189,7 @@ class ClimateArchiveLoader(BaseLoader):
             }
 
             index_name = 'climate_station_information'
-
-            if self.ES.indices.exists(index_name):
-                self.ES.indices.delete(index_name)
-                LOGGER.info('Deleted the stations index')
-            self.ES.indices.create(index=index_name, body=mapping)
+            self.conn.create(index_name, mapping, overwrite=True)
 
         if index == 'normals':
             mapping = {
@@ -298,11 +286,7 @@ class ClimateArchiveLoader(BaseLoader):
             }
 
             index_name = 'climate_normals_data'
-
-            if self.ES.indices.exists(index_name):
-                self.ES.indices.delete(index_name)
-                LOGGER.info('Deleted the climate normals index')
-            self.ES.indices.create(index=index_name, body=mapping)
+            self.conn.create(index_name, mapping, overwrite=True)
 
         if index == 'monthly_summary':
             mapping = {
@@ -389,11 +373,7 @@ class ClimateArchiveLoader(BaseLoader):
             }
 
             index_name = 'climate_public_climate_summary'
-
-            if self.ES.indices.exists(index_name):
-                self.ES.indices.delete(index_name)
-                LOGGER.info('Deleted the climate monthly summaries index')
-            self.ES.indices.create(index=index_name, body=mapping)
+            self.conn.create(index_name, mapping, overwrite=True)
 
         if index == 'daily_summary':
             mapping = {
@@ -508,11 +488,7 @@ class ClimateArchiveLoader(BaseLoader):
             }
 
             index_name = 'climate_public_daily_data'
-
-            if self.ES.indices.exists(index_name):
-                self.ES.indices.delete(index_name)
-                LOGGER.info('Deleted the climate daily summaries index')
-            self.ES.indices.create(index=index_name, body=mapping)
+            self.conn.create(index_name, mapping, overwrite=True)
 
     def generate_stations(self):
         """
@@ -950,7 +926,7 @@ class ClimateArchiveLoader(BaseLoader):
 
 @click.group()
 def climate_archive():
-    """Manages Cliamte Archive indices"""
+    """Manages climate archive indices"""
     pass
 
 
@@ -960,6 +936,7 @@ def climate_archive():
 @cli_options.OPTION_ELASTICSEARCH()
 @cli_options.OPTION_ES_USERNAME()
 @cli_options.OPTION_ES_PASSWORD()
+@cli_options.OPTION_ES_IGNORE_CERTS()
 @cli_options.OPTION_DATASET(
     type=click.Choice(['all', 'stations', 'normals', 'monthly', 'daily']),
 )
@@ -971,21 +948,26 @@ def climate_archive():
     help=' Load all stations starting from specified station',
     required=False,
 )
-@click.option('--date', help='Start date to fetch updates (YYYY-MM-DD)',
-              required=False)
-def add(ctx, db, es, username, password, dataset, station=None,
-        starting_from=False, date=None):
+@click.option(
+    '--date', help='Start date to fetch updates (YYYY-MM-DD)', required=False
+)
+def add(
+    ctx,
+    db,
+    es,
+    username,
+    password,
+    ignore_certs,
+    dataset,
+    station=None,
+    starting_from=False,
+    date=None,
+):
     """Loads MSC Climate Archive data from Oracle into Elasticsearch"""
 
-    plugin_def = {
-        'db_conn_string': db,
-        'es_conn_dict': {'host': es, 'auth': (username, password)}
-        if all([es, username, password])
-        else None,
-        'handler': 'msc_pygeoapi.loader.climate_archive.ClimateArchiveLoader',
-    }
+    conn_config = configure_es_connection(es, username, password, ignore_certs)
 
-    loader = ClimateArchiveLoader(plugin_def)
+    loader = ClimateArchiveLoader(db, conn_config)
 
     if dataset == 'all':
         datasets_to_process = ['daily', 'monthly', 'normals', 'stations']
@@ -999,7 +981,7 @@ def add(ctx, db, es, username, password, dataset, station=None,
             click.echo('Populating stations index')
             loader.create_index('stations')
             stations = loader.generate_stations()
-            submit_elastic_package(loader.ES, stations)
+            loader.conn.submit_elastic_package(stations)
         except Exception as err:
             msg = 'Could not populate stations index: {}'.format(err)
             raise click.ClickException(msg)
@@ -1011,9 +993,10 @@ def add(ctx, db, es, username, password, dataset, station=None,
             normals_dict = loader.get_normals_data()
             periods_dict = loader.get_normals_periods()
             loader.create_index('normals')
-            normals = loader.generate_normals(stn_dict, normals_dict,
-                                              periods_dict)
-            submit_elastic_package(loader.ES, normals)
+            normals = loader.generate_normals(
+                stn_dict, normals_dict, periods_dict
+            )
+            loader.conn.submit_elastic_package(normals)
         except Exception as err:
             msg = 'Could not populate normals index: {}'.format(err)
             raise click.ClickException(msg)
@@ -1025,7 +1008,7 @@ def add(ctx, db, es, username, password, dataset, station=None,
             if not (date or station or starting_from):
                 loader.create_index('monthly_summary')
             monthlies = loader.generate_monthly_data(stn_dict, date)
-            submit_elastic_package(loader.ES, monthlies)
+            loader.conn.submit_elastic_package(monthlies)
         except Exception as err:
             msg = 'Could not populate montly index: {}'.format(err)
             raise click.ClickException(msg)
@@ -1037,12 +1020,12 @@ def add(ctx, db, es, username, password, dataset, station=None,
             if not (date or station or starting_from):
                 loader.create_index('daily_summary')
             dailies = loader.generate_daily_data(stn_dict, date)
-            submit_elastic_package(loader.ES, dailies)
+            loader.conn.submit_elastic_package(dailies)
         except Exception as err:
             msg = 'Could not populate daily index: {}'.format(err)
             raise click.ClickException(msg)
 
-    loader.conn.close()
+    loader.db_conn.close()
 
 
 climate_archive.add_command(add)

@@ -36,10 +36,10 @@ from lxml import etree
 import os
 
 from msc_pygeoapi import cli_options
-from msc_pygeoapi.env import (MSC_PYGEOAPI_ES_TIMEOUT, MSC_PYGEOAPI_ES_URL,
-                              MSC_PYGEOAPI_ES_AUTH, MSC_PYGEOAPI_BASEPATH)
+from msc_pygeoapi.connector.elasticsearch_ import ElasticsearchConnector
+from msc_pygeoapi.env import MSC_PYGEOAPI_BASEPATH
 from msc_pygeoapi.loader.base import BaseLoader
-from msc_pygeoapi.util import get_es
+from msc_pygeoapi.util import configure_es_connection
 
 LOGGER = logging.getLogger(__name__)
 
@@ -236,16 +236,13 @@ SETTINGS = {
 class CitypageweatherRealtimeLoader(BaseLoader):
     """Current conditions real-time loader"""
 
-    def __init__(self, plugin_def):
+    def __init__(self, conn_config={}):
         """initializer"""
 
         BaseLoader.__init__(self)
 
-        self.ES = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
-
-        if not self.ES.indices.exists(INDEX_NAME):
-            self.ES.indices.create(index=INDEX_NAME, body=SETTINGS,
-                                   request_timeout=MSC_PYGEOAPI_ES_TIMEOUT)
+        self.conn = ElasticsearchConnector(conn_config)
+        self.conn.create(INDEX_NAME, mapping=SETTINGS)
 
     def load_data(self, filepath):
         """
@@ -264,9 +261,11 @@ class CitypageweatherRealtimeLoader(BaseLoader):
         data = self.xml2json_cpw(wxo_lookup, filepath)
 
         try:
-            r = self.ES.index(index=INDEX_NAME,
-                              id=data['properties']['identifier'],
-                              body=data)
+            r = self.conn.Elasticsearch.index(
+                index=INDEX_NAME,
+                id=data['properties']['identifier'],
+                body=data
+            )
             LOGGER.debug('Result: {}'.format(r))
             return True
         except Exception as err:
@@ -499,13 +498,18 @@ def citypageweather():
     default=DAYS_TO_KEEP,
     help=f'Delete documents older than n days (default={DAYS_TO_KEEP})'
 )
+@cli_options.OPTION_ELASTICSEARCH()
+@cli_options.OPTION_ES_USERNAME()
+@cli_options.OPTION_ES_PASSWORD()
+@cli_options.OPTION_ES_IGNORE_CERTS()
 @cli_options.OPTION_YES(
     prompt='Are you sure you want to delete old documents?'
 )
-def clean_records(ctx, days):
-    """Delete old documents"""
+def clean_records(ctx, days, es, username, password, ignore_certs):
+    """Delete old citypageweather documents"""
 
-    es = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
+    conn_config = configure_es_connection(es, username, password, ignore_certs)
+    conn = ElasticsearchConnector(conn_config)
 
     older_than = (datetime.now() - timedelta(days=days)).strftime(
         '%Y-%m-%d %H:%M')
@@ -522,21 +526,25 @@ def clean_records(ctx, days):
         }
     }
 
-    es.delete_by_query(index=INDEX_NAME, body=query)
+    conn.Elasticsearch.delete_by_query(index=INDEX_NAME, body=query)
 
 
 @click.command()
 @click.pass_context
+@cli_options.OPTION_ELASTICSEARCH()
+@cli_options.OPTION_ES_USERNAME()
+@cli_options.OPTION_ES_PASSWORD()
+@cli_options.OPTION_ES_IGNORE_CERTS()
 @cli_options.OPTION_YES(
     prompt='Are you sure you want to delete this index?'
 )
-def delete_index(ctx):
+def delete_index(ctx, es, username, password, ignore_certs):
     """Delete current conditions index"""
 
-    es = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
+    conn_config = configure_es_connection(es, username, password, ignore_certs)
+    conn = ElasticsearchConnector(conn_config)
 
-    if es.indices.exists(INDEX_NAME):
-        es.indices.delete(INDEX_NAME)
+    conn.delete(INDEX_NAME)
 
 
 citypageweather.add_command(clean_records)

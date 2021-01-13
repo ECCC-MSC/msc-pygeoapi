@@ -35,16 +35,11 @@ from elasticsearch import logger as elastic_logger
 from slugify import slugify
 
 from msc_pygeoapi import cli_options
-from msc_pygeoapi.env import (
-    MSC_PYGEOAPI_ES_TIMEOUT,
-    MSC_PYGEOAPI_ES_URL,
-    MSC_PYGEOAPI_ES_AUTH,
-    MSC_PYGEOAPI_LOGGING_LOGLEVEL
-)
+from msc_pygeoapi.connector.elasticsearch_ import ElasticsearchConnector
+from msc_pygeoapi.env import MSC_PYGEOAPI_LOGGING_LOGLEVEL
 from msc_pygeoapi.loader.base import BaseLoader
 from msc_pygeoapi.util import (
-    get_es,
-    submit_elastic_package,
+    configure_es_connection,
     strftime_rfc3339,
     DATETIME_RFC3339_FMT,
 )
@@ -354,44 +349,31 @@ INDICES = [INDEX_NAME.format(index) for index in MAPPINGS]
 class LtceLoader(BaseLoader):
     """LTCE data loader"""
 
-    def __init__(self, plugin_def):
+    def __init__(self, db_string=None, conn_config={}):
         """initializer"""
 
         BaseLoader.__init__(self)
-
-        if plugin_def['es_conn_dict']:
-            self.ES = get_es(
-                plugin_def['es_conn_dict']['host'],
-                plugin_def['es_conn_dict']['auth'],
-            )
-        else:
-            self.ES = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
-        self.con = None
+        self.conn = ElasticsearchConnector(conn_config)
+        self.db_conn = None
 
         # setup DB connection
-        if 'db_conn_string' in plugin_def:
+        if db_string is not None:
             try:
-                self.con = cx_Oracle.connect(plugin_def['db_conn_string'])
-                self.cur = self.con.cursor()
+                self.db_conn = cx_Oracle.connect(db_string)
+                self.cur = self.db_conn.cursor()
             except Exception as err:
                 msg = 'Could not connect to Oracle: {}'.format(err)
                 LOGGER.critical(msg)
                 raise click.ClickException(msg)
         else:
             LOGGER.debug("No DB connection string passed. Indexing disabled.")
-            self.con = self.cur = None
+            self.db_conn = self.cur = None
 
         for item in MAPPINGS:
-            if not self.ES.indices.exists(INDEX_NAME.format(item)):
-                SETTINGS['mappings']['properties']['properties'][
-                    'properties'
-                ] = MAPPINGS[item]
-
-                self.ES.indices.create(
-                    index=INDEX_NAME.format(item),
-                    body=SETTINGS,
-                    request_timeout=MSC_PYGEOAPI_ES_TIMEOUT,
-                )
+            SETTINGS['mappings']['properties']['properties'][
+                'properties'
+            ] = MAPPINGS[item]
+            self.conn.create(INDEX_NAME.format(item), SETTINGS)
 
     def get_stations_info(self, element_name, station_id):
         """
@@ -427,7 +409,7 @@ class LtceLoader(BaseLoader):
             }
         }
 
-        results = self.ES.search(
+        results = self.conn.Elasticsearch.search(
             body=query,
             index='ltce_stations',
             _source=[
@@ -1010,19 +992,18 @@ def ltce():
 
 @click.command()
 @click.pass_context
-@click.option('--db', required=True, help='Oracle database connection string.')
-@click.option('--es', help='URL to Elasticsearch.')
-@click.option('--username', help='Username to connect to HTTPS')
-@click.option('--password', help='Password to connect to HTTPS')
-@click.option(
-    '--dataset',
+@cli_options.OPTION_DB()
+@cli_options.OPTION_ELASTICSEARCH()
+@cli_options.OPTION_ES_USERNAME()
+@cli_options.OPTION_ES_PASSWORD()
+@cli_options.OPTION_ES_IGNORE_CERTS()
+@cli_options.OPTION_DATASET(
     type=click.Choice(
         ['all', 'stations', 'temperature', 'precipitation', 'snowfall']
     ),
-    required=True,
     help='LTCE dataset to load',
 )
-def add(ctx, db, es, username, password, dataset):
+def add(ctx, db, es, username, password, ignore_certs, dataset):
     """
     Loads Long Term Climate Extremes(LTCE) data from Oracle DB
     into Elasticsearch.
@@ -1031,14 +1012,9 @@ def add(ctx, db, es, username, password, dataset):
     :param dataset: name of dataset to load, or all for all datasets.
     """
 
-    plugin_def = {
-        'db_conn_string': db,
-        'es_conn_dict': {'host': es, 'auth': (username, password)}
-        if all([es, username, password])
-        else None,
-        'handler': 'msc_pygeoapi.loader.ltce.LtceLoader',
-    }
-    loader = LtceLoader(plugin_def)
+    conn_config = configure_es_connection(es, username, password, ignore_certs)
+
+    loader = LtceLoader(db, conn_config)
 
     if dataset == 'all':
         datasets_to_process = [
@@ -1053,7 +1029,7 @@ def add(ctx, db, es, username, password, dataset):
     if 'stations' in datasets_to_process:
         try:
             stations = loader.generate_stations()
-            submit_elastic_package(loader.ES, stations)
+            loader.conn.submit_elastic_package(stations)
             LOGGER.info('Stations populated.')
         except Exception as err:
             LOGGER.error(
@@ -1064,7 +1040,7 @@ def add(ctx, db, es, username, password, dataset):
     if 'temperature' in datasets_to_process:
         try:
             temp_extremes = loader.generate_daily_temp_extremes()
-            submit_elastic_package(loader.ES, temp_extremes)
+            loader.conn.submit_elastic_package(temp_extremes)
             LOGGER.info('Daily temperature extremes populated.')
         except Exception as err:
             LOGGER.error(
@@ -1076,8 +1052,8 @@ def add(ctx, db, es, username, password, dataset):
 
     if 'precipitation' in datasets_to_process:
         try:
-            temp_extremes = loader.generate_daily_precip_extremes()
-            submit_elastic_package(loader.ES, temp_extremes)
+            precip_extremes = loader.generate_daily_precip_extremes()
+            loader.conn.submit_elastic_package(precip_extremes)
             LOGGER.info('Daily precipitation extremes populated.')
         except Exception as err:
             LOGGER.error(
@@ -1089,8 +1065,8 @@ def add(ctx, db, es, username, password, dataset):
 
     if 'snowfall' in datasets_to_process:
         try:
-            temp_extremes = loader.generate_daily_snow_extremes()
-            submit_elastic_package(loader.ES, temp_extremes)
+            snow_extremes = loader.generate_daily_snow_extremes()
+            loader.conn.submit_elastic_package(snow_extremes)
             LOGGER.info('Daily snowfall extremes populated.')
         except Exception as err:
             LOGGER.error(
@@ -1102,7 +1078,7 @@ def add(ctx, db, es, username, password, dataset):
 
     LOGGER.info('Finished populating indices.')
 
-    loader.con.close()
+    loader.db_conn.close()
 
 
 def confirm(ctx, param, value):
@@ -1132,34 +1108,29 @@ def confirm(ctx, param, value):
     type=click.Choice(INDICES),
     help='msc-pygeoapi LTCE index name to delete',
 )
-@click.option('--es', help='URL to Elasticsearch.')
-@click.option('--username', help='Username to connect to HTTPS')
-@click.option('--password', help='Password to connect to HTTPS')
+@cli_options.OPTION_ELASTICSEARCH()
+@cli_options.OPTION_ES_USERNAME()
+@cli_options.OPTION_ES_PASSWORD()
+@cli_options.OPTION_ES_IGNORE_CERTS()
 @cli_options.OPTION_YES(callback=confirm)
-def delete_index(ctx, index_name, es, username, password):
+def delete_indexes(ctx, index_name, es, username, password, ignore_certs):
     """
     Delete a particular ES index with a given name as argument or all if no
     argument is passed
     """
 
-    plugin_def = {
-        'es_conn_dict': {'host': es, 'auth': (username, password)}
-        if all([es, username, password])
-        else None,
-        'handler': 'msc_pygeoapi.loader.ltce.LtceLoader',
-    }
-
-    loader = LtceLoader(plugin_def)
+    conn_config = configure_es_connection(es, username, password, ignore_certs)
+    loader = LtceLoader(conn_config=conn_config)
 
     if index_name:
         LOGGER.info('Deleting ES index {}'.format(index_name))
-        loader.ES.indices.delete(index=index_name)
+        loader.conn.delete(index_name)
         return True
     else:
         LOGGER.info('Deleting all LTCE ES indices')
-        loader.ES.indices.delete(index=",".join(INDICES))
+        loader.conn.delete(",".join(INDICES))
         return True
 
 
 ltce.add_command(add)
-ltce.add_command(delete_index)
+ltce.add_command(delete_indexes)

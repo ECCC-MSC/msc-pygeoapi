@@ -33,15 +33,19 @@ from datetime import datetime, timedelta
 import logging
 import os
 import urllib.request
-from elasticsearch import helpers, logger as elastic_logger
+from elasticsearch import logger as elastic_logger
 
 from msc_pygeoapi import cli_options
-from msc_pygeoapi.env import (MSC_PYGEOAPI_CACHEDIR, MSC_PYGEOAPI_ES_URL,
-                              MSC_PYGEOAPI_ES_AUTH,
-                              MSC_PYGEOAPI_LOGGING_LOGLEVEL)
+from msc_pygeoapi.connector.elasticsearch_ import ElasticsearchConnector
+from msc_pygeoapi.env import (
+    MSC_PYGEOAPI_CACHEDIR,
+    MSC_PYGEOAPI_LOGGING_LOGLEVEL
+)
 from msc_pygeoapi.loader.base import BaseLoader
-from msc_pygeoapi.util import (check_es_indexes_to_delete, delete_es_indexes,
-                               get_es)
+from msc_pygeoapi.util import (
+    check_es_indexes_to_delete,
+    configure_es_connection,
+)
 
 
 LOGGER = logging.getLogger(__name__)
@@ -167,15 +171,13 @@ def delocalize_date(date_string):
 class HydrometricRealtimeLoader(BaseLoader):
     """Hydrometric Real-time loader"""
 
-    def __init__(self, plugin_def):
+    def __init__(self, conn_config={}):
         """initializer"""
 
         BaseLoader.__init__(self)
 
-        self.ES = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
-
-        if not self.ES.indices.exists_template(INDEX_BASENAME):
-            self.ES.indices.put_template(INDEX_BASENAME, SETTINGS)
+        self.conn = ElasticsearchConnector(conn_config)
+        self.conn.create_template(INDEX_BASENAME, SETTINGS)
 
         self.stations = {}
         self.read_stations_list()
@@ -386,33 +388,11 @@ class HydrometricRealtimeLoader(BaseLoader):
         if filepath.endswith('hydrometric_StationList.csv'):
             return True
 
-        inserts = 0
-        updates = 0
-        noops = 0
-        fails = 0
-
         LOGGER.debug('Received file {}'.format(filepath))
-        chunk_size = 80000
 
         package = self.generate_observations(filepath)
-        for ok, response in helpers.streaming_bulk(self.ES, package,
-                                                   chunk_size=chunk_size,
-                                                   request_timeout=30):
-            status = response['update']['result']
+        self.conn.submit_elastic_package(package, request_size=80000)
 
-            if status == 'created':
-                inserts += 1
-            elif status == 'updated':
-                updates += 1
-            elif status == 'noop':
-                noops += 1
-            else:
-                LOGGER.warning('Unhandled status code {}'.format(status))
-
-        total = inserts + updates + noops + fails
-        LOGGER.info('Inserted package of {} observations ({} inserts,'
-                    ' {} updates, {} no-ops, {} rejects)'
-                    .format(total, inserts, updates, noops, fails))
         return True
 
 
@@ -429,24 +409,25 @@ def download_stations():
 
 @click.group()
 def hydrometric_realtime():
-    """Manages hydrometric realtime index"""
+    """Manages hydrometric realtime indices"""
     pass
 
 
 @click.command()
 @click.pass_context
-@click.option('--file', '-f', 'file_',
-              type=click.Path(exists=True, resolve_path=True),
-              help='Path to file')
-@click.option('--directory', '-d', 'directory',
-              type=click.Path(exists=True, resolve_path=True,
-                              dir_okay=True, file_okay=False),
-              help='Path to directory')
-def add(ctx, file_, directory):
+@cli_options.OPTION_FILE()
+@cli_options.OPTION_DIRECTORY()
+@cli_options.OPTION_ELASTICSEARCH()
+@cli_options.OPTION_ES_USERNAME()
+@cli_options.OPTION_ES_PASSWORD()
+@cli_options.OPTION_ES_IGNORE_CERTS()
+def add(ctx, file_, directory, es, username, password, ignore_certs):
     """adds data to system"""
 
     if all([file_ is None, directory is None]):
         raise click.ClickException('Missing --file/-f or --dir/-d option')
+
+    conn_config = configure_es_connection(es, username, password, ignore_certs)
 
     files_to_process = []
 
@@ -459,12 +440,8 @@ def add(ctx, file_, directory):
         files_to_process.sort(key=os.path.getmtime)
 
     for file_to_process in files_to_process:
-        plugin_def = {
-            'filename_pattern': 'hydrometric_realtime',
-            'handler': 'msc_pygeoapi.loader.hydrometric_realtime.HydrometricRealtimeLoader'  # noqa
-        }
-        loader = HydrometricRealtimeLoader(plugin_def)
-        _ = loader.load_data(file_to_process)
+        loader = HydrometricRealtimeLoader(conn_config)
+        loader.load_data(file_to_process)
 
     click.echo('Done')
 
@@ -484,37 +461,49 @@ def cache_stations(ctx):
     default=DAYS_TO_KEEP,
     help='Delete indexes older than n days (default={})'
 )
+@cli_options.OPTION_ELASTICSEARCH()
+@cli_options.OPTION_ES_USERNAME()
+@cli_options.OPTION_ES_PASSWORD()
+@cli_options.OPTION_ES_IGNORE_CERTS()
 @cli_options.OPTION_YES(
     prompt='Are you sure you want to delete old indexes?'
 )
-def clean_indexes(ctx, days):
-    """Delete old indexes"""
+def clean_indexes(ctx, days, es, username, password, ignore_certs):
+    """Clean hydrometric realtime indexes older than n number of days"""
 
-    es = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
+    conn_config = configure_es_connection(es, username, password, ignore_certs)
+    conn = ElasticsearchConnector(conn_config)
 
-    indexes = list(es.indices.get('{}*'.format(INDEX_BASENAME)).keys())
+    indexes = conn.get('{}*'.format(INDEX_BASENAME))
 
     if indexes:
         indexes_to_delete = check_es_indexes_to_delete(indexes, days)
         if indexes_to_delete:
             click.echo('Deleting indexes {}'.format(indexes_to_delete))
-            delete_es_indexes(','.join(indexes))
+            conn.delete(','.join(indexes))
 
     click.echo('Done')
 
 
 @click.command()
 @click.pass_context
+@cli_options.OPTION_ELASTICSEARCH()
+@cli_options.OPTION_ES_USERNAME()
+@cli_options.OPTION_ES_PASSWORD()
+@cli_options.OPTION_ES_IGNORE_CERTS()
 @cli_options.OPTION_YES(
     prompt='Are you sure you want to delete these indexes?'
 )
-def delete_indexes(ctx):
-    """Delete all hydrometric realtime indexes"""
+def delete_indexes(ctx, es, username, password, ignore_certs):
+    """"Delete all hydrometric realtime indexes"""
+
+    conn_config = configure_es_connection(es, username, password, ignore_certs)
+    conn = ElasticsearchConnector(conn_config)
 
     all_indexes = '{}*'.format(INDEX_BASENAME)
 
     click.echo('Deleting indexes {}'.format(all_indexes))
-    delete_es_indexes(all_indexes)
+    conn.delete(all_indexes)
 
     click.echo('Done')
 

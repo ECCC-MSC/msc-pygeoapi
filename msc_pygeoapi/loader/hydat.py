@@ -42,11 +42,13 @@ from sqlalchemy.schema import MetaData
 from sqlalchemy.sql import distinct
 
 from msc_pygeoapi import cli_options
-from msc_pygeoapi.env import (MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH,
-                              MSC_PYGEOAPI_LOGGING_LOGLEVEL,
-                              MSC_PYGEOAPI_OGC_API_URL)
+from msc_pygeoapi.connector.elasticsearch_ import ElasticsearchConnector
+from msc_pygeoapi.env import (
+    MSC_PYGEOAPI_LOGGING_LOGLEVEL,
+    MSC_PYGEOAPI_OGC_API_URL
+)
 from msc_pygeoapi.loader.base import BaseLoader
-from msc_pygeoapi.util import get_es, submit_elastic_package
+from msc_pygeoapi.util import configure_es_connection
 
 
 LOGGER = logging.getLogger(__name__)
@@ -62,20 +64,13 @@ VERIFY = False
 class HydatLoader(BaseLoader):
     """Climat Archive Loader"""
 
-    def __init__(self, plugin_def):
+    def __init__(self, db_string, conn_config={}):
         """initializer"""
 
         super().__init__()
 
-        if plugin_def['es_conn_dict']:
-            self.ES = get_es(
-                plugin_def['es_conn_dict']['host'],
-                plugin_def['es_conn_dict']['auth'],
-            )
-        else:
-            self.ES = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
-
-        self.db_string = 'sqlite:///{}'.format(plugin_def['db_string'])
+        self.conn = ElasticsearchConnector(conn_config)
+        self.db_string = 'sqlite:///{}'.format(db_string)
 
         self.engine, self.session, self.metadata = self.connect_db()
 
@@ -158,10 +153,7 @@ class HydatLoader(BaseLoader):
             }
 
             index_name = 'hydrometric_daily_mean'
-            if self.ES.indices.exists(index_name):
-                self.ES.indices.delete(index_name)
-                LOGGER.info('Deleted the daily observations index')
-            self.ES.indices.create(index=index_name, body=mapping)
+            self.conn.create(index_name, mapping, overwrite=True)
 
             mapping = {
                 "settings": {"number_of_shards": 1, "number_of_replicas": 0},
@@ -198,10 +190,7 @@ class HydatLoader(BaseLoader):
             }
 
             index_name = 'hydrometric_monthly_mean'
-            if self.ES.indices.exists(index_name):
-                self.ES.indices.delete(index_name)
-                LOGGER.info('Deleted the monthly observations index')
-            self.ES.indices.create(index=index_name, body=mapping)
+            self.conn.create(index_name, mapping, overwrite=True)
 
         if index == 'annual_statistics':
             mapping = {
@@ -270,10 +259,7 @@ class HydatLoader(BaseLoader):
             }
 
             index_name = 'hydrometric_annual_statistics'
-            if self.ES.indices.exists(index_name):
-                self.ES.indices.delete(index_name)
-                LOGGER.info('Deleted the annual statistics index')
-            self.ES.indices.create(index=index_name, body=mapping)
+            self.conn.create(index_name, mapping, overwrite=True)
 
         if index == 'stations':
             mapping = {
@@ -328,10 +314,7 @@ class HydatLoader(BaseLoader):
             }
 
             index_name = 'hydrometric_stations'
-            if self.ES.indices.exists(index_name):
-                self.ES.indices.delete(index_name)
-                LOGGER.info('Deleted the stations index')
-            self.ES.indices.create(index=index_name, body=mapping)
+            self.conn.create(index_name, mapping, overwrite=True)
 
         if index == 'annual_peaks':
             mapping = {
@@ -407,10 +390,7 @@ class HydatLoader(BaseLoader):
             }
 
             index_name = 'hydrometric_annual_peaks'
-            if self.ES.indices.exists(index_name):
-                self.ES.indices.delete(index_name)
-                LOGGER.info('Deleted the annual peaks index')
-            self.ES.indices.create(index=index_name, body=mapping)
+            self.conn.create(index_name, mapping, overwrite=True)
 
     def connect_db(self):
         """
@@ -1218,6 +1198,7 @@ def hydat():
 @cli_options.OPTION_ELASTICSEARCH()
 @cli_options.OPTION_ES_USERNAME()
 @cli_options.OPTION_ES_PASSWORD()
+@cli_options.OPTION_ES_IGNORE_CERTS()
 @cli_options.OPTION_DATASET(
     type=click.Choice(
         [
@@ -1229,18 +1210,11 @@ def hydat():
         ]
     )
 )
-def add(ctx, db, es, username, password, dataset):
+def add(ctx, db, es, username, password, ignore_certs, dataset):
     """Loads HYDAT data into Elasticsearch"""
 
-    plugin_def = {
-        'db_string': db,
-        'es_conn_dict': {'host': es, 'auth': (username, password)}
-        if all([es, username, password])
-        else None,
-        'handler': 'msc_pygeoapi.loader.hydat.HydatLoader',
-    }
-
-    loader = HydatLoader(plugin_def)
+    conn_config = configure_es_connection(es, username, password, ignore_certs)
+    loader = HydatLoader(db, conn_config)
 
     click.echo('Accessing SQLite database {}'.format(db))
     try:
@@ -1278,7 +1252,7 @@ def add(ctx, db, es, username, password, dataset):
             click.echo('Populating stations index')
             loader.create_index('stations')
             stations = loader.generate_stations(station_table)
-            submit_elastic_package(loader.ES, stations)
+            loader.conn.submit_elastic_package(stations)
         except Exception as err:
             msg = 'Could not populate stations index: {}'.format(err)
             raise click.ClickException(msg)
@@ -1289,7 +1263,7 @@ def add(ctx, db, es, username, password, dataset):
             loader.create_index('observations')
             means = loader.generate_means(discharge_var, level_var,
                                           station_table, symbol_table)
-            submit_elastic_package(loader.ES, means)
+            loader.conn.submit_elastic_package(means)
         except Exception as err:
             msg = 'Could not populate observations indexes: {}'.format(err)
             raise click.ClickException(msg)
@@ -1301,7 +1275,7 @@ def add(ctx, db, es, username, password, dataset):
             stats = loader.generate_annual_stats(annual_stats_table,
                                                  data_types_table,
                                                  station_table, symbol_table)
-            submit_elastic_package(loader.ES, stats)
+            loader.conn.submit_elastic_package(stats)
         except Exception as err:
             msg = 'Could not populate annual statistics index: {}'.format(err)
             raise click.ClickException(msg)
@@ -1313,7 +1287,7 @@ def add(ctx, db, es, username, password, dataset):
             peaks = loader.generate_annual_peaks(annual_peaks_table,
                                                  data_types_table,
                                                  symbol_table, station_table)
-            submit_elastic_package(loader.ES, peaks)
+            loader.conn.submit_elastic_package(peaks)
         except Exception as err:
             msg = 'Could not populate annual peaks index: {}'.format(err)
             raise click.ClickException(msg)

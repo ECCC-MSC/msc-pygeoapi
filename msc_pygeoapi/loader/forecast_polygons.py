@@ -32,16 +32,15 @@ import os
 from pathlib import Path
 
 import click
-from elasticsearch import helpers, logger as elastic_logger
+from elasticsearch import logger as elastic_logger
 from parse import parse
 from osgeo import ogr
 
 from msc_pygeoapi import cli_options
-from msc_pygeoapi.env import (
-    MSC_PYGEOAPI_ES_TIMEOUT, MSC_PYGEOAPI_ES_URL,
-    MSC_PYGEOAPI_ES_AUTH, MSC_PYGEOAPI_LOGGING_LOGLEVEL)
+from msc_pygeoapi.connector.elasticsearch_ import ElasticsearchConnector
+from msc_pygeoapi.env import MSC_PYGEOAPI_LOGGING_LOGLEVEL
 from msc_pygeoapi.loader.base import BaseLoader
-from msc_pygeoapi.util import get_es, json_pretty_print
+from msc_pygeoapi.util import configure_es_connection, json_pretty_print
 
 LOGGER = logging.getLogger(__name__)
 elastic_logger.setLevel(getattr(logging, MSC_PYGEOAPI_LOGGING_LOGLEVEL))
@@ -291,10 +290,10 @@ INDICES = [
 ]
 
 SHAPEFILES_TO_LOAD = {
-    'MSC_Geography_Pkg_V6_3_0_Water_Unproj':
+    'MSC_Geography_Pkg_V6_4_0_Water_Unproj':
         ['water_MarStdZone_coarse_unproj.shp',
          'water_MarStdZone_detail_unproj.shp'],
-    'MSC_Geography_Pkg_V6_3_0_Land_Unproj':
+    'MSC_Geography_Pkg_V6_4_0_Land_Unproj':
         ['land_CLCBaseZone_coarse_unproj.shp',
          'land_CLCBaseZone_detail_unproj.shp']
 }
@@ -303,12 +302,12 @@ SHAPEFILES_TO_LOAD = {
 class ForecastPolygonsLoader(BaseLoader):
     """Forecast polygons (land/water) loader"""
 
-    def __init__(self, plugin_def):
+    def __init__(self, conn_config={}):
         """initializer"""
 
         BaseLoader.__init__(self)
 
-        self.ES = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
+        self.conn = ElasticsearchConnector(conn_config)
         self.filepath = None
         self.version = None
         self.zone = None
@@ -317,14 +316,10 @@ class ForecastPolygonsLoader(BaseLoader):
         # create forecast polygon indices if they don't exist
         for index in INDICES:
             zone = index.split('_')[2]
-            if not self.ES.indices.exists(index):
-                SETTINGS['mappings']['properties'][
-                    'properties']['properties'] = FILE_PROPERTIES[zone]
-
-                self.ES.indices.create(index=index,
-                                       body=SETTINGS,
-                                       request_timeout=MSC_PYGEOAPI_ES_TIMEOUT
-                                       )
+            SETTINGS['mappings']['properties']['properties'][
+                'properties'
+            ] = FILE_PROPERTIES[zone]
+            self.conn.create(index, SETTINGS)
 
     def parse_filename(self):
         """
@@ -389,37 +384,12 @@ class ForecastPolygonsLoader(BaseLoader):
 
         # set class variables from filename
         self.parse_filename()
-
-        inserts = 0
-        updates = 0
-        noops = 0
-        fails = 0
-
         LOGGER.debug('Received file {}'.format(self.filepath))
-        chunk_size = 80000
 
         for shapefile in SHAPEFILES_TO_LOAD[self.filepath.stem]:
             # generate geojson features
             package = self.generate_geojson_features(shapefile)
-            for ok, response in helpers.streaming_bulk(self.ES, package,
-                                                       chunk_size=chunk_size,
-                                                       request_timeout=30):
-                status = response['update']['result']
-
-                if status == 'created':
-                    inserts += 1
-                elif status == 'updated':
-                    updates += 1
-                elif status == 'noop':
-                    noops += 1
-                else:
-                    LOGGER.warning('Unhandled status code {}'.format(status))
-
-            total = inserts + updates + noops + fails
-            LOGGER.info('Inserted package of {} forecast {} polygons ({} '
-                        'inserts, {} updates, {} no-ops, {} rejects)'
-                        .format(total, self.zone, inserts, updates,
-                                noops, fails))
+            self.conn.submit_elastic_package(package, request_size=80000)
 
         return True
 
@@ -434,11 +404,17 @@ def forecast_polygons():
 @click.pass_context
 @cli_options.OPTION_FILE()
 @cli_options.OPTION_DIRECTORY()
-def add(ctx, file_, directory):
+@cli_options.OPTION_ELASTICSEARCH()
+@cli_options.OPTION_ES_USERNAME()
+@cli_options.OPTION_ES_PASSWORD()
+@cli_options.OPTION_ES_IGNORE_CERTS()
+def add(ctx, file_, directory, es, username, password, ignore_certs):
     """add data to system"""
 
     if all([file_ is None, directory is None]):
         raise click.ClickException('Missing --file/-f or --dir/-d option')
+
+    conn_config = configure_es_connection(es, username, password, ignore_certs)
 
     files_to_process = []
 
@@ -451,11 +427,7 @@ def add(ctx, file_, directory):
         files_to_process.sort(key=os.path.getmtime)
 
     for file_to_process in files_to_process:
-        plugin_def = {
-            'filename_pattern': 'meteocode/geodata/',
-            'handler': 'msc_pygeoapi.loader.forecast_polygons.ForecastPolygonsLoader'  # noqa
-        }
-        loader = ForecastPolygonsLoader(plugin_def)
+        loader = ForecastPolygonsLoader(conn_config)
         result = loader.load_data(file_to_process)
         if result:
             click.echo('GeoJSON features generated: {}'.format(
@@ -464,21 +436,28 @@ def add(ctx, file_, directory):
 
 @click.command()
 @click.pass_context
+@cli_options.OPTION_ELASTICSEARCH()
+@cli_options.OPTION_ES_USERNAME()
+@cli_options.OPTION_ES_PASSWORD()
+@cli_options.OPTION_ES_IGNORE_CERTS()
 @cli_options.OPTION_INDEX_NAME(
     type=click.Choice(INDICES),
 )
-def delete_index(ctx, index_name):
+def delete_indexes(ctx, index_name, es, username, password, ignore_certs):
     """
     Delete a particular ES index with a given name as argument or all if no
     argument is passed
     """
-    es = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
+
+    conn_config = configure_es_connection(es, username, password, ignore_certs)
+    conn = ElasticsearchConnector(conn_config)
+
     if index_name:
         if click.confirm(
                 'Are you sure you want to delete ES index named: {}?'.format(
                     click.style(index_name, fg='red')), abort=True):
             LOGGER.info('Deleting ES index {}'.format(index_name))
-            es.indices.delete(index=index_name)
+            conn.delete(index_name)
             return True
     else:
         if click.confirm(
@@ -487,9 +466,9 @@ def delete_index(ctx, index_name):
                                         click.style(", ".join(INDICES),
                                                     fg='red')),
                 abort=True):
-            es.indices.delete(index=",".join(INDICES))
+            conn.delete(",".join(INDICES))
             return True
 
 
 forecast_polygons.add_command(add)
-forecast_polygons.add_command(delete_index)
+forecast_polygons.add_command(delete_indexes)
