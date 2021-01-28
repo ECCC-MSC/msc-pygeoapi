@@ -34,16 +34,20 @@ import os
 from pathlib import Path
 
 import click
-from elasticsearch import helpers, logger as elastic_logger
+from elasticsearch import logger as elastic_logger
 from elasticsearch.exceptions import ConflictError
 from parse import parse
 from osgeo import ogr
 
-from msc_pygeoapi.env import (MSC_PYGEOAPI_ES_TIMEOUT, MSC_PYGEOAPI_ES_URL,
-                              MSC_PYGEOAPI_ES_AUTH,
-                              MSC_PYGEOAPI_LOGGING_LOGLEVEL)
+from msc_pygeoapi import cli_options
+from msc_pygeoapi.connector.elasticsearch_ import ElasticsearchConnector
+from msc_pygeoapi.env import MSC_PYGEOAPI_LOGGING_LOGLEVEL
 from msc_pygeoapi.loader.base import BaseLoader
-from msc_pygeoapi.util import get_es, json_pretty_print, strftime_rfc3339
+from msc_pygeoapi.util import (
+    configure_es_connection,
+    json_pretty_print,
+    strftime_rfc3339,
+)
 
 LOGGER = logging.getLogger(__name__)
 elastic_logger.setLevel(getattr(logging, MSC_PYGEOAPI_LOGGING_LOGLEVEL))
@@ -288,12 +292,12 @@ INDICES = [INDEX_NAME.format(weather_var) for weather_var in FILE_PROPERTIES]
 class HurricanesRealtimeLoader(BaseLoader):
     """Hurricanes Real-time loader"""
 
-    def __init__(self, plugin_def):
+    def __init__(self, conn_config={}):
         """initializer"""
 
         BaseLoader.__init__(self)
 
-        self.ES = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
+        self.conn = ElasticsearchConnector(conn_config)
         self.filepath = None
         self.date_ = None
         self.fh = None
@@ -303,14 +307,10 @@ class HurricanesRealtimeLoader(BaseLoader):
 
         # create storm variable indices if it don't exist
         for item in FILE_PROPERTIES:
-            if not self.ES.indices.exists(INDEX_NAME.format(item)):
-
-                SETTINGS['mappings']['properties'][
-                    'properties']['properties'] = FILE_PROPERTIES[item]
-
-                self.ES.indices.create(index=INDEX_NAME.format(
-                    item), body=SETTINGS,
-                    request_timeout=MSC_PYGEOAPI_ES_TIMEOUT)
+            SETTINGS['mappings']['properties']['properties'][
+                'properties'
+            ] = FILE_PROPERTIES[item]
+            self.conn.create(INDEX_NAME.format(item), SETTINGS)
 
     def parse_filename(self):
         """
@@ -372,14 +372,14 @@ class HurricanesRealtimeLoader(BaseLoader):
         }
 
         try:
-            self.ES.update_by_query(index=INDEX_NAME.format(
+            self.conn.Elasticsearch.update_by_query(index=INDEX_NAME.format(
                 self.storm_variable), body=query)
         except ConflictError:
             LOGGER.warning("Conflict error detected. Refreshing index and "
                            "retrying update by query.")
-            self.ES.indices.refresh(index=INDEX_NAME.format(
+            self.conn.Elasticsearch.indices.refresh(index=INDEX_NAME.format(
                 self.storm_variable))
-            self.ES.update_by_query(index=INDEX_NAME.format(
+            self.conn.Elasticsearch.update_by_query(index=INDEX_NAME.format(
                 self.storm_variable), body=query)
 
         return True
@@ -451,13 +451,7 @@ class HurricanesRealtimeLoader(BaseLoader):
         # set class variables from filename
         self.parse_filename()
 
-        inserts = 0
-        updates = 0
-        noops = 0
-        fails = 0
-
         LOGGER.debug('Received file {}'.format(self.filepath))
-        chunk_size = 80000
 
         # check for shapefile dependencies
         if self.check_shapefile_deps():
@@ -467,25 +461,8 @@ class HurricanesRealtimeLoader(BaseLoader):
 
             # generate geojson features
             package = self.generate_geojson_features()
-            for ok, response in helpers.streaming_bulk(self.ES, package,
-                                                       chunk_size=chunk_size,
-                                                       request_timeout=30):
-                status = response['update']['result']
+            self.conn.submit_elastic_package(package, request_size=80000)
 
-                if status == 'created':
-                    inserts += 1
-                elif status == 'updated':
-                    updates += 1
-                elif status == 'noop':
-                    noops += 1
-                else:
-                    LOGGER.warning('Unhandled status code {}'.format(status))
-
-            total = inserts + updates + noops + fails
-            LOGGER.info('Inserted package of {} hurricane {} ({} inserts,'
-                        ' {} updates, {} no-ops, {} rejects)'
-                        .format(total, self.storm_variable, inserts, updates,
-                                noops, fails))
             return True
 
         else:
@@ -502,18 +479,19 @@ def hurricanes():
 
 @click.command()
 @click.pass_context
-@click.option('--file', '-f', 'file_',
-              type=click.Path(exists=True, resolve_path=True),
-              help='Path to file')
-@click.option('--directory', '-d', 'directory',
-              type=click.Path(exists=True, resolve_path=True,
-                              dir_okay=True, file_okay=False),
-              help='Path to directory')
-def add(ctx, file_, directory):
+@cli_options.OPTION_FILE()
+@cli_options.OPTION_DIRECTORY()
+@cli_options.OPTION_ELASTICSEARCH()
+@cli_options.OPTION_ES_USERNAME()
+@cli_options.OPTION_ES_PASSWORD()
+@cli_options.OPTION_ES_IGNORE_CERTS()
+def add(ctx, file_, directory, es, username, password, ignore_certs):
     """Add hurricane data to Elasticsearch"""
 
     if all([file_ is None, directory is None]):
         raise click.ClickException('Missing --file/-f or --dir/-d option')
+
+    conn_config = configure_es_connection(es, username, password, ignore_certs)
 
     files_to_process = []
 
@@ -526,11 +504,7 @@ def add(ctx, file_, directory):
         files_to_process.sort(key=os.path.getmtime)
 
     for file_to_process in files_to_process:
-        plugin_def = {
-            'filename_pattern': 'trajectoires/hurricane',
-            'handler': 'msc_pygeoapi.loader.hurricanes_realtime.HurricanesRealtimeLoader'  # noqa
-        }
-        loader = HurricanesRealtimeLoader(plugin_def)
+        loader = HurricanesRealtimeLoader(conn_config)
         result = loader.load_data(file_to_process)
         if result:
             click.echo('GeoJSON features generated: {}'.format(
@@ -539,13 +513,19 @@ def add(ctx, file_, directory):
 
 @click.command()
 @click.pass_context
-@click.option('--days', '-d',
-              required=True,
-              type=int,
-              help='number of days')
-def deactivate(ctx, days):
+@cli_options.OPTION_DAYS(
+    required=True,
+    help='Delete documents older than n days'
+)
+@cli_options.OPTION_ELASTICSEARCH()
+@cli_options.OPTION_ES_USERNAME()
+@cli_options.OPTION_ES_PASSWORD()
+@cli_options.OPTION_ES_IGNORE_CERTS()
+def deactivate(ctx, days, es, username, password, ignore_certs):
     """deactivate hurricane forecasts older than N days"""
-    es = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
+
+    conn_config = configure_es_connection(es, username, password, ignore_certs)
+    conn = ElasticsearchConnector(conn_config)
 
     for index in INDICES:
         query = {
@@ -559,7 +539,7 @@ def deactivate(ctx, days):
             }
         }
 
-        es.update_by_query(index=index, body=query)
+        conn.Elasticsearch.update_by_query(index=index, body=query)
 
     return True
 
@@ -569,18 +549,24 @@ def deactivate(ctx, days):
 @click.option('--index_name', '-i',
               type=click.Choice(INDICES),
               help='msc-geousage elasticsearch index name to delete')
-def delete_index(ctx, index_name):
+@cli_options.OPTION_ELASTICSEARCH()
+@cli_options.OPTION_ES_USERNAME()
+@cli_options.OPTION_ES_PASSWORD()
+@cli_options.OPTION_ES_IGNORE_CERTS()
+def delete_indexes(ctx, index_name, es, username, password, ignore_certs):
     """
     Delete a particular ES index with a given name as argument or all if no
     argument is passed
     """
-    es = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
+    conn_config = configure_es_connection(es, username, password, ignore_certs)
+    conn = ElasticsearchConnector(conn_config)
+
     if index_name:
         if click.confirm(
                 'Are you sure you want to delete ES index named: {}?'.format(
                     click.style(index_name, fg='red')), abort=True):
             LOGGER.info('Deleting ES index {}'.format(index_name))
-            es.indices.delete(index=index_name)
+            conn.delete(index_name)
             return True
     else:
         if click.confirm(
@@ -589,10 +575,10 @@ def delete_index(ctx, index_name):
                                         click.style(", ".join(INDICES),
                                                     fg='red')),
                 abort=True):
-            es.indices.delete(index=",".join(INDICES))
+            conn.delete(",".join(INDICES))
             return True
 
 
 hurricanes.add_command(add)
 hurricanes.add_command(deactivate)
-hurricanes.add_command(delete_index)
+hurricanes.add_command(delete_indexes)

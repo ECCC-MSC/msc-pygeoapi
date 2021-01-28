@@ -70,7 +70,7 @@ PLUGINS = {
 }
 
 
-def load_plugin(plugin_type, plugin_def):
+def load_plugin(plugin_type, plugin_def, **kwargs):
     """
     loads plugin by type
 

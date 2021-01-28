@@ -1,8 +1,8 @@
 # =================================================================
 #
-# Author: Tom Kralidis <tom.kralidis@canada.ca>
+# Author: Etienne <etienne.pelletier@canada.ca>
 #
-# Copyright (c) 2020 Tom Kralidis
+# Copyright (c) 2021 Etienne Pelletier
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -26,15 +26,3 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 #
 # =================================================================
-
-# every day at 0300h, clean bulletin records from ES
-#0 3 * * * geoadm msc-pygeoapi data bulletins clean-indexes --yes
-
-# every day at 0400h, clean hydrometric realtime data older than 30 days
-0 4 * * * geoadm msc-pygeoapi data hydrometric-realtime clean-indexes --days 30
-
-# every day at 0500h, clean swob realtime data older than 30 days
-0 5 * * * geoadm msc-pygeoapi data swob-realtime clean-indexes --days 30
-
-# every day at 0300h, clean out empty MetPX directories
-0 3 * * * geoadm /usr/bin/find $MSC_PYGEOAPI_CACHEDIR -type d -empty -delete > /dev/null 2>&1
