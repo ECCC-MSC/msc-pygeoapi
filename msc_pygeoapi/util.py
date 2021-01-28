@@ -30,115 +30,14 @@
 from datetime import datetime, date, time, timedelta
 import json
 import logging
-from urllib.parse import urlparse
 
-from elasticsearch import Elasticsearch
-from elasticsearch.helpers import streaming_bulk, BulkIndexError
 from parse import parse
 
-from msc_pygeoapi.env import MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH
 
 LOGGER = logging.getLogger(__name__)
 
-VERIFY = False
-
 DATETIME_RFC3339_FMT = '%Y-%m-%dT%H:%M:%SZ'
 DATETIME_RFC3339_MILLIS_FMT = '%Y-%m-%dT%H:%M:%S.%fZ'
-
-
-def get_es(url, auth=None):
-    """
-    helper function to instantiate an Elasticsearch connection
-
-    :param url: URL of ES endpoint
-    :param auth: HTTP username-password tuple for authentication (optional)
-    :returns: `elasticsearch.Elasticsearch` object
-    """
-
-    url_parsed = urlparse(url)
-    url_settings = {
-        'host': url_parsed.hostname
-    }
-
-    LOGGER.debug('Connecting to Elasticsearch')
-
-    if url_parsed.port is None:  # proxy to default HTTP(S) port
-        if url_parsed.scheme == 'https':
-            url_settings['port'] = 443
-            url_settings['scheme'] = url_parsed.scheme
-        else:
-            url_settings['port'] = 80
-    else:  # was set explictly
-        url_settings['port'] = url_parsed.port
-
-    if url_parsed.path:
-        url_settings['url_prefix'] = url_parsed.path
-
-    LOGGER.debug('URL settings: {}'.format(url_settings))
-
-    if auth is None:
-        es = Elasticsearch([url_settings], verify_certs=VERIFY)
-    else:
-        es = Elasticsearch([url_settings], http_auth=auth, verify_certs=VERIFY)
-
-    if not es.ping():
-        msg = 'Cannot connect to Elasticsearch'
-        LOGGER.error(msg)
-        raise RuntimeError(msg)
-
-    return es
-
-
-def submit_elastic_package(es, package, request_size=10000):
-    """
-    Helper function to send an update request to Elasticsearch and
-    log the status of the request. Returns True iff the upload succeeded.
-
-    :param es: Elasticsearch client object.
-    :param package: Iterable of bulk API update actions.
-    :param request_size: Number of documents to upload per request.
-    :returns: `bool` of whether the operation was successful.
-    """
-
-    inserts = 0
-    updates = 0
-    noops = 0
-    errors = []
-
-    try:
-        for ok, response in streaming_bulk(es, package,
-                                           chunk_size=request_size,
-                                           request_timeout=30,
-                                           raise_on_error=False):
-            if not ok:
-                errors.append(response)
-            else:
-                status = response['update']['result']
-
-                if status == 'created':
-                    inserts += 1
-                elif status == 'updated':
-                    updates += 1
-                elif status == 'noop':
-                    noops += 1
-                else:
-                    LOGGER.error('Unhandled status code {}'.format(status))
-                    errors.append(response)
-    except BulkIndexError as err:
-        LOGGER.error('Unable to perform bulk insert due to: {}'
-                     .format(err.errors))
-        return False
-
-    total = inserts + updates + noops
-    LOGGER.info('Inserted package of {} observations ({} inserts, {} updates,'
-                ' {} no-ops'.format(total, inserts, updates, noops))
-
-    if len(errors) > 0:
-        LOGGER.warning('{} errors encountered in bulk insert: {}'.format(
-            len(errors), errors))
-        return False
-
-    return True
 
 
 def click_abort_if_false(ctx, param, value):
@@ -246,30 +145,38 @@ def check_es_indexes_to_delete(indexes, days):
 
     for index in indexes:
         parsed = parse(pattern, index)
-        index_date = datetime(parsed.named['YYYY'], parsed.named['MM'],
-                              parsed.named['dd'])
+        index_date = datetime(
+            parsed.named['YYYY'], parsed.named['MM'], parsed.named['dd']
+        )
         if index_date < (today - timedelta(days=days)):
             to_delete.append(index)
 
     return to_delete
 
 
-def delete_es_indexes(indexes):
+def configure_es_connection(
+    es: str, username: str, password: str, ignore_certs: bool = False
+) -> dict:
     """
-    helper function to delete a series of ES indexes
+    helper function to create an ES connection configuration dictionnary with
+    the relevant params passed via CLI.
 
-    :param indexes: indexes to delete
+    :param es: `str` ES url
+    :param username: `str` ES username for authentication
+    :param password: `str` ES password for authentication
+    :param ignore_certs: `bool` indicates whether to ignore certs when
+                         connecting. Defaults to False.
 
-    :returns: None
+    :returns: `dict` containing ES connection configuration
     """
+    conn_config = {}
 
-    if indexes in ['*', '_all']:
-        msg = 'Cannot delete {}'.format(indexes)
-        LOGGER.error(msg)
-        raise ValueError(msg)
+    if es:
+        conn_config['url'] = es
+    if all([username, password]):
+        conn_config['auth'] = (username, password)
 
-    es = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
+    # negate ignore_certs CLI flag value to get verify_certs value
+    conn_config['verify_certs'] = not ignore_certs
 
-    if es.indices.exists(indexes):
-        LOGGER.info('Deleting indexes {}'.format(indexes))
-        es.indices.delete(indexes)
+    return conn_config

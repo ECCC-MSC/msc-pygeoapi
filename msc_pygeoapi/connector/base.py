@@ -1,8 +1,8 @@
 # =================================================================
 #
-# Author: Tom Kralidis <tom.kralidis@canada.ca>
+# Author: Etienne <etienne.pelletier@canada.ca>
 #
-# Copyright (c) 2020 Tom Kralidis
+# Copyright (c) 2021 Etienne Pelletier
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -27,14 +27,48 @@
 #
 # =================================================================
 
-# every day at 0300h, clean bulletin records from ES
-#0 3 * * * geoadm msc-pygeoapi data bulletins clean-indexes --yes
+import logging
 
-# every day at 0400h, clean hydrometric realtime data older than 30 days
-0 4 * * * geoadm msc-pygeoapi data hydrometric-realtime clean-indexes --days 30
+LOGGER = logging.getLogger(__name__)
 
-# every day at 0500h, clean swob realtime data older than 30 days
-0 5 * * * geoadm msc-pygeoapi data swob-realtime clean-indexes --days 30
 
-# every day at 0300h, clean out empty MetPX directories
-0 3 * * * geoadm /usr/bin/find $MSC_PYGEOAPI_CACHEDIR -type d -empty -delete > /dev/null 2>&1
+class BaseConnector:
+    """generic Connector ABC"""
+
+    def __init__(self, connector_def):
+        """
+        Initialize BaseConnector object
+
+        :param connector_def: connector definition
+
+        :returns: msc_pygeoapi.connector.base.BaseConnector
+        """
+
+    def connect(self):
+        """
+        Create connection to connector
+        """
+
+    def create(self):
+        """
+        Create a connector resource
+        """
+
+        raise NotImplementedError
+
+    def get(self):
+        """
+        Retrieve connector resources
+        """
+
+        raise NotImplementedError
+
+    def delete(self):
+        """
+        Delete connector resource(s)
+        """
+
+        raise NotImplementedError
+
+    def __repr__(self):
+        return '<BaseConnector> {}'.format(self.name)

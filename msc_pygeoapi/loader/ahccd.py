@@ -5,7 +5,7 @@
 # Author: Tom Kralidis <tom.kralidis@canada.ca>
 #
 # Copyright (c) 2019 Alex Hurka
-# Copyright (c) 2020 Etienne Pelletier
+# Copyright (c) 2021 Etienne Pelletier
 # Copyright (c) 2020 Tom Kralidis
 
 # Permission is hereby granted, free of charge, to any person
@@ -37,38 +37,26 @@ import logging
 import click
 
 from msc_pygeoapi import cli_options
-from msc_pygeoapi.env import MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH
+from msc_pygeoapi.connector.elasticsearch_ import ElasticsearchConnector
 from msc_pygeoapi.loader.base import BaseLoader
-from msc_pygeoapi.util import get_es, submit_elastic_package
-
+from msc_pygeoapi.util import configure_es_connection
 
 LOGGER = logging.getLogger(__name__)
-HTTP_OK = 200
-POST_OK = 201
-HEADERS = {'Content-type': 'application/json'}
-# Needs to be fixed.
-VERIFY = False
 
 
 class AhccdLoader(BaseLoader):
     """AHCCD Loader"""
 
-    def __init__(self, plugin_def):
+    def __init__(self, conn_config={}):
         """initializer"""
 
         super().__init__()
 
-        if plugin_def['es_conn_dict']:
-            self.ES = get_es(
-                plugin_def['es_conn_dict']['host'],
-                plugin_def['es_conn_dict']['auth'],
-            )
-        else:
-            self.ES = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
+        self.conn = ElasticsearchConnector(conn_config)
 
     def create_index(self, index):
         """
-        Creates the Elasticsearch index at self.ES. If the index already
+        Creates the Elasticsearch index at self.conn. If the index already
         exists, it is deleted and re-created. The mappings for the two types
         are also created.
 
@@ -165,11 +153,7 @@ class AhccdLoader(BaseLoader):
                 },
             }
 
-            index_name = 'ahccd_annual'
-            if self.ES.indices.exists(index_name):
-                self.ES.indices.delete(index_name)
-                LOGGER.info('Deleted the AHCCD annuals index')
-            self.ES.indices.create(index=index_name, body=mapping)
+            self.conn.create('ahccd_annual', mapping=mapping, overwrite=True)
 
         if index == 'monthly':
             mapping = {
@@ -265,11 +249,7 @@ class AhccdLoader(BaseLoader):
                 },
             }
 
-            index_name = 'ahccd_monthly'
-            if self.ES.indices.exists(index_name):
-                self.ES.indices.delete(index_name)
-                LOGGER.info('Deleted the AHCCD monthlies index')
-            self.ES.indices.create(index=index_name, body=mapping)
+            self.conn.create('ahccd_monthly', mapping=mapping, overwrite=True)
 
         if index == 'seasonal':
             mapping = {
@@ -361,11 +341,7 @@ class AhccdLoader(BaseLoader):
                 },
             }
 
-            index_name = 'ahccd_seasonal'
-            if self.ES.indices.exists(index_name):
-                self.ES.indices.delete(index_name)
-                LOGGER.info('Deleted the AHCCD seasonals index')
-            self.ES.indices.create(index=index_name, body=mapping)
+            self.conn.create('ahccd_seasonal', mapping=mapping, overwrite=True)
 
         if index == 'stations':
             mapping = {
@@ -416,11 +392,7 @@ class AhccdLoader(BaseLoader):
                 },
             }
 
-            index_name = 'ahccd_stations'
-            if self.ES.indices.exists(index_name):
-                self.ES.indices.delete(index_name)
-                LOGGER.info('Deleted the AHCCD stations index')
-            self.ES.indices.create(index=index_name, body=mapping)
+            self.conn.create('ahccd_stations', mapping=mapping, overwrite=True)
 
         if index == 'trends':
             mapping = {
@@ -471,11 +443,7 @@ class AhccdLoader(BaseLoader):
                 },
             }
 
-            index_name = 'ahccd_trends'
-            if self.ES.indices.exists(index_name):
-                self.ES.indices.delete(index_name)
-                LOGGER.info('Deleted the AHCCD trends index')
-            self.ES.indices.create(index=index_name, body=mapping)
+            self.es.create('ahccd_trends', mapping=mapping)
 
     def generate_docs(self, fp, index):
         """
@@ -571,22 +539,18 @@ CTL_HELP = '''
 @cli_options.OPTION_ELASTICSEARCH()
 @cli_options.OPTION_ES_USERNAME()
 @cli_options.OPTION_ES_PASSWORD()
+@cli_options.OPTION_ES_IGNORE_CERTS()
 @cli_options.OPTION_DATASET(
     type=click.Choice(
         ['all', 'stations', 'trends', 'annual', 'seasonal', 'monthly']
     )
 )
-def add(ctx, ctl, es, username, password, dataset):
+def add(ctx, ctl, es, username, password, ignore_certs, dataset):
     """Loads AHCCD data from JSON into Elasticsearch"""
 
-    plugin_def = {
-        'es_conn_dict': {'host': es, 'auth': (username, password)}
-        if all([es, username, password])
-        else None,
-        'handler': 'msc_pygeoapi.loader.ahccd.AhccdLoader',
-    }
+    conn_config = configure_es_connection(es, username, password, ignore_certs)
 
-    loader = AhccdLoader(plugin_def)
+    loader = AhccdLoader(conn_config)
 
     try:
         with open(ctl, 'r') as f:
@@ -601,7 +565,7 @@ def add(ctx, ctl, es, username, password, dataset):
             'monthly',
             'seasonal',
             'stations',
-            'trends'
+            'trends',
         ]
     else:
         datasets_to_process = [dataset]
@@ -613,7 +577,7 @@ def add(ctx, ctl, es, username, password, dataset):
             click.echo('Populating {} index'.format(dtp))
             loader.create_index(dtp)
             dtp_data = loader.generate_docs(ctl_dict[dtp], dtp)
-            submit_elastic_package(loader.ES, dtp_data)
+            loader.conn.submit_elastic_package(dtp_data)
         except Exception as err:
             msg = 'Could not populate {} index: {}'.format(dtp, err)
             raise click.ClickException(msg)
