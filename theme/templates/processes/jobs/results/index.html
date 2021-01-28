@@ -1,11 +1,11 @@
 {% extends "_base.html" %}
 {% block title %}{{ super() }} Job result {% endblock %}
 {% block crumbs %}{{ super() }}
-/ <a href="../../../../processes">Processes</a>
-/ <a href="../../../{{ data.process.id }}">{{ data.process.title }}</a>
-/ <a href="../../jobs">Jobs</a>
-/ <a href="../{{ data.job.id }}">{{ data.job.id }}</a>
-/ <a href="./results">results</a>
+<li><a href="../../../../processes">Processes</a></li>
+<li><a href="../../../{{ data.process.id }}">{{ data.process.title }}</a></li>
+<li><a href="../../jobs">Jobs</a></li>
+<li><a href="../{{ data.job.id }}">{{ data.job.id }}</a></li>
+<li><a href="./results">results</a></li>
 {% endblock %}
 {% block body %}
   <section id="jobs">

@@ -1,10 +1,10 @@
 {% extends "_base.html" %}
 {% block title %}{{ super() }} {{ data['title'] }} {% endblock %}
 {% block crumbs %}{{ super() }}
-/ <a href="../../../../collections">Collections</a>
-/ <a href="../../../{{ data['id'] }}">{{ data['title'] }}</a>
-/ <a href="../../../{{ data['id'] }}/tiles">Tiles</a>
-/ <a href="../../../{{ data['id'] }}/tiles/{{ data['tileset'] }}/metadata">Tile Metadata</a>
+<li><a href="../../../../collections">Collections</a></li>
+<li><a href="../../../{{ data['id'] }}">{{ data['title'] }}</a></li>
+<li><a href="../../../{{ data['id'] }}/tiles">Tiles</a></li>
+<li><a href="../../../{{ data['id'] }}/tiles/{{ data['tileset'] }}/metadata">Tile Metadata</a></li>
 {% endblock %}
 {% block body %}
     <section id="collection">
@@ -12,7 +12,7 @@
       <p>{{ data['description'] }}</p>
       <p>
         {% for kw in data['keywords'] %}
-          <mark class="tag">{{ kw }}</mark>
+          <span class="label label-info">{{ kw }}</span>
         {% endfor %}
       </p>
       <h3>Tiles metadata - {{ data['format'] }} format</h3>

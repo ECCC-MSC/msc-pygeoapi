@@ -1,24 +1,11 @@
-.flat {
-    border: 0px;
+@media (min-width: 1400px) {
+  .container{
+    width: 1320px;
+  }
 }
 
-header {
-    display: inline-block;
-}
-
-main {
-    background-color:white
-}
-
-.crumbs {
-    background-color:rgb(230, 230, 230);
-    padding: 6px;
-}
-
-.crumbs a {
-    padding: 0px 6px;
-    color:black;
-/*    text-transform: capitalize;*/
+.text-break {
+  word-break: break-all;
 }
 
 #items-map, #collection-map {
@@ -26,40 +13,35 @@ main {
     height: 400px;
 }
 
-/* cancel mini-css header>button uppercase */
-header button, header [type="button"], header .button, header [role="button"] {
-    text-transform: none;
-}
-
-html, body {
-    background-color: #fff;
-}
-
 footer.sticky {
     position: fixed;
     width: 100%;
-}
-
-main {
-    padding-bottom: 65px; /* prevent from falling under the footer */
 }
 
 table:not(.horizontal) {
     max-height: none;
 }
 
-mark.successful {
-  background-color: green;
+.label-job {
+  color: #000;
 }
 
-mark.accepted {
-  background-color: default;
+.job-successful {
+  background: #d8eeca;
+  border-color: #278400;
 }
 
-mark.failed {
-  background-color: red;
+.job-accepted {
+  background: #d7faff;
+  border-color: #269abc;
 }
 
-mark.running {
-  background-color: orange;
+.job-failed {
+  background: #f3e9e8;
+  border-color: #d3080c
+}
+
+.job-running {
+  background: #f9f4d4;
+  border-color: #f90;
 }

@@ -1,8 +1,8 @@
 {% extends "_base.html" %}
 {% block title %}{{ super() }} {{ data['title'] }} {% endblock %}
 {% block crumbs %}{{ super() }}
-/ <a href="../collections">Collections</a>
-/ <a href="./{{ data['id'] }}">{{ data['title'] }}</a>
+<li><a href="../collections">Collections</a></li>
+<li><a href="./{{ data['id'] }}">{{ data['title'] }}</a></li>
 {% endblock %}
 
 {% block extrahead %}
@@ -13,12 +13,12 @@
 {% block body %}
     <section id="collection">
       <div class="row">
-        <div class="col-sm">
+        <div class="col-sm-12">
           <h1>{{ data['title'] }}</h1>
           <p>{{ data['description'] }}</p>
           <p>
             {% for kw in data['keywords'] %}
-              <mark class="tag">{{ kw }}</mark>
+              <span class="label label-info">{{ kw }}</span>
             {% endfor %}
           </p>
         </div>

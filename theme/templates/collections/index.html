@@ -1,12 +1,13 @@
 {% extends "_base.html" %}
 {% block title %}{{ super() }} Collections {% endblock %}
 {% block crumbs %}{{ super() }}
-/ <a href="./collections">Collections</a>
+<li><a href="./collections">Collections</a></li>
 {% endblock %}
 {% block body %}
     <section id="collections">
       <h1>Collections in this service</h1>
-            <table class="striped">
+      <button @click="tableHidden = !tableHidden">TEST hide table: [% tableHidden %]</button>
+            <table class="striped" v-show="!tableHidden">
               <thead>
               <tr>
                 <th>Name</th>
@@ -31,4 +32,16 @@
               </tbody>
             </table>
     </section>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.2/vue.global.prod.js" integrity="sha512-M8VjsuCj1iBzrwKloFNjvQBmFXT2oF0MWExoLGpQT2nEx5tq7CP+BhWGJdczT1LoWAhyqHh+LJ6ihHSVGyclHw==" crossorigin="anonymous"></script>
+    <script type="module">
+      const app = Vue.createApp({
+        delimiters: ['[%', '%]'],
+        setup() {
+          const tableHidden = Vue.ref(false);
+          return {
+            tableHidden
+          };
+        }
+      }).mount('#collections');
+    </script>
 {% endblock %}

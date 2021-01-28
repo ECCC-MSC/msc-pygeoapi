@@ -1,9 +1,9 @@
 {% extends "_base.html" %}
 {% block title %}{{ super() }} Jobs {% endblock %}
 {% block crumbs %}{{ super() }}
-/ <a href="../../processes">Processes</a>
-/ <a href="../{{ data.process.id }}">{{ data.process.title }}</a>
-/ <a href="./jobs">Jobs</a>
+<li><a href="../../processes">Processes</a></li>
+<li><a href="../{{ data.process.id }}">{{ data.process.title }}</a></li>
+<li><a href="./jobs">Jobs</a></li>
 {% endblock %}
 {% block body %}
     <section id="jobs">
@@ -37,7 +37,7 @@
                   <progress class="inline" value="{{job.progress|int*10}}" max="1000"></progress>
                 </td>
                 <td>
-                  <mark class="{{job.status}}">{{ job.status }}</mark>
+                  <span class="label label-job job-{{job.status}}">{{ job.status }}</span>
                 </td>
                 <td>
                   {{ job.message }}

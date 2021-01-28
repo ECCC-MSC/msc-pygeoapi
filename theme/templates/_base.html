@@ -8,7 +8,12 @@
     <meta name="description" content="{{ config['metadata']['identification']['title'] }}">
     <meta name="keywords" content="{{ config['metadata']['identification']['keywords']|join(',') }}">
     <link rel="shortcut icon" href="{{ config['server']['url'] }}/static/img/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="https://unpkg.com/mini.css@3.0.1/dist/mini-default.min.css">
+
+    <!-- GCWeb theme -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_32/css/theme.min.css">
+
+    <!-- <link rel="stylesheet" href="https://unpkg.com/mini.css@3.0.1/dist/mini-default.min.css"> -->
     <link rel="stylesheet" href="{{ config['server']['url'] }}/static/css/default.css">
     <!--[if lt IE 9]>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
@@ -22,41 +27,161 @@
     {% block extrahead %}
     {% endblock %}
   </head>
-  <body>
-    <header class="sticky row">
-      <div class="col-sm-12 col-md-10 col-md-offset-1">
-        <a href="{{ config['server']['url'] }}" class="logo" role="button">
-          <img src="{{ config['server']['url'] }}/static/img/logo.png" title="{{ config['metadata']['identification']['title'] }}" style="height:40px;vertical-align: middle;" /></a>
-        <!--
-          Add additional menu items here
-          <a href="https://pygeoapi.io" role="button" class="button">About</a>
-        -->
-        <a href="mailto:{{ config['metadata']['contact']['email'] }}" role="button" class="button" style="float:right">Contact</a>
-      </div>
-    </header>
-    <div class="sticky row crumbs">
-      <div class="col-sm-12 col-md-10 col-md-offset-1">
-        {% block crumbs %}
-        <a href="{{ config['server']['url'] }}">Home</a>
-        {% endblock %}
-        <span style="float:right">
-          <a href="{{ data['links'] | map(rel='self') | attr('href') }}?f=json">JSON</a>
-          <a href="{{ data['links'] | map(rel='self') | attr('href') }}?f=jsonld">JSON-LD</a>
-        </span>
-      </div>
-    </div>
-    <main>
-    <div class="container">
-      <div class="row">
-        <div class="col-sm-12 col-md-10 col-md-offset-1">
-          <br/>
-          {% block body %}
-          {% endblock %}
+  <body vocab="http://schema.org/" typeof="WebPage">
+    <nav>
+        <ul id="wb-tphp">
+            <li class="wb-slc">
+                <a class="wb-sl" href="#wb-cont">Skip to main content</a>
+            </li>
+            <li class="wb-slc">
+                <a class="wb-sl" href="#wb-info">Skip to "About government"</a>
+            </li>
+        </ul>
+    </nav>
+    <header>
+      <div id="wb-bnr" class="container">
+        <div class="row">
+          <!-- language selection (JSON) -->
+          <section id="wb-lng" class="col-xs-3 col-sm-12 pull-right text-right">
+            <h2 class="wb-inv">JSON selection</h2>
+            <ul class="list-inline mrgn-bttm-0">
+              <li>
+                <a href="{{ data['links'] | map(rel='self') | attr('href') }}?f=json">
+                  <span class="hidden-xs">JSON</span>
+                  <abbr title="JSON" class="visible-xs h3 mrgn-tp-sm mrgn-bttm-0 text-uppercase">JSON</abbr>
+                </a>
+              </li>
+              <li>
+                <a href="{{ data['links'] | map(rel='self') | attr('href') }}?f=jsonld">
+                  <span class="hidden-xs">JSON-LD</span>
+                  <abbr title="JSON-LD" class="visible-xs h3 mrgn-tp-sm mrgn-bttm-0 text-uppercase">JSON-LD</abbr>
+                </a>
+              </li>
+            </ul>
+          </section>
+
+          <!-- Brand -->
+          <div class="brand col-xs-9 col-sm-5 col-md-4" property="publisher" typeof="GovernmentOrganization">
+            <a href="https://www.canada.ca/en.html" property="url">
+              <img src="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_32/assets/sig-blk-en.svg" alt="Government of Canada" property="logo" /><span class="wb-inv"> / <span lang="fr">Gouvernement du Canada</span></span>
+            </a>
+            <meta property="name" content="Government of Canada" />
+            <meta property="areaServed" typeof="Country" content="Canada" />
+            <link property="logo" href="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_32/assets/wmms-blk.svg" />
+          </div>
         </div>
       </div>
-    </div>
+
+      <nav id="wb-bc" property="breadcrumb">
+        <h2>You are here:</h2>
+        <div class="container">
+          <ol class="breadcrumb">
+            {% block crumbs %}
+            <li><a href="{{ config['server']['url'] }}">Home</a></li>
+            {% endblock %}
+          </ol>
+        </div>
+      </nav>
+    </header>
+    <main property="mainContentOfPage" class="container" typeof="WebPageElement">
+      {% block body %}
+      {% endblock %}
+      <div class="pagedetails">
+        <!-- <div class="row">
+          <div class="col-sm-6 col-md-5 col-lg-4">
+            <details class="brdr-0">
+              <summary class="btn btn-default text-center">Report a problem on this page</summary>
+              <div class="well row">
+                <div class="gc-rprt-prblm">
+                  <div class="gc-rprt-prblm-frm gc-rprt-prblm-tggl">
+                    <form action="#">
+                      <fieldset>
+                        <legend><span class="field-name">Please select all that apply: </span></legend>
+                        <div class="checkbox">
+                          <label for="gc-rprt-prblm-f1"> <input type="checkbox" name="problem1" value="Yes" id="gc-rprt-prblm-f1" />A link, button or video is not working </label>
+                          <input name="problem1" type="hidden" value="No" />
+                        </div>
+                        <div class="checkbox">
+                          <label for="gc-rprt-prblm-f2"> <input type="checkbox" name="problem2" value="Yes" id="gc-rprt-prblm-f2" />It has a spelling mistake </label>
+                          <input name="problem2" type="hidden" value="No" />
+                        </div>
+                        <div class="checkbox">
+                          <label for="gc-rprt-prblm-f3"> <input type="checkbox" name="problem3" value="Yes" id="gc-rprt-prblm-f3" />Information is missing </label>
+                          <input name="problem3" type="hidden" value="No" />
+                        </div>
+                        <div class="checkbox">
+                          <label for="gc-rprt-prblm-f4"> <input type="checkbox" name="problem4" value="Yes" id="gc-rprt-prblm-f4" />Information is outdated or wrong </label>
+                          <input name="problem4" type="hidden" value="No" />
+                        </div>
+                        <div class="checkbox">
+                          <label for="gc-rprt-prblm-f5"> <input type="checkbox" name="problem5" value="Yes" id="gc-rprt-prblm-f5" />I can't find what I'm looking for </label>
+                          <input name="problem5" type="hidden" value="No" />
+                        </div>
+                        <div class="checkbox">
+                          <label for="gc-rprt-prblm-f6"> <input type="checkbox" name="problem6" value="Yes" id="gc-rprt-prblm-f6" />Other issue not in this list </label>
+                          <input name="problem6" type="hidden" value="No" />
+                        </div>
+                      </fieldset>
+                      <button type="submit" class="btn btn-primary wb-toggle" data-toggle='{"stateOff": "hide", "stateOn": "show", "selector": ".gc-rprt-prblm-tggl"}'>Submit</button>
+                    </form>
+                  </div>
+                  <div class="gc-rprt-prblm-thnk gc-rprt-prblm-tggl hide">
+                    <h3>Thank you for your help!</h3>
+                    <p>You will not receive a reply. For enquiries, please <a href="https://www.canada.ca/en/contact.html">contact us</a>.</p>
+                  </div>
+                </div>
+              </div>
+            </details>
+          </div>
+          <div class="wb-share col-sm-4 col-md-3 col-sm-offset-2 col-md-offset-4 col-lg-offset-5" data-wb-share='{"lnkClass": "btn btn-default btn-block"}'></div>
+        </div> -->
+        <dl id="wb-dtmd">
+          <dt>Version:&#32;</dt>
+          <dd><code>{{ version }}</code> Powered by <a title="pygeoapi" href="https://pygeoapi.io"><img src="{{ config['server']['url'] }}/static/img/pygeoapi.png" style="height:24px;vertical-align: middle;"/></a></dd>
+        </dl>
+      </div>
     </main>
-    <footer class="sticky">Powered by <a title="pygeoapi" href="https://pygeoapi.io"><img src="{{ config['server']['url'] }}/static/img/pygeoapi.png" title="pygeoapi logo" style="height:24px;vertical-align: middle;"/></a> {{ version }}</footer>
+    <footer id="wb-info">
+      <div class="landscape">
+        <nav class="container wb-navcurr">
+          <h2 class="wb-inv">About government</h2>
+          <ul class="list-unstyled colcount-sm-2 colcount-md-3">
+            <li><a href="mailto:{{ config['metadata']['contact']['email'] }}">Contact MSC pygeoapi</a></li>
+            <li><a href="https://www.canada.ca/en/contact.html">Contact us</a></li>
+            <li><a href="https://www.canada.ca/en/government/dept.html">Departments and agencies</a></li>
+            <li><a href="https://www.canada.ca/en/government/publicservice.html">Public service and military</a></li>
+            <li><a href="https://www.canada.ca/en/news.html">News</a></li>
+            <li><a href="https://www.canada.ca/en/government/system/laws.html">Treaties, laws and regulations</a></li>
+            <li><a href="https://www.canada.ca/en/transparency/reporting.html">Government-wide reporting</a></li>
+            <li><a href="https://pm.gc.ca/eng">Prime Minister</a></li>
+            <li><a href="https://www.canada.ca/en/government/system.html">How government works</a></li>
+            <li><a href="https://open.canada.ca/en/">Open government</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="brand">
+        <div class="container">
+          <div class="row">
+            <nav class="col-md-9 col-lg-10 ftr-urlt-lnk">
+              <h2 class="wb-inv">About this site</h2>
+              <ul>
+                <li><a href="https://www.canada.ca/en/social.html">Social media</a></li>
+                <li><a href="https://www.canada.ca/en/mobile.html">Mobile applications</a></li>
+                <li><a href="https://www1.canada.ca/en/newsite.html">About Canada.ca</a></li>
+                <li><a href="https://www.canada.ca/en/transparency/terms.html">Terms and conditions</a></li>
+                <li><a href="https://www.canada.ca/en/transparency/privacy.html">Privacy</a></li>
+              </ul>
+            </nav>
+            <div class="col-xs-6 visible-sm visible-xs tofpg">
+              <a href="#wb-cont">Top of page <span class="glyphicon glyphicon-chevron-up"></span></a>
+            </div>
+            <div class="col-xs-6 col-md-3 col-lg-2 text-right">
+              <img src="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_32/assets/wmms-blk.svg" alt="Symbol of the Government of Canada" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
     {% block extrafoot %}
     {% endblock %}
     <script>
@@ -76,5 +201,8 @@
       };
       xhr.send();
     </script>
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_32/js/wet-boew.min.js"></script>
+    <script src="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_32/js/theme.min.js"></script> -->
   </body>
 </html>

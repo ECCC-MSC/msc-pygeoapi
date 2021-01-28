@@ -1,8 +1,8 @@
 {% extends "_base.html" %}
 {% block title %}{{ super() }} {{ data['title'] }} {% endblock %}
 {% block crumbs %}{{ super() }}
-/ <a href="../processes">Processes</a>
-/ <a href="./{{ data['id'] }}">{{ data['title'] }}</a>
+<li><a href="../processes">Processes</a></li>
+<li><a href="./{{ data['id'] }}">{{ data['title'] }}</a></li>
 {% endblock %}
 {% block body %}
     <section id="process" itemscope itemtype="https://schema.org/WebAPI">
@@ -10,7 +10,7 @@
       <div itemprop="description">{{data.description}}</div>
       <p itemprop="keywords">
           {% for kw in data['keywords'] %}
-            <mark class="tag">{{ kw }}</mark>
+            <span class="label label-info">{{ kw }}</span>
           {% endfor %}
       </p>
       <meta itemprop="url" content="{{config.server.url}}/processes/{{data.id}}" />
