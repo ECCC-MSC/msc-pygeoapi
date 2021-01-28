@@ -443,12 +443,12 @@ class AhccdLoader(BaseLoader):
                 },
             }
 
-            self.es.create('ahccd_trends', mapping=mapping)
+            self.conn.create('ahccd_trends', mapping=mapping, overwrite=True)
 
     def generate_docs(self, fp, index):
         """
         Reads AHCCD and CMIP5 data from file(s) at fp and reformats them
-        so they can be nserted into Elasticsearch.
+        so they can be inserted into Elasticsearch.
 
         Returns a generator of dictionaries that represent upsert actions
         into Elasticsearch's bulk API.
