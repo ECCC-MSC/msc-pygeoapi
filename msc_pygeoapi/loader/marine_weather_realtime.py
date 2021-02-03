@@ -47,8 +47,7 @@ from msc_pygeoapi.env import (
 from msc_pygeoapi.loader.base import BaseLoader
 from msc_pygeoapi.util import (
     configure_es_connection,
-    json_pretty_print,
-    strftime_rfc3339,
+    strftime_rfc3339
 )
 
 LOGGER = logging.getLogger(__name__)
@@ -754,12 +753,8 @@ def add(ctx, file_, directory, es, username, password, ignore_certs):
     for file_to_process in files_to_process:
         loader = MarineWeatherRealtimeLoader(conn_config)
         result = loader.load_data(file_to_process)
-        if result:
-            click.echo(
-                'GeoJSON features generated: {}'.format(
-                    json_pretty_print(loader.items)
-                )
-            )
+        if not result:
+            click.echo('features not generated')
 
 
 @click.command()
