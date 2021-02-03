@@ -49,8 +49,7 @@ from msc_pygeoapi.loader.base import BaseLoader
 from msc_pygeoapi.util import (
     configure_es_connection,
     check_es_indexes_to_delete,
-    json_pretty_print,
-    DATETIME_RFC3339_MILLIS_FMT,
+    DATETIME_RFC3339_MILLIS_FMT
 )
 
 
@@ -399,12 +398,8 @@ def add(ctx, file_, directory, es, username, password, ignore_certs):
     for file_to_process in files_to_process:
         loader = SWOBRealtimeLoader(conn_config)
         result = loader.load_data(file_to_process)
-        if result:
-            click.echo(
-                'GeoJSON features generated: {}'.format(
-                    json_pretty_print(loader.items)
-                )
-            )
+        if not result:
+            click.echo('features not generated')
 
 
 @click.command()

@@ -40,9 +40,8 @@ from msc_pygeoapi.connector.elasticsearch_ import ElasticsearchConnector
 from msc_pygeoapi.loader.base import BaseLoader
 from msc_pygeoapi.util import (
     configure_es_connection,
-    json_pretty_print,
     _get_date_format,
-    _get_element,
+    _get_element
 )
 
 LOGGER = logging.getLogger(__name__)
@@ -488,9 +487,8 @@ def add(ctx, file_, directory, es, username, password, ignore_certs):
     for file_to_process in files_to_process:
         loader = CapAlertsRealtimeLoader(conn_config)
         result = loader.load_data(file_to_process)
-        if result:
-            click.echo('GeoJSON features generated: {}'.format(
-                json_pretty_print(loader.bulk_data)))
+        if not result:
+            click.echo('features not generated')
 
 
 @click.command()
