@@ -40,7 +40,7 @@ from msc_pygeoapi import cli_options
 from msc_pygeoapi.connector.elasticsearch_ import ElasticsearchConnector
 from msc_pygeoapi.env import MSC_PYGEOAPI_LOGGING_LOGLEVEL
 from msc_pygeoapi.loader.base import BaseLoader
-from msc_pygeoapi.util import configure_es_connection, json_pretty_print
+from msc_pygeoapi.util import configure_es_connection
 
 LOGGER = logging.getLogger(__name__)
 elastic_logger.setLevel(getattr(logging, MSC_PYGEOAPI_LOGGING_LOGLEVEL))
@@ -429,9 +429,8 @@ def add(ctx, file_, directory, es, username, password, ignore_certs):
     for file_to_process in files_to_process:
         loader = ForecastPolygonsLoader(conn_config)
         result = loader.load_data(file_to_process)
-        if result:
-            click.echo('GeoJSON features generated: {}'.format(
-                json_pretty_print(loader.items)))
+        if not result:
+            click.echo('features not generated: {}')
 
 
 @click.command()
