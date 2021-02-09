@@ -63,11 +63,11 @@
           <!-- Brand -->
           <div class="brand col-xs-9 col-sm-5 col-md-4" property="publisher" typeof="GovernmentOrganization">
             <a href="https://www.canada.ca/en.html" property="url">
-              <img src="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_32/assets/sig-blk-en.svg" alt="Government of Canada" property="logo" /><span class="wb-inv"> / <span lang="fr">Gouvernement du Canada</span></span>
+              <img src="{{ config['server']['url'] }}/static/img/img_eccc-logo.png" alt="Environment & Climate Change Canada" property="logo" /><span class="wb-inv"> / <span lang="fr">Environnement et Changement climatique Canada</span></span>
             </a>
-            <meta property="name" content="Government of Canada" />
+            <meta property="name" content="Environment & Climate Change Canada" />
             <meta property="areaServed" typeof="Country" content="Canada" />
-            <link property="logo" href="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_32/assets/wmms-blk.svg" />
+            <link property="logo" href="{{ config['server']['url'] }}/static/img/img_eccc-logo.png" />
           </div>
         </div>
       </div>
@@ -136,8 +136,8 @@
           <div class="wb-share col-sm-4 col-md-3 col-sm-offset-2 col-md-offset-4 col-lg-offset-5" data-wb-share='{"lnkClass": "btn btn-default btn-block"}'></div>
         </div> -->
         <dl id="wb-dtmd">
-          <dt>Version:&#32;</dt>
-          <dd><code>{{ version }}</code> Powered by <a title="pygeoapi" href="https://pygeoapi.io"><img src="{{ config['server']['url'] }}/static/img/pygeoapi.png" style="height:24px;vertical-align: middle;"/></a></dd>
+          <dt>Powered by <a title="pygeoapi" href="https://pygeoapi.io"><img src="{{ config['server']['url'] }}/static/img/pygeoapi.png" style="height:24px;vertical-align: middle;"/></a></dt>
+          <dd>version:&#32; {{ version }}</dd>
         </dl>
       </div>
     </main>
@@ -146,7 +146,7 @@
         <nav class="container wb-navcurr">
           <h2 class="wb-inv">About government</h2>
           <ul class="list-unstyled colcount-sm-2 colcount-md-3">
-            <li><a href="mailto:{{ config['metadata']['contact']['email'] }}">Contact MSC pygeoapi</a></li>
+            <!-- <li><a href="mailto:{{ config['metadata']['contact']['email'] }}">Contact MSC</a></li> -->
             <li><a href="https://www.canada.ca/en/contact.html">Contact us</a></li>
             <li><a href="https://www.canada.ca/en/government/dept.html">Departments and agencies</a></li>
             <li><a href="https://www.canada.ca/en/government/publicservice.html">Public service and military</a></li>
@@ -188,6 +188,9 @@
       // Requests and embeds JSON-LD representation of current page
       var xhr = new XMLHttpRequest();
       var path = window.location.protocol + "//" + window.location.host + window.location.pathname + "?f=jsonld";
+      if (window.location.pathname.match(/\/items(#)*/gi)) { // reduce load on /items page
+        path += '&limit=10';
+      }
       xhr.open('GET', path);
       xhr.onload = function() {
         if (xhr.status === 200) {

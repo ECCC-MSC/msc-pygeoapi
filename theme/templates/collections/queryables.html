@@ -9,11 +9,11 @@
     <section id="collection">
       <h1>{{ data['title'] }}</h1>
       <p>{{ data['description'] }}</p>
-      <p>
+      <ul>
         {% for kw in data['keywords'] %}
-          <span class="label label-info">{{ kw }}</span>
+          <li><span class="label label-info">{{ kw }}</span></li>
         {% endfor %}
-      </p>
+      </ul>
       <h3>Queryables</h3>
       <ul>
       {% for queryable in data['queryables'] %}
