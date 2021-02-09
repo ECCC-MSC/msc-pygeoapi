@@ -2,7 +2,7 @@
 #
 # Author: Tom Kralidis <tom.kralidis@canada.ca>
 #
-# Copyright (c) 2020 Tom Kralidis
+# Copyright (c) 2021 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -119,7 +119,7 @@ def _get_element(node, path, attrib=None):
     return None
 
 
-def strftime_rfc3339(datetimeobj: datetime) -> str:
+def strftime_rfc3339(datetimeobj):
     """
     helper function to convert datetime object to RFC3393 compliant string.
 
@@ -154,9 +154,7 @@ def check_es_indexes_to_delete(indexes, days):
     return to_delete
 
 
-def configure_es_connection(
-    es: str, username: str, password: str, ignore_certs: bool = False
-) -> dict:
+def configure_es_connection(es, username, password, ignore_certs=False):
     """
     helper function to create an ES connection configuration dictionnary with
     the relevant params passed via CLI.
