@@ -6,7 +6,7 @@
 #
 # Copyright (c) 2020 Thinesh Sornalingam
 # Copyright (c) 2020 Robert Westhaver
-# Copyright (c) 2020 Tom Kralidis
+# Copyright (c) 2021 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -304,7 +304,7 @@ class SWOBRealtimeLoader(BaseLoader):
 
         BaseLoader.__init__(self)
 
-        self.conn = ElasticsearchConnector(conn_config, verify_certs=False)
+        self.conn = ElasticsearchConnector(conn_config)
         self.items = []
         self.conn.create_template(INDEX_BASENAME, SETTINGS)
 
