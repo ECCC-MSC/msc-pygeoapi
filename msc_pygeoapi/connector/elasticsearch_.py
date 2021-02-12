@@ -135,7 +135,7 @@ class ElasticsearchConnector(BaseConnector):
         self.Elasticsearch.indices.create(
             index=index_name,
             body=mapping,
-            request_timeout=MSC_PYGEOAPI_ES_TIMEOUT,
+            request_timeout=MSC_PYGEOAPI_ES_TIMEOUT
         )
 
         return True
@@ -212,7 +212,7 @@ class ElasticsearchConnector(BaseConnector):
                 self.Elasticsearch,
                 package,
                 chunk_size=request_size,
-                request_timeout=30,
+                request_timeout=MSC_PYGEOAPI_ES_TIMEOUT,
                 raise_on_error=False,
             ):
                 if not ok:
