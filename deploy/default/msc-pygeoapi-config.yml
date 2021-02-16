@@ -611,7 +611,7 @@ resources:
             - type: text/html
               rel: canonical
               title: Adjusted and Homogenized Canadian Climate Data (AHCCD)
-              href: https://ec.gc.ca/dccha-ahccd/default.asp?lang=En&n=B1F8423
+              href: https://www.canada.ca/en/environment-climate-change/services/climate-change/science-research-data/climate-trends-variability/adjusted-homogenized-canadian-data.html
               hreflang: en-CA
         extents:
             spatial:
@@ -635,7 +635,7 @@ resources:
             - type: text/html
               rel: canonical
               title: Adjusted and Homogenized Canadian Climate Data (AHCCD)
-              href: https://ec.gc.ca/dccha-ahccd/default.asp?lang=En&n=B1F8423
+              href: https://www.canada.ca/en/environment-climate-change/services/climate-change/science-research-data/climate-trends-variability/adjusted-homogenized-canadian-data.html
               hreflang: en-CA
         extents:
             spatial:
@@ -690,7 +690,7 @@ resources:
             - type: text/html
               rel: canonical
               title: Adjusted and Homogenized Canadian Climate Data (AHCCD)
-              href: https://ec.gc.ca/dccha-ahccd/default.asp?lang=En&n=B1F8423
+              href: https://www.canada.ca/en/environment-climate-change/services/climate-change/science-research-data/climate-trends-variability/adjusted-homogenized-canadian-data.html
               hreflang: en-CA
         extents:
             spatial:
@@ -745,7 +745,7 @@ resources:
             - type: text/html
               rel: canonical
               title: Adjusted and Homogenized Canadian Climate Data (AHCCD)
-              href: https://ec.gc.ca/dccha-ahccd/default.asp?lang=En&n=B1F8423
+              href: https://www.canada.ca/en/environment-climate-change/services/climate-change/science-research-data/climate-trends-variability/adjusted-homogenized-canadian-data.html
               hreflang: en-CA
         extents:
             spatial:
@@ -801,7 +801,7 @@ resources:
             - type: text/html
               rel: canonical
               title: Adjusted and Homogenized Canadian Climate Data (AHCCD)
-              href: https://ec.gc.ca/dccha-ahccd/default.asp?lang=En&n=B1F8423
+              href: https://www.canada.ca/en/environment-climate-change/services/climate-change/science-research-data/climate-trends-variability/adjusted-homogenized-canadian-data.html
               hreflang: en-CA
         extents:
             spatial:
