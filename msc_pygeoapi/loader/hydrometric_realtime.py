@@ -2,7 +2,7 @@
 #
 # Author: Tom Kralidis <tom.kralidis@canada.ca>
 #
-# Copyright (c) 2020 Tom Kralidis
+# Copyright (c) 2021 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -459,7 +459,7 @@ def cache_stations(ctx):
 @click.pass_context
 @cli_options.OPTION_DAYS(
     default=DAYS_TO_KEEP,
-    help='Delete indexes older than n days (default={})'
+    help='Delete indexes older than n days (default={})'.format(DAYS_TO_KEEP)
 )
 @cli_options.OPTION_ELASTICSEARCH()
 @cli_options.OPTION_ES_USERNAME()
@@ -480,7 +480,7 @@ def clean_indexes(ctx, days, es, username, password, ignore_certs):
         indexes_to_delete = check_es_indexes_to_delete(indexes, days)
         if indexes_to_delete:
             click.echo('Deleting indexes {}'.format(indexes_to_delete))
-            conn.delete(','.join(indexes))
+            conn.delete(','.join(indexes_to_delete))
 
     click.echo('Done')
 

@@ -405,7 +405,8 @@ def add(ctx, file_, directory, es, username, password, ignore_certs):
 @click.command()
 @click.pass_context
 @cli_options.OPTION_DAYS(
-    default=DAYS_TO_KEEP, help='Delete indexes older than n days (default={})'
+    default=DAYS_TO_KEEP,
+    help='Delete indexes older than n days (default={})'.format(DAYS_TO_KEEP)
 )
 @cli_options.OPTION_ELASTICSEARCH()
 @cli_options.OPTION_ES_USERNAME()
@@ -425,7 +426,7 @@ def clean_indexes(ctx, days, es, username, password, ignore_certs):
         indexes_to_delete = check_es_indexes_to_delete(indexes, days)
         if indexes_to_delete:
             click.echo('Deleting indexes {}'.format(indexes_to_delete))
-            conn.delete(','.join(indexes))
+            conn.delete(','.join(indexes_to_delete))
 
     click.echo('Done')
 
