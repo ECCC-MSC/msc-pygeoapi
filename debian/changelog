@@ -1,3 +1,15 @@
+msc-pygeoapi (0.8.6) bionic; urgency=medium
+
+  * slugify LTCE identifiers
+  * fix HYDAT URLs in hypermedia
+  * add ES connector
+  * fix ES timeout to use environment variables
+  * enable real-time configurations
+  * update AHCCD metadata links
+  * fix real-time index deletion
+
+ -- Tom Kralidis <tom.kralidis@canada.ca>  Thu, 25 Feb 2021 16:13:16 +0000
+
 msc-pygeoapi (0.8.5) bionic; urgency=medium
 
   * fix default OpenAPI URL
