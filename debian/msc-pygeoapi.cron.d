@@ -28,13 +28,13 @@
 # =================================================================
 
 # every day at 0300h, clean bulletin records from ES
-#0 3 * * * geoadm msc-pygeoapi data bulletins clean-indexes --yes
+#0 3 * * * geoadm msc-pygeoapi data bulletins clean_indexes --days 30 --yes
 
 # every day at 0400h, clean hydrometric realtime data older than 30 days
-0 4 * * * geoadm msc-pygeoapi data hydrometric_realtime clean-indexes --days 30
+0 4 * * * geoadm msc-pygeoapi data hydrometric_realtime clean_indexes --days 30 --yes
 
 # every day at 0500h, clean swob realtime data older than 30 days
-0 5 * * * geoadm msc-pygeoapi data swob_realtime clean-indexes --days 30
+0 5 * * * geoadm msc-pygeoapi data swob_realtime clean_indexes --days 30 --yes
 
 # every day at 0300h, clean out empty MetPX directories
 0 3 * * * geoadm /usr/bin/find $MSC_PYGEOAPI_CACHEDIR -type d -empty -delete > /dev/null 2>&1
