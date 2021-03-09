@@ -831,20 +831,20 @@ resources:
     swob-realtime:
         type: collection
         title: Surface Weather Observations
-        description: TBD
-        keywords: [Surface, realtime]
+        description: Surface Observations measured at the automatic and manual stations of the Environement and Climate Change Canada and partners networks, either for a single station, or for the stations of specific provinces and territories (last 30 days)
+        keywords: [surface, observations, weather, realtime]
         crs:
             - CRS84
         links:
             - type: text/html
               rel: canonical
               title: Data and products of in situ observations
-              href: https://eccc-msc.github.io/open-data/msc-data/obs_station/readme_obs_insitu_en
+              href: https://eccc-msc.github.io/open-data/msc-data/obs_station/readme_obs_insitu_swobdatamart_en
               hreflang: en-CA
             - type: text/html
               rel: canonical
               title: Données et produits d'observations aux stations
-              href: https://eccc-msc.github.io/open-data/msc-data/obs_station/readme_obs_insitu_fr
+              href: https://eccc-msc.github.io/open-data/msc-data/obs_station/readme_obs_insitu_swobdatamart_fr
               hreflang: fr-CA
         extents:
             spatial:
