@@ -1242,14 +1242,14 @@ def add(ctx, db, es, username, password, ignore_certs, dataset):
     else:
         datasets_to_process = [dataset]
 
-    click.echo('Processing dataset(s): {}'.format(datasets_to_process))
+    LOGGER.info('Processing dataset(s): {}'.format(datasets_to_process))
 
     if 'stations' in datasets_to_process:
         if MSC_PYGEOAPI_OGC_API_URL is None:
             msg = 'MSC_PYGEOAPI_OGC_API_URL environment variable not set'
             raise click.ClickException(msg)
         try:
-            click.echo('Populating stations index')
+            LOGGER.info('Populating stations index')
             loader.create_index('stations')
             stations = loader.generate_stations(station_table)
             loader.conn.submit_elastic_package(stations)
@@ -1259,7 +1259,7 @@ def add(ctx, db, es, username, password, ignore_certs, dataset):
 
     if 'observations' in datasets_to_process:
         try:
-            click.echo('Populating observations indexes')
+            LOGGER.info('Populating observations indexes')
             loader.create_index('observations')
             means = loader.generate_means(discharge_var, level_var,
                                           station_table, symbol_table)
@@ -1270,7 +1270,7 @@ def add(ctx, db, es, username, password, ignore_certs, dataset):
 
     if 'annual-statistics' in datasets_to_process:
         try:
-            click.echo('Populating annual statistics index')
+            LOGGER.info('Populating annual statistics index')
             loader.create_index('annual_statistics')
             stats = loader.generate_annual_stats(annual_stats_table,
                                                  data_types_table,
@@ -1282,7 +1282,7 @@ def add(ctx, db, es, username, password, ignore_certs, dataset):
 
     if 'annual-peaks' in datasets_to_process:
         try:
-            click.echo('Populating annual peaks index')
+            LOGGER.info('Populating annual peaks index')
             loader.create_index('annual_peaks')
             peaks = loader.generate_annual_peaks(annual_peaks_table,
                                                  data_types_table,

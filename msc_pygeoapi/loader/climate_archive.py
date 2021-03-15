@@ -974,11 +974,11 @@ def add(
     else:
         datasets_to_process = [dataset]
 
-    click.echo('Processing dataset(s): {}'.format(datasets_to_process))
+    LOGGER.info('Processing dataset(s): {}'.format(datasets_to_process))
 
     if 'stations' in datasets_to_process:
         try:
-            click.echo('Populating stations index')
+            LOGGER.info('Populating stations index')
             loader.create_index('stations')
             stations = loader.generate_stations()
             loader.conn.submit_elastic_package(stations)
@@ -988,7 +988,7 @@ def add(
 
     if 'normals' in datasets_to_process:
         try:
-            click.echo('Populating normals index')
+            LOGGER.info('Populating normals index')
             stn_dict = loader.get_station_data(station, starting_from)
             normals_dict = loader.get_normals_data()
             periods_dict = loader.get_normals_periods()
@@ -1003,7 +1003,7 @@ def add(
 
     if 'monthly' in datasets_to_process:
         try:
-            click.echo('Populating monthly index')
+            LOGGER.info('Populating monthly index')
             stn_dict = loader.get_station_data(station, starting_from)
             if not (date or station or starting_from):
                 loader.create_index('monthly_summary')
@@ -1015,7 +1015,7 @@ def add(
 
     if 'daily' in datasets_to_process:
         try:
-            click.echo('Populating daily index')
+            LOGGER.info('Populating daily index')
             stn_dict = loader.get_station_data(station, starting_from)
             if not (date or station or starting_from):
                 loader.create_index('daily_summary')

@@ -570,11 +570,11 @@ def add(ctx, ctl, es, username, password, ignore_certs, dataset):
     else:
         datasets_to_process = [dataset]
 
-    click.echo('Processing dataset(s): {}'.format(datasets_to_process))
+    LOGGER.info('Processing dataset(s): {}'.format(datasets_to_process))
 
     for dtp in datasets_to_process:
         try:
-            click.echo('Populating {} index'.format(dtp))
+            LOGGER.info('Populating {} index'.format(dtp))
             loader.create_index(dtp)
             dtp_data = loader.generate_docs(ctl_dict[dtp], dtp)
             loader.conn.submit_elastic_package(dtp_data)
