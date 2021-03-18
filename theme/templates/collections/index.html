@@ -43,6 +43,10 @@
       </table>
     </section>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+    <script>
+      // Jinja rendered JSON
+      const JSON_DATA = {{ data |to_json }};
+    </script>
     <script type="module">
       import useCollections from '{{ config['server']['url'] }}/static/js/composables/useCollections.js'
       import useTableFilter from '{{ config['server']['url'] }}/static/js/composables/useTableFilter.js'
