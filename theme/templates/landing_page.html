@@ -19,35 +19,12 @@
       </ul>
     </section>
 
-    <section id="legal" class="panel panel-info">
+    <section class="panel panel-info">
       <div class="panel-body">
         <p class="text-info">
           <b><span class="glyphicon glyphicon-book"></span> MSC GeoMet User Documentation</b><br>
           <a class="info" href="https://eccc-msc.github.io/open-data/msc-geomet/readme_en" target="_blank">https://eccc-msc.github.io/open-data/msc-geomet/readme_en</a>
         </p>
-
-        {% if config['metadata']['identification']['terms_of_service'] %}
-        <div class="row">
-          <div class="col-sm-4">
-            Terms of service<br>
-          </div>
-          <div class="col-sm-8">
-            <p class="text-break">{{ config['metadata']['identification']['terms_of_service'] | urlize() }}</p>
-          </div>
-        </div>
-        
-        {% endif %}
-
-        {% if config['metadata']['license']['url'] %}
-        <div class="row">
-          <div class="col-sm-4">
-            License
-          </div>
-          <div class="col-sm-8">
-              <a href="{{ config['metadata']['license']['url'] }}">{{ config['metadata']['license']['name'] or config['metadata']['license']['url'] }}</a>
-          </div>
-        </div>
-        {% endif %}
       </div>
     </section>
 
@@ -146,6 +123,22 @@
         </div>
       </div>
     </section>
+
+    <section class="panel panel-info">
+      <header class="panel-heading">
+        <h2 class="panel-title">Use of service</h2>
+      </header>
+      <div class="panel-body">
+        {% if config['metadata']['identification']['terms_of_service'] %}
+        <b>License</b><br>
+        <a href="{{ config['metadata']['license']['url'] }}">{{ config['metadata']['license']['name'] or config['metadata']['license']['url'] }}</a><br>
+        {% endif %}
+
+        {% if config['metadata']['identification']['terms_of_service'] %}
+        <b>Terms of service</b><br>
+        <span class="text-break">{{ config['metadata']['identification']['terms_of_service'] | urlize() }}</span>
+        {% endif %}
+      </div>
   </div>
 </div>
 
