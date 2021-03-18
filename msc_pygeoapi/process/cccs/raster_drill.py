@@ -562,6 +562,8 @@ try:
             BaseProcessor.__init__(self, provider_def, PROCESS_METADATA)
 
         def execute(self, data):
+            mimetype = 'application/json'
+
             layer = data['layer']
             x = float(data['x'])
             y = float(data['y'])
@@ -577,13 +579,14 @@ try:
             if format_ == 'GeoJSON':
                 dict_ = output
             elif format_ == 'CSV':
+                mimetype = 'text/csv'
                 dict_ = output.getvalue()
             else:
                 msg = 'Invalid format'
                 LOGGER.error(msg)
                 raise ValueError(msg)
 
-            return dict_
+            return mimetype, dict_
 
         def __repr__(self):
             return '<RasterDrillProcessor> {}'.format(self.name)
