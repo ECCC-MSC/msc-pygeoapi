@@ -1,7 +1,7 @@
 import { ref, computed, onMounted } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.7/vue.esm-browser.prod.js'
 
 export default function useCatalog() {
-  const catalogJson = ref({})
+  const catalogJson = ref(JSON_DATA)
   const catalogLoading = ref(false)
   const linksTotal = computed(() => {
     return links.value.length
@@ -36,7 +36,7 @@ export default function useCatalog() {
     }
   }
   
-  onMounted(getCatalog)
+  // onMounted(getCatalog) // use Jinja rendered JSON data
 
   return {
     links,
