@@ -18,7 +18,7 @@ export default function useCollections() {
   })
   const getCollections = async () => {
     try {
-      const resp = await axios.get('/collections?f=json')
+      const resp = await axios.get('?f=json') // relative to /collections
       collectionsJson.value = resp.data
     } catch (err) {
       console.error(err)
