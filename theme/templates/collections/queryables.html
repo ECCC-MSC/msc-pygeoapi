@@ -16,9 +16,17 @@
       </ul>
       <h3>Queryables</h3>
       <ul>
-      {% for queryable in data['queryables'] %}
-        <li>{{ queryable['queryable'] }} (<code>{{ queryable['type'] }}</code>)</li>
-      {% endfor %}
-      </ul>
+        {% for qname, qinfo in data['properties'].items() %}
+          <li>{{ qname }} (<code>{{ qinfo['type'] }}</code>)
+          {% if 'enum' in qinfo %}
+            <ul>
+            {% for value in qinfo['enum'] %}
+              <li><i>{{ value }}</i></li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+          </li>
+        {% endfor %}
+        </ul>
     </section>
 {% endblock %}

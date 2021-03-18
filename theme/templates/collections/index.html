@@ -42,7 +42,7 @@
         </tbody>
       </table>
     </section>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+
     <script>
       // Jinja rendered JSON
       const JSON_DATA = {{ data |to_json }};
@@ -55,7 +55,7 @@
       const app = createApp({
         delimiters: ['[%', '%]'],
         setup() {
-          const { collections, getCollections } = useCollections()
+          const { collections } = useCollections()
 
           // table columns
           const tableFields = ref([
@@ -84,7 +84,6 @@
 
           return {
             collections: filteredRows, // don't care about unfiltered collections
-            getCollections,
             tableFields, truncateStripTags,
             searchText, searchTextLowered,
             sortIconClass, sortDir, currentSort, 

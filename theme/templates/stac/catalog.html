@@ -19,7 +19,7 @@
         placeholder="Search"
         v-model="searchText">
     </div>
-    <div id="links-table-container" :class="{ 'loading-mask': catalogLoading }">
+    <div id="links-table-container">
       <table id="links-table" class="table table-striped">
         <thead>
           <tr>
@@ -46,7 +46,6 @@
     </div>
   </section>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
   <script>
     // Jinja rendered JSON
     const JSON_DATA = {{ data |to_json }};
@@ -59,7 +58,7 @@
     const app = createApp({
       delimiters: ['[%', '%]'],
       setup() {
-        const { childLinks, getCatalog, catalogLoading } = useCatalog()
+        const { childLinks } = useCatalog()
 
         // table columns
         const tableFields = ref([
@@ -79,7 +78,6 @@
 
         return {
           childLinks: filteredRows, // don't care about unfiltered table rows
-          getCatalog,
           tableFields, truncateStripTags,
           searchText, searchTextLowered,
           sortIconClass, sortDir, currentSort, 

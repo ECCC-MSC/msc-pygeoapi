@@ -2,7 +2,6 @@ import { ref, computed } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.7/
 
 export default function useCatalog() {
   const catalogJson = ref(JSON_DATA)
-  const catalogLoading = ref(false)
   const linksTotal = computed(() => {
     return links.value.length
   })
@@ -24,25 +23,11 @@ export default function useCatalog() {
     })
     return children
   })
-  const getCatalog = async () => {
-    try {
-      catalogLoading.value = true
-      const resp = await axios.get('?f=json') // relative to root
-      catalogJson.value = resp.data
-      catalogLoading.value = false
-    } catch (err) {
-      console.error(err)
-      catalogLoading.value = false
-    }
-  }
-  
-  // onMounted(getCatalog) // use Jinja rendered JSON data
 
   return {
     links,
     childLinks,
     linksTotal,
-    catalogJson, catalogLoading,
-    getCatalog
+    catalogJson
   }
 }
