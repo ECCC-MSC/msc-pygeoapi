@@ -16,21 +16,10 @@ export default function useCollections() {
       return []
     }
   })
-  const getCollections = async () => {
-    try {
-      const resp = await axios.get('?f=json') // relative to /collections
-      collectionsJson.value = resp.data
-    } catch (err) {
-      console.error(err)
-    }
-  }
-  
-  // onMounted(getCollections) // use Jinja rendered JSON instead
 
   return {
     collections,
     collectionsTotal,
-    collectionsJson,
-    getCollections
+    collectionsJson
   }
 }
