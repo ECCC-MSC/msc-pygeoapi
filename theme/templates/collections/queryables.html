@@ -1,0 +1,24 @@
+{% extends "_base.html" %}
+{% block title %}{{ super() }} {{ data['title'] }} {% endblock %}
+{% block crumbs %}{{ super() }}
+<li><a href="../../collections">Collections</a></li>
+<li><a href="./{{ data['id'] }}">{{ data['title'] }}</a></li>
+<li><a href="./{{ data['id'] }}queryables">Queryables</a></li>
+{% endblock %}
+{% block body %}
+    <section id="collection">
+      <h1>{{ data['title'] }}</h1>
+      <p>{{ data['description'] }}</p>
+      <ul>
+        {% for kw in data['keywords'] %}
+          <li><span class="label label-info">{{ kw }}</span></li>
+        {% endfor %}
+      </ul>
+      <h3>Queryables</h3>
+      <ul>
+      {% for queryable in data['queryables'] %}
+        <li>{{ queryable['queryable'] }} (<code>{{ queryable['type'] }}</code>)</li>
+      {% endfor %}
+      </ul>
+    </section>
+{% endblock %}

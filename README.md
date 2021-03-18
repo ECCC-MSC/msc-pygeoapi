@@ -36,6 +36,9 @@ python setup.py install
 cp msc-pygeoapi.env dev.env
 vi dev.env # edit paths accordingly
 . dev.env
+
+# serve API
+pygeoapi serve
 ```
 
 ## Running
