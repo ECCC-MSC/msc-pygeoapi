@@ -13,7 +13,6 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
     <link rel="stylesheet" href="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_32/css/theme.min.css">
 
-    <!-- <link rel="stylesheet" href="https://unpkg.com/mini.css@3.0.1/dist/mini-default.min.css"> -->
     <link rel="stylesheet" href="{{ config['server']['url'] }}/static/css/default.css">
     <!--[if lt IE 9]>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
@@ -87,54 +86,6 @@
       {% block body %}
       {% endblock %}
       <div class="pagedetails">
-        <!-- <div class="row">
-          <div class="col-sm-6 col-md-5 col-lg-4">
-            <details class="brdr-0">
-              <summary class="btn btn-default text-center">Report a problem on this page</summary>
-              <div class="well row">
-                <div class="gc-rprt-prblm">
-                  <div class="gc-rprt-prblm-frm gc-rprt-prblm-tggl">
-                    <form action="#">
-                      <fieldset>
-                        <legend><span class="field-name">Please select all that apply: </span></legend>
-                        <div class="checkbox">
-                          <label for="gc-rprt-prblm-f1"> <input type="checkbox" name="problem1" value="Yes" id="gc-rprt-prblm-f1" />A link, button or video is not working </label>
-                          <input name="problem1" type="hidden" value="No" />
-                        </div>
-                        <div class="checkbox">
-                          <label for="gc-rprt-prblm-f2"> <input type="checkbox" name="problem2" value="Yes" id="gc-rprt-prblm-f2" />It has a spelling mistake </label>
-                          <input name="problem2" type="hidden" value="No" />
-                        </div>
-                        <div class="checkbox">
-                          <label for="gc-rprt-prblm-f3"> <input type="checkbox" name="problem3" value="Yes" id="gc-rprt-prblm-f3" />Information is missing </label>
-                          <input name="problem3" type="hidden" value="No" />
-                        </div>
-                        <div class="checkbox">
-                          <label for="gc-rprt-prblm-f4"> <input type="checkbox" name="problem4" value="Yes" id="gc-rprt-prblm-f4" />Information is outdated or wrong </label>
-                          <input name="problem4" type="hidden" value="No" />
-                        </div>
-                        <div class="checkbox">
-                          <label for="gc-rprt-prblm-f5"> <input type="checkbox" name="problem5" value="Yes" id="gc-rprt-prblm-f5" />I can't find what I'm looking for </label>
-                          <input name="problem5" type="hidden" value="No" />
-                        </div>
-                        <div class="checkbox">
-                          <label for="gc-rprt-prblm-f6"> <input type="checkbox" name="problem6" value="Yes" id="gc-rprt-prblm-f6" />Other issue not in this list </label>
-                          <input name="problem6" type="hidden" value="No" />
-                        </div>
-                      </fieldset>
-                      <button type="submit" class="btn btn-primary wb-toggle" data-toggle='{"stateOff": "hide", "stateOn": "show", "selector": ".gc-rprt-prblm-tggl"}'>Submit</button>
-                    </form>
-                  </div>
-                  <div class="gc-rprt-prblm-thnk gc-rprt-prblm-tggl hide">
-                    <h3>Thank you for your help!</h3>
-                    <p>You will not receive a reply. For enquiries, please <a href="https://www.canada.ca/en/contact.html">contact us</a>.</p>
-                  </div>
-                </div>
-              </div>
-            </details>
-          </div>
-          <div class="wb-share col-sm-4 col-md-3 col-sm-offset-2 col-md-offset-4 col-lg-offset-5" data-wb-share='{"lnkClass": "btn btn-default btn-block"}'></div>
-        </div> -->
         <dl id="wb-dtmd">
           <dt>Powered by <a title="pygeoapi" href="https://pygeoapi.io"><img src="{{ config['server']['url'] }}/static/img/pygeoapi.png" style="height:24px;vertical-align: middle;"/></a></dt>
           <dd>version:&#32; {{ version }}</dd>
@@ -146,7 +97,6 @@
         <nav class="container wb-navcurr">
           <h2 class="wb-inv">About government</h2>
           <ul class="list-unstyled colcount-sm-2 colcount-md-3">
-            <!-- <li><a href="mailto:{{ config['metadata']['contact']['email'] }}">Contact MSC</a></li> -->
             <li><a href="https://www.canada.ca/en/contact.html">Contact us</a></li>
             <li><a href="https://www.canada.ca/en/government/dept.html">Departments and agencies</a></li>
             <li><a href="https://www.canada.ca/en/government/publicservice.html">Public service and military</a></li>
@@ -197,15 +147,12 @@
           var head = document.getElementsByTagName('head')[0];
           var jsonld_datablock = document.createElement('script');
           jsonld_datablock.type = "application/ld+json";
-          //remove full context path, because search engines don't expect it here, pyld requires it.
+          // remove full context path, because search engines don't expect it here, pyld requires it.
           jsonld_datablock.textContent = xhr.responseText.replace('docs/jsonldcontext.jsonld','');
           head.appendChild(jsonld_datablock);
         }
       };
       xhr.send();
     </script>
-    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-    <script src="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_32/js/wet-boew.min.js"></script>
-    <script src="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_32/js/theme.min.js"></script> -->
   </body>
 </html>
