@@ -108,9 +108,9 @@
 {% if data['features'] %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
     <script type="module">
-      import useItems from '{{ config['server']['url'] }}/static/js/composables/useItems.js'
-      import useTableFilter from '{{ config['server']['url'] }}/static/js/composables/useTableFilter.js'
-      import useMap from '{{ config['server']['url'] }}/static/js/composables/useMap.js'
+      import useItems from '{{ config['server']['url'] }}/static/js/composables/useItems.js?v={{ version }}'
+      import useTableFilter from '{{ config['server']['url'] }}/static/js/composables/useTableFilter.js?v={{ version }}'
+      import useMap from '{{ config['server']['url'] }}/static/js/composables/useMap.js?v={{ version }}'
       import { createApp, ref, computed, watch, onMounted } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.7/vue.esm-browser.prod.js'
       
       const app = createApp({
