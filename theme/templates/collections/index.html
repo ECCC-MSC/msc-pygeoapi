@@ -48,8 +48,8 @@
       const JSON_DATA = {{ data |to_json }};
     </script>
     <script type="module">
-      import useCollections from '{{ config['server']['url'] }}/static/js/composables/useCollections.js'
-      import useTableFilter from '{{ config['server']['url'] }}/static/js/composables/useTableFilter.js'
+      import useCollections from '{{ config['server']['url'] }}/static/js/composables/useCollections.js?v={{ version }}'
+      import useTableFilter from '{{ config['server']['url'] }}/static/js/composables/useTableFilter.js?v={{ version }}'
       import { createApp, ref, computed } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.7/vue.esm-browser.prod.js'
 
       const app = createApp({
