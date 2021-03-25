@@ -287,9 +287,9 @@ def swob2geojson(swob_file):
         }
         swob_source = swob_dict["properties"]["id"]
         if "minute" in swob_source:
-            swob_dict["properties"]["hourly_obs-value"] = "F"
+            swob_dict["properties"]["minutely_obs-value"] = "T"
         else:
-            swob_dict["properties"]["hourly_obs-value"] = "T"
+            swob_dict["properties"]["minutely_obs-value"] = "F"
         json_output["properties"] = swob_dict["properties"]
         return json_output
     else:

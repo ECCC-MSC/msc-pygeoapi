@@ -245,6 +245,6 @@
         "avg_snw_dpth_pst5mts_2-uom": "cm",
         "avg_snw_dpth_pst5mts_3": null,
         "avg_snw_dpth_pst5mts_3-uom": "cm",
-        "hourly_obs-value": "F"
+        "minutely_obs-value": "T"
     }
 }
