@@ -145,6 +145,6 @@
         "wetblb_temp-data_flag-uom": "code",
         "wetblb_temp-data_flag-code_src": "std_code_src",
         "wetblb_temp-data_flag-value": 1,
-        "minutely_obs-value": "F"
+        "_is-minutely_obs-value": false
     }
 }

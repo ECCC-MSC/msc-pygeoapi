@@ -285,11 +285,10 @@ def swob2geojson(swob_file):
             "type": "Point",
             "coordinates": swob_dict['coordinates'],
         }
-        swob_source = swob_dict["properties"]["id"]
-        if "minute" in swob_source:
-            swob_dict["properties"]["minutely_obs-value"] = "T"
+        if "minute" in swob_dict["properties"]["id"]:
+            swob_dict["properties"]["_is-minutely_obs-value"] = True
         else:
-            swob_dict["properties"]["minutely_obs-value"] = "F"
+            swob_dict["properties"]["_is-minutely_obs-value"] = False
         json_output["properties"] = swob_dict["properties"]
         return json_output
     else:

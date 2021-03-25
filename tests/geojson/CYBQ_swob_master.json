@@ -141,6 +141,6 @@
         "pcpn_amt_pst6hrs-data_flag-uom": "code",
         "pcpn_amt_pst6hrs-data_flag-code_src": "std_code_src",
         "pcpn_amt_pst6hrs-data_flag-value": 4,
-        "minutely_obs-value": "F"
+        "_is-minutely_obs-value": false
     }
 }
