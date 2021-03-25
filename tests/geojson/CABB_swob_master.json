@@ -144,6 +144,7 @@
         "wetblb_temp-uom": "°C",
         "wetblb_temp-data_flag-uom": "code",
         "wetblb_temp-data_flag-code_src": "std_code_src",
-        "wetblb_temp-data_flag-value": 1
+        "wetblb_temp-data_flag-value": 1,
+        "hourly_obs-value": "T"
     }
 }
