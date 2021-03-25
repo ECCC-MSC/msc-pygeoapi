@@ -1,0 +1,91 @@
+{% extends "_base.html" %}
+{% block title %}{{ super() }} {{ data['title'] }} {% endblock %}
+{% block crumbs %}{{ super() }}
+<li><a href="../processes">Processes</a></li>
+<li><a href="./{{ data['id'] }}">{{ data['title'] }}</a></li>
+{% endblock %}
+{% block body %}
+    <section id="process">
+      <h2>{{ data['title'] }}</h2>
+      <div>{{data.description}}</div>
+      <ul class="list-inline">
+          {% for kw in data['keywords'] %}
+            <li><span class="label label-info">{{ kw }}</span></li>
+          {% endfor %}
+      </ul>
+      <div class="row">
+        <div class="col-sm-12 col-md-12">
+          <table class="table table-striped table-hover">
+            <caption>Inputs</caption>
+            <thead>
+            <tr>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Data Type</th>
+              <th>Description</th>
+            </tr>
+            </thead>
+            <tbody>
+              {% for input_ in data['inputs'] %}
+              <tr>
+                <td>
+                  {{ input_.id }}
+                </td>
+                <td>
+                  {{ input_.title|striptags|truncate }}
+                </td>
+                <td>
+                  {{ input_.input.literalDataDomain.dataType }}
+                </td>
+                <td>
+                  {{ input_.abstract }}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div class="col-sm-12 col-md-12">
+          <table class="table table-striped table-hover">
+            <caption>Outputs</caption>
+            <thead>
+            <tr>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Description</th>
+            </tr>
+            </thead>
+            <tbody>
+              {% for output_ in data['outputs'] %}
+              <tr>
+                <td>{{ output_['id'] }}</td>
+                <td>{{ output_['title'] }}</td>
+                <td>
+                  {{ output_['description'] | striptags | truncate }}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <h2>Execution modes</h2>
+          <ul>
+            {% if 'sync-execute' in data.jobControlOptions %}<li>Synchronous</li>{% endif %}
+            {% if 'async-execute' in data.jobControlOptions %}<li>Asynchronous</li>{% endif %}
+          </ul>
+          <h2>Jobs</h2>
+          <a title="Browse jobs" href="{{config.server.url}}/processes/{{data.id}}/jobs">Browse jobs</a>
+          <h2>Links</h2>
+          <ul>
+            {% for link in data['links'] %}
+                <li>
+                  <a title={{link.title}} type={{link.type}} rel={{link.rel}} href={{link.href}} hreflang={{link.hreflang}}>
+                    {{ link['title'] }} ({{ link['type'] }})
+                  </a>
+                </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+{% endblock %}

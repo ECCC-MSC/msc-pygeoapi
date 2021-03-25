@@ -1,0 +1,88 @@
+{% extends "_base.html" %}
+{% block title %}{{ super() }} stac/{{ data['path'] }} {% endblock %}
+{% block crumbs %}{{ super() }}
+<li><a href="{{ config['server']['url'] }}/stac">SpatioTemporal Asset Catalog</a></li>
+{% for link in get_breadcrumbs(data['path']) %}
+<li><a class="crumbs-path" href="{{config['server']['url'] }}/stac/{{ link['href'] }}">{{ link['title'] }}</a></li>
+{% endfor %}
+{% endblock %}
+
+{% block body %}
+
+  <section id="links">
+    <h2>Links</h2>
+
+    <div class="form-inline" aria-controls="links-table">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Search"
+        v-model="searchText">
+    </div>
+    <div id="links-table-container">
+      <table id="links-table" class="table table-striped">
+        <thead>
+          <tr>
+            <th v-for="(th, index) in tableFields"
+              :class="['sortable']"
+              @click="sortDir(th.key)">[% th.text %]
+              <span
+                v-show="currentSort === th.key"
+                :class="sortIconClass"
+                class="glyphicon"></span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(link, index) in childLinks">
+            <td data-label="name">
+              <a :title="truncateStripTags(link.name)"
+                :href="link.href">
+                <span>[% link.name %]</span></a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <script>
+    // Jinja rendered JSON
+    const JSON_DATA = {{ data |to_json }};
+  </script>
+  <script type="module">
+    import useCatalog from '{{ config['server']['url'] }}/static/js/composables/useCatalog.js?v={{ version }}'
+    import useTableFilter from '{{ config['server']['url'] }}/static/js/composables/useTableFilter.js?v={{ version }}'
+    import { createApp, ref, computed } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.7/vue.esm-browser.prod.js'
+
+    const app = createApp({
+      delimiters: ['[%', '%]'],
+      setup() {
+        const { childLinks } = useCatalog()
+
+        // table columns
+        const tableFields = ref([
+          {
+            key: 'name',
+            text: 'Name'
+          }
+        ])
+        const keyColumns = computed(() => {
+          return tableFields.value.map(field => field.key)
+        })
+
+        // filtering of table results
+        const { filteredRows, searchText, searchTextLowered,
+          currentSort, sortDir, sortIconClass, truncateStripTags } = useTableFilter(childLinks, keyColumns, 'title')
+        sortDir('name') // default sort
+
+        return {
+          childLinks: filteredRows, // don't care about unfiltered table rows
+          tableFields, truncateStripTags,
+          searchText, searchTextLowered,
+          sortIconClass, sortDir, currentSort, 
+        }
+      }
+    }).mount('#links')    
+  </script>
+{% endblock %}

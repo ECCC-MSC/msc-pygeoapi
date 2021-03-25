@@ -1,0 +1,166 @@
+{% extends "_base.html" %}
+{% block title %}{{ super() }} {{ data['title'] }} {% endblock %}
+{% block crumbs %}{{ super() }}
+<li><a href="{{ data['collections_path'] }}">Collections</a></li>
+{% for link in data['links'] %}
+  {% if link.rel == 'collection' %}
+    <li><a href="{{ data['dataset_path'] }}">{{ link['title'] }}</a></li>
+    {% set col_title = link['title'] %}
+  {% endif %}
+{% endfor %}
+<li><a href="{{ data['items_path']}}">Items</a></li>
+{% endblock %}
+{% block extrahead %}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
+{% endblock %}
+
+{% block body %}
+  <section id="collection">
+    <h1>{% for l in data['links'] if l.rel == 'collection' %} {{ l['title'] }} {% endfor %}</h1>
+    <p>Items in this collection.</p>
+  </section>
+  <section id="items">
+    {% if data['features'] %}
+    <div class="row">
+      <div class="col-sm-12 col-md-6">
+        <div class="row">
+          <div class="col-sm-12">
+            <div id="items-map"></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-12 col-md-6">
+        <div class="form-inline" aria-controls="items-table">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Search"
+            v-model="searchText">
+        </div>
+        <div id="items-table-container" :class="{ 'loading-mask': itemsLoading }">
+          <table id="items-table" class="table table-striped">
+            <thead>
+              <tr>
+                <th v-for="(th, index) in tableFields"
+                  :class="[th.colClass, 'sortable', 'ellipsis']"
+                  :title="th.text"
+                  @click="sortDir(th.key)">
+                  <span v-text="truncate(th.text, 10)"></span>
+                  <span
+                    v-show="currentSort === th.key"
+                    :class="sortIconClass"
+                    class="glyphicon"></span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(item, index) in items">
+                <td v-for="(th, index) in tableFields" v-html="linkToRow(item, th.key, itemsPath)">
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <nav class="small" aria-live="polite" aria-controls="items-table">
+          <div class="row">
+            <div class="col-xs-4">
+              <div class="form-group">
+                <label>Limit: </label>
+                <select
+                  class="input-sm form-control inline-block"
+                  v-model="limit"
+                  :disabled="itemsLoading"
+                  @change="getItems">
+                    <option value="10">10</option>
+                    <option value="100">100</option>
+                    <option value="1000">1000</option>
+                    <option value="2000">2000</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-xs-8 text-right"><span v-text="showingLimitText"></span></div>
+          </div>
+          <div class="alert alert-warning">
+            <p><small>Warning: Higher limits not recommended</small></p>
+          </div>    
+          <ul class="pagination pagination-sm">
+            <li>
+              <button class="btn btn-sm btn-default" @click="prevPage" rel="prev" :disabled="itemsLoading || currentPage === 1">Previous</button>
+            </li>
+            <span>Page [% currentPage %] / [% maxPages %]</span>
+            <li>
+              <button class="btn btn-sm btn-default" @click="nextPage" :disabled="itemsLoading || currentPage === maxPages" rel="next">Next</button>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+    {% else %}
+    <div class="row col-sm-12">
+        <p>No items</p>
+    </div>
+    {% endif %}
+    </section>
+{% endblock %}
+
+{% block extrafoot %}
+{% if data['features'] %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+    <script type="module">
+      import useItems from '{{ config['server']['url'] }}/static/js/composables/useItems.js?v={{ version }}'
+      import useTableFilter from '{{ config['server']['url'] }}/static/js/composables/useTableFilter.js?v={{ version }}'
+      import useMap from '{{ config['server']['url'] }}/static/js/composables/useMap.js?v={{ version }}'
+      import { createApp, ref, computed, watch, onMounted } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.7/vue.esm-browser.prod.js'
+      
+      const app = createApp({
+        delimiters: ['[%', '%]'],
+        setup() {
+          // Items handling
+          const { items, itemsJson, itemProps, getItems, itemsTotal, itemsLoading,
+            currentPage, maxPages, prevPage, nextPage, limit, showingLimitText } = useItems()
+          
+          // Table columns
+          const tableFields = computed(() => {
+            const fields = []
+            if (typeof itemProps === 'undefined') {
+              return []
+            }
+            itemProps.value.slice(0, 4).forEach((prop) => {
+              fields.push({
+                key: prop,
+                text: prop,
+                colClass: 'col-sm-3'
+              })
+            })
+            return fields
+          })
+          const keyColumns = computed(() => {
+            return tableFields.value.map(field => field.key)
+          })
+
+          // Table filtering
+          const { searchText, searchTextLowered, truncate,
+            currentSort, sortDir, sortIconClass, filteredRows, linkToRow } = useTableFilter(items, keyColumns, 'id', itemsTotal)
+          sortDir('id') // default sort
+
+          // Map setup
+          const itemsPath = '{{ data['items_path'] }}'
+          const tileLayerUrl = '{{ config['server']['map']['url'] }}'
+          const tileLayerAttr = '{{ config['server']['map']['attribution'] }}'
+          useMap('items-map', itemsJson, itemsPath, tileLayerUrl, tileLayerAttr)
+
+          return {
+            tableFields, keyColumns, itemsTotal, getItems, itemsLoading,
+            items: filteredRows, // don't care for unfiltered
+            searchText, searchTextLowered, truncate,
+            sortIconClass, sortDir, currentSort, 
+            limit, showingLimitText, nextPage, prevPage, currentPage, maxPages,
+            itemsPath, linkToRow
+          }
+        }
+      })
+      app.mount('#items')
+    </script>
+{% endif %}
+{% endblock %}

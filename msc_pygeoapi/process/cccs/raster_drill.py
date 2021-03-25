@@ -37,6 +37,7 @@ import os
 import re
 
 from osgeo import gdal, osr
+import pyproj
 from pyproj import Proj, transform
 import yaml
 from yaml import CLoader
@@ -148,7 +149,22 @@ PROCESS_METADATA = {
                 'mimeType': 'text/csv'
             }]
         }
-    }]
+    }],
+    'example': {
+        "inputs": [{
+            "id": "layer",
+            "value": "CMIP5.TT.RCP26.YEAR.ANO_PCTL50"
+        }, {
+            "id": "y",
+            "value": 51.132831196692806
+        }, {
+            "id": "x",
+            "value": -114.74968888274337
+        }, {
+            "id": "format",
+            "value": "CSV"
+        }]
+    }
 }
 
 
@@ -421,7 +437,14 @@ def raster_drill(layer, x, y, format_):
 
     from msc_pygeoapi.process.cccs import (GEOMET_CLIMATE_CONFIG,
                                            GEOMET_CLIMATE_BASEPATH,
-                                           GEOMET_CLIMATE_BASEPATH_VRT)
+                                           GEOMET_CLIMATE_BASEPATH_VRT,
+                                           GEOMET_CLIMATE_EPSG)
+
+    if GEOMET_CLIMATE_EPSG is not None:
+        pyproj.set_datapath(GEOMET_CLIMATE_EPSG)
+    else:
+        raise Exception("Could not locate geomet-climate EPSG file.")
+
     LOGGER.info('start raster drilling')
 
     if format_ not in ['CSV', 'GeoJSON']:
@@ -429,7 +452,7 @@ def raster_drill(layer, x, y, format_):
         LOGGER.error(msg)
         raise ValueError(msg)
 
-    with open(GEOMET_CLIMATE_CONFIG) as fh:
+    with open(GEOMET_CLIMATE_CONFIG, encoding='utf-8') as fh:
         cfg = yaml.load(fh, Loader=CLoader)
 
     data_basepath = GEOMET_CLIMATE_BASEPATH
@@ -539,6 +562,8 @@ try:
             BaseProcessor.__init__(self, provider_def, PROCESS_METADATA)
 
         def execute(self, data):
+            mimetype = 'application/json'
+
             layer = data['layer']
             x = float(data['x'])
             y = float(data['y'])
@@ -554,13 +579,14 @@ try:
             if format_ == 'GeoJSON':
                 dict_ = output
             elif format_ == 'CSV':
+                mimetype = 'text/csv'
                 dict_ = output.getvalue()
             else:
                 msg = 'Invalid format'
                 LOGGER.error(msg)
                 raise ValueError(msg)
 
-            return dict_
+            return mimetype, dict_
 
         def __repr__(self):
             return '<RasterDrillProcessor> {}'.format(self.name)

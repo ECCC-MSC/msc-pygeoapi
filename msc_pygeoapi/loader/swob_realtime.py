@@ -6,7 +6,7 @@
 #
 # Copyright (c) 2020 Thinesh Sornalingam
 # Copyright (c) 2020 Robert Westhaver
-# Copyright (c) 2020 Tom Kralidis
+# Copyright (c) 2021 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -32,26 +32,34 @@
 # =================================================================
 
 import click
-from datetime import datetime, timedelta
+from datetime import datetime
 import logging
 import os
 
-from elasticsearch import helpers, logger as elastic_logger
+from elasticsearch import logger as elastic_logger
 from lxml import etree
 
 from msc_pygeoapi import cli_options
-from msc_pygeoapi.env import (MSC_PYGEOAPI_CACHEDIR, MSC_PYGEOAPI_ES_TIMEOUT,
-                              MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
+from msc_pygeoapi.env import (
+    MSC_PYGEOAPI_CACHEDIR,
+    MSC_PYGEOAPI_LOGGING_LOGLEVEL,
+)
+from msc_pygeoapi.connector.elasticsearch_ import ElasticsearchConnector
 from msc_pygeoapi.loader.base import BaseLoader
-from msc_pygeoapi.util import get_es, json_pretty_print
+from msc_pygeoapi.util import (
+    configure_es_connection,
+    check_es_indexes_to_delete,
+    DATETIME_RFC3339_MILLIS_FMT
+)
 
 
 LOGGER = logging.getLogger(__name__)
-elastic_logger.setLevel(logging.WARNING)
+elastic_logger.setLevel(getattr(logging, MSC_PYGEOAPI_LOGGING_LOGLEVEL))
 
 STATIONS_LIST_NAME = 'swob-xml_station_list.csv'
-STATIONS_LIST_URL = 'https://dd.weather.gc.ca/observations/doc/{}' \
-    .format(STATIONS_LIST_NAME)
+STATIONS_LIST_URL = 'https://dd.weather.gc.ca/observations/doc/{}'.format(
+    STATIONS_LIST_NAME
+)
 
 STATIONS_CACHE = os.path.join(MSC_PYGEOAPI_CACHEDIR, STATIONS_LIST_NAME)
 
@@ -59,32 +67,26 @@ STATIONS_CACHE = os.path.join(MSC_PYGEOAPI_CACHEDIR, STATIONS_LIST_NAME)
 DAYS_TO_KEEP = 30
 
 # index settings
-INDEX_NAME = 'swob_realtime'
+INDEX_BASENAME = 'swob_realtime.'
 
 SETTINGS = {
-    'settings': {
-        'number_of_shards': 1,
-        'number_of_replicas': 0
-    },
+    'order': 0,
+    'version': 1,
+    'index_patterns': ['{}*'.format(INDEX_BASENAME)],
+    'settings': {'number_of_shards': 1, 'number_of_replicas': 0},
     'mappings': {
         'properties': {
-            'geometry': {
-                'type': 'geo_shape'
-            },
+            'geometry': {'type': 'geo_shape'},
             'properties': {
                 'properties': {
                     'rmk': {
                         'type': 'text',
-                        'fields': {
-                            'raw': {
-                                'type': 'keyword'
-                            }
-                        }
+                        'fields': {'raw': {'type': 'keyword'}},
                     }
                 }
-            }
+            },
         }
-    }
+    },
 }
 
 
@@ -95,11 +97,13 @@ def parse_swob(swob_file):
     :returns: dictionary of SWOB
     """
 
-    namespaces = {'gml': 'http://www.opengis.net/gml',
-                  'om': 'http://www.opengis.net/om/1.0',
-                  'xlink': 'http://www.w3.org/1999/xlink',
-                  'xsi': 'http://www.w3.org/2001/XMLSchema-instance',
-                  'dset': 'http://dms.ec.gc.ca/schema/point-observation/2.0'}
+    namespaces = {
+        'gml': 'http://www.opengis.net/gml',
+        'om': 'http://www.opengis.net/om/1.0',
+        'xlink': 'http://www.w3.org/1999/xlink',
+        'xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+        'dset': 'http://dms.ec.gc.ca/schema/point-observation/2.0',
+    }
 
     swob_values = {}
     elevation = ''
@@ -119,7 +123,7 @@ def parse_swob(swob_file):
             raise RuntimeError(msg)
 
         gen_path = './/om:Observation/om:metadata/dset:set/dset:general'
-        general_info_tree = (xml_tree.findall(gen_path, namespaces))
+        general_info_tree = xml_tree.findall(gen_path, namespaces)
         general_info_elements = list(general_info_tree[0].iter())
         properties = {}
 
@@ -127,15 +131,18 @@ def parse_swob(swob_file):
         for element in general_info_elements:
             if 'name' in element.attrib:
                 if element.tag.split('}')[1] == 'dataset':
-                    properties[element.tag.split('}')[1]] = (
-                        element.attrib['name'].replace('/', '-'))
+                    properties[element.tag.split('}')[1]] = element.attrib[
+                        'name'
+                    ].replace('/', '-')
 
         # add swob source name to properties
         properties["id"] = swob_name
 
         # extract ID related properties
-        id_path = ('.//om:Observation/om:metadata/' +
-                   'dset:set/dset:identification-elements')
+        id_path = (
+            './/om:Observation/om:metadata/'
+            + 'dset:set/dset:identification-elements'
+        )
         identification_tree = xml_tree.findall(id_path, namespaces)
         identification_elements = list(identification_tree[0].iter())
 
@@ -156,19 +163,24 @@ def parse_swob(swob_file):
                         else:
                             element_name = element.attrib[key]
                     else:
-                        properties["{}-{}".format(element_name, key)] = (
-                                element.attrib[key])
+                        properties[
+                            "{}-{}".format(element_name, key)
+                        ] = element.attrib[key]
 
         # set up cords and time stamps
         swob_values['coordinates'] = [longitude, latitude, elevation]
 
-        s_time = ('.//om:Observation/om:samplingTime/' +
-                  'gml:TimeInstant/gml:timePosition')
+        s_time = (
+            './/om:Observation/om:samplingTime/'
+            + 'gml:TimeInstant/gml:timePosition'
+        )
         time_sample = list(xml_tree.findall(s_time, namespaces)[0].iter())[0]
         properties['obs_date_tm'] = time_sample.text
 
-        r_time = ('.//om:Observation/om:resultTime/' +
-                  'gml:TimeInstant/gml:timePosition')
+        r_time = (
+            './/om:Observation/om:resultTime/'
+            + 'gml:TimeInstant/gml:timePosition'
+        )
         time_result = list(xml_tree.findall(r_time, namespaces)[0].iter())[0]
         properties['processed_date_tm'] = time_result.text
 
@@ -222,14 +234,19 @@ def parse_swob(swob_file):
                     elif name == 'qa_summary':
                         properties["{}-{}".format(last_element, 'qa')] = value
                     elif name == 'data_flag':
-                        properties["{}-{}-{}".format(last_element, 'data_flag',
-                                                     'uom')] = uom
-                        properties["{}-{}-{}".format(last_element, 'data_flag',
-                                                     'code_src')] = (
-                            nest_elem.attrib['code-src'])
-                        properties["{}-{}-{}".format(last_element, 'data_flag',
-                                                     'value')] = (
-                                value)
+                        properties[
+                            "{}-{}-{}".format(last_element, 'data_flag', 'uom')
+                        ] = uom
+                        properties[
+                            "{}-{}-{}".format(
+                                last_element, 'data_flag', 'code_src'
+                            )
+                        ] = nest_elem.attrib['code-src']
+                        properties[
+                            "{}-{}-{}".format(
+                                last_element, 'data_flag', 'value'
+                            )
+                        ] = value
 
             swob_values['properties'] = properties
 
@@ -252,7 +269,7 @@ def swob2geojson(swob_file):
 
     try:
         if len(swob_dict) == 0:
-            msg = ('Error: dictionary passed into swob2geojson is blank')
+            msg = 'Error: dictionary passed into swob2geojson is blank'
             LOGGER.debug(msg)
             raise RuntimeError(msg)
     except TypeError:
@@ -264,13 +281,17 @@ def swob2geojson(swob_file):
     if 'properties' in swob_dict and 'coordinates' in swob_dict:
         json_output['id'] = swob_dict['properties']['id']
         json_output['type'] = 'Feature'
-        json_output["geometry"] = (
-            {"type": "Point", "coordinates": swob_dict['coordinates']})
+        json_output["geometry"] = {
+            "type": "Point",
+            "coordinates": swob_dict['coordinates'],
+        }
         json_output["properties"] = swob_dict["properties"]
         return json_output
     else:
-        msg = ('Error: dictionary passed into swob2geojson lacks' +
-               ' required fields')
+        msg = (
+            'Error: dictionary passed into swob2geojson lacks',
+            ' required fields',
+        )
         LOGGER.debug(msg)
         raise RuntimeError(msg)
 
@@ -278,16 +299,14 @@ def swob2geojson(swob_file):
 class SWOBRealtimeLoader(BaseLoader):
     """SWOB Real-time loader"""
 
-    def __init__(self, plugin_def):
+    def __init__(self, conn_config={}):
         """initializer"""
 
         BaseLoader.__init__(self)
 
-        self.ES = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
-
-        if not self.ES.indices.exists(INDEX_NAME):
-            self.ES.indices.create(index=INDEX_NAME, body=SETTINGS,
-                                   request_timeout=MSC_PYGEOAPI_ES_TIMEOUT)
+        self.conn = ElasticsearchConnector(conn_config)
+        self.items = []
+        self.conn.create_template(INDEX_BASENAME, SETTINGS)
 
     def generate_observations(self, filepath):
         """
@@ -303,15 +322,26 @@ class SWOBRealtimeLoader(BaseLoader):
         observation = swob2geojson(filepath)
         observation_id = observation['id']
 
-        LOGGER.debug('Observation {} created successfully'
-                     .format(observation_id))
+        LOGGER.debug(
+            'Observation {} created successfully'.format(observation_id)
+        )
+
+        obs_dt = datetime.strptime(
+            observation['properties']['date_tm-value'],
+            DATETIME_RFC3339_MILLIS_FMT,
+        )
+        obs_dt2 = obs_dt.strftime('%Y-%m-%d')
+        es_index = '{}{}'.format(INDEX_BASENAME, obs_dt2)
+
         action = {
             '_id': observation_id,
-            '_index': INDEX_NAME,
+            '_index': es_index,
             '_op_type': 'update',
             'doc': observation,
-            'doc_as_upsert': True
+            'doc_as_upsert': True,
         }
+
+        self.items.append(observation)
 
         yield action
 
@@ -324,56 +354,36 @@ class SWOBRealtimeLoader(BaseLoader):
         :returns: `bool` of status result
         """
 
-        inserts = 0
-        updates = 0
-        noops = 0
-        fails = 0
-
         LOGGER.debug('Received file {}'.format(filepath))
         chunk_size = 80000
 
         package = self.generate_observations(filepath)
-        for ok, response in helpers.streaming_bulk(self.ES, package,
-                                                   chunk_size=chunk_size,
-                                                   request_timeout=30):
-            status = response['update']['result']
+        self.conn.submit_elastic_package(package, request_size=chunk_size)
 
-            if status == 'created':
-                inserts += 1
-            elif status == 'updated':
-                updates += 1
-            elif status == 'noop':
-                noops += 1
-            else:
-                LOGGER.warning('Unhandled status code {}'.format(status))
-
-        total = inserts + updates + noops + fails
-        LOGGER.info('Inserted package of {} observations ({} inserts,'
-                    ' {} updates, {} no-ops, {} rejects)'
-                    .format(total, inserts, updates, noops, fails))
         return True
 
 
 @click.group()
 def swob_realtime():
-    """Manages SWOB realtime index"""
+    """Manages SWOB realtime indices"""
     pass
 
 
 @click.command()
 @click.pass_context
-@click.option('--file', '-f', 'file_',
-              type=click.Path(exists=True, resolve_path=True),
-              help='Path to file')
-@click.option('--directory', '-d', 'directory',
-              type=click.Path(exists=True, resolve_path=True,
-                              dir_okay=True, file_okay=False),
-              help='Path to directory')
-def add(ctx, file_, directory):
+@cli_options.OPTION_FILE()
+@cli_options.OPTION_DIRECTORY()
+@cli_options.OPTION_ELASTICSEARCH()
+@cli_options.OPTION_ES_USERNAME()
+@cli_options.OPTION_ES_PASSWORD()
+@cli_options.OPTION_ES_IGNORE_CERTS()
+def add(ctx, file_, directory, es, username, password, ignore_certs):
     """adds data to system"""
 
     if all([file_ is None, directory is None]):
         raise click.ClickException('Missing --file/-f or --dir/-d option')
+
+    conn_config = configure_es_connection(es, username, password, ignore_certs)
 
     files_to_process = []
 
@@ -386,73 +396,64 @@ def add(ctx, file_, directory):
         files_to_process.sort(key=os.path.getmtime)
 
     for file_to_process in files_to_process:
-        plugin_def = {
-            'filename_pattern': 'marine_weather/xml',
-            'handler': 'msc_pygeoapi.loader.swob_realtime.SWOBRealtimeLoader',
-        }
-        loader = SWOBRealtimeLoader(plugin_def)
+        loader = SWOBRealtimeLoader(conn_config)
         result = loader.load_data(file_to_process)
-        if result:
-            click.echo(
-                'GeoJSON features generated: {}'.format(
-                    json_pretty_print(loader.items)
-                )
-            )
+        if not result:
+            click.echo('features not generated')
 
 
 @click.command()
 @click.pass_context
 @cli_options.OPTION_DAYS(
     default=DAYS_TO_KEEP,
-    help=f'Delete documents older than n days (default={DAYS_TO_KEEP})'
+    help='Delete indexes older than n days (default={})'.format(DAYS_TO_KEEP)
 )
-@cli_options.OPTION_YES(
-    prompt='Are you sure you want to delete old documents?'
-)
-def clean_records(ctx, days):
-    """Delete old documents"""
+@cli_options.OPTION_ELASTICSEARCH()
+@cli_options.OPTION_ES_USERNAME()
+@cli_options.OPTION_ES_PASSWORD()
+@cli_options.OPTION_ES_IGNORE_CERTS()
+@cli_options.OPTION_YES(prompt='Are you sure you want to delete old indexes?')
+def clean_indexes(ctx, days, es, username, password, ignore_certs):
+    """Clean SWOB realtime indexes older than n number of days"""
 
-    es = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
+    conn_config = configure_es_connection(es, username, password, ignore_certs)
+    conn = ElasticsearchConnector(conn_config)
 
-    today = datetime.now().replace(hour=0, minute=0)
-    older_than = (today - timedelta(days=days)).strftime('%Y-%m-%dT%H:%M')
-    click.echo('Deleting documents older than {} ({} full days)'
-               .format(older_than.replace('T', ' '), days))
+    indexes = conn.get('{}*'.format(INDEX_BASENAME))
+    click.echo(indexes)
 
-    query = {
-        'query': {
-            'range': {
-                'properties.DATETIME': {
-                    'lt': older_than,
-                    'format': 'strict_date_hour_minute'
-                }
-            }
-        }
-    }
+    if indexes:
+        indexes_to_delete = check_es_indexes_to_delete(indexes, days)
+        if indexes_to_delete:
+            click.echo('Deleting indexes {}'.format(indexes_to_delete))
+            conn.delete(','.join(indexes_to_delete))
 
-    response = es.delete_by_query(index=INDEX_NAME, body=query,
-                                  request_timeout=90)
-
-    click.echo('Deleted {} documents'.format(response['deleted']))
-    if len(response['failures']) > 0:
-        click.echo('Failed to delete {} documents in time range'
-                   .format(len(response['failures'])))
+    click.echo('Done')
 
 
 @click.command()
 @click.pass_context
+@cli_options.OPTION_ELASTICSEARCH()
+@cli_options.OPTION_ES_USERNAME()
+@cli_options.OPTION_ES_PASSWORD()
+@cli_options.OPTION_ES_IGNORE_CERTS()
 @cli_options.OPTION_YES(
     prompt='Are you sure you want to delete these indexes?'
 )
-def delete_index(ctx):
-    """Delete SWOB realtime indexes"""
+def delete_indexes(ctx, es, username, password, ignore_certs):
+    """Delete all SWOB realtime indexes"""
 
-    es = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
+    conn_config = configure_es_connection(es, username, password, ignore_certs)
+    conn = ElasticsearchConnector(conn_config)
 
-    if es.indices.exists(INDEX_NAME):
-        es.indices.delete(INDEX_NAME)
+    all_indexes = '{}*'.format(INDEX_BASENAME)
+
+    click.echo('Deleting indexes {}'.format(all_indexes))
+    conn.delete(all_indexes)
+
+    click.echo('Done')
 
 
 swob_realtime.add_command(add)
-swob_realtime.add_command(clean_records)
-swob_realtime.add_command(delete_index)
+swob_realtime.add_command(clean_indexes)
+swob_realtime.add_command(delete_indexes)

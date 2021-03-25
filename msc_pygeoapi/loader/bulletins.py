@@ -2,7 +2,7 @@
 #
 # Author: Tom Kralidis <tom.kralidis@canada.ca>
 #
-# Copyright (c) 2020 Tom Kralidis
+# Copyright (c) 2021 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -28,14 +28,16 @@
 # =================================================================
 
 import click
-from datetime import datetime, timedelta
+from datetime import datetime
 import logging
 
 from msc_pygeoapi import cli_options
-from msc_pygeoapi.env import (MSC_PYGEOAPI_ES_TIMEOUT, MSC_PYGEOAPI_ES_URL,
-                              MSC_PYGEOAPI_ES_AUTH)
+from msc_pygeoapi.connector.elasticsearch_ import ElasticsearchConnector
 from msc_pygeoapi.loader.base import BaseLoader
-from msc_pygeoapi.util import get_es
+from msc_pygeoapi.util import (
+    check_es_indexes_to_delete,
+    configure_es_connection,
+)
 
 
 LOGGER = logging.getLogger(__name__)
@@ -44,9 +46,12 @@ LOGGER = logging.getLogger(__name__)
 DAYS_TO_KEEP = 30
 
 # index settings
-INDEX_NAME = 'bulletins'
+INDEX_BASENAME = 'bulletins.'
 
 SETTINGS = {
+    'order': 0,
+    'version': 1,
+    'index_patterns': ['{}*'.format(INDEX_BASENAME)],
     'settings': {
         'number_of_shards': 1,
         'number_of_replicas': 0
@@ -72,17 +77,14 @@ SETTINGS = {
 class BulletinsRealtimeLoader(BaseLoader):
     """Bulletins real-time loader"""
 
-    def __init__(self, filepath):
+    def __init__(self, filepath, conn_config={}):
         """initializer"""
 
         BaseLoader.__init__(self)
 
         self.DD_URL = 'https://dd.weather.gc.ca/bulletins/alphanumeric'
-        self.ES = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
-
-        if not self.ES.indices.exists(INDEX_NAME):
-            self.ES.indices.create(index=INDEX_NAME, body=SETTINGS,
-                                   request_timeout=MSC_PYGEOAPI_ES_TIMEOUT)
+        self.conn = ElasticsearchConnector(conn_config)
+        self.conn.create_template(INDEX_BASENAME, SETTINGS)
 
     def load_data(self, filepath):
         """
@@ -97,8 +99,15 @@ class BulletinsRealtimeLoader(BaseLoader):
 
         data = self.bulletin2dict(filepath)
 
+        b_dt = datetime.strptime(data['properties']['datetime'],
+                                 '%Y-%m-%d %H:%M')
+        b_dt2 = b_dt.strftime('%Y-%m-%d')
+        es_index = '{}{}'.format(INDEX_BASENAME, b_dt2)
+
         try:
-            r = self.ES.index(index=INDEX_NAME, id=data['ID'], body=data)
+            r = self.conn.Elasticsearch.index(
+                index=es_index, id=data['ID'], body=data
+            )
             LOGGER.debug('Result: {}'.format(r))
             return True
         except Exception as err:
@@ -175,47 +184,54 @@ def bulletins():
 @click.pass_context
 @cli_options.OPTION_DAYS(
     default=DAYS_TO_KEEP,
-    help=f'Delete documents older than n days (default={DAYS_TO_KEEP})'
+    help='Delete indexes older than n days (default={})'.format(DAYS_TO_KEEP)
 )
+@cli_options.OPTION_ELASTICSEARCH()
+@cli_options.OPTION_ES_USERNAME()
+@cli_options.OPTION_ES_PASSWORD()
+@cli_options.OPTION_ES_IGNORE_CERTS()
 @cli_options.OPTION_YES(
-    prompt='Are you sure you want to delete old documents?'
+    prompt='Are you sure you want to delete old indexes?'
 )
-def clean_records(ctx, days):
-    """Delete old documents"""
+def clean_indexes(ctx, days, es, username, password, ignore_certs):
+    """Clean bulletins indexes older than n number of days"""
 
-    es = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
+    conn_config = configure_es_connection(es, username, password, ignore_certs)
+    conn = ElasticsearchConnector(conn_config)
 
-    older_than = (datetime.now() - timedelta(days=days)).strftime(
-        '%Y-%m-%d %H:%M')
-    click.echo('Deleting documents older than {} ({} days)'.format(
-        older_than, days))
+    indexes = conn.get('{}*'.format(INDEX_BASENAME))
 
-    query = {
-        'query': {
-            'range': {
-                'properties.datetime': {
-                    'lte': older_than
-                }
-            }
-        }
-    }
+    if indexes:
+        indexes_to_delete = check_es_indexes_to_delete(indexes, days)
+        if indexes_to_delete:
+            click.echo('Deleting indexes {}'.format(indexes_to_delete))
+            conn.delete(','.join(indexes_to_delete))
 
-    es.delete_by_query(index=INDEX_NAME, body=query)
+    click.echo('Done')
 
 
 @click.command()
 @click.pass_context
+@cli_options.OPTION_ELASTICSEARCH()
+@cli_options.OPTION_ES_USERNAME()
+@cli_options.OPTION_ES_PASSWORD()
+@cli_options.OPTION_ES_IGNORE_CERTS()
 @cli_options.OPTION_YES(
-    prompt='Are you sure you want to delete this index?'
+    prompt='Are you sure you want to delete these indexes?'
 )
-def delete_index(ctx):
-    """Delete bulletins index"""
+def delete_indexes(ctx, es, username, password, ignore_certs):
+    """Delete all hydrometric realtime indexes"""
 
-    es = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
+    conn_config = configure_es_connection(es, username, password, ignore_certs)
+    conn = ElasticsearchConnector(conn_config)
 
-    if es.indices.exists(INDEX_NAME):
-        es.indices.delete(INDEX_NAME)
+    all_indexes = '{}*'.format(INDEX_BASENAME)
+
+    click.echo('Deleting indexes {}'.format(all_indexes))
+    conn.delete(all_indexes)
+
+    click.echo('Done')
 
 
-bulletins.add_command(clean_records)
-bulletins.add_command(delete_index)
+bulletins.add_command(clean_indexes)
+bulletins.add_command(delete_indexes)

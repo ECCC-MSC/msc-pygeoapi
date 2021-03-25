@@ -1,0 +1,255 @@
+# =================================================================
+#
+# Author: Etienne <etienne.pelletier@canada.ca>
+#
+# Copyright (c) 2021 Etienne Pelletier
+#
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation
+# files (the "Software"), to deal in the Software without
+# restriction, including without limitation the rights to use,
+# copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following
+# conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+# OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+# HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+# WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+# OTHER DEALINGS IN THE SOFTWARE.
+#
+# =================================================================
+
+import logging
+from urllib.parse import urlparse
+
+from elasticsearch import Elasticsearch
+from elasticsearch.helpers import streaming_bulk, BulkIndexError
+
+from msc_pygeoapi.connector.base import BaseConnector
+from msc_pygeoapi.env import (
+    MSC_PYGEOAPI_ES_USERNAME,
+    MSC_PYGEOAPI_ES_PASSWORD,
+    MSC_PYGEOAPI_ES_URL,
+    MSC_PYGEOAPI_ES_TIMEOUT,
+)
+
+LOGGER = logging.getLogger(__name__)
+
+
+class ElasticsearchConnector(BaseConnector):
+    """Elasticsearch Connector"""
+
+    def __init__(self, connector_def={}):
+        """
+        Elasticticsearch connection initialization
+
+        :param connector_def: connection definition dictionnary
+
+        :returns: msc_pygeoapi.connector.elasticsearch_.ElasticsearchConnector
+        """
+
+        self.url = connector_def.get('url', MSC_PYGEOAPI_ES_URL)
+
+        # if no URL passed in connector def or env variable not set default
+        # to default ES port on localhost
+        if not self.url:
+            self.url = 'http://localhost:9200'
+
+        self.verify_certs = connector_def.get('verify_certs', True)
+
+        if 'auth' in connector_def:
+            self.auth = connector_def['auth']
+        elif all([MSC_PYGEOAPI_ES_USERNAME, MSC_PYGEOAPI_ES_PASSWORD]):
+            self.auth = (MSC_PYGEOAPI_ES_USERNAME, MSC_PYGEOAPI_ES_PASSWORD)
+        else:
+            self.auth = None
+
+        self.Elasticsearch = self.connect()
+
+    def connect(self):
+        """create Elasticsearch connection"""
+
+        LOGGER.debug('Connecting to Elasticsearch')
+
+        # if no protocol specified in url append http:// by default
+        if not self.url.startswith('http'):
+            self.url = 'http://{}'.format(self.url)
+
+        url_parsed = urlparse(self.url)
+        url_settings = {'host': url_parsed.hostname}
+
+        if url_parsed.port is None:  # proxy to default HTTP(S) port
+            if url_parsed.scheme == 'https':
+                url_settings['port'] = 443
+                url_settings['scheme'] = url_parsed.scheme
+            else:
+                url_settings['port'] = 80
+        else:  # was set explictly
+            url_settings['port'] = url_parsed.port
+
+        if url_parsed.path:
+            url_settings['url_prefix'] = url_parsed.path
+
+        LOGGER.debug('URL settings: {}'.format(url_settings))
+
+        if self.auth:
+            return Elasticsearch(
+                [url_settings],
+                http_auth=self.auth,
+                verify_certs=self.verify_certs,
+            )
+        else:
+            return Elasticsearch(
+                [url_settings], verify_certs=self.verify_certs
+            )
+
+    def create(self, index_name, mapping, overwrite=False):
+        """
+        create an Elaticsearch index
+
+        :param index_name: name of in index to create
+        :mapping: `dict` mapping of index to create
+        :overwrite: `bool` indicating whether to overwrite index if it already
+                    exists
+
+        :returns: `bool` of creation status
+        """
+
+        # if overwrite is False, do not recreate an existing index
+        if self.Elasticsearch.indices.exists(index_name) and not overwrite:
+            LOGGER.info('{} index already exists.')
+            return False
+
+        elif self.Elasticsearch.indices.exists(index_name) and overwrite:
+            self.Elasticsearch.indices.delete(index_name)
+            LOGGER.info('Deleted existing {} index.'.format(index_name))
+
+        self.Elasticsearch.indices.create(
+            index=index_name,
+            body=mapping,
+            request_timeout=MSC_PYGEOAPI_ES_TIMEOUT
+        )
+
+        return True
+
+    def get(self, pattern):
+        """
+        get list of Elaticsearch index matching a pattern
+
+        :param pattern: `str` of pattern to match
+
+        :returns: `list` of index names matching patterns
+        """
+
+        return list(self.Elasticsearch.indices.get(pattern).keys())
+
+    def delete(self, indexes):
+        """
+        delete ES index(es)
+
+        :param indexes: indexes to delete, comma-seperated if multiple.
+
+        :returns: `bool` of deletion status
+        """
+
+        if indexes in ['*', '_all'] or not self.Elasticsearch.indices.exists(
+            indexes
+        ):
+            msg = (
+                'Cannot delete {}. '.format(indexes),
+                'Either the index does not exist or an unaccepted index ',
+                'pattern was given (\'*\' or \'_all\')',
+            )
+            LOGGER.error(msg)
+            raise ValueError(msg)
+
+        LOGGER.info('Deleting indexes {}'.format(indexes))
+        self.Elasticsearch.indices.delete(indexes)
+
+        return True
+
+    def create_template(self, name, settings):
+        """
+        create an Elasticsearch index template
+
+        :param name: `str` index template name
+        :param settings: `dict` settings dictionnary for index template
+
+        :return: `bool` of index template creation status
+        """
+
+        if not self.Elasticsearch.indices.exists_template(name):
+            self.Elasticsearch.indices.put_template(name, settings)
+
+        return True
+
+    def submit_elastic_package(self, package, request_size=10000):
+        """
+        helper function to send an update request to Elasticsearch and
+        log the status of the request. Returns True if the upload succeeded.
+
+        :param package: Iterable of bulk API update actions.
+        :param request_size: Number of documents to upload per request.
+
+        :returns: `bool` of whether the operation was successful.
+        """
+
+        inserts = 0
+        updates = 0
+        noops = 0
+        errors = []
+
+        try:
+            for ok, response in streaming_bulk(
+                self.Elasticsearch,
+                package,
+                chunk_size=request_size,
+                request_timeout=MSC_PYGEOAPI_ES_TIMEOUT,
+                raise_on_error=False,
+            ):
+                if not ok:
+                    errors.append(response)
+                else:
+                    status = response['update']['result']
+
+                    if status == 'created':
+                        inserts += 1
+                    elif status == 'updated':
+                        updates += 1
+                    elif status == 'noop':
+                        noops += 1
+                    else:
+                        LOGGER.error('Unhandled status code {}'.format(status))
+                        errors.append(response)
+        except BulkIndexError as err:
+            LOGGER.error(
+                'Unable to perform bulk insert due to: {}'.format(err.errors)
+            )
+            return False
+
+        total = inserts + updates + noops
+        LOGGER.info(
+            'Inserted package of {} documents ({} inserts, {} updates,'
+            ' {} no-ops)'.format(total, inserts, updates, noops)
+        )
+
+        if len(errors) > 0:
+            LOGGER.warning(
+                '{} errors encountered in bulk insert: {}'.format(
+                    len(errors), errors
+                )
+            )
+            return False
+
+        return True
+
+    def __repr__(self):
+        return '<ElasticsearchConnector> {}'.format(self.url)

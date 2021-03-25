@@ -29,12 +29,26 @@
 # =================================================================
 
 import click
+import imp
+import logging
 
 from msc_pygeoapi.process.cccs.raster_drill import raster_drill_execute
 
+LOGGER = logging.getLogger(__name__)
+
 GEOMET_CLIMATE_CONFIG = '/opt/geomet-climate/geomet-climate.yml'
-GEOMET_CLIMATE_BASEPATH = '/data/geomet/amqp/climate'
+GEOMET_CLIMATE_BASEPATH = '/data/geomet/feeds/dd.ops/climate'
 GEOMET_CLIMATE_BASEPATH_VRT = '/opt/geomet-climate/vrt'
+try:
+    GEOMET_CLIMATE_EPSG = '{}/{}'.format(
+        imp.find_module('geomet_climate')[1], '/resources/mapserv'
+    )
+except ImportError:
+    LOGGER.warning(
+        "Could not import geomet_climate module."
+        " Ensure geomet-climate is installed in order to use cccs processes."
+    )
+    GEOMET_CLIMATE_EPSG = None
 
 
 @click.group()

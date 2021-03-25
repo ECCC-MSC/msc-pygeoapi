@@ -37,7 +37,6 @@ try:
     from msc_pygeoapi.loader.bulletins import bulletins
     from msc_pygeoapi.loader.citypageweather_realtime import citypageweather
     from msc_pygeoapi.loader.hydat import hydat
-    from msc_pygeoapi.loader.climate_archive import climate_archive
     from msc_pygeoapi.loader.ahccd import ahccd
     from msc_pygeoapi.loader.hydrometric_realtime import hydrometric_realtime
     from msc_pygeoapi.loader.hurricanes_realtime import hurricanes
@@ -45,6 +44,8 @@ try:
     from msc_pygeoapi.loader.marine_weather_realtime import marine_weather
     from msc_pygeoapi.loader.cap_alerts_realtime import cap_alerts
     from msc_pygeoapi.loader.swob_realtime import swob_realtime
+    from msc_pygeoapi.loader.ltce import ltce
+    from msc_pygeoapi.loader.climate_archive import climate_archive
 except ImportError as err:
     LOGGER.info('loaders not imported')
     LOGGER.debug(err)
@@ -61,13 +62,14 @@ try:
     data.add_command(citypageweather)
     data.add_command(hydat)
     data.add_command(hurricanes)
-    data.add_command(climate_archive)
     data.add_command(ahccd)
     data.add_command(hydrometric_realtime)
     data.add_command(forecast_polygons)
     data.add_command(marine_weather)
     data.add_command(cap_alerts)
     data.add_command(swob_realtime)
+    data.add_command(ltce)
+    data.add_command(climate_archive)
 except NameError as err:
     LOGGER.info('loaders not found')
     LOGGER.debug(err)

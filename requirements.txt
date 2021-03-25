@@ -4,6 +4,7 @@ gdal
 lxml
 parse
 pyproj
+python-slugify
 pyyaml
 requests
 sqlalchemy

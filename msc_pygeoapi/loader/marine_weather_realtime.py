@@ -34,22 +34,24 @@ import os
 from pathlib import Path
 
 import click
-from elasticsearch import helpers, exceptions, logger as elastic_logger
+from elasticsearch import exceptions, logger as elastic_logger
 from lxml import etree
 from parse import parse
 
 from msc_pygeoapi import cli_options
+from msc_pygeoapi.connector.elasticsearch_ import ElasticsearchConnector
 from msc_pygeoapi.env import (
     MSC_PYGEOAPI_BASEPATH,
-    MSC_PYGEOAPI_ES_TIMEOUT,
-    MSC_PYGEOAPI_ES_URL,
-    MSC_PYGEOAPI_ES_AUTH,
+    MSC_PYGEOAPI_LOGGING_LOGLEVEL,
 )
 from msc_pygeoapi.loader.base import BaseLoader
-from msc_pygeoapi.util import get_es, json_pretty_print, strftime_rfc3339
+from msc_pygeoapi.util import (
+    configure_es_connection,
+    strftime_rfc3339
+)
 
 LOGGER = logging.getLogger(__name__)
-elastic_logger.setLevel(logging.WARNING)
+elastic_logger.setLevel(getattr(logging, MSC_PYGEOAPI_LOGGING_LOGLEVEL))
 
 # index settings
 INDEX_NAME = 'marine_weather_{}'
@@ -323,12 +325,12 @@ INDICES = [INDEX_NAME.format(weather_var) for weather_var in MAPPINGS]
 class MarineWeatherRealtimeLoader(BaseLoader):
     """Marine weather real-time loader"""
 
-    def __init__(self, plugin_def):
+    def __init__(self, conn_config={}):
         """initializer"""
 
         BaseLoader.__init__(self)
 
-        self.ES = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
+        self.conn = ElasticsearchConnector(conn_config)
         self.filepath = None
         self.region_name_code = None
         self.language = None
@@ -338,18 +340,10 @@ class MarineWeatherRealtimeLoader(BaseLoader):
 
         # create marine weather indices if it don't exist
         for item in MAPPINGS:
-            if not self.ES.indices.exists(INDEX_NAME.format(item)):
-                SETTINGS['mappings']['properties']['properties'][
-                    'properties'
-                ] = MAPPINGS[
-                    item
-                ]  # noqa
-
-                self.ES.indices.create(
-                    index=INDEX_NAME.format(item),
-                    body=SETTINGS,
-                    request_timeout=MSC_PYGEOAPI_ES_TIMEOUT,
-                )
+            SETTINGS['mappings']['properties']['properties'][
+                'properties'
+            ] = MAPPINGS[item]
+            self.conn.create(INDEX_NAME.format(item), SETTINGS)
 
     def parse_filename(self):
         """
@@ -415,7 +409,7 @@ class MarineWeatherRealtimeLoader(BaseLoader):
             forecast_id = meteocode_lookup[self.region_name_code]
 
         try:
-            result = self.ES.get(
+            result = self.conn.Elasticsearch.get(
                 index='forecast_polygons_water_detail',
                 id=forecast_id,
                 _source=['geometry'],
@@ -708,13 +702,7 @@ class MarineWeatherRealtimeLoader(BaseLoader):
         self.filepath = Path(filepath)
         self.parse_filename()
 
-        inserts = 0
-        updates = 0
-        noops = 0
-        fails = 0
-
         LOGGER.debug('Received file {}'.format(self.filepath))
-        chunk_size = 80000
 
         self.root = etree.parse(str(self.filepath.resolve())).getroot()
 
@@ -726,31 +714,7 @@ class MarineWeatherRealtimeLoader(BaseLoader):
         extended_forecasts = self.generate_extended_forecasts()
 
         for package in [warnings, regular_forecasts, extended_forecasts]:
-            for ok, response in helpers.streaming_bulk(
-                self.ES,
-                package,
-                chunk_size=chunk_size,
-                # noqa
-                request_timeout=30,
-            ):
-                status = response['update']['result']
-
-                if status == 'created':
-                    inserts += 1
-                elif status == 'updated':
-                    updates += 1
-                elif status == 'noop':
-                    noops += 1
-                else:
-                    LOGGER.warning('Unhandled status code {}'.format(status))
-
-        total = inserts + updates + noops + fails
-        LOGGER.info(
-            'Inserted package of {}  ({} '
-            'inserts, {} updates, {} no-ops, {} rejects)'.format(
-                total, inserts, updates, noops, fails
-            )
-        )
+            self.conn.submit_elastic_package(package, request_size=80000)
         return True
 
 
@@ -764,11 +728,17 @@ def marine_weather():
 @click.pass_context
 @cli_options.OPTION_FILE()
 @cli_options.OPTION_DIRECTORY()
-def add(ctx, file_, directory):
+@cli_options.OPTION_ELASTICSEARCH()
+@cli_options.OPTION_ES_USERNAME()
+@cli_options.OPTION_ES_PASSWORD()
+@cli_options.OPTION_ES_IGNORE_CERTS()
+def add(ctx, file_, directory, es, username, password, ignore_certs):
     """add data to system"""
 
     if all([file_ is None, directory is None]):
         raise click.ClickException('Missing --file/-f or --dir/-d option')
+
+    conn_config = configure_es_connection(es, username, password, ignore_certs)
 
     files_to_process = []
 
@@ -781,29 +751,28 @@ def add(ctx, file_, directory):
         files_to_process.sort(key=os.path.getmtime)
 
     for file_to_process in files_to_process:
-        plugin_def = {
-            'filename_pattern': 'marine_weather/xml',
-            'handler': 'msc_pygeoapi.loader.marine_weather_realtime.MarineWeatherRealtimeLoader',  # noqa
-        }
-        loader = MarineWeatherRealtimeLoader(plugin_def)
+        loader = MarineWeatherRealtimeLoader(conn_config)
         result = loader.load_data(file_to_process)
-        if result:
-            click.echo(
-                'GeoJSON features generated: {}'.format(
-                    json_pretty_print(loader.items)
-                )
-            )
+        if not result:
+            click.echo('features not generated')
 
 
 @click.command()
 @click.pass_context
 @cli_options.OPTION_INDEX_NAME(type=click.Choice(INDICES))
-def delete_index(ctx, index_name):
+@cli_options.OPTION_ELASTICSEARCH()
+@cli_options.OPTION_ES_USERNAME()
+@cli_options.OPTION_ES_PASSWORD()
+@cli_options.OPTION_ES_IGNORE_CERTS()
+def delete_index(ctx, index_name, es, username, password, ignore_certs):
     """
     Delete a particular ES index with a given name as argument or all if no
     argument is passed
     """
-    es = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
+
+    conn_config = configure_es_connection(es, username, password, ignore_certs)
+    conn = ElasticsearchConnector(conn_config)
+
     if index_name:
         if click.confirm(
             'Are you sure you want to delete ES index named: {}?'.format(
@@ -812,7 +781,7 @@ def delete_index(ctx, index_name):
             abort=True,
         ):
             LOGGER.info('Deleting ES index {}'.format(index_name))
-            es.indices.delete(index=index_name)
+            conn.delete(index_name)
             return True
     else:
         if click.confirm(
@@ -823,7 +792,7 @@ def delete_index(ctx, index_name):
             ),
             abort=True,
         ):
-            es.indices.delete(index=",".join(INDICES))
+            conn.delete(",".join(INDICES))
             return True
 
 

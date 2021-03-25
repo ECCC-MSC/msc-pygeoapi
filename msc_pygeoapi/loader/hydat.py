@@ -1,10 +1,12 @@
 # =================================================================
 #
-# Author: Etienne Pelletier <etienne.pelletier@canada.ca>
 # Author: Alex Hurka <alex.hurka@canada.ca>
+# Author: Etienne Pelletier <etienne.pelletier@canada.ca>
+# Author: Tom Kralidis <tom.kralidis@canada.ca>
 #
-# Copyright (c) 2020 Etienne Pelletier
 # Copyright (c) 2019 Alex Hurka
+# Copyright (c) 2020 Etienne Pelletier
+# Copyright (c) 2021 Tom Kralidis
 
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -29,32 +31,29 @@
 #
 # =================================================================
 
-# Example Usage:
-# python es_loader_hydat.py --db path/to/hydat.sqlite3 --es https://path/to/elasticsearch --username user --password pass --dataset stations # noqa
-'''
-DATASET VALUES:
-stations
-observations
-annual-statistics
-annual-peaks
-'''
-
-import logging
-import click
 from collections import defaultdict
+import logging
+
+import click
+
 from sqlalchemy import create_engine
-from sqlalchemy.sql import distinct
-from sqlalchemy.schema import MetaData
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.schema import MetaData
+from sqlalchemy.sql import distinct
 
 from msc_pygeoapi import cli_options
-from msc_pygeoapi.env import MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH
+from msc_pygeoapi.connector.elasticsearch_ import ElasticsearchConnector
+from msc_pygeoapi.env import (
+    MSC_PYGEOAPI_LOGGING_LOGLEVEL,
+    MSC_PYGEOAPI_OGC_API_URL
+)
 from msc_pygeoapi.loader.base import BaseLoader
-from msc_pygeoapi.util import get_es, submit_elastic_package
+from msc_pygeoapi.util import configure_es_connection
 
 
 LOGGER = logging.getLogger(__name__)
-LOGGER.setLevel(40)
+LOGGER.setLevel(getattr(logging, MSC_PYGEOAPI_LOGGING_LOGLEVEL))
+
 HTTP_OK = 200
 POST_OK = 201
 HEADERS = {'Content-type': 'application/json'}
@@ -65,20 +64,13 @@ VERIFY = False
 class HydatLoader(BaseLoader):
     """Climat Archive Loader"""
 
-    def __init__(self, plugin_def):
+    def __init__(self, db_string, conn_config={}):
         """initializer"""
 
         super().__init__()
 
-        if plugin_def['es_conn_dict']:
-            self.ES = get_es(
-                plugin_def['es_conn_dict']['host'],
-                plugin_def['es_conn_dict']['auth'],
-            )
-        else:
-            self.ES = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
-
-        self.db_string = plugin_def['db_string']
+        self.conn = ElasticsearchConnector(conn_config)
+        self.db_string = 'sqlite:///{}'.format(db_string)
 
         self.engine, self.session, self.metadata = self.connect_db()
 
@@ -161,10 +153,7 @@ class HydatLoader(BaseLoader):
             }
 
             index_name = 'hydrometric_daily_mean'
-            if self.ES.indices.exists(index_name):
-                self.ES.indices.delete(index_name)
-                LOGGER.info('Deleted the daily observations index')
-            self.ES.indices.create(index=index_name, body=mapping)
+            self.conn.create(index_name, mapping, overwrite=True)
 
             mapping = {
                 "settings": {"number_of_shards": 1, "number_of_replicas": 0},
@@ -201,10 +190,7 @@ class HydatLoader(BaseLoader):
             }
 
             index_name = 'hydrometric_monthly_mean'
-            if self.ES.indices.exists(index_name):
-                self.ES.indices.delete(index_name)
-                LOGGER.info('Deleted the monthly observations index')
-            self.ES.indices.create(index=index_name, body=mapping)
+            self.conn.create(index_name, mapping, overwrite=True)
 
         if index == 'annual_statistics':
             mapping = {
@@ -273,10 +259,7 @@ class HydatLoader(BaseLoader):
             }
 
             index_name = 'hydrometric_annual_statistics'
-            if self.ES.indices.exists(index_name):
-                self.ES.indices.delete(index_name)
-                LOGGER.info('Deleted the annual statistics index')
-            self.ES.indices.create(index=index_name, body=mapping)
+            self.conn.create(index_name, mapping, overwrite=True)
 
         if index == 'stations':
             mapping = {
@@ -331,10 +314,7 @@ class HydatLoader(BaseLoader):
             }
 
             index_name = 'hydrometric_stations'
-            if self.ES.indices.exists(index_name):
-                self.ES.indices.delete(index_name)
-                LOGGER.info('Deleted the stations index')
-            self.ES.indices.create(index=index_name, body=mapping)
+            self.conn.create(index_name, mapping, overwrite=True)
 
         if index == 'annual_peaks':
             mapping = {
@@ -410,10 +390,7 @@ class HydatLoader(BaseLoader):
             }
 
             index_name = 'hydrometric_annual_peaks'
-            if self.ES.indices.exists(index_name):
-                self.ES.indices.delete(index_name)
-                LOGGER.info('Deleted the annual peaks index')
-            self.ES.indices.create(index=index_name, body=mapping)
+            self.conn.create(index_name, mapping, overwrite=True)
 
     def connect_db(self):
         """
@@ -590,7 +567,7 @@ class HydatLoader(BaseLoader):
                 )
             )
             discharge_lst, discharge_means = self.generate_obs(
-                self.session, station, discharge_var, symbol_table, True
+                station, discharge_var, symbol_table, True
             )
             level_lst, level_means = self.generate_obs(
                 station, level_var, symbol_table, False
@@ -686,7 +663,7 @@ class HydatLoader(BaseLoader):
         :returns: generator of bulk API upsert actions.
         """
 
-        url = 'https://api.geo.weather.gc.ca'
+        url = MSC_PYGEOAPI_OGC_API_URL
 
         station_codes = [
             x[0]
@@ -882,6 +859,12 @@ class HydatLoader(BaseLoader):
             max_day = result[annual_stats_keys.index('MAX_DAY')]
             max_value = result[annual_stats_keys.index('MAX')]
             max_symbol = result[annual_stats_keys.index('MAX_SYMBOL')]
+
+            if min_value is not None:
+                min_value = float(min_value)
+            if max_value is not None:
+                max_value = float(max_value)
+
             args = {'STATION_NUMBER': station_number}
             station_metadata = list(
                 self.session.query(station_table).filter_by(**args).all()[0]
@@ -969,11 +952,11 @@ class HydatLoader(BaseLoader):
                     'DATA_TYPE_EN': data_type_en,
                     'DATA_TYPE_FR': data_type_fr,
                     'MIN_DATE': min_date,
-                    'MIN_VALUE': float(min_value) if min_value else None,
+                    'MIN_VALUE': min_value,
                     'MIN_SYMBOL_EN': min_symbol_en,
                     'MIN_SYMBOL_FR': min_symbol_fr,
                     'MAX_DATE': max_date,
-                    'MAX_VALUE': float(max_value) if max_value else None,
+                    'MAX_VALUE': max_value,
                     'MAX_SYMBOL_EN': max_symbol_en,
                     'MAX_SYMBOL_FR': max_symbol_fr,
                 },
@@ -1205,16 +1188,17 @@ class HydatLoader(BaseLoader):
 
 @click.group()
 def hydat():
-    """Manages hydat indices"""
+    """Manages HYDAT indices"""
     pass
 
 
 @click.command()
 @click.pass_context
-@cli_options.OPTION_DB(help='Path to Hydat sqlite database')
+@cli_options.OPTION_DB(help='Path to HYDAT SQLite database')
 @cli_options.OPTION_ELASTICSEARCH()
 @cli_options.OPTION_ES_USERNAME()
 @cli_options.OPTION_ES_PASSWORD()
+@cli_options.OPTION_ES_IGNORE_CERTS()
 @cli_options.OPTION_DATASET(
     type=click.Choice(
         [
@@ -1226,32 +1210,17 @@ def hydat():
         ]
     )
 )
-def add(ctx, db, es, username, password, dataset):
-    """
-    Loads HYDAT data into Elasticsearch.
+def add(ctx, db, es, username, password, ignore_certs, dataset):
+    """Loads HYDAT data into Elasticsearch"""
 
-    Controls transformation from sqlite to Elasticsearch.
+    conn_config = configure_es_connection(es, username, password, ignore_certs)
+    loader = HydatLoader(db, conn_config)
 
-    :param db: database connection string.
-    :param es: path to Elasticsearch.
-    :param username: username for HTTP authentication.
-    :param password: password for HTTP authentication.
-    :param dataset: name of dataset to load, or all for all datasets.
-    """
-
-    plugin_def = {
-        'db_string': db,
-        'es_conn_dict': {'host': es, 'auth': (username, password)}
-        if all([es, username, password])
-        else None,
-        'handler': 'msc_pygeoapi.loader.hydate.HydatLoader',
-    }
-
-    loader = HydatLoader(plugin_def)
-
+    click.echo('Accessing SQLite database {}'.format(db))
     try:
-        LOGGER.info('Accessing SQLite tables...')
+        click.echo('Accessing SQLite database {}'.format(db))
         discharge_var = level_var = station_table = None
+
         level_var = loader.get_table_var('DLY_LEVELS')
         discharge_var = loader.get_table_var('DLY_FLOWS')
         station_table = loader.get_table_var('STATIONS')
@@ -1259,137 +1228,69 @@ def add(ctx, db, es, username, password, dataset):
         annual_stats_table = loader.get_table_var('ANNUAL_STATISTICS')
         symbol_table = loader.get_table_var('DATA_SYMBOLS')
         annual_peaks_table = loader.get_table_var('ANNUAL_INSTANT_PEAKS')
-        LOGGER.info('Success. Created table variables.')
     except Exception as err:
-        LOGGER.critical(
-            'Could not create table variables due to: {str(err)}. Exiting.'
-        )
-        raise err
+        msg = 'Could not create table variables: {}'.format(err)
+        raise click.ClickException(msg)
 
     if dataset == 'all':
-        try:
-            LOGGER.info('Populating stations index...')
-            loader.create_index('stations')
-            stations = loader.generate_stations(station_table)
-
-            submit_elastic_package(loader.ES, stations)
-            LOGGER.info('Stations index populated.')
-        except Exception as err:
-            LOGGER.error(f'Could not populate stations due to: {str(err)}.')
-        try:
-            LOGGER.info('Populating observations indexes...')
-            loader.create_index('observations')
-            means = loader.generate_means(
-                discharge_var, level_var, station_table, symbol_table
-            )
-
-            submit_elastic_package(loader.ES, means)
-            LOGGER.info('Observations populated.')
-        except Exception as err:
-            LOGGER.error(
-                f'Could not populate observations due to: {str(err)}.'
-            )
-        try:
-            LOGGER.info('Populating annual statistics index...')
-            loader.create_index('annual_statistics')
-            stats = loader.generate_annual_stats(
-                annual_stats_table,
-                data_types_table,
-                station_table,
-                symbol_table,
-            )
-
-            submit_elastic_package(loader.ES, stats)
-            LOGGER.info('Annual stastistics index populated.')
-        except Exception as err:
-            LOGGER.error(
-                f'Could not populate annual statistics due to: {str(err)}.'
-            )
-        try:
-            LOGGER.info('Populating annual peaks index...')
-            loader.create_index('annual_peaks')
-            peaks = loader.generate_annual_peaks(
-                annual_peaks_table,
-                data_types_table,
-                symbol_table,
-                station_table,
-            )
-
-            submit_elastic_package(loader.ES, peaks)
-            LOGGER.info('Annual peaks index populated.')
-        except Exception as err:
-            LOGGER.error(
-                f'Could not populate annual peaks due to: {str(err)}.'
-            )
-        LOGGER.info('Finished populating all indices.')
-
-    elif dataset == 'stations':
-        try:
-            LOGGER.info('Populating stations index...')
-            loader.create_index('stations')
-            stations = loader.generate_stations(station_table)
-
-            submit_elastic_package(loader.ES, stations)
-            LOGGER.info('Stations index populated.')
-        except Exception as err:
-            LOGGER.error(f'Could not populate stations due to: {str(err)}.')
-
-    elif dataset == 'observations':
-        try:
-            LOGGER.info('Populating observations indexes...')
-            loader.create_index('observations')
-            means = loader.generate_means(
-                discharge_var, level_var, station_table, symbol_table
-            )
-
-            submit_elastic_package(loader.ES, means)
-            LOGGER.info('Observations populated.')
-        except Exception as err:
-            raise
-            LOGGER.error(
-                f'Could not populate observations due to: {str(err)}.'
-            )
-
-    elif dataset == 'annual-statistics':
-        try:
-            LOGGER.info('Populating annual statistics index...')
-            loader.create_index('annual_statistics')
-            stats = loader.generate_annual_stats(
-                annual_stats_table,
-                data_types_table,
-                station_table,
-                symbol_table,
-            )
-
-            submit_elastic_package(loader.ES, stats)
-            LOGGER.info('Annual stastistics index populated.')
-        except Exception as err:
-            LOGGER.error(
-                f'Could not populate annual statistics due to: {str(err)}.'
-            )
-
-    elif dataset == 'annual-peaks':
-        try:
-            LOGGER.info('Populating annual peaks index...')
-            loader.create_index('annual_peaks')
-            peaks = loader.generate_annual_peaks(
-                annual_peaks_table,
-                data_types_table,
-                symbol_table,
-                station_table,
-            )
-
-            submit_elastic_package(loader.ES, peaks)
-            LOGGER.info('Annual peaks index populated.')
-        except Exception as err:
-            LOGGER.error(
-                f'Could not populate annual peaks due to: {str(err)}.'
-            )
-            raise err
+        datasets_to_process = [
+            'annual-peaks',
+            'annual-statistics',
+            'observations',
+            'stations'
+        ]
     else:
-        LOGGER.critical(
-            f'Unknown dataset parameter {dataset}, skipping index population.'
-        )
+        datasets_to_process = [dataset]
+
+    click.echo('Processing dataset(s): {}'.format(datasets_to_process))
+
+    if 'stations' in datasets_to_process:
+        if MSC_PYGEOAPI_OGC_API_URL is None:
+            msg = 'MSC_PYGEOAPI_OGC_API_URL environment variable not set'
+            raise click.ClickException(msg)
+        try:
+            click.echo('Populating stations index')
+            loader.create_index('stations')
+            stations = loader.generate_stations(station_table)
+            loader.conn.submit_elastic_package(stations)
+        except Exception as err:
+            msg = 'Could not populate stations index: {}'.format(err)
+            raise click.ClickException(msg)
+
+    if 'observations' in datasets_to_process:
+        try:
+            click.echo('Populating observations indexes')
+            loader.create_index('observations')
+            means = loader.generate_means(discharge_var, level_var,
+                                          station_table, symbol_table)
+            loader.conn.submit_elastic_package(means)
+        except Exception as err:
+            msg = 'Could not populate observations indexes: {}'.format(err)
+            raise click.ClickException(msg)
+
+    if 'annual-statistics' in datasets_to_process:
+        try:
+            click.echo('Populating annual statistics index')
+            loader.create_index('annual_statistics')
+            stats = loader.generate_annual_stats(annual_stats_table,
+                                                 data_types_table,
+                                                 station_table, symbol_table)
+            loader.conn.submit_elastic_package(stats)
+        except Exception as err:
+            msg = 'Could not populate annual statistics index: {}'.format(err)
+            raise click.ClickException(msg)
+
+    if 'annual-peaks' in datasets_to_process:
+        try:
+            click.echo('Populating annual peaks index')
+            loader.create_index('annual_peaks')
+            peaks = loader.generate_annual_peaks(annual_peaks_table,
+                                                 data_types_table,
+                                                 symbol_table, station_table)
+            loader.conn.submit_elastic_package(peaks)
+        except Exception as err:
+            msg = 'Could not populate annual peaks index: {}'.format(err)
+            raise click.ClickException(msg)
 
 
 hydat.add_command(add)

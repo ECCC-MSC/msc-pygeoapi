@@ -36,11 +36,13 @@ import os
 import re
 
 from msc_pygeoapi import cli_options
-from msc_pygeoapi.env import (MSC_PYGEOAPI_ES_TIMEOUT, MSC_PYGEOAPI_ES_URL,
-                              MSC_PYGEOAPI_ES_AUTH)
+from msc_pygeoapi.connector.elasticsearch_ import ElasticsearchConnector
 from msc_pygeoapi.loader.base import BaseLoader
-from msc_pygeoapi.util import (get_es, json_pretty_print, _get_date_format,
-                               _get_element)
+from msc_pygeoapi.util import (
+    configure_es_connection,
+    _get_date_format,
+    _get_element
+)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -175,17 +177,13 @@ SETTINGS = {
 class CapAlertsRealtimeLoader(BaseLoader):
     """Cap Alerts real-time loader"""
 
-    def __init__(self, plugin_def):
+    def __init__(self, conn_config={}):
         """initializer"""
 
         BaseLoader.__init__(self)
 
-        self.ES = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
-
-        if not self.ES.indices.exists(INDEX_NAME,
-                                      request_timeout=MSC_PYGEOAPI_ES_TIMEOUT):
-            self.ES.indices.create(index=INDEX_NAME, body=SETTINGS,
-                                   request_timeout=MSC_PYGEOAPI_ES_TIMEOUT)
+        self.conn = ElasticsearchConnector(conn_config)
+        self.conn.create(INDEX_NAME, mapping=SETTINGS)
 
     def load_data(self, filepath):
         """
@@ -210,7 +208,9 @@ class CapAlertsRealtimeLoader(BaseLoader):
                 op_dict['index']['_id'] = doc['properties']['identifier']
                 self.bulk_data.append(op_dict)
                 self.bulk_data.append(doc)
-            r = self.ES.bulk(index=INDEX_NAME, body=self.bulk_data)
+            r = self.conn.Elasticsearch.bulk(
+                index=INDEX_NAME, body=self.bulk_data
+            )
 
             LOGGER.debug('Result: {}'.format(r))
 
@@ -233,8 +233,6 @@ class CapAlertsRealtimeLoader(BaseLoader):
 
         if self.references_arr and len(self.references_arr) != 0:
 
-            es = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
-
             click.echo('Deleting old alerts')
 
             query = {
@@ -245,7 +243,9 @@ class CapAlertsRealtimeLoader(BaseLoader):
                 }
             }
 
-            es.delete_by_query(index=INDEX_NAME, body=query)
+            self.conn.Elasticsearch.delete_by_query(
+                index=INDEX_NAME, body=query
+            )
 
             return True
 
@@ -462,11 +462,17 @@ def cap_alerts():
 @click.pass_context
 @cli_options.OPTION_FILE()
 @cli_options.OPTION_DIRECTORY()
-def add(ctx, file_, directory):
+@cli_options.OPTION_ELASTICSEARCH()
+@cli_options.OPTION_ES_USERNAME()
+@cli_options.OPTION_ES_PASSWORD()
+@cli_options.OPTION_ES_IGNORE_CERTS()
+def add(ctx, file_, directory, es, username, password, ignore_certs):
     """add data to system"""
 
     if all([file_ is None, directory is None]):
         raise click.ClickException('Missing --file/-f or --dir/-d option')
+
+    conn_config = configure_es_connection(es, username, password, ignore_certs)
 
     files_to_process = []
 
@@ -479,15 +485,10 @@ def add(ctx, file_, directory):
         files_to_process.sort(key=os.path.getmtime)
 
     for file_to_process in files_to_process:
-        plugin_def = {
-            'filename_pattern': 'alerts/cap',
-            'handler': 'msc_pygeoapi.loader.cap_alerts.CapAlertsRealtimeLoader'  # noqa
-        }
-        loader = CapAlertsRealtimeLoader(plugin_def)
+        loader = CapAlertsRealtimeLoader(conn_config)
         result = loader.load_data(file_to_process)
-        if result:
-            click.echo('GeoJSON features generated: {}'.format(
-                json_pretty_print(loader.bulk_data)))
+        if not result:
+            click.echo('features not generated')
 
 
 @click.command()
@@ -496,16 +497,21 @@ def add(ctx, file_, directory):
     default=DAYS_TO_KEEP,
     help=f'Delete documents older than n days (default={DAYS_TO_KEEP})'
 )
+@cli_options.OPTION_ELASTICSEARCH()
+@cli_options.OPTION_ES_USERNAME()
+@cli_options.OPTION_ES_PASSWORD()
+@cli_options.OPTION_ES_IGNORE_CERTS()
 @cli_options.OPTION_YES(
     prompt='Are you sure you want to delete old documents?'
 )
-def clean_records(ctx, days):
-    """Delete old documents"""
+def clean_records(ctx, days, es, username, password, ignore_certs):
+    """Delete old cap-alerts documents"""
 
-    es = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
+    conn_config = configure_es_connection(es, username, password, ignore_certs)
+    conn = ElasticsearchConnector(conn_config)
 
     older_than = (datetime.now() - timedelta(days=days)).strftime(
-        '%Y-%m-%d %H:%M')
+        '%Y-%m-%dT%H:%M:%SZ')
     click.echo('Deleting documents older than {} ({} days)'.format(
         older_than, days))
 
@@ -519,21 +525,25 @@ def clean_records(ctx, days):
         }
     }
 
-    es.delete_by_query(index=INDEX_NAME, body=query)
+    conn.Elasticsearch.delete_by_query(index=INDEX_NAME, body=query)
 
 
 @click.command()
 @click.pass_context
+@cli_options.OPTION_ELASTICSEARCH()
+@cli_options.OPTION_ES_USERNAME()
+@cli_options.OPTION_ES_PASSWORD()
+@cli_options.OPTION_ES_IGNORE_CERTS()
 @cli_options.OPTION_YES(
     prompt='Are you sure you want to delete this index?'
 )
-def delete_index(ctx):
-    """Delete current conditions index"""
+def delete_index(ctx, es, username, password, ignore_certs):
+    """Delete cap-alerts realtime index"""
 
-    es = get_es(MSC_PYGEOAPI_ES_URL, MSC_PYGEOAPI_ES_AUTH)
+    conn_config = configure_es_connection(es, username, password, ignore_certs)
+    conn = ElasticsearchConnector(conn_config)
 
-    if es.indices.exists(INDEX_NAME):
-        es.indices.delete(INDEX_NAME)
+    conn.delete(INDEX_NAME)
 
 
 cap_alerts.add_command(add)
