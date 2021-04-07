@@ -356,7 +356,7 @@ resources:
     hydrometric-realtime:
         type: collection
         title: Real-time hydrometric data
-        description: Real-time water level and flow (discharge) data collected at over 1900 hydrometric stations across Canada (last 30 days).
+        description: Real-time water level and flow (discharge) data collected at over 2100 hydrometric stations across Canada (last 30 days).
         keywords: [Real-Time, Water Level, Flow, Discharge]
         crs:
             - CRS84
@@ -833,7 +833,7 @@ resources:
     swob-realtime:
         type: collection
         title: Surface Weather Observations
-        description: Surface Observations measured at the automatic and manual stations of the Environement and Climate Change Canada and partners networks, either for a single station, or for the stations of specific provinces and territories (last 30 days)
+        description: Surface Observations measured at the automatic and manual stations of the Environment and Climate Change Canada and partners networks, either for a single station, or for the stations of specific provinces and territories (last 30 days)
         keywords: [surface, observations, weather, realtime]
         crs:
             - CRS84

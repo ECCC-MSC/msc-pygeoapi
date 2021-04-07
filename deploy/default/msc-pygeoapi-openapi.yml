@@ -3665,7 +3665,7 @@ paths:
   /collections/hydrometric-realtime:
     get:
       description: Real-time water level and flow (discharge) data collected at over
-        1900 hydrometric stations across Canada (last 30 days).
+        2100 hydrometric stations across Canada (last 30 days).
       operationId: describeHydrometric-realtimeCollection
       parameters:
       - $ref: '#/components/parameters/f'
@@ -3684,7 +3684,7 @@ paths:
   /collections/hydrometric-realtime/items:
     get:
       description: Real-time water level and flow (discharge) data collected at over
-        1900 hydrometric stations across Canada (last 30 days).
+        2100 hydrometric stations across Canada (last 30 days).
       operationId: getHydrometric-realtimeFeatures
       parameters:
       - *id001
@@ -3812,7 +3812,7 @@ paths:
   /collections/hydrometric-realtime/items/{featureId}:
     get:
       description: Real-time water level and flow (discharge) data collected at over
-        1900 hydrometric stations across Canada (last 30 days).
+        2100 hydrometric stations across Canada (last 30 days).
       operationId: getHydrometric-realtimeFeature
       parameters:
       - $ref: http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
@@ -3832,7 +3832,7 @@ paths:
   /collections/hydrometric-realtime/queryables:
     get:
       description: Real-time water level and flow (discharge) data collected at over
-        1900 hydrometric stations across Canada (last 30 days).
+        2100 hydrometric stations across Canada (last 30 days).
       operationId: getHydrometric-realtimeQueryables
       parameters:
       - *id001
@@ -5771,7 +5771,7 @@ paths:
   /collections/swob-realtime:
     get:
       description: Surface Observations measured at the automatic and manual stations
-        of the Environement and Climate Change Canada and partners networks, either
+        of the Environment and Climate Change Canada and partners networks, either
         for a single station, or for the stations of specific provinces and territories
         (last 30 days)
       operationId: describeSwob-realtimeCollection
@@ -5792,7 +5792,7 @@ paths:
   /collections/swob-realtime/items:
     get:
       description: Surface Observations measured at the automatic and manual stations
-        of the Environement and Climate Change Canada and partners networks, either
+        of the Environment and Climate Change Canada and partners networks, either
         for a single station, or for the stations of specific provinces and territories
         (last 30 days)
       operationId: getSwob-realtimeFeatures
@@ -11627,7 +11627,7 @@ paths:
   /collections/swob-realtime/items/{featureId}:
     get:
       description: Surface Observations measured at the automatic and manual stations
-        of the Environement and Climate Change Canada and partners networks, either
+        of the Environment and Climate Change Canada and partners networks, either
         for a single station, or for the stations of specific provinces and territories
         (last 30 days)
       operationId: getSwob-realtimeFeature
@@ -11649,7 +11649,7 @@ paths:
   /collections/swob-realtime/queryables:
     get:
       description: Surface Observations measured at the automatic and manual stations
-        of the Environement and Climate Change Canada and partners networks, either
+        of the Environment and Climate Change Canada and partners networks, either
         for a single station, or for the stations of specific provinces and territories
         (last 30 days)
       operationId: getSwob-realtimeQueryables
@@ -11839,7 +11839,7 @@ tags:
 - description: The annual maximum and minimum instantaneous data are the maximum and
     minimum instantaneous values for a given year.
   name: hydrometric-annual-peaks
-- description: Real-time water level and flow (discharge) data collected at over 1900
+- description: Real-time water level and flow (discharge) data collected at over 2100
     hydrometric stations across Canada (last 30 days).
   name: hydrometric-realtime
 - description: 1981-2010 Climate Normals
@@ -11870,7 +11870,7 @@ tags:
 - description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends
   name: ahccd-trends
 - description: Surface Observations measured at the automatic and manual stations
-    of the Environement and Climate Change Canada and partners networks, either for
+    of the Environment and Climate Change Canada and partners networks, either for
     a single station, or for the stations of specific provinces and territories (last
     30 days)
   name: swob-realtime
