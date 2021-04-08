@@ -441,10 +441,11 @@ def clean_indexes(ctx, days, es, username, password, ignore_certs):
 @cli_options.OPTION_ES_USERNAME()
 @cli_options.OPTION_ES_PASSWORD()
 @cli_options.OPTION_ES_IGNORE_CERTS()
+@cli_options.OPTION_INDEX_TEMPLATE()
 @cli_options.OPTION_YES(
     prompt='Are you sure you want to delete these indexes?'
 )
-def delete_indexes(ctx, es, username, password, ignore_certs):
+def delete_indexes(ctx, es, username, password, ignore_certs, index_template):
     """Delete all SWOB realtime indexes"""
 
     conn_config = configure_es_connection(es, username, password, ignore_certs)
@@ -454,6 +455,10 @@ def delete_indexes(ctx, es, username, password, ignore_certs):
 
     click.echo('Deleting indexes {}'.format(all_indexes))
     conn.delete(all_indexes)
+
+    if index_template:
+        click.echo('Deleting index template {}'.format(INDEX_BASENAME))
+        conn.delete_template(INDEX_BASENAME)
 
     click.echo('Done')
 

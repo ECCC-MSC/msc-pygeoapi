@@ -191,6 +191,20 @@ class ElasticsearchConnector(BaseConnector):
 
         return True
 
+    def delete_template(self, name):
+        """
+        delete an Elasticsearch index template
+
+        :param name: `str` index template name
+
+        :return: `bool` of index template creation status
+        """
+
+        if self.Elasticsearch.indices.exists_template(name):
+            self.Elasticsearch.indices.delete_template(name)
+
+        return True
+
     def submit_elastic_package(self, package, request_size=10000):
         """
         helper function to send an update request to Elasticsearch and
