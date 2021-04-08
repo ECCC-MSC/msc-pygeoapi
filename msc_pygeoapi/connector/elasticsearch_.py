@@ -197,7 +197,7 @@ class ElasticsearchConnector(BaseConnector):
 
         :param name: `str` index template name
 
-        :return: `bool` of index template creation status
+        :return: `bool` of index template deletion status
         """
 
         if self.Elasticsearch.indices.exists_template(name):
