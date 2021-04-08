@@ -189,6 +189,23 @@ def OPTION_INDEX_NAME(*args, **kwargs):
     return click.option(*args, **kwargs)
 
 
+def OPTION_INDEX_TEMPLATE(*args, **kwargs):
+
+    default_args = ['--index-template', '-it']
+
+    default_kwargs = {
+        'is_flag': True,
+        'help': 'include index templates'
+    }
+
+    if not args:
+        args = default_args
+
+    kwargs = {**default_kwargs, **kwargs} if kwargs else default_kwargs
+
+    return click.option(*args, **kwargs)
+
+
 def OPTION_YES(**kwargs):
 
     default_kwargs = {
