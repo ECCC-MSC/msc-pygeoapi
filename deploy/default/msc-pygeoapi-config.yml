@@ -10,9 +10,9 @@ server:
     # cors: true
     pretty_print: true
     limit: 500
-    templates: 
-        path: ${MSC_PYGEOAPI_TEMPLATES}
-        static: ${MSC_PYGEOAPI_STATIC}
+    # templates:
+    #    path: ${MSC_PYGEOAPI_TEMPLATES}
+    #    static: ${MSC_PYGEOAPI_STATIC}
     map:
         url: https://tile.openstreetmap.org/{z}/{x}/{y}.png
         attribution: '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>'
