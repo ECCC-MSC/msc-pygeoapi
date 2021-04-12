@@ -1,3 +1,17 @@
+msc-pygeoapi (0.8.9) bionic; urgency=medium
+
+  * add DATETIME_LST to hydrometric realtime mappings
+  * add --index-template flag for ES index template deletion
+
+ -- Tom Kralidis <tom.kralidis@canada.ca>  Mon, 12 Apr 2021 15:43:43 +0000
+
+
+msc-pygeoapi (0.8.8) bionic; urgency=medium
+
+  * fix process to align with pygeoapi 0.10.0
+
+ -- Tom Kralidis <tom.kralidis@canada.ca>  Thu, 18 Mar 2021 11:29:37 +0000
+
 msc-pygeoapi (0.8.7) bionic; urgency=medium
 
   * fix MetPX trigger handling reference
