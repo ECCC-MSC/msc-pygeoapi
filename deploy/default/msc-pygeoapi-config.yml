@@ -407,7 +407,7 @@ resources:
             - type: text/html
               rel: canonical
               title: Climate Data Online
-              href: https://climate.weather.ec.gc.ca
+              href: https://climate.weather.gc.ca
               hreflang: en-CA
         extents:
             spatial:
@@ -462,7 +462,7 @@ resources:
             - type: text/html
               rel: canonical
               title: Climate Data Online
-              href: https://climate.weather.ec.gc.ca
+              href: https://climate.weather.gc.ca
               hreflang: en-CA
         extents:
             spatial:
@@ -489,7 +489,7 @@ resources:
             - type: text/html
               rel: canonical
               title: Climate Data Online
-              href: https://climate.weather.ec.gc.ca
+              href: https://climate.weather.gc.ca
               hreflang: en-CA
         extents:
             spatial:
@@ -550,7 +550,7 @@ resources:
             - type: text/html
               rel: canonical
               title: Climate Data Online
-              href: https://climate.weather.ec.gc.ca
+              href: https://climate.weather.gc.ca
               hreflang: en-CA
         extents:
             spatial:
