@@ -141,8 +141,7 @@
 
           // Table filtering
           const { searchText, searchTextLowered, truncate,
-            currentSort, sortDir, sortIconClass, filteredRows, linkToRow } = useTableFilter(items, keyColumns, 'id', itemsTotal)
-          sortDir('id') // default sort
+            currentSort, sortDir, sortIconClass, filteredRows, linkToRow } = useTableFilter(items, keyColumns, 'id')
 
           // Map setup
           const itemsPath = '{{ data['items_path'] }}'
