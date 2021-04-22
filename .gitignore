@@ -1,6 +1,7 @@
 *.egg-info
 .pybuild
 *.pyc
+.cache
 build
 dist
 node_modules

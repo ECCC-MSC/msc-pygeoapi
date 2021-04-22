@@ -130,15 +130,20 @@ msc-pygeoapi process cccs execute raster-drill --y=45 --x=-75 --layer=CMIP5.SFCW
 # install dev requirements
 pip install -r requirements-dev.txt
 
-# run tests like this:
-python msc_pygeoapi/tests/run_tests.py
+# API tests run against http://localhost:5000
+# use --url to override
 
-# or this:
-python setup.py test
+# run all tests
+pytest
 
-# measure code coverage
-coverage run --source=msc_pygeoapi -m unittest msc_pygeoapi.tests.run_tests
-coverage report -m
+# run one test file
+pytest test/test_hydat.py
+
+# override endpoint
+pytest test/test_hydat.py --url https://example.org/dev
+
+# skip API tests (run only unit tests)
+pytest -k 'not api'
 ```
 
 ## Releasing
