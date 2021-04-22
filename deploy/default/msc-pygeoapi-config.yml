@@ -107,7 +107,7 @@ resources:
         providers:
             - type: feature
               default: true
-              name: Elasticsearch
+              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/hydrometric_stations
               id_field: IDENTIFIER
 
@@ -154,7 +154,7 @@ resources:
         providers:
             - type: feature
               default: true
-              name: Elasticsearch
+              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/hydrometric_daily_mean
               id_field: IDENTIFIER
               time_field: DATE
@@ -213,7 +213,7 @@ resources:
         providers:
             - type: feature
               default: true
-              name: Elasticsearch
+              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/hydrometric_monthly_mean
               id_field: IDENTIFIER
               time_field: DATE
@@ -269,7 +269,7 @@ resources:
         providers:
             - type: feature
               default: true
-              name: Elasticsearch
+              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/hydrometric_annual_statistics
               id_field: IDENTIFIER
               time_field: MAX_DATE
@@ -332,7 +332,7 @@ resources:
         providers:
             - type: feature
               default: true
-              name: Elasticsearch
+              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/hydrometric_annual_peaks
               id_field: IDENTIFIER
               time_field: DATE
@@ -391,7 +391,7 @@ resources:
         providers:
             - type: feature
               default: true
-              name: Elasticsearch
+              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/hydrometric_realtime.*
               id_field: IDENTIFIER
               time_field: DATETIME
@@ -419,7 +419,7 @@ resources:
         providers:
             - type: feature
               default: true
-              name: Elasticsearch
+              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/climate_normals_data
               id_field: ID
               time_field: DATE_CALCULATED
@@ -474,7 +474,7 @@ resources:
         providers:
             - type: feature
               default: true
-              name: Elasticsearch
+              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/climate_station_information
               id_field: CLIMATE_IDENTIFIER
 
@@ -501,7 +501,7 @@ resources:
         providers:
             - type: feature
               default: true
-              name: Elasticsearch
+              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/climate_public_climate_summary
               id_field: ID
               time_field: LOCAL_DATE
@@ -562,7 +562,7 @@ resources:
         providers:
             - type: feature
               default: true
-              name: Elasticsearch
+              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/climate_public_daily_data
               id_field: ID
               time_field: LOCAL_DATE
@@ -622,7 +622,7 @@ resources:
         providers:
             - type: feature
               default: true
-              name: Elasticsearch
+              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/ahccd_stations
               id_field: identifier__identifiant
 
@@ -649,7 +649,7 @@ resources:
         providers:
             - type: feature
               default: true
-              name: Elasticsearch
+              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/ahccd_annual
               id_field: identifier__identifiant
               time_field: year__annee
@@ -704,7 +704,7 @@ resources:
         providers:
             - type: feature
               default: true
-              name: Elasticsearch
+              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/ahccd_seasonal
               id_field: identifier__identifiant
               time_field: year__annee
@@ -759,7 +759,7 @@ resources:
         providers:
             - type: feature
               default: true
-              name: Elasticsearch
+              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/ahccd_monthly
               id_field: identifier__identifiant
               time_field: date
@@ -815,7 +815,7 @@ resources:
         providers:
             - type: feature
               default: true
-              name: Elasticsearch
+              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/ahccd_trends
               id_field: identifier__identifiant
               properties:
@@ -857,7 +857,7 @@ resources:
                 end: null # or empty
         providers:
             - type: feature
-              name: Elasticsearch
+              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/swob_realtime.*
               id_field: id
               time_field: date_tm-value
@@ -879,7 +879,7 @@ resources:
                 end: null # or empty
         providers:
             - type: feature
-              name: Elasticsearch
+              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/ltce_stations
               id_field: IDENTIFIER
 
@@ -900,7 +900,7 @@ resources:
                 end: null # or empty
         providers:
             - type: feature
-              name: Elasticsearch
+              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/ltce_temp_extremes
               id_field: IDENTIFIER
 
@@ -921,7 +921,7 @@ resources:
                 end: null # or empty
         providers:
             - type: feature
-              name: Elasticsearch
+              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/ltce_precip_extremes
               id_field: IDENTIFIER
 
@@ -942,7 +942,7 @@ resources:
                 end: null # or empty
         providers:
             - type: feature
-              name: Elasticsearch
+              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/ltce_snow_extremes
               id_field: IDENTIFIER
 
