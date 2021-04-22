@@ -3,8 +3,9 @@ msc-pygeoapi (0.8.10) bionic; urgency=medium
   * fix Canadian extents
   * fix CDO URL
   * add chown after log directory creation
+  * add local ES provider
 
- -- Tom Kralidis <tom.kralidis@canada.ca>  Wed, 21 Apr 2021 21:14:37 +0000
+ -- Tom Kralidis <tom.kralidis@canada.ca>  Thu, 22 Apr 2021 18:28:44 +0000
 
 msc-pygeoapi (0.8.9) bionic; urgency=medium
 
