@@ -80,7 +80,6 @@
           // filtering of table results
           const { filteredRows, searchText, searchTextLowered,
             currentSort, sortDir, sortIconClass, truncateStripTags } = useTableFilter(collections, keyColumns, 'title')
-          sortDir('title') // default sort
 
           return {
             collections: filteredRows, // don't care about unfiltered collections
