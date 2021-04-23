@@ -30,26 +30,35 @@
         </div>
       </div>
       <div class="col-sm-12 col-md-6">
-        <div class="form-inline" aria-controls="items-table">
+        <div class="form-inline clearfix" aria-controls="items-table">
+          <label class="wb-inv" for="filter-table">Filter table content</label>
           <input
+            id="filter-table"
             type="text"
-            class="form-control"
-            placeholder="Search"
+            class="form-control input-sm"
+            placeholder="Filter table content"
             v-model="searchText">
+          <div class="btn-group btn-group-sm pull-right">
+            <button title="Clear column search queries and reset to display the default results" class="btn btn-warning" @click="clearSearch"><span class="glyphicon glyphicon-remove"></span> Clear Search</button>
+            <button title="Apply column search queries to the entire collection" class="btn btn-primary" @click="getItemsSorted()"><span class="glyphicon glyphicon-search"></span> Search Collection</button>
+          </div>
         </div>
         <div id="items-table-container" :class="{ 'loading-mask': itemsLoading }">
           <table id="items-table" class="table table-striped">
             <thead>
               <tr>
                 <th v-for="(th, index) in tableFields"
-                  :class="[th.colClass, 'sortable', 'ellipsis']"
-                  :title="th.text"
-                  @click="sortDir(th.key)">
-                  <span v-text="truncate(th.text, 10)"></span>
-                  <span
-                    v-show="currentSort === th.key"
-                    :class="sortIconClass"
-                    class="glyphicon"></span>
+                  :class="th.colClass">
+                  <div class="sortable ellipsis" @click="sortDir(th.key)" :title="th.text">
+                    <span v-text="truncate(th.text, 15)"></span>
+                    <span
+                      v-show="currentSort === th.key"
+                      :class="[sortIconClass, 'glyphicon']"></span>
+                  </div>
+                  <div v-if="th.key !== 'id'">
+                    <label class="wb-inv" :for="'input-'+th.key">Search column: [% th.key %]</label>
+                    <input type="text" class="form-control input-sm" :id="'input-'+th.key" :placeholder="'Search ' + th.key" v-model="queryCols[th.key]" @keyup.enter="getItemsSorted()" />
+                  </div>
                 </th>
               </tr>
               <tr v-if="noJs">
@@ -102,7 +111,7 @@
                   class="input-sm form-control inline-block"
                   v-model="limit"
                   :disabled="itemsLoading"
-                  @change="getItems">
+                  @change="getItemsSorted()">
                     <option value="10">10</option>
                     <option value="100">100</option>
                     <option value="1000">1000</option>
@@ -117,11 +126,11 @@
           </div>    
           <ul class="pagination pagination-sm">
             <li>
-              <button class="btn btn-sm btn-default" @click="prevPage" rel="prev" :disabled="itemsLoading || currentPage === 1">Previous</button>
+              <button class="btn btn-sm btn-default" @click="prevPageItems" rel="prev" :disabled="itemsLoading || currentPage === 1">Previous</button>
             </li>
             <span>Page [% currentPage %] / [% maxPages %]</span>
             <li>
-              <button class="btn btn-sm btn-default" @click="nextPage" :disabled="itemsLoading || currentPage === maxPages" rel="next">Next</button>
+              <button class="btn btn-sm btn-default" @click="nextPageItems" :disabled="itemsLoading || currentPage === maxPages" rel="next">Next</button>
             </li>
           </ul>
         </nav>
@@ -151,7 +160,8 @@
 
           // Items handling
           const { items, itemsJson, itemProps, getItems, itemsTotal, itemsLoading,
-            currentPage, maxPages, prevPage, nextPage, limit, showingLimitText } = useItems()
+            currentPage, maxPages, prevPage, nextPage, limit, showingLimitText,
+            queryCols, clearQueryCols } = useItems()
           
           // Table columns
           const tableFields = computed(() => {
@@ -159,7 +169,7 @@
             if (typeof itemProps === 'undefined') {
               return []
             }
-            itemProps.value.slice(0, 4).forEach((prop) => {
+            itemProps.value.forEach((prop) => {
               fields.push({
                 key: prop,
                 text: prop,
@@ -174,7 +184,25 @@
 
           // Table filtering
           const { searchText, searchTextLowered, truncate,
-            currentSort, sortDir, sortIconClass, filteredRows, linkToRow } = useTableFilter(items, keyColumns, 'id')
+            currentSort, currentSortDir, sortDir, sortIconClass, filteredRows, linkToRow } = useTableFilter(items, keyColumns, 'id')
+          
+          // Collection searching
+          const clearSearch = function() {
+            clearQueryCols()
+            searchText.value = ''
+            getItemsSorted()
+          }
+          const getItemsSorted = function() {
+            getItems(currentSort.value, currentSortDir.value)
+          }
+          const prevPageItems = function() {
+            prevPage()
+            getItemsSorted()
+          }
+          const nextPageItems = function() {
+            nextPage()
+            getItemsSorted()
+          }
 
           // Map setup
           const itemsPath = '{{ data['items_path'] }}'
@@ -183,12 +211,13 @@
           useMap('items-map', itemsJson, itemsPath, tileLayerUrl, tileLayerAttr)
 
           return {
-            tableFields, keyColumns, itemsTotal, getItems, itemsLoading,
+            tableFields, keyColumns, itemsTotal, itemsLoading,
             items: filteredRows, // don't care for unfiltered
             searchText, searchTextLowered, truncate,
-            sortIconClass, sortDir, currentSort, 
-            limit, showingLimitText, nextPage, prevPage, currentPage, maxPages,
-            itemsPath, linkToRow
+            sortIconClass, sortDir, currentSort, currentSortDir,
+            limit, showingLimitText, currentPage, maxPages,
+            itemsPath, linkToRow,
+            queryCols, clearSearch, getItemsSorted, prevPageItems, nextPageItems
           }
         }
       })

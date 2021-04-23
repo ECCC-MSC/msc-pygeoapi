@@ -22,6 +22,11 @@
   white-space: nowrap;
   overflow: hidden;
 }
+#items-table-container th {
+  background: white;
+  position: sticky;
+  top: 0; /* sticky table header */
+}
 
 #items-map, #collection-map {
   width: 100%;
