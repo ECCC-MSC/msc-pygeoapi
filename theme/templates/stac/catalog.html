@@ -34,11 +34,14 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(link, index) in childLinks">
-            <td data-label="name">
-              <a :title="truncateStripTags(link.name)"
+          <tr v-for="(link, index) in catalogLinks">
+            <td v-for="(th, index) in tableFields">
+              <a v-if="th.key === 'name'" :title="truncateStripTags(link.name)"
                 :href="link.href">
-                <span>[% link.name %]</span></a>
+                <span>[% link[th.key] %]</span></a>
+              <template v-else>
+                <span>[% link[th.key] %]</span>
+              </template>
             </td>
           </tr>
         </tbody>
@@ -58,26 +61,40 @@
     const app = createApp({
       delimiters: ['[%', '%]'],
       setup() {
-        const { childLinks } = useCatalog()
+        const { childLinks, itemLinks } = useCatalog()
 
         // table columns
         const tableFields = ref([
           {
             key: 'name',
             text: 'Name'
+          }, {
+            key: 'created',
+            text: 'Last modified'
           }
         ])
+
+        // determine if there are file items to display instead
+        let catalogLinks = childLinks
+        if (itemLinks.value.length > 0) {
+          catalogLinks = itemLinks
+          tableFields.value.push({
+            key: 'file:size',
+            text: 'Size'
+          })
+        }
+        
         const keyColumns = computed(() => {
           return tableFields.value.map(field => field.key)
         })
 
         // filtering of table results
         const { filteredRows, searchText, searchTextLowered,
-          currentSort, sortDir, sortIconClass, truncateStripTags } = useTableFilter(childLinks, keyColumns, 'title')
+          currentSort, sortDir, sortIconClass, truncateStripTags } = useTableFilter(catalogLinks, keyColumns, 'title')
         sortDir('name') // default sort
 
         return {
-          childLinks: filteredRows, // don't care about unfiltered table rows
+          catalogLinks: filteredRows, // don't care about unfiltered table rows
           tableFields, truncateStripTags,
           searchText, searchTextLowered,
           sortIconClass, sortDir, currentSort, 

@@ -30,17 +30,21 @@
                   <thead>
                     <tr>
                       <th>URL</th>
+                      <th>Last Modified</th>
+                      <th>Size</th>
                     </tr>
                   </thead>
                   <tbody>
-                  {% for k, link in data['assets'].items() %}
-                  <tr>
-                    <td data-label="name">
-                      <a title="{{ link['href'] }}" href="{{ link['href'] }}">
-                      <span>{{ link['href'] | get_path_basename }}</span></a>
-                    </td>
-                  </tr>
-                  {% endfor %}
+                    {% for k, link in data['assets'].items() %}
+                    <tr>
+                      <td data-label="name">
+                        <a title="{{ link['href'] }}" href="{{ link['href'] }}" class="text-break">
+                        <span>{{ link['href'] | get_path_basename }}</span></a>
+                      </td>
+                      <td data-label="created">{{ link['created'] }}</td>
+                      <td data-label="size">{{ link['file:size'] | human_size }}</td>
+                    </tr>
+                    {% endfor %}
                   </tbody>
                 </table>
               </div>
@@ -85,21 +89,30 @@
 
 {% block extrafoot %}
     <script>
-    //var map = L.map('items-map').setView([{{ 45 }}, {{ -75 }}], 2);
-    var map = L.map('items-map').setView([{{ 0 }}, {{ 0 }}], 1);
+    // Jinja rendered JSON
+    const JSON_DATA = {{ data |to_json }};
+    
+    var map = L.map('items-map').setView([0, 0], 1);
     map.addLayer(new L.TileLayer(
-        '{{ config['server']['map']['url'] }}', {
-            maxZoom: 18,
-            attribution: '{{ config['server']['map']['attribution'] }}'
-        }
-    ));
-    var bbox_layer = L.polygon([
-        [{{ data['extent']['spatial']['bbox'][1] }}, {{ data['extent']['spatial']['bbox'][0] }}],
-        [{{ data['extent']['spatial']['bbox'][3] }}, {{ data['extent']['spatial']['bbox'][0] }}],
-        [{{ data['extent']['spatial']['bbox'][3] }}, {{ data['extent']['spatial']['bbox'][2] }}],
-        [{{ data['extent']['spatial']['bbox'][1] }}, {{ data['extent']['spatial']['bbox'][2] }}],
-    ]);
-    map.addLayer(bbox_layer);
-    map.fitBounds(bbox_layer.getBounds(), {maxZoom: 5});
+          '{{ config['server']['map']['url'] }}', {
+              maxZoom: 18,
+              attribution: '{{ config['server']['map']['attribution'] }}'
+          }
+      ));
+    
+    // null geometry/bbox check
+    if (JSON_DATA.bbox !== null) {
+      var bbox_layer = L.polygon([
+          [JSON_DATA.bbox[1], JSON_DATA.bbox[0] ],
+          [JSON_DATA.bbox[3], JSON_DATA.bbox[0] ],
+          [JSON_DATA.bbox[3], JSON_DATA.bbox[2] ],
+          [JSON_DATA.bbox[1], JSON_DATA.bbox[2] ],
+      ]);
+      map.addLayer(bbox_layer);
+      map.fitBounds(bbox_layer.getBounds(), {maxZoom: 5});
+    } else {
+      const warnAlert = '<div class="alert alert-warning mrgn-tp-md">Map extent preview not available</div>';
+      document.getElementById('items-map').insertAdjacentHTML('afterend', warnAlert);
+    }
     </script>
 {% endblock %}
