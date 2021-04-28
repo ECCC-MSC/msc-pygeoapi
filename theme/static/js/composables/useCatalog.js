@@ -16,7 +16,6 @@ export default function useCatalog() {
     let children = []
     links.value.forEach(link => {
       if (link.rel === 'child') {
-        console.log(link)
         const splitLink = link.href.split('/')
         link.name = splitLink[splitLink.length-1] // last path
         children.push(link)
