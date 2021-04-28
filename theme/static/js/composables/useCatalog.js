@@ -15,9 +15,20 @@ export default function useCatalog() {
   const childLinks = computed(() => {
     let children = []
     links.value.forEach(link => {
-      if ((link.rel === 'child' || link.rel === 'item') && link.type === 'text/html') {
+      if (link.rel === 'child') {
+        console.log(link)
         const splitLink = link.href.split('/')
-        link.name = splitLink[splitLink.length-1]
+        link.name = splitLink[splitLink.length-1] // last path
+        children.push(link)
+      }
+    })
+    return children
+  })
+  const itemLinks = computed(() => {
+    let children = []
+    links.value.forEach(link => {
+      if (link.rel === 'item') {
+        link.name = link.title
         children.push(link)
       }
     })
@@ -25,8 +36,7 @@ export default function useCatalog() {
   })
 
   return {
-    links,
-    childLinks,
+    links, childLinks, itemLinks,
     linksTotal,
     catalogJson
   }
