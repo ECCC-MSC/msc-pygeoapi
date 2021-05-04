@@ -12,3 +12,8 @@
 
 %:
 	dh $@ --with python3 --buildsystem=pybuild
+
+	mkdir -p debian/schemas.opengis.net \
+	&& curl -O http://schemas.opengis.net/SCHEMAS_OPENGIS_NET.zip \
+	&& unzip -o ./SCHEMAS_OPENGIS_NET.zip "ogcapi/*" -d debian/schemas.opengis.net \
+	&& rm -f ./SCHEMAS_OPENGIS_NET.zip \

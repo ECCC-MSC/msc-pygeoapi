@@ -50,7 +50,8 @@ class PyCleanBuild(Command):
             'debian/msc-pygeoapi.debhelper.log',
             'debian/msc-pygeoapi.postinst.debhelper',
             'debian/msc-pygeoapi.prerm.debhelper',
-            'debian/msc-pygeoapi.substvars'
+            'debian/msc-pygeoapi.substvars',
+            'debian/schemas.opengis.net'
         ]
 
         remove_dirs = [
