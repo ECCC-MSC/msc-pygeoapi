@@ -57,6 +57,11 @@ cd ../msc-pygeoapi
 python3 setup.py install
 cd ..
 
+
+mkdir schemas.opengis.net
+curl -O http://schemas.opengis.net/SCHEMAS_OPENGIS_NET.zip && unzip ./SCHEMAS_OPENGIS_NET.zip "ogcapi/*" -d schemas.opengis.net && rm -f ./SCHEMAS_OPENGIS_NET.zip
+
+
 cp msc-pygeoapi/deploy/default/msc-pygeoapi-config.yml msc-pygeoapi/deploy/nightly
 sed -i 's#https://api.wxod-dev.cmc.ec.gc.ca/#https://geomet-dev-03-nightly/msc-pygeoapi/nightly/latest#g' msc-pygeoapi/deploy/nightly/msc-pygeoapi-config.yml
 sed -i 's#basepath: /#basepath: /msc-pygeoapi/nightly/latest#' msc-pygeoapi/deploy/nightly/msc-pygeoapi-config.yml
