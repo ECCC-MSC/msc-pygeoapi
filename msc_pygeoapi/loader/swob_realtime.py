@@ -137,6 +137,8 @@ def parse_swob(swob_file):
 
         # add swob source name to properties
         properties["id"] = swob_name
+        local_path = swob_file.split(MSC_PYGEOAPI_CACHEDIR)[-1]
+        properties["url"] = f'https://dd.weather.gc.ca/{local_path}'
 
         # extract ID related properties
         id_path = (
