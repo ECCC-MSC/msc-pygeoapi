@@ -100,16 +100,17 @@ class ElasticsearchConnector(BaseConnector):
 
         LOGGER.debug('URL settings: {}'.format(url_settings))
 
+        es_args = {
+            'hosts': [url_settings],
+            'verify_certs': self.verify_certs,
+            'retry_on_timeout': True,
+            'max_retries': 3
+        }
+
         if self.auth:
-            return Elasticsearch(
-                [url_settings],
-                http_auth=self.auth,
-                verify_certs=self.verify_certs,
-            )
-        else:
-            return Elasticsearch(
-                [url_settings], verify_certs=self.verify_certs
-            )
+            es_args['http_auth'] = self.auth
+
+        return Elasticsearch(**es_args)
 
     def create(self, index_name, mapping, overwrite=False):
         """
