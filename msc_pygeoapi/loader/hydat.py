@@ -651,7 +651,8 @@ class HydatLoader(BaseLoader):
                 }
                 yield action
 
-    def generate_stations(self, station_table):
+    def generate_stations(self, station_table, annual_peaks_table,
+                          annual_stats_table):
         """
         Queries station data from the db, and reformats
         data so it can be inserted into Elasticsearch.
@@ -743,6 +744,14 @@ class HydatLoader(BaseLoader):
                     )
                 )
 
+            station_number_args = {'STATION_NUMBER': station}
+
+            peaks = list(self.session.query(annual_peaks_table)
+                         .filter_by(**station_number_args).all())
+
+            stats = list(self.session.query(annual_stats_table)
+                         .filter_by(**station_number_args).all())
+
             insert_dict = {
                 'type': 'Feature',
                 'properties': {
@@ -775,18 +784,6 @@ class HydatLoader(BaseLoader):
                             'href': f'{url}/collections/hydrometric-monthly-mean/items?STATION_NUMBER={station}',  # noqa
                         },
                         {
-                            'type': 'application/json',
-                            'rel': 'related',
-                            'title': f'Annual Maximum and Minimum Instantaneous Water Level or Discharge for {station_name} ({station})',  # noqa
-                            'href': f'{url}/collections/hydrometric-annual-peaks/items?STATION_NUMBER={station}',  # noqa
-                        },
-                        {
-                            'type': 'application/json',
-                            'rel': 'related',
-                            'title': f'Annual Maximum and Minimum Daily Water Level or Discharge for {station_name} ({station})',  # noqa
-                            'href': f'{url}/collections/hydrometric-annual-statistics/items?STATION_NUMBER={station}',  # noqa
-                        },
-                        {
                             'type': 'text/html',
                             'rel': 'alternate',
                             'title': 'Station Information for {} ({})'.format(
@@ -806,6 +803,21 @@ class HydatLoader(BaseLoader):
                 },
                 'geometry': {'type': 'Point', 'coordinates': station_coords},
             }
+
+            if len(peaks) > 0:
+                insert_dict['properties']['links'].append({
+                    'type': 'application/json',
+                    'rel': 'related',
+                    'title': f'Annual Maximum and Minimum Instantaneous Water Level or Discharge for {station_name} ({station})',  # noqa
+                    'href': f'{url}/collections/hydrometric-annual-peaks/items?STATION_NUMBER={station}',  # noqa
+                })
+            if len(stats) > 0:
+                insert_dict['properties']['links'].append({
+                    'type': 'application/json',
+                    'rel': 'related',
+                    'title': f'Annual Maximum and Minimum Daily Water Level or Discharge for {station_name} ({station})',  # noqa
+                    'href': f'{url}/collections/hydrometric-annual-statistics/items?STATION_NUMBER={station}',  # noqa
+                })
 
             action = {
                 '_id': station,
@@ -1251,7 +1263,8 @@ def add(ctx, db, es, username, password, ignore_certs, dataset):
         try:
             click.echo('Populating stations index')
             loader.create_index('stations')
-            stations = loader.generate_stations(station_table)
+            stations = loader.generate_stations(
+                station_table, annual_peaks_table, annual_stats_table)
             loader.conn.submit_elastic_package(stations)
         except Exception as err:
             msg = 'Could not populate stations index: {}'.format(err)
