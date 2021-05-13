@@ -254,7 +254,6 @@ class CitypageweatherRealtimeLoader(BaseLoader):
         """
 
         with open(os.path.join(MSC_PYGEOAPI_BASEPATH,
-                               'lib/msc_pygeoapi/',
                                'resources/wxo_lookup.json')) as json_file:
             wxo_lookup = json.load(json_file)
 

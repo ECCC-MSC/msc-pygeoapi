@@ -400,9 +400,7 @@ class MarineWeatherRealtimeLoader(BaseLoader):
 
         with open(
             os.path.join(
-                MSC_PYGEOAPI_BASEPATH,
-                'lib/msc_pygeoapi/',
-                'resources/meteocode_lookup.json',
+                MSC_PYGEOAPI_BASEPATH, 'resources/meteocode_lookup.json',
             )
         ) as json_file:
             meteocode_lookup = json.load(json_file)
