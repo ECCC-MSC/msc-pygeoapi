@@ -123,7 +123,7 @@ PROCESS_METADATA = {
 
 }
 
-ES_INDEX = 'hackathon-lp'
+ES_INDEX = 'geomet-data-registry-tileindex-dev'
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 
 OUTDATA = {}
@@ -155,7 +155,7 @@ def get_files(layers, fh, mr):
                 'query': {
                     'bool': {
                         'must': {
-                            'match': {'properties.layer.raw': layer}
+                            'match': {'properties.layer': layer}
                         },
                         'filter': [
                             {'term': {'properties.forecast_hour_datetime':
@@ -168,7 +168,6 @@ def get_files(layers, fh, mr):
 
             try:
                 res = es.search(index=ES_INDEX, body=s_object)
-
                 try:
                     filepath = (res['hits']['hits'][0]
                                 ['_source']['properties']['filepath'])
@@ -184,6 +183,8 @@ def get_files(layers, fh, mr):
                     list_files.append(files)
 
                 except IndexError as error:
+                    import traceback
+                    print(traceback.format_exc())
                     msg = 'invalid input value: {}' .format(error)
                     LOGGER.error(msg)
                     return None, None
@@ -729,7 +730,7 @@ try:
             output_geojson = extract_raster_main(
                 model, forecast_hours_, model_run, input_geojson)
 
-            return output_geojson
+            return 'application/json', output_geojson
 
         def __repr__(self):
             return '<ExtractRasterProcessor> {}'.format(self.name)
