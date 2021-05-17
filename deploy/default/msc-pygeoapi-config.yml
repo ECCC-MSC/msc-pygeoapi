@@ -975,6 +975,33 @@ resources:
                   - .shp
                   - .Z
 
+    bulletins-realtime:
+        type: collection
+        title: Real-time meteorological bulletins
+        description: Real-time meteorological bulletins (last 180 days)
+        keywords: [alphanumerical, binary, bulletins]
+        crs:
+            - CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title: information
+              href: https://eccc-msc.github.io/open-data/msc-data/bulletins/readme_bulletins_en
+              hreflang: en-CA
+        extents:
+            spatial:
+                bbox: [-180, -90, 180, 90]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+            temporal:
+                begin: 1840-05-01T00:00:00Z
+                end: null # or empty
+        providers:
+            - type: feature
+              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
+              data: http://localhost:9200/bulletins.*
+              id_field: identifier
+              time_field: datetime
+
     raster-drill:
         type: process
         processor:

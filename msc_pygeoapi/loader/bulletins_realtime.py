@@ -65,7 +65,9 @@ SETTINGS = {
                 'properties': {
                     'datetime': {
                         'type': 'date',
-                        'format': 'yyyy-MM-dd HH:mm'
+                        'format': 'strict_date_hour_minute'
+                        #'format': "YYYY-MM-DD'T'HH:mm:ssZ"
+                        #'format': 'YYYY-MM-DD HH:mm'
                     }
                 }
             }
@@ -100,13 +102,13 @@ class BulletinsRealtimeLoader(BaseLoader):
         data = self.bulletin2dict(filepath)
 
         b_dt = datetime.strptime(data['properties']['datetime'],
-                                 '%Y-%m-%d %H:%M')
+                                 '%Y-%m-%dT%H:%M')
         b_dt2 = b_dt.strftime('%Y-%m-%d')
         es_index = '{}{}'.format(INDEX_BASENAME, b_dt2)
 
         try:
             r = self.conn.Elasticsearch.index(
-                index=es_index, id=data['ID'], body=data
+                index=es_index, id=data['id'], body=data
             )
             LOGGER.debug('Result: {}'.format(r))
             return True
@@ -125,10 +127,7 @@ class BulletinsRealtimeLoader(BaseLoader):
 
         dict_ = {
             'type': 'Feature',
-            'geometry': {
-                'type': 'Point',
-                'coordinates': [-75, 45]
-            },
+            'geometry': None,
             'properties': {}
         }
 
@@ -142,7 +141,7 @@ class BulletinsRealtimeLoader(BaseLoader):
         issuer_name = None
         issuer_country = None
 
-        dict_['ID'] = dict_['properties']['identifier'] = identifier
+        dict_['id'] = dict_['properties']['identifier'] = identifier
 
         tokens = bulletin_path.split('/')
 
@@ -156,14 +155,11 @@ class BulletinsRealtimeLoader(BaseLoader):
 
         min_ = filename.split('_')[2][-2:]
 
-        datetime = '{}-{}-{} {}:{}'.format(yyyy, mm, dd, hh, min_)
+        datetime_ = '{}-{}-{}T{}:{}'.format(yyyy, mm, dd, hh, min_)
 
-        dict_['geometry'] = {
-            'type': 'Point',
-            'coordinates': [-75, 45]  # TODO: use real coordinates
-        }
+        # TODO: use real coordinates
 
-        dict_['properties']['datetime'] = datetime
+        dict_['properties']['datetime'] = datetime_
         dict_['properties']['type'] = tokens[1]
         dict_['properties']['issuer_code'] = tokens[2]
         dict_['properties']['issuer_name'] = issuer_name
@@ -175,7 +171,7 @@ class BulletinsRealtimeLoader(BaseLoader):
 
 
 @click.group()
-def bulletins():
+def bulletins_realtime():
     """Manages bulletins index"""
     pass
 
@@ -238,5 +234,5 @@ def delete_indexes(ctx, es, username, password, ignore_certs, index_template):
     click.echo('Done')
 
 
-bulletins.add_command(clean_indexes)
-bulletins.add_command(delete_indexes)
+bulletins_realtime.add_command(clean_indexes)
+bulletins_realtime.add_command(delete_indexes)

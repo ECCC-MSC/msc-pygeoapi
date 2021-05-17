@@ -102,7 +102,7 @@ msc-pygeoapi data ahccd_cmip5 <rest of flags/parameters>
 msc-pygeoapi data marine-weather add -d <path_to_directory of XML files>
 
 # bulletins - delete index
-msc-pygeoapi data bulletins delete-index  # use --yes flag to bypass prompt
+msc-pygeoapi data bulletins_realtime delete-index  # use --yes flag to bypass prompt
 
 # realtime - standard workflow
 msc-pygeoapi data hydrometric-realtime cache-stations  # download stations list to $MSC_PYGEOAPI_CACHEDIR location
