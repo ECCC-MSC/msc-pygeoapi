@@ -14,17 +14,20 @@
           placeholder="Search"
           v-model="searchText">
       </div>
+
       <table id="collections-table" class="table table-striped">
         <thead>
         <tr>
           <th v-for="(th, index) in tableFields"
             :class="[th.colClass, 'sortable']"
-            @click="sortDir(th.key)">[% th.text %]
+            @click="sortDir(th.key)"><span v-text="th.text">Name</span>
             <span
               v-show="currentSort === th.key"
               :class="sortIconClass"
               class="glyphicon"></span>
           </th>
+          <th v-if="noJs">Type</th>
+          <th v-if="noJs">Description</th>
         </tr>
         </thead>
         <tbody>
@@ -32,13 +35,24 @@
             <td data-label="name">
               <a :title="truncateStripTags(collection.title)"
                 :href="'{{ config['server']['url'] }}/collections/' + collection.id">
-                <span>[% truncateStripTags(collection.title) %]</span></a>
+                <span v-html="truncateStripTags(collection.title)"></span></a>
             </td>
-            <td data-label="type">[% collection.itemType %]</td>
+            <td data-label="type" v-text="collection.itemType"></td>
+            <td data-label="description" v-text="truncateStripTags(collection.description)"></td>
+          </tr>
+          {% for col in data['collections']  %}
+          <tr v-if="noJs">
+            <td data-label="name">
+              <a  title="{{ col['title'] | striptags | truncate }}"
+                href="{{ config['server']['url'] }}/collections/{{ col.id }}">
+                <span>{{ col['title'] | striptags | truncate }}</span></a>
+            </td>
+            <td data-label="type">{{ col["itemType"] }}</td>
             <td data-label="description">
-              [% truncateStripTags(collection.description) %]
+              {{ col['description'] | striptags | truncate }}
             </td>
           </tr>
+          {% endfor %}
         </tbody>
       </table>
     </section>
@@ -55,6 +69,7 @@
       const app = createApp({
         delimiters: ['[%', '%]'],
         setup() {
+          const noJs = ref(false) // progressive enhancement
           const { collections } = useCollections()
 
           // table columns

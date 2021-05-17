@@ -25,12 +25,15 @@
           <tr>
             <th v-for="(th, index) in tableFields"
               :class="['sortable']"
-              @click="sortDir(th.key)">[% th.text %]
+              @click="sortDir(th.key)">
+              <span v-text="th.text">Name</span>
               <span
                 v-show="currentSort === th.key"
                 :class="sortIconClass"
                 class="glyphicon"></span>
             </th>
+            <th v-if="noJs">Last modified</th>
+            <th v-if="noJs">Size</th>
           </tr>
         </thead>
         <tbody>
@@ -38,12 +41,32 @@
             <td v-for="(th, index) in tableFields">
               <a v-if="th.key === 'name'" :title="truncateStripTags(link.name)"
                 :href="link.href">
-                <span>[% link[th.key] %]</span></a>
+                <span v-text="link[th.key]"></span></a>
               <template v-else>
-                <span>[% link[th.key] %]</span>
+                <span v-text="link[th.key]"></span>
               </template>
             </td>
           </tr>
+
+          {% for link in data['links'] %}
+          {% if link['rel'] in ['child', 'item'] %}
+          <tr v-if="noJs">
+            <td data-label="name">
+              {% if link['title'] %}
+              <a title="{{ link['href'] }}" href="{{ link['href'] }}"><span>{{ link['title'] | get_path_basename }}</span></a>
+              {% else %}
+              <a title="{{ link['href'] }}" href="{{ link['href'] }}"><span>{{ link['href'] | get_path_basename }}</span></a>
+              {% endif %}
+            </td>
+            <td data-label="created">{{ link['created'] }}</td>
+            {% if link['file:size'] %}
+            <td data-label="size">{{ link['file:size'] | human_size }}</td>
+            {% else %}
+            <td data-label="size">-</td>
+            {% endif %}
+          </tr>
+          {% endif %}
+          {% endfor %}
         </tbody>
       </table>
     </div>
@@ -61,6 +84,8 @@
     const app = createApp({
       delimiters: ['[%', '%]'],
       setup() {
+        const noJs = ref(false) // progressive enhancement
+        
         const { childLinks, itemLinks } = useCatalog()
 
         // table columns
