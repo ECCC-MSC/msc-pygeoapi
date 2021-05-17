@@ -106,7 +106,7 @@ class BulletinsRealtimeLoader(BaseLoader):
 
         try:
             r = self.conn.Elasticsearch.index(
-                index=es_index, id=data['ID'], body=data
+                index=es_index, id=data['id'], body=data
             )
             LOGGER.debug('Result: {}'.format(r))
             return True
@@ -125,10 +125,7 @@ class BulletinsRealtimeLoader(BaseLoader):
 
         dict_ = {
             'type': 'Feature',
-            'geometry': {
-                'type': 'Point',
-                'coordinates': [-75, 45]
-            },
+            'geometry': None,
             'properties': {}
         }
 
@@ -142,7 +139,7 @@ class BulletinsRealtimeLoader(BaseLoader):
         issuer_name = None
         issuer_country = None
 
-        dict_['ID'] = dict_['properties']['identifier'] = identifier
+        dict_['id'] = dict_['properties']['identifier'] = identifier
 
         tokens = bulletin_path.split('/')
 
@@ -158,10 +155,7 @@ class BulletinsRealtimeLoader(BaseLoader):
 
         datetime = '{}-{}-{} {}:{}'.format(yyyy, mm, dd, hh, min_)
 
-        dict_['geometry'] = {
-            'type': 'Point',
-            'coordinates': [-75, 45]  # TODO: use real coordinates
-        }
+        # TODO: use real coordinates
 
         dict_['properties']['datetime'] = datetime
         dict_['properties']['type'] = tokens[1]
@@ -175,7 +169,7 @@ class BulletinsRealtimeLoader(BaseLoader):
 
 
 @click.group()
-def bulletins():
+def bulletins_realtime():
     """Manages bulletins index"""
     pass
 

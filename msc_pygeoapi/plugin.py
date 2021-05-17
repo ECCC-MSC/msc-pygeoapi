@@ -40,7 +40,7 @@ PLUGINS = {
         },
         'bulletins_realtime': {
             'filename_pattern': 'bulletins/alphanumeric',
-            'handler': 'msc_pygeoapi.loader.bulletins.BulletinsRealtimeLoader'  # noqa
+            'handler': 'msc_pygeoapi.loader.bulletins_realtime.BulletinsRealtimeLoader'  # noqa
         },
         'citypageweather_realtime': {
             'filename_pattern': 'citypage_weather/xml',

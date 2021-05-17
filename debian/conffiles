@@ -1,4 +1,4 @@
-/opt/msc-pygeoapi/etc/sarracenia/bulletins.conf
+/opt/msc-pygeoapi/etc/sarracenia/bulletins-realtime.conf
 /opt/msc-pygeoapi/etc/sarracenia/cap-alerts.conf
 /opt/msc-pygeoapi/etc/sarracenia/citypageweather.conf
 /opt/msc-pygeoapi/etc/sarracenia/hurricanes.conf

@@ -34,7 +34,7 @@ import click
 LOGGER = logging.getLogger(__name__)
 
 try:
-    from msc_pygeoapi.loader.bulletins import bulletins
+    from msc_pygeoapi.loader.bulletins_realtime import bulletins_realtime
     from msc_pygeoapi.loader.citypageweather_realtime import citypageweather
     from msc_pygeoapi.loader.hydat import hydat
     from msc_pygeoapi.loader.ahccd import ahccd
@@ -58,7 +58,7 @@ def data():
 
 # add load commands
 try:
-    data.add_command(bulletins)
+    data.add_command(bulletins_realtime)
     data.add_command(citypageweather)
     data.add_command(hydat)
     data.add_command(hurricanes)
