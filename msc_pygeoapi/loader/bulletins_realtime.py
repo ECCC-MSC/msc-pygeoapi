@@ -66,8 +66,6 @@ SETTINGS = {
                     'datetime': {
                         'type': 'date',
                         'format': 'strict_date_hour_minute'
-                        #'format': "YYYY-MM-DD'T'HH:mm:ssZ"
-                        #'format': 'YYYY-MM-DD HH:mm'
                     }
                 }
             }

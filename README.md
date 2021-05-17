@@ -1,3 +1,5 @@
+[![Build Status](https://github.com/ECCC-MSC/msc-pygeoapi/workflows/build%20%E2%9A%99%EF%B8%8F/badge.svg)](https://github.com/ECCC-MSC/msc-pygeoapi/actions)
+
 # msc_pygeoapi
 
 ## Overview
