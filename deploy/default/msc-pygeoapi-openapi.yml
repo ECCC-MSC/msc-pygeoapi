@@ -123,7 +123,7 @@ info:
     url: https://eccc-msc.github.io/open-data/licence/readme_en/
   termsOfService: https://www.canada.ca/en/transparency/terms.html
   title: MSC GeoMet - GeoMet-OGC-API
-  version: 0.11.dev0
+  version: 0.9.dev0
   x-keywords:
   - Weather
   - Meteorology

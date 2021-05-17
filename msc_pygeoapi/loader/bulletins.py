@@ -232,5 +232,5 @@ def delete_indexes(ctx, es, username, password, ignore_certs, index_template):
     click.echo('Done')
 
 
-bulletins.add_command(clean_indexes)
-bulletins.add_command(delete_indexes)
+bulletins_realtime.add_command(clean_indexes)
+bulletins_realtime.add_command(delete_indexes)
