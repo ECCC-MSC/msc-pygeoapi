@@ -32,7 +32,6 @@ import json
 import logging
 
 from elasticsearch import Elasticsearch, exceptions
-import numpy as np
 from osgeo import gdal, osr
 from pyproj import Transformer
 import rasterio
@@ -244,6 +243,7 @@ def reproject_line(input_geojson, raster_path):
     transform xy coordinates to geo coordinates and wrap in line format
 
     :param input_geojson: geojson file containing geometry of line
+import numpy as np
     :param raster_path: path to queried raster file on disk
 
     :returns: list of geographic coordinates
@@ -491,9 +491,9 @@ def summ_stats_poly(raster_list, input_geojson):
                         dataset.write(out_image)
                         ds = dataset.read()
                         ds = ds[ds != src.nodata]
-                        min_val = np.min(ds, axis=None)
-                        max_val = np.max(ds, axis=None)
-                        mean_val = np.mean(ds, axis=None)
+                        min_val = ds.min()
+                        max_val = ds.max()
+                        mean_val = ds.mean()
                         to_return[i] = [min_val, max_val, mean_val, data_type]
                         i += 1
         except FileNotFoundError as err:

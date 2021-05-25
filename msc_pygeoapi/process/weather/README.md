@@ -2,7 +2,7 @@
 
 The extract raster process clips a raster file by a geojson type. The process will extract the temperature, wind speed, and wind direction for all queried forecast hours within/along/at the queried geometry. It then returns the weather data as a time series.
 
-The process returns obersvations of the weather data in differing formats based on geometry type.
+The process returns observations of the weather data in differing formats based on geometry type.
 
 ## Inputs
 
