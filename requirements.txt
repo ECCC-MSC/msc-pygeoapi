@@ -1,4 +1,4 @@
-click
+click<8
 elasticsearch
 gdal
 lxml
