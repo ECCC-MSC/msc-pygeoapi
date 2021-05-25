@@ -93,6 +93,7 @@
         "cld_bas_hgt_1": 7620,
         "cld_bas_hgt_1-uom": "m",
         "cld_bas_hgt_1-qa": 100,
+        "url": "https://dd.weather.gc.ca/tests/data/swob/2020-05-31-0200-CYBQ-AUTO-swob.xml",
         "vert_vis": null,
         "vert_vis-uom": "m",
         "vert_vis-qa": -1,

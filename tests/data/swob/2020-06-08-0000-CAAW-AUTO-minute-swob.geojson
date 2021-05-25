@@ -212,6 +212,7 @@
         "mslp-data_flag-uom": "code",
         "mslp-data_flag-code_src": "std_code_src",
         "mslp-data_flag-value": 1,
+        "url": "https://dd.weather.gc.ca/tests/data/swob/2020-06-08-0000-CAAW-AUTO-minute-swob.xml",
         "wetblb_temp": 9.0,
         "wetblb_temp-uom": "°C",
         "wetblb_temp-data_flag-uom": "code",
