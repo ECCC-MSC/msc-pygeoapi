@@ -18,7 +18,6 @@ jobs:
       run: |
         sudo apt-get install -y libgdal-dev 
         pip3 install gdal==`gdal-config --version` cython
-        pip3 install --no-binary pyproj
     - name: Install requirements 📦
       run: |
         python3 -m pip install --upgrade pip
