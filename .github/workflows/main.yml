@@ -17,7 +17,7 @@ jobs:
     - name: Install system dependencies 📦
       run: |
         sudo apt-get install -y libgdal-dev 
-        pip3 install gdal==`gdal-config --version` cython
+        pip3 install gdal==`gdal-config --version` cython pyproj==1.8.3
     - name: Install requirements 📦
       run: |
         python3 -m pip install --upgrade pip
