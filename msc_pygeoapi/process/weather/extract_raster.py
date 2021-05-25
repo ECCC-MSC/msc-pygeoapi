@@ -1,8 +1,8 @@
 # =================================================================
 #
-# Authors: Tom Cooney <tom.cooney@canada.ca>
+# Author: Tom Cooney <tom.cooney@canada.ca>
 #
-# Copyright (c) 2020 Tom Cooney
+# Copyright (c) 2021 Tom Cooney
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -51,13 +51,13 @@ PROCESS_METADATA = {
         'type': 'text/html',
         'rel': 'canonical',
         'title': 'information',
-        'href': 'https://canada.ca/climate-services',
+        'href': 'https://eccc-msc.github.io/open-data/readme_en',
         'hreflang': 'en-CA'
     }, {
         'type': 'text/html',
-        'rel': 'canonical',
+        'rel': 'alternate',
         'title': 'information',
-        'href': 'https://canada.ca/services-climatiques',
+        'href': 'https://eccc-msc.github.io/open-data/readme_fr',
         'hreflang': 'fr-CA'
 
     }],
@@ -123,7 +123,7 @@ PROCESS_METADATA = {
 
 }
 
-ES_INDEX = 'geomet-data-registry-tileindex-dev'
+ES_INDEX = 'hackathon-lp'
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 
 OUTDATA = {}
@@ -140,12 +140,14 @@ OUTDATA['metadata'].append({
 def get_files(layers, fh, mr):
     """
     ES search to find files names
+
     :param layers: arrays of three layers
     :param fh: forcast hour datetime
     :param mr: model run
-    :return: files : arrays of threee file paths
+
+    :returns: list of three file paths
     """
-    es = Elasticsearch(['localhost:9200'])
+    es = Elasticsearch()
     list_files = []
 
     for layer in layers:
@@ -184,8 +186,6 @@ def get_files(layers, fh, mr):
                     list_files.append(files)
 
                 except IndexError as error:
-                    import traceback
-                    print(traceback.format_exc())
                     msg = 'invalid input value: {}' .format(error)
                     LOGGER.error(msg)
                     return None, None
@@ -194,74 +194,85 @@ def get_files(layers, fh, mr):
                 msg = 'ES search failed: {}' .format(error)
                 LOGGER.error(msg)
                 return None, None
+
     return list_files
 
 
-def xy2geo(_x, _y, ds):
+def xy2geo(x, y, ds):
     """
-    transforms x/y pixel values to geographic coordinate
-    :param _x: x coordinate
-    :param _y: y coordinate
+    transforms x/y pixel values to geographic coordinates
+
+    :param x: x coordinate
+    :param y: y coordinate
     :param ds: GDAL dataset object
-    :returns: list of geographic coordinate
+
+    :returns: list of geographic coordinates
     """
     geotransform = ds.GetGeoTransform()
     origin_x = geotransform[0]
     origin_y = geotransform[3]
     width = geotransform[1]
     height = geotransform[5]
-    final_x = (_x - origin_x) / width
-    final_y = (_y - origin_y) / height
+    final_x = (x - origin_x) / width
+    final_y = (y - origin_y) / height
+
     return [final_x, final_y]
 
 
-def setup_xy2geo(x, y, inputSRS_wkt, ds):
+def setup_xy2geo(x, y, input_srs_wkt, ds):
     """
     does the pre-processing for xy2geo transformations
+
     :param x: x coordinate
     :param y: y coordinate
-    :param inputSRS_wkt: well known text crs decsription
+    :param input_srs_wkt: well known text crs decsription
     :param ds: GDAL dataset object
-    :returns: list of geographic coordinate
+
+    :returns: list of geographic coordinates
     """
     srs = osr.SpatialReference()
-    srs.ImportFromWkt(inputSRS_wkt)
+    srs.ImportFromWkt(input_srs_wkt)
     transformer = Transformer.from_crs("epsg:4326", srs.ExportToProj4())
     _x, _y = transformer.transform(x, y)
     final_x, final_y = xy2geo(_x, _y, ds)
+
     return [final_x, final_y]
 
 
 def reproject_line(input_geojson, raster_path):
     """
     transform xy coordinates to geo coordinates and wrap in line format
+
     :param input_geojson: geojson file containing geometry of line
     :param raster_path: path to queried raster file on disk
-    :returns: list of geographic coordinate
+
+    :returns: list of geographic coordinates
     """
     to_return = []
     try:
         ds = gdal.Open(raster_path)
     except FileNotFoundError as err:
         LOGGER.debug(err)
-    inputSRS_wkt = ds.GetProjection()
-
-    for geom in range(0, len(input_geojson['features'])):
-        for point in (input_geojson['features'][geom]
-                      ['geometry']['coordinates']):
+    input_srs_wkt = ds.GetProjection()
+    for geom in input_geojson['features']:
+        for point in geom['geometry']['coordinates']:
             x = point[1]
             y = point[0]
 
-            to_return.append(setup_xy2geo(x, y, inputSRS_wkt, ds))
+            to_return.append(setup_xy2geo(x, y, input_srs_wkt, ds))
+    ds = None
+
     return to_return
 
 
 def reproject_poly(input_geojson, raster_path):
     """
     transform xy coordinates to geo coordinates and wrap in polygon format
+
     :param input_geojson: geojson file containing geometry of polygon
     :param raster_path: path to queried raster file on disk
-    :returns: list of geographic coordinate
+
+    :returns: list of geographic coordinates
     """
     ret = []
     to_return = []
@@ -269,50 +280,53 @@ def reproject_poly(input_geojson, raster_path):
         ds = gdal.Open(raster_path)
     except FileNotFoundError as err:
         LOGGER.debug(err)
-    inputSRS_wkt = ds.GetProjection()
+    input_srs_wkt = ds.GetProjection()
 
-    for geom in range(0, len(input_geojson['features'])):
-        for line in range(
-            0, len(
-                input_geojson['features'][geom]['geometry']['coordinates'])):
-            for point in range(0, len((input_geojson['features'][geom]
-                                       ['geometry']['coordinates'][line]))):
-                x = (input_geojson['features'][geom]['geometry']
-                     ['coordinates'][line][point][1])
-                y = (input_geojson['features'][geom]['geometry']
-                     ['coordinates'][line][point][0])
+    for geom in input_geojson['features']:
+        for polygon in geom['geometry']['coordinates']:
+            for coordinate in polygon:
+                x = coordinate[1]
+                y = coordinate[0]
 
-                ret.append(setup_xy2geo(x, y, inputSRS_wkt, ds))
+                ret.append(setup_xy2geo(x, y, input_srs_wkt, ds))
+    ds = None
     to_return.append(ret)
+
     return to_return
 
 
 def reproject_point(input_geojson, raster_path):
     """
     transform xy coordinates to geo coordinates and wrap in point format
+
     :param input_geojson: geojson file containing geometry of point
     :param raster_path: path to queried raster file on disk
-    :returns: list of geographic coordinate
+
+    :returns: list of geographic coordinates
     """
     to_return = []
     try:
         ds = gdal.Open(raster_path)
     except FileNotFoundError as err:
         LOGGER.debug(err)
-    inputSRS_wkt = ds.GetProjection()
+    input_srs_wkt = ds.GetProjection()
 
-    for geom in range(0, len(input_geojson['features'])):
-        y, x = input_geojson['features'][geom]['geometry']['coordinates']
-        to_return.append(setup_xy2geo(x, y, inputSRS_wkt, ds))
+    for geom in input_geojson['features']:
+        y, x = geom['geometry']['coordinates']
+        to_return.append(setup_xy2geo(x, y, input_srs_wkt, ds))
+    ds = None
+
     return to_return
 
 
 def geo2xy(ds, x, y):
     """
     transforms geographic coordinate to x/y pixel values
+
     :param ds: GDAL dataset object
     :param x: x coordinate
     :param y: y coordinate
+
     :returns: list of x/y pixel values
     """
     geotransform = ds.GetGeoTransform()
@@ -322,35 +336,41 @@ def geo2xy(ds, x, y):
     height = geotransform[5]
     _x = int((x * width) + origin_x)
     _y = int((y * height) + origin_y)
+
     return [_x, _y]
 
 
 def setup_geo2xy(x, y, raster_path):
     """
     does the pre-processing for geo2xy transformations
-    :param ds: GDAL dataset object
+
     :param x: x coordinate
     :param y: y coordinate
+
     :returns: list of x/y pixel values
     """
     try:
         ds = gdal.Open(raster_path)
     except FileNotFoundError as err:
         LOGGER.debug(err)
-    inputSRS_wkt = ds.GetProjection()
+    input_srs_wkt = ds.GetProjection()
     srs = osr.SpatialReference()
-    srs.ImportFromWkt(inputSRS_wkt)
+    srs.ImportFromWkt(input_srs_wkt)
     _x, _y = geo2xy(ds, x, y)
+    ds = None
     transformer = Transformer.from_proj(srs.ExportToProj4(), "epsg:4326")
     final_x, final_y = transformer.transform(_x, _y)
+
     return [final_x, final_y]
 
 
 def get_point(raster_list, input_geojson):
     """
     clips a raster by a point
-    :param input_geojson: geojson file containing geometry of point
-    :param raster_path: path to queried raster file on disk
+
+    :param raster_list: list of paths to queried raster file on disk
+    :param input_geojson: geojson file containing geometry of line
+
     :returns: dict with values of clipped points, original point
     geometry, and query type
     """
@@ -375,6 +395,7 @@ def get_point(raster_list, input_geojson):
             band = ds.GetRasterBand(1)
             arr = band.ReadAsArray()
             to_return[i] = [in_coords[0], in_coords[1], arr[y][x], data_type]
+            ds = None
         except FileNotFoundError as err:
             LOGGER.debug(err)
         i += 1
@@ -385,8 +406,10 @@ def get_point(raster_list, input_geojson):
 def get_line(raster_list, input_geojson):
     """
     clips a raster by a line
+
+    :param raster_list: list of paths to queried raster file on disk
     :param input_geojson: geojson file containing geometry of line
-    :param raster_path: path to queried raster file on disk
+
     :returns: dict with values along clipped lines, original line
     geometry, and query type
     """
@@ -424,14 +447,17 @@ def get_line(raster_list, input_geojson):
                         i += 1
         except FileNotFoundError as err:
             LOGGER.debug(err)
+
     return to_return
 
 
 def summ_stats_poly(raster_list, input_geojson):
     """
     clips a raster by a polygon
+
+    :param input_geojson: geojson file containing geometry of line
     :param input_geojson: geojson file containing geometry of polygon
-    :param raster_path: path to queried raster file on disk
+
     :returns: dict with min, max, and mean value for each query type
     and each forecast hour
     """
@@ -475,46 +501,32 @@ def summ_stats_poly(raster_list, input_geojson):
     return to_return
 
 
-def poly_out(string_name, forecast_hour, value):
+def format_out(string_name, forecast_hour, value):
     """
     formats polygon output
+
     :param string_name: name of output field
     :param forecast_hour: forecast hour of output
     :param value: value of output
+
     :returns: dict forecast hour, field name, and value
     """
-    to_return = []
-    to_return.append({
+    return [{
         'Forecast Hour': forecast_hour,
         string_name: value
-    })
-    return to_return
-
-
-def point_out(string_name, forecast_hour, key):
-    """
-    formats point output
-    :param string_name: name of output field
-    :param forecast_hour: forecast hour of output
-    :param key: value of output
-    :returns: dict forecast hour, field name, and key
-    """
-    to_return = []
-    to_return.append({
-        "Forecast Hour": forecast_hour,
-        string_name: key
-    })
-    return to_return
+    }]
 
 
 def write_output(features, forecast_hours, poly, line, point):
     """
     writes output to OUTDATA dict depending on query type
+
     :param features: output from clipping function
     :param forecast_hours: list of all queried forecast hours
     :param poly: boolean to identify a polygon query
     :param line: boolean to identify a line query
     :param point: boolean to identify a point query
+
     :returns: dict with all queried forecast hours and clipping results
     """
     i = 0
@@ -566,39 +578,41 @@ def write_output(features, forecast_hours, poly, line, point):
         OUTDATA['Min Wind Speed Data'] = []
         OUTDATA['Max Wind Speed Data'] = []
         OUTDATA['Mean Wind Speed Data'] = []
+
         for item in features:
             for key in item.keys():
                 if 'Temperature Data' in item[key][3]:
                     OUTDATA['Min Temperature Data'].append(
-                        poly_out("Min Temperature", forecast_hours[i],
-                                 item[key][0]))
+                        format_out("Min Temperature", forecast_hours[i],
+                                   item[key][0]))
                     OUTDATA['Max Temperature Data'].append(
-                        poly_out("Max Temperature", forecast_hours[i],
-                                 item[key][1]))
+                        format_out("Max Temperature", forecast_hours[i],
+                                   item[key][1]))
                     OUTDATA['Mean Temperature Data'].append(
-                        poly_out("Mean Temperature", forecast_hours[i],
-                                 item[key][2]))
+                        format_out("Mean Temperature", forecast_hours[i],
+                                   item[key][2]))
                 if 'Wind Direction Data' in item[key][3]:
                     OUTDATA['Min Wind Direction Data'].append(
-                        poly_out("Min Wind Direction", forecast_hours[i],
-                                 item[key][0]))
+                        format_out("Min Wind Direction", forecast_hours[i],
+                                   item[key][0]))
                     OUTDATA['Max Wind Direction Data'].append(
-                        poly_out("Max Wind Direction", forecast_hours[i],
-                                 item[key][1]))
+                        format_out("Max Wind Direction", forecast_hours[i],
+                                   item[key][1]))
                     OUTDATA['Mean Wind Direction Data'].append(
-                        poly_out("Mean Wind Direction", forecast_hours[i],
-                                 item[key][2]))
+                        format_out("Mean Wind Direction", forecast_hours[i],
+                                   item[key][2]))
                 if 'Wind Speed Data' in item[key][3]:
                     OUTDATA['Min Wind Speed Data'].append(
-                        poly_out("Min Wind Speed", forecast_hours[i],
-                                 item[key][0]))
+                        format_out("Min Wind Speed", forecast_hours[i],
+                                   item[key][0]))
                     OUTDATA['Max Wind Speed Data'].append(
-                        poly_out("Max Wind Speed", forecast_hours[i],
-                                 item[key][1]))
+                        format_out("Max Wind Speed", forecast_hours[i],
+                                   item[key][1]))
                     OUTDATA['Mean Wind Speed Data'].append(
-                        poly_out("Mean Wind Speed", forecast_hours[i],
-                                 item[key][2]))
+                        format_out("Mean Wind Speed", forecast_hours[i],
+                                   item[key][2]))
                 i += 1
+
         return OUTDATA
 
     if point:
@@ -616,27 +630,28 @@ def write_output(features, forecast_hours, poly, line, point):
                     break
                 if 'Temperature Data' in item[key][3]:
                     OUTDATA['Temperature Data'].append(
-                        point_out(
+                        format_out(
                             "Temperature Observation",
                             forecast_hours[i],
                             item[key][2]))
                 if 'Wind Direction Data' in item[key][3]:
                     OUTDATA['Wind Direction Data'].append(
-                        point_out(
+                        format_out(
                             "Wind Direction Observation",
                             forecast_hours[i],
                             item[key][2]))
                 if 'Wind Speed Data' in item[key][3]:
                     OUTDATA['Wind Speed Data'].append(
-                        point_out(
+                        format_out(
                             "Wind Speed Observation",
                             forecast_hours[i],
                             item[key][2]))
                 i += 1
+
         return OUTDATA
 
 
-@click.command('extract-raster')
+@click.command()
 @click.pass_context
 @click.option('--model', 'model', help='which type of raster')
 @click.option('--forecast_hours_', 'forecast_hours_',
@@ -644,7 +659,7 @@ def write_output(features, forecast_hours, poly, line, point):
 @click.option('--model_run', 'model_run',
               help='model run to use for the time series')
 @click.option('--input_geojson', 'input_geojson', help='shape to clip by')
-def cli(ctx, model, forecast_hours_, model_run, input_geojson):
+def extract_raster(ctx, model, forecast_hours_, model_run, input_geojson):
     output_geojson = extract_raster_main(
         model, forecast_hours_, model_run, input_geojson)
 
@@ -687,18 +702,15 @@ def extract_raster_main(model, forecast_hours_, model_run, input_geojson):
     point = False
 
     for feature in input_geojson['features']:
-        if (feature['geometry']['type'] == "Polygon" or
-                feature['geometry']['type'] == "MultiPolygon"):
+        if feature['geometry']['type'] in ["Polygon", "MultiPolygon"]:
             poly = True
             features.append(summ_stats_poly(raster_list, input_geojson))
             break
-        elif (feature['geometry']['type'] == "LineString" or
-                feature['geometry']['type'] == "MultiLineString"):
+        elif feature['geometry']['type'] in ["LineString", "MultiLineString"]:
             line = True
             features.append(get_line(raster_list, input_geojson))
             break
-        elif (feature['geometry']['type'] == "Point" or
-                feature['geometry']['type'] == "MultiPoint"):
+        elif feature['geometry']['type'] in ["Point", "MultiPoint"]:
             point = True
             features.append(get_point(raster_list, input_geojson))
 
@@ -716,7 +728,9 @@ try:
         def __init__(self, provider_def):
             """
             Initialize object
+
             :param provider_def: provider definition
+
             :returns: pygeoapi.process.cccs.raster_drill.RasterDrillProcessor
              """
 

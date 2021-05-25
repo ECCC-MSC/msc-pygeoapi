@@ -6,7 +6,7 @@ parse
 pyproj
 python-slugify
 pyyaml
-rastreio
+rasterio
 requests
 sqlalchemy
 unicodecsv

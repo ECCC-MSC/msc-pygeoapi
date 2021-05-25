@@ -2,8 +2,10 @@
 #
 # Author: Louis-Philippe Rousseau-Lambert
 #         <Louis-Philippe.RousseauLambert2@canada.ca>
+# Author: Tom Cooney <tom.cooney@canada.ca>
 #
 # Copyright (c) 2019 Louis-Philippe Rousseau-Lambert
+# Copyright (c) 2021 Tom Cooney
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation

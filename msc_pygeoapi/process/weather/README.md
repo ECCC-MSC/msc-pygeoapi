@@ -57,11 +57,11 @@ pygeoapi serve
 ```
 Visit http://geomet-dev-03.cmc.ec.gc.ca:5000
 
-Note: port 5000 is default port. Check `msc-pygeoapi/deploy/default/msc-pygeoapi-config.yml` to double check port
+Note: port 5000 is default port. Check `/deploy/default/msc-pygeoapi-config.yml` to double check port
 
 # Making changes to program
 
-After making changes to extract_raster.py re-install msc-pygeapi by navigating into the msc-pygeoapi directory and running
+After making changes to msc_pygeoapi/process/weather/extract_raster.py re-install msc-pygeoapi by navigating into the msc-pygeoapi directory and running
 ```bash
 python setup.py install
 ```
@@ -78,7 +78,7 @@ gdallocationinfo -wgs84 <path_to_raster> <x-coordinate> <y-coordinate>
 ```
 
 # Rasterio version
-The extract raster process currently only works with rasterio version 1.1.4. If running anewer version of rasterio dwongrade using
+The extract raster process currently only works with rasterio version 1.1.4. If running a newer version of rasterio downgrade using
 ```bash
 pip install rasterio==1.1.4 --force-reinstall
 ```

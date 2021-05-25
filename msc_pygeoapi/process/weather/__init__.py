@@ -1,8 +1,8 @@
 # =================================================================
 #
-# Author: Thomas Cooney  <tom.cooney@canada.ca>
+# Author: Tom Cooney <tom.cooney@canada.ca>
 #
-# Copyright (c) 2020 Thomas Cooney
+# Copyright (c) 2021 Tom Cooney
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -29,15 +29,13 @@
 
 import click
 
-from msc_pygeoapi.process.weather.extract_raster import cli as er
+from msc_pygeoapi.process.weather.extract_raster import (
+    extract_raster)
 
 
 @click.group()
 def execute():
     pass
-
-
-execute.add_command(er)
 
 
 @click.group()
@@ -46,3 +44,4 @@ def weather():
 
 
 weather.add_command(execute)
+execute.add_command(extract_raster)
