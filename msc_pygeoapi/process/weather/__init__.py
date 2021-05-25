@@ -1,10 +1,7 @@
 # =================================================================
 #
-# Author: Louis-Philippe Rousseau-Lambert
-#         <Louis-Philippe.RousseauLambert2@canada.ca>
 # Author: Tom Cooney <tom.cooney@canada.ca>
 #
-# Copyright (c) 2019 Louis-Philippe Rousseau-Lambert
 # Copyright (c) 2021 Tom Cooney
 #
 # Permission is hereby granted, free of charge, to any person
@@ -32,14 +29,19 @@
 
 import click
 
-from msc_pygeoapi.process.cccs import cccs
-from msc_pygeoapi.process.weather import weather
+from msc_pygeoapi.process.weather.extract_raster import (
+    extract_raster)
 
 
 @click.group()
-def process():
+def execute():
     pass
 
 
-process.add_command(cccs)
-process.add_command(weather)
+@click.group()
+def weather():
+    pass
+
+
+weather.add_command(execute)
+execute.add_command(extract_raster)
