@@ -15,7 +15,9 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install system dependencies 📦
-      run: sudo apt-get install -y libgdal-dev
+      run: |
+        sudo apt-get install -y libgdal-dev
+        pip3 install gdal==`gdal-config --version`
     - name: Install requirements 📦
       run: |
         python3 -m pip install --upgrade pip
