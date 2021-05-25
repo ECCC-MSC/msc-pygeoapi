@@ -27,27 +27,22 @@
 #
 # =================================================================
 
-import logging
-
 import click
 
-LOGGER = logging.getLogger(__name__)
+
+from msc_pygeoapi.process.weather.extract_raster import (
+    extract_raster)
 
 
-try:
-    from msc_pygeoapi.process.weather.extract_raster import (
-        extract_raster)
+@click.group()
+def execute():
+    pass
 
-    @click.group()
-    def execute():
-        pass
 
-    @click.group()
-    def weather():
-        pass
+@click.group()
+def weather():
+    pass
 
-    weather.add_command(execute)
-    execute.add_command(extract_raster)
 
-except ImportError:
-    LOGGER.warning('Could not import weather module.')
+weather.add_command(execute)
+execute.add_command(extract_raster)
