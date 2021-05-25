@@ -222,6 +222,7 @@
         "avg_dwpt_temp_pst1hr-data_flag-uom": "code",
         "avg_dwpt_temp_pst1hr-data_flag-code_src": "std_code_src",
         "avg_dwpt_temp_pst1hr-data_flag-value": 4,
+        "url": "https://dd.weather.gc.ca/tests/data/swob/2020-07-01-0007-CGCH-AUTO-minute-swob.xml",
         "wetblb_temp": 18.1,
         "wetblb_temp-uom": "°C",
         "wetblb_temp-data_flag-uom": "code",

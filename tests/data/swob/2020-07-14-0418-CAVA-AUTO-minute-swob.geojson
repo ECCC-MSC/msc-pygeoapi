@@ -207,6 +207,7 @@
         "avg_wnd_spd_10m_pst10mts-data_flag-uom": "code",
         "avg_wnd_spd_10m_pst10mts-data_flag-code_src": "std_code_src",
         "avg_wnd_spd_10m_pst10mts-data_flag-value": 1,
+        "url": "https://dd.weather.gc.ca/tests/data/swob/2020-07-14-0418-CAVA-AUTO-minute-swob.xml",
         "wetblb_temp": 16.2,
         "wetblb_temp-uom": "°C",
         "wetblb_temp-data_flag-uom": "code",

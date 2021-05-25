@@ -217,6 +217,7 @@
         "pcpn_amt_pst1hr-data_flag-uom": "code",
         "pcpn_amt_pst1hr-data_flag-code_src": "std_code_src",
         "pcpn_amt_pst1hr-data_flag-value": 1,
+        "url": "https://dd.weather.gc.ca/tests/data/swob/2020-07-14-0052-CNCO-AUTO-minute-swob.xml",
         "wetblb_temp": 10.5,
         "wetblb_temp-uom": "°C",
         "wetblb_temp-data_flag-uom": "code",
