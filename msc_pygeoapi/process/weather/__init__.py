@@ -29,7 +29,6 @@
 
 import click
 
-
 from msc_pygeoapi.process.weather.extract_raster import (
     extract_raster)
 
