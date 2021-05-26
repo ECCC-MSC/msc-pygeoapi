@@ -904,6 +904,76 @@ resources:
               name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/ltce_temp_extremes
               id_field: IDENTIFIER
+              properties:
+                  - VIRTUAL_STATION_NAME_E
+                  - VIRTUAL_STATION_NAME_F
+                  - VIRTUAL_CLIMATE_ID
+                  - PROVINCE_CODE
+                  - WXO_CITY_CODE
+                  - LOCAL_DAY
+                  - LOCAL_MONTH
+                  - RECORD_HIGH_MAX_TEMP
+                  - RECORD_HIGH_MAX_TEMP_YR
+                  - PREV_RECORD_HIGH_MAX_TEMP
+                  - PREV_RECORD_HIGH_MAX_TEMP_YR
+                  - RECORD_LOW_MAX_TEMP
+                  - RECORD_LOW_MAX_TEMP_YR
+                  - PREV_RECORD_LOW_MAX_TEMP
+                  - PREV_RECORD_LOW_MAX_TEMP_YR
+                  - RECORD_LOW_MIN_TEMP
+                  - RECORD_LOW_MIN_TEMP_YR
+                  - PREV_RECORD_LOW_MIN_TEMP
+                  - PREV_RECORD_LOW_MIN_TEMP_YR
+                  - RECORD_HIGH_MIN_TEMP
+                  - RECORD_HIGH_MIN_TEMP_YR
+                  - PREV_RECORD_HIGH_MIN_TEMP
+                  - PREV_RECORD_HIGH_MIN_TEMP_YR
+                  - FIRST_HIGH_MAX_TEMP
+                  - FIRST_HIGH_MAX_TEMP_YEAR
+                  - SECOND_HIGH_MAX_TEMP
+                  - SECOND_HIGH_MAX_TEMP_YEAR
+                  - THIRD_HIGH_MAX_TEMP
+                  - THIRD_HIGH_MAX_TEMP_YEAR
+                  - FOURTH_HIGH_MAX_TEMP
+                  - FOURTH_HIGH_MAX_TEMP_YEAR
+                  - FIFTH_HIGH_MAX_TEMP
+                  - FIFTH_HIGH_MAX_TEMP_YEAR
+                  - FIRST_LOW_MAX_TEMP
+                  - FIRST_LOW_MAX_TEMP_YEAR
+                  - SECOND_LOW_MAX_TEMP
+                  - SECOND_LOW_MAX_TEMP_YEAR
+                  - THIRD_LOW_MAX_TEMP
+                  - THIRD_LOW_MAX_TEMP_YEAR
+                  - FOURTH_LOW_MAX_TEMP
+                  - FOURTH_LOW_MAX_TEMP_YEAR
+                  - FIFTH_LOW_MAX_TEMP
+                  - FIFTH_LOW_MAX_TEMP_YEAR
+                  - FIRST_HIGH_MIN_TEMP
+                  - FIRST_HIGH_MIN_TEMP_YEAR
+                  - SECOND_HIGH_MIN_TEMP
+                  - SECOND_HIGH_MIN_TEMP_YEAR
+                  - THIRD_HIGH_MIN_TEMP
+                  - THIRD_HIGH_MIN_TEMP_YEAR
+                  - FOURTH_HIGH_MIN_TEMP
+                  - FOURTH_HIGH_MIN_TEMP_YEAR
+                  - FIFTH_HIGH_MIN_TEMP
+                  - FIFTH_HIGH_MIN_TEMP_YEAR
+                  - FIRST_LOW_MIN_TEMP
+                  - FIRST_LOW_MIN_TEMP_YEAR
+                  - SECOND_LOW_MIN_TEMP
+                  - SECOND_LOW_MIN_TEMP_YEAR
+                  - THIRD_LOW_MIN_TEMP
+                  - THIRD_LOW_MIN_TEMP_YEAR
+                  - FOURTH_LOW_MIN_TEMP
+                  - FOURTH_LOW_MIN_TEMP_YEAR
+                  - FIFTH_LOW_MIN_TEMP
+                  - FIFTH_LOW_MIN_TEMP_YEAR
+                  - MIN_TEMP_RECORD_BEGIN
+                  - MIN_TEMP_RECORD_END
+                  - MAX_TEMP_RECORD_BEGIN
+                  - MAX_TEMP_RECORD_END
+                  - IDENTIFIER
+                  - LAST_UPDATED
 
     ltce-precipitation:
         type: collection
@@ -925,6 +995,31 @@ resources:
               name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/ltce_precip_extremes
               id_field: IDENTIFIER
+              properties:
+                  - VIRTUAL_STATION_NAME_E
+                  - VIRTUAL_STATION_NAME_F
+                  - VIRTUAL_CLIMATE_ID
+                  - PROVINCE_CODE
+                  - WXO_CITY_CODE
+                  - LOCAL_DAY
+                  - LOCAL_MONTH
+                  - RECORD_PRECIPITATION
+                  - RECORD_PRECIPITATION_YR
+                  - PREV_RECORD_PRECIPITATION
+                  - PREV_RECORD_PRECIPITATION_YR
+                  - FIRST_PRECIPITATION
+                  - FIRST_PRECIPITATION_YEAR
+                  - SECOND_PRECIPITATION
+                  - SECOND_PRECIPITATION_YEAR
+                  - THIRD_PRECIPITATION
+                  - THIRD_PRECIPITATION_YEAR
+                  - FOURTH_PRECIPITATION
+                  - FOURTH_PRECIPITATION_YEAR
+                  - FIFTH_PRECIPITATION
+                  - FIFTH_PRECIPITATION_YEAR
+                  - RECORD_BEGIN
+                  - RECORD_END
+                  - IDENTIFIER
 
     ltce-snowfall:
         type: collection
@@ -946,6 +1041,31 @@ resources:
               name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/ltce_snow_extremes
               id_field: IDENTIFIER
+              properties:
+                  - VIRTUAL_STATION_NAME_E
+                  - VIRTUAL_STATION_NAME_F
+                  - VIRTUAL_CLIMATE_ID
+                  - PROVINCE_CODE
+                  - WXO_CITY_CODE
+                  - LOCAL_DAY
+                  - LOCAL_MONTH
+                  - RECORD_SNOWFALL
+                  - RECORD_SNOWFALL_YR
+                  - PREV_RECORD_SNOWFALL
+                  - PREV_RECORD_SNOWFALL_YR
+                  - FIRST_SNOWFALL
+                  - FIRST_SNOWFALL_YEAR
+                  - SECOND_SNOWFALL
+                  - SECOND_SNOWFALL_YEAR
+                  - THIRD_SNOWFALL
+                  - THIRD_SNOWFALL_YEAR
+                  - FOURTH_SNOWFALL
+                  - FOURTH_SNOWFALL_YEAR
+                  - FIFTH_SNOWFALL
+                  - FIFTH_SNOWFALL_YEAR
+                  - RECORD_BEGIN
+                  - RECORD_END
+                  - IDENTIFIER
 
     msc-datamart:
         type: stac-collection
