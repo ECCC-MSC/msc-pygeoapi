@@ -1,4 +1,4 @@
-click
+click<8
 elasticsearch
 gdal
 lxml
@@ -6,6 +6,7 @@ parse
 pyproj
 python-slugify
 pyyaml
+rasterio
 requests
 sqlalchemy
 unicodecsv
