@@ -35,7 +35,7 @@ export MSC_PYGEOAPI_OGC_API_URL=https://api.wxod-dev.cmc.ec.gc.ca/
 export MSC_PYGEOAPI_OGC_API_URL_BASEPATH=/
 export MSC_PYGEOAPI_METPX_EVENT_PY=/opt/msc-pygeoapi/event.py
 
-export XDG_CACHE_HOME=/tmp/msc-pygeoapi-sarra-logs
+export XDG_CACHE_HOME=/tmp/geoadm-sarra-logs
 
 export PYGEOAPI_CONFIG=/opt/msc-pygeoapi/conf/msc-pygeoapi-config.yml
 export PYGEOAPI_OPENAPI=/opt/msc-pygeoapi/conf/msc-pygeoapi-openapi.yml
