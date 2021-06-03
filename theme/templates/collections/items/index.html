@@ -56,8 +56,8 @@
                       :class="[sortIconClass, 'glyphicon']"></span>
                   </div>
                   <div v-if="th.key !== 'id'">
-                    <label class="wb-inv" :for="'input-'+th.key">Search column: [% th.key %]</label>
-                    <input type="text" class="form-control input-sm" :id="'input-'+th.key" :placeholder="'Search ' + th.key" v-model="queryCols[th.key]" @keyup.enter="getItemsSorted()" />
+                    <label class="wb-inv" :for="'search-'+th.key">Search column: [% th.key %]</label>
+                    <input type="text" class="form-control input-sm" :id="'search-'+th.key" placeholder="Keyword search" v-model="queryCols[th.key]" @keyup.enter="getItemsSorted()" />
                   </div>
                 </th>
               </tr>
@@ -123,7 +123,7 @@
           </div>
           <div class="alert alert-warning">
             <p><small>Warning: Higher limits not recommended</small></p>
-          </div>    
+          </div>
           <ul class="pagination pagination-sm">
             <li>
               <button class="btn btn-sm btn-default" @click="prevPageItems" rel="prev" :disabled="itemsLoading || currentPage === 1">Previous</button>

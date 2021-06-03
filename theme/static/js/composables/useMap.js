@@ -4,6 +4,7 @@ import { watch, onMounted } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.0
 export default function useMap(mapElemId, geoJsonData, itemsPath, tileLayerUrl, tileLayerAttr) {
   let map, layerItems
 
+  // map initialize
   const setupMap = function() {
     map = L.map(mapElemId).setView([45, -75], 5)
     map.addLayer(new L.TileLayer(
@@ -15,8 +16,9 @@ export default function useMap(mapElemId, geoJsonData, itemsPath, tileLayerUrl, 
     layerItems = new L.GeoJSON({type: 'FeatureCollection', features: []})
     map.addLayer(layerItems)
   }
-
   onMounted(setupMap)
+
+  // update map with new geoJson data
   watch(geoJsonData, () => {
     if (map.hasLayer(layerItems)) {
       map.removeLayer(layerItems)

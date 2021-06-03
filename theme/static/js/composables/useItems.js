@@ -1,10 +1,7 @@
 import { ref, computed, onMounted, watch } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.7/vue.esm-browser.prod.js'
 
 export default function useItems() {
-  const requestUrl = ref('')
-  const limit = ref(10) // default
-  const queryCols = ref({})
-  const currentPage = ref(1)
+  // Items results
   const itemsLoading = ref(false)
   const itemsJson = ref({})
   const itemProps = ref([])
@@ -28,6 +25,10 @@ export default function useItems() {
       return []
     }
   })
+
+  // Pagination
+  const limit = ref(10) // default
+  const currentPage = ref(1)
   const showingLimitText = computed(() => {
     let showText = `Showing ${parseInt(startindex.value) + 1} to ${parseInt(startindex.value) + parseInt(limit.value)} of ${itemsTotal.value}`
     return showText
@@ -52,6 +53,10 @@ export default function useItems() {
       currentPage.value--
     }
   }
+
+  // Data retrieval
+  const requestUrl = ref('')
+  const queryCols = ref({}) // optional querying per column
   const getItems = async (sortCol = '', sortDir = '') => {
     // Request URL
     let newRequestUrl = `?f=json&limit=${limit.value}&startindex=${startindex.value}`  // relative to /items
@@ -68,7 +73,7 @@ export default function useItems() {
     }
 
     // Optional sort
-    console.log('Resulting sortCol and sortDir: ', sortCol + ' / ' + sortDir)
+    // console.log('Resulting sortCol and sortDir: ', sortCol + ' / ' + sortDir)
     if (sortCol !== '' && sortDir !== '') {
       if (sortCol !== 'id') { // id is an internal column
         newRequestUrl += '&sortby=' + (sortDir === 'desc' ? '-' : '') + sortCol
@@ -92,12 +97,14 @@ export default function useItems() {
       itemsLoading.value = false
     }
   }
+
   const clearQueryCols = () => {
     for (const [key] of Object.entries(queryCols.value)) {
       queryCols.value[key] = ''
     }
   }
   
+  // initialize with base data retrieval
   onMounted(() => {
     getItems()
       .then(() => { // success
@@ -109,6 +116,8 @@ export default function useItems() {
         }
       })
   })
+
+  // reset page to 1 if there is a change in limit
   watch(limit, () => {
     currentPage.value = 1 // reset for limit
   })
