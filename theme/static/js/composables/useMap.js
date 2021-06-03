@@ -21,15 +21,28 @@ export default function useMap(mapElemId, geoJsonData, itemsPath, tileLayerUrl, 
     if (map.hasLayer(layerItems)) {
       map.removeLayer(layerItems)
     }
-    layerItems = new L.GeoJSON(geoJsonData.value, {
-      onEachFeature: function (feature, layer) {
-        let url = itemsPath + '/' + feature.id + '?f=html'
-        let html = '<span><a href="' + url + '">' + feature.id + '</a></span>'
-        layer.bindPopup(html)
+    
+    if (Object.prototype.hasOwnProperty.call(geoJsonData.value, 'features')) {
+      if (geoJsonData.value.features[0].geometry === null) {
+        map.setView([0, 0], 1)
+      } else {
+        layerItems = new L.GeoJSON(geoJsonData.value, {
+          onEachFeature: function (feature, layer) {
+            let url = itemsPath + '/' + feature.id + '?f=html'
+            let html = '<span><a href="' + url + '">' + feature.id + '</a></span>'
+            layer.bindPopup(html)
+          }
+        })
+        map.addLayer(layerItems)
+        if (geoJsonData.value.features.length !== 0) {
+          map.fitBounds(layerItems.getBounds(), {maxZoom: 5})
+        } else {
+          map.setView([45, -75], 1)
+        }
       }
-    })
-    map.addLayer(layerItems)
-    map.fitBounds(layerItems.getBounds(), {maxZoom: 5})
+    } else {
+      map.setView([45, -75], 1)
+    }
   })
 
   return {

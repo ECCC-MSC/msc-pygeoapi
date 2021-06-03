@@ -104,9 +104,14 @@
         }
     ));
     var geojson_data = {{ data |to_json }};
-    var items = new L.GeoJSON(geojson_data);
 
-    map.addLayer(items);
-    map.fitBounds(items.getBounds(), {maxZoom: 6});
+    // Null geometry check
+    if (geojson_data.features[0].geometry === null) {
+      map.setView([0, 0], 1)
+    } else {
+      var items = new L.GeoJSON(geojson_data);
+      map.addLayer(items);
+      map.fitBounds(items.getBounds(), {maxZoom: 6});
+    }
     </script>
 {% endblock %}
