@@ -1,11 +1,10 @@
 import { ref, computed, onMounted, watch } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.7/vue.esm-browser.prod.js'
 
 export default function useItems() {
-  const requestUrl = ref('')
-  const limit = ref(10) // default
-  const currentPage = ref(1)
+  // Items results
   const itemsLoading = ref(false)
   const itemsJson = ref({})
+  const itemProps = ref([])
   const itemsTotal = computed(() => {
     if (Object.prototype.hasOwnProperty.call(itemsJson.value, 'numberMatched')) {
       return itemsJson.value.numberMatched
@@ -26,64 +25,123 @@ export default function useItems() {
       return []
     }
   })
-  const itemProps = computed(() => {
-    if (items.value.length > 0) {
-      return Object.keys(items.value[0])
-    } else {
-      return []
-    }
-  })
+
+  // Pagination
+  const limit = ref(10) // default
+  const currentPage = ref(1)
   const showingLimitText = computed(() => {
-    let showText = `Showing ${parseInt(startindex.value) + 1} to ${parseInt(startindex.value) + parseInt(limit.value)} of ${itemsTotal.value}`
+    let upper = parseInt(startindex.value) + parseInt(limit.value)
+    if (upper >= itemsTotal.value) {
+      upper = itemsTotal.value
+    }
+    let showText = `Showing ${parseInt(startindex.value) + 1} to ${upper} of ${itemsTotal.value}`
     return showText
   })
   const startindex = computed(() => {
     if (currentPage.value === 1) {
       return 0
     } else {
-      return parseInt((currentPage.value - 1) * limit.value)
+      // - 1 for lower range from current page
+      const index = Math.floor((currentPage.value - 1) * limit.value)
+      if (index < limit.value) {
+        return 0
+      } else {
+        return index
+      }
     }
   })
   const maxPages = computed(() => {
-    return parseInt(itemsTotal.value / limit.value)
+    return Math.ceil(itemsTotal.value / limit.value)
   })
-  const nextPage = function() {
+  const nextPage = () => {
     if ((currentPage.value * limit.value) < itemsTotal.value) {
       currentPage.value++
-      getItems()
     }
   }
-  const prevPage = function() {
+  const prevPage = () => {
     if (currentPage.value > 1) {
       currentPage.value--
-      getItems()
     }
   }
-  const getItems = async () => {
+
+  // Data retrieval
+  const requestUrl = ref('')
+  const queryCols = ref({}) // optional querying per column
+  const queryColsIsEmpty = computed(() => {
+    let isEmpty = true
+    for (const [key, value] of Object.entries(queryCols.value)) {
+      if (value !== '') {
+        isEmpty = false
+        break;
+      }
+    }
+    return isEmpty
+  })
+  const getItems = async (sortCol = '', sortDir = '') => {
+    // Request URL
+    let newRequestUrl = `?f=json&limit=${limit.value}&startindex=${startindex.value}`  // relative to /items
+
+    // Query params
+    let newQueryColValues = []
+    for (const [key, value] of Object.entries(queryCols.value)) {
+      if (value !== '') {
+        newQueryColValues.push(key + '=' + value)
+      }
+    }
+    if (newQueryColValues.length > 0) {
+      newRequestUrl += '&' + newQueryColValues.join('&')
+    }
+
+    // Optional sort
+    // console.log('Resulting sortCol and sortDir: ', sortCol + ' / ' + sortDir)
+    if (sortCol !== '' && sortDir !== '') {
+      if (sortCol !== 'id') { // id is an internal column
+        newRequestUrl += '&sortby=' + (sortDir === 'desc' ? '-' : '') + sortCol
+      }
+    }
+
+    if (requestUrl.value === newRequestUrl) {
+      return false // prevent duplicate calls
+    }
+
     try {
       itemsLoading.value = true
-      const newRequestUrl = `?f=json&limit=${limit.value}&startindex=${startindex.value}`  // relative to /items
-      if (requestUrl.value === newRequestUrl) {
-        return false // prevent duplicate calls
-      }
       requestUrl.value = newRequestUrl
       const resp = await axios.get(requestUrl.value)
-      itemsJson.value = resp.data
+      itemsJson.value = resp.data // original JSON data
+      if (itemProps.value.length === 0) { // initalize itemProps once from JSON data
+        itemProps.value = Object.keys(items.value[0])
+      }
       itemsLoading.value = false
     } catch (err) {
       console.error(err)
       itemsLoading.value = false
     }
   }
+
+  const clearQueryCols = () => {
+    for (const [key] of Object.entries(queryCols.value)) {
+      queryCols.value[key] = ''
+    }
+  }
   
-  onMounted(getItems)
-  watch(limit, () => {
-    currentPage.value = 1 // reset for limit
+  // initialize with base data retrieval
+  onMounted(() => {
+    getItems()
+      .then(() => { // success
+        if (Object.entries(queryCols.value).length === 0) {
+          // initialize queryCols once
+          itemProps.value.forEach((key) => {
+            queryCols.value[key] = ''
+          })
+        }
+      })
   })
 
   return {
     itemsJson, itemsTotal, items, itemProps, limit,
     getItems, showingLimitText, itemsLoading,
-    nextPage, prevPage, currentPage, maxPages
+    nextPage, prevPage, currentPage, maxPages,
+    queryCols, clearQueryCols, queryColsIsEmpty
   }
 }

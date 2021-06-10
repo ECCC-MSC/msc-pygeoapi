@@ -14,6 +14,20 @@
 .inline-block {
   display: inline-block;
 }
+.padding-tb-3 {
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+.padding-tb-5 {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+.fixed-table-layout {
+  table-layout: fixed;
+}
+.keyword-search-input {
+  width: 150px;
+}
 
 .ellipsis {
   text-overflow: ellipsis;
@@ -21,6 +35,11 @@
   /* Required for text-overflow to do anything */
   white-space: nowrap;
   overflow: hidden;
+}
+#items-table-container th {
+  background: white;
+  position: sticky;
+  top: 0; /* sticky table header */
 }
 
 #items-map, #collection-map {

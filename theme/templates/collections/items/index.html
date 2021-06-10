@@ -22,50 +22,66 @@
   <section id="items">
     {% if data['features'] %}
     <div class="row">
-      <div class="col-sm-12 col-md-6">
+      <div class="col-sm-12 col-md-12">
         <div class="row">
           <div class="col-sm-12">
             <div id="items-map"></div>
           </div>
         </div>
       </div>
-      <div class="col-sm-12 col-md-6">
-        <div class="form-inline" aria-controls="items-table">
-          <input
-            type="text"
-            class="form-control"
-            placeholder="Search"
-            v-model="searchText">
+      <div class="col-xs-12 mrgn-tp-sm">
+        <div class="form-inline row" aria-controls="items-table">
+          <div class="form-group col-xs-5">
+            <label class="wb-inv" for="filter-table">Filter table content</label>
+            <input
+              id="filter-table"
+              type="text"
+              class="form-control input-sm mrgn-rght-0"
+              placeholder="Filter table content"
+              v-model="searchText">
+          </div>
+          <div class="col-xs-7 text-right">
+            <div class="btn-group btn-group-sm inline-block">
+              <button 
+                title="Clear column keyword search queries and reset to display the default results" 
+                class="btn btn-warning" 
+                @click="clearSearch"
+                :disabled="queryColsIsEmpty">
+                <span class="glyphicon glyphicon-remove"></span> Reset</button>
+              <button 
+                title="Apply column keyword search queries to the entire collection" 
+                class="btn btn-primary" 
+                @click="getItemsSorted()"
+                :disabled="queryColsIsEmpty">
+                <span class="glyphicon glyphicon-search"></span> Search by keywords</button>
+            </div>
+          </div>
         </div>
+        <div class="clearfix"></div>
         <div id="items-table-container" :class="{ 'loading-mask': itemsLoading }">
           <table id="items-table" class="table table-striped">
             <thead>
               <tr>
                 <th v-for="(th, index) in tableFields"
-                  :class="[th.colClass, 'sortable', 'ellipsis']"
-                  :title="th.text"
-                  @click="sortDir(th.key)">
-                  <span v-text="truncate(th.text, 10)"></span>
-                  <span
-                    v-show="currentSort === th.key"
-                    :class="sortIconClass"
-                    class="glyphicon"></span>
+                  :class="th.colClass">
+                  <div class="sortable ellipsis" @click="sortDir(th.key)" :title="th.text">
+                    <span v-text="truncate(th.text, 15)"></span>
+                    <span
+                      v-show="currentSort === th.key"
+                      :class="[sortIconClass, 'glyphicon']"></span>
+                  </div>
+                  <div v-if="th.key !== 'id'">
+                    <label class="wb-inv" :for="'search-'+th.key">Keyword search for: [% th.key %]</label>
+                    <input 
+                      type="text"
+                      class="form-control input-sm keyword-search-input"
+                      title="eg. &quot;BC QC ON&quot; will search for &quot;BC&quot; or &quot;ON&quot; or &quot;QC&quot;"
+                      :id="'search-'+th.key"
+                      placeholder="Keyword"
+                      v-model="queryCols[th.key]"
+                      @keyup.enter="getItemsSorted()" />
+                  </div>
                 </th>
-              </tr>
-              <tr v-if="noJs">
-                {% if data.get('uri_field') %}
-                <th>{{ data['uri_field'] }}</th>
-                {% endif %}
-                  <th>id</th>
-                  {% if data['title_field'] %}
-                    <th>{{ data['title_field'] }}</th>
-                  {% endif %}
-                  {% for k, v in data['features'][0]['properties'].items() %}
-                    {# start with id & title then take first 5 columns for table #}
-                    {% if loop.index < 5 and k not in [data['id_field'], data['title_field'], data['uri_field'], 'extent'] %}
-                    <th>{{ k }}</th>
-                    {% endif %}
-                  {% endfor %}
               </tr>
             </thead>
             <tbody>
@@ -95,33 +111,37 @@
 
         <nav class="small" aria-live="polite" aria-controls="items-table">
           <div class="row">
-            <div class="col-xs-4">
-              <div class="form-group">
-                <label>Limit: </label>
-                <select
-                  class="input-sm form-control inline-block"
-                  v-model="limit"
-                  :disabled="itemsLoading"
-                  @change="getItems">
-                    <option value="10">10</option>
-                    <option value="100">100</option>
-                    <option value="1000">1000</option>
-                    <option value="2000">2000</option>
-                </select>
+            <div class="col-xs-5 col-sm-6">
+              <div class="form-inline">
+                <div class="form-group inline-block">
+                  <label>Limit: </label>
+                  <select
+                    class="input-sm form-control inline-block"
+                    v-model="limit"
+                    :disabled="itemsLoading"
+                    @change="limitChange()">
+                      <option value="10">10</option>
+                      <option value="100">100</option>
+                      <option value="1000">1000</option>
+                      <option value="2000">2000</option>
+                  </select>
+                </div>
               </div>
             </div>
-            <div class="col-xs-8 text-right"><span v-text="showingLimitText"></span></div>
+            <div class="col-xs-7 col-sm-6 text-right">
+              <div v-text="showingLimitText"></div>
+            </div>
           </div>
-          <div class="alert alert-warning">
-            <p><small>Warning: Higher limits not recommended</small></p>
-          </div>    
-          <ul class="pagination pagination-sm">
+          <div class="alert alert-warning padding-tb-5 mrgn-bttm-0 mrgn-tp-sm">
+            <p><small>Higher limits are not recommended</small></p>
+          </div>
+          <ul class="pagination pagination-sm clearfix">
             <li>
-              <button class="btn btn-sm btn-default" @click="prevPage" rel="prev" :disabled="itemsLoading || currentPage === 1">Previous</button>
+              <button class="btn btn-sm btn-default" @click="prevPageItems" rel="prev" :disabled="itemsLoading || currentPage === 1">Previous</button>
             </li>
             <span>Page [% currentPage %] / [% maxPages %]</span>
             <li>
-              <button class="btn btn-sm btn-default" @click="nextPage" :disabled="itemsLoading || currentPage === maxPages" rel="next">Next</button>
+              <button class="btn btn-sm btn-default" @click="nextPageItems" :disabled="itemsLoading || currentPage === maxPages" rel="next">Next</button>
             </li>
           </ul>
         </nav>
@@ -143,6 +163,7 @@
       import useTableFilter from '{{ config['server']['url'] }}/static/js/composables/useTableFilter.js?v={{ version }}'
       import useMap from '{{ config['server']['url'] }}/static/js/composables/useMap.js?v={{ version }}'
       import { createApp, ref, computed, watch, onMounted } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.7/vue.esm-browser.prod.js'
+
       
       const app = createApp({
         delimiters: ['[%', '%]'],
@@ -151,7 +172,8 @@
 
           // Items handling
           const { items, itemsJson, itemProps, getItems, itemsTotal, itemsLoading,
-            currentPage, maxPages, prevPage, nextPage, limit, showingLimitText } = useItems()
+            currentPage, maxPages, prevPage, nextPage, limit, showingLimitText,
+            queryCols, clearQueryCols, queryColsIsEmpty } = useItems()
           
           // Table columns
           const tableFields = computed(() => {
@@ -159,11 +181,11 @@
             if (typeof itemProps === 'undefined') {
               return []
             }
-            itemProps.value.slice(0, 4).forEach((prop) => {
+            itemProps.value.forEach((prop) => {
               fields.push({
                 key: prop,
                 text: prop,
-                colClass: 'col-sm-3'
+                colClass: ''
               })
             })
             return fields
@@ -174,7 +196,32 @@
 
           // Table filtering
           const { searchText, searchTextLowered, truncate,
-            currentSort, sortDir, sortIconClass, filteredRows, linkToRow } = useTableFilter(items, keyColumns, 'id')
+            currentSort, currentSortDir, sortDir, sortIconClass, filteredRows, linkToRow } = useTableFilter(items, keyColumns, 'id')
+          
+          // Collection searching
+          const clearSearch = function() {
+            clearQueryCols()
+            searchText.value = ''
+            getItemsSorted()
+          }
+          const getItemsSorted = function() {
+            getItems(currentSort.value, currentSortDir.value)
+          }
+          const prevPageItems = function() {
+            prevPage()
+            getItemsSorted()
+          }
+          const nextPageItems = function() {
+            nextPage()
+            getItemsSorted()
+          }
+          const limitChange = function () {
+            // Cannot have current page > max pages on limit changes
+            if (currentPage.value > maxPages.value) {
+              currentPage.value = maxPages.value
+            }
+            getItemsSorted()
+          }
 
           // Map setup
           const itemsPath = '{{ data['items_path'] }}'
@@ -183,12 +230,13 @@
           useMap('items-map', itemsJson, itemsPath, tileLayerUrl, tileLayerAttr)
 
           return {
-            tableFields, keyColumns, itemsTotal, getItems, itemsLoading,
+            tableFields, keyColumns, itemsTotal, itemsLoading,
             items: filteredRows, // don't care for unfiltered
             searchText, searchTextLowered, truncate,
-            sortIconClass, sortDir, currentSort, 
-            limit, showingLimitText, nextPage, prevPage, currentPage, maxPages,
-            itemsPath, linkToRow
+            sortIconClass, sortDir, currentSort, currentSortDir,
+            limit, showingLimitText, currentPage, maxPages, limitChange,
+            itemsPath, linkToRow,
+            queryCols, clearSearch, queryColsIsEmpty, getItemsSorted, prevPageItems, nextPageItems
           }
         }
       })
