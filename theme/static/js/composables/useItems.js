@@ -41,7 +41,7 @@ export default function useItems() {
     }
   })
   const maxPages = computed(() => {
-    return parseInt(itemsTotal.value / limit.value)
+    return Math.ceil(itemsTotal.value / limit.value)
   })
   const nextPage = () => {
     if ((currentPage.value * limit.value) < itemsTotal.value) {

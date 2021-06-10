@@ -15,7 +15,12 @@
   display: inline-block;
 }
 .padding-tb-3 {
-  padding: 3px 15px 3px 15px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+.padding-tb-5 {
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 .fixed-table-layout {
   table-layout: fixed;

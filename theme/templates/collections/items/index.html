@@ -75,7 +75,7 @@
                     <input 
                       type="text"
                       class="form-control input-sm keyword-search-input"
-                      title="eg. &quot;lake baker A&quot;"
+                      title="eg. &quot;BC QC ON&quot; will search for &quot;BC&quot; or &quot;ON&quot; or &quot;QC&quot;"
                       :id="'search-'+th.key"
                       placeholder="Keyword(s)"
                       v-model="queryCols[th.key]"
@@ -132,7 +132,7 @@
               <div v-text="showingLimitText"></div>
             </div>
           </div>
-          <div class="alert alert-warning padding-tb-3 mrgn-bttm-0">
+          <div class="alert alert-warning padding-tb-5 mrgn-bttm-0 mrgn-tp-sm">
             <p><small>Higher limits are not recommended</small></p>
           </div>
           <ul class="pagination pagination-sm clearfix">
