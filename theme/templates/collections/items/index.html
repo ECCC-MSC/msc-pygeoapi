@@ -29,16 +29,35 @@
           </div>
         </div>
       </div>
-      <div class="col-sm-12 col-md-12 mrgn-tp-sm">
-        <div class="form-inline" aria-controls="items-table">
-          <label class="wb-inv" for="filter-table">Filter table content</label>
-          <input
-            id="filter-table"
-            type="text"
-            class="form-control input-sm"
-            placeholder="Filter table content"
-            v-model="searchText">
+      <div class="col-xs-12 mrgn-tp-sm">
+        <div class="form-inline row" aria-controls="items-table">
+          <div class="form-group col-xs-5">
+            <label class="wb-inv" for="filter-table">Filter table content</label>
+            <input
+              id="filter-table"
+              type="text"
+              class="form-control input-sm mrgn-rght-0"
+              placeholder="Filter table content"
+              v-model="searchText">
+          </div>
+          <div class="col-xs-7 text-right">
+            <div class="btn-group btn-group-sm inline-block">
+              <button 
+                title="Clear column keyword search queries and reset to display the default results" 
+                class="btn btn-warning" 
+                @click="clearSearch"
+                :disabled="queryColsIsEmpty">
+                <span class="glyphicon glyphicon-remove"></span> Reset</button>
+              <button 
+                title="Apply column keyword search queries to the entire collection" 
+                class="btn btn-primary" 
+                @click="getItemsSorted()"
+                :disabled="queryColsIsEmpty">
+                <span class="glyphicon glyphicon-search"></span> Search by keywords</button>
+            </div>
+          </div>
         </div>
+        <div class="clearfix"></div>
         <div id="items-table-container" :class="{ 'loading-mask': itemsLoading }">
           <table id="items-table" class="table table-striped">
             <thead>
@@ -92,7 +111,7 @@
 
         <nav class="small" aria-live="polite" aria-controls="items-table">
           <div class="row">
-            <div class="col-xs-3 col-sm-6">
+            <div class="col-xs-5 col-sm-6">
               <div class="form-inline">
                 <div class="form-group inline-block">
                   <label>Limit: </label>
@@ -107,29 +126,14 @@
                       <option value="2000">2000</option>
                   </select>
                 </div>
-                <div class="inline-block alert alert-warning mrgn-lft-sm padding-tb-3">
-                  <p><small>Higher limits are not recommended</small></p>
-                </div>
               </div>
             </div>
-            <div class="col-xs-9 col-sm-6 text-right">
+            <div class="col-xs-7 col-sm-6 text-right">
               <div v-text="showingLimitText"></div>
-              <div class="btn-group btn-group-sm text-right">
-                <button 
-                  title="Clear column keyword search queries and reset to display the default results" 
-                  class="btn btn-warning inline-block" 
-                  @click="clearSearch"
-                  :disabled="queryColsIsEmpty">
-                  <span class="glyphicon glyphicon-remove"></span> Reset</button>
-                <button 
-                  title="Apply column keyword search queries to the entire collection" 
-                  class="btn btn-primary inline-block" 
-                  @click="getItemsSorted()"
-                  :disabled="queryColsIsEmpty">
-                  <span class="glyphicon glyphicon-search"></span> Search by keywords</button>
-              </div>
-              <div class="clearfix"></div>
             </div>
+          </div>
+          <div class="alert alert-warning padding-tb-3 mrgn-bttm-0">
+            <p><small>Higher limits are not recommended</small></p>
           </div>
           <ul class="pagination pagination-sm clearfix">
             <li>
