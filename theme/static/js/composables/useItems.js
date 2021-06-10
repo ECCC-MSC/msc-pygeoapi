@@ -57,6 +57,16 @@ export default function useItems() {
   // Data retrieval
   const requestUrl = ref('')
   const queryCols = ref({}) // optional querying per column
+  const queryColsIsEmpty = computed(() => {
+    let isEmpty = true
+    for (const [key, value] of Object.entries(queryCols.value)) {
+      if (value !== '') {
+        isEmpty = false
+        break;
+      }
+    }
+    return isEmpty
+  })
   const getItems = async (sortCol = '', sortDir = '') => {
     // Request URL
     let newRequestUrl = `?f=json&limit=${limit.value}&startindex=${startindex.value}`  // relative to /items
@@ -126,6 +136,6 @@ export default function useItems() {
     itemsJson, itemsTotal, items, itemProps, limit,
     getItems, showingLimitText, itemsLoading,
     nextPage, prevPage, currentPage, maxPages,
-    queryCols, clearQueryCols
+    queryCols, clearQueryCols, queryColsIsEmpty
   }
 }

@@ -25,7 +25,7 @@ export default function useMap(mapElemId, geoJsonData, itemsPath, tileLayerUrl, 
     }
     
     if (Object.prototype.hasOwnProperty.call(geoJsonData.value, 'features')) {
-      if (geoJsonData.value.features[0].geometry === null) {
+      if (geoJsonData.value.features.length === 0 || geoJsonData.value.features[0].geometry === null) {
         map.setView([0, 0], 1)
       } else {
         layerItems = new L.GeoJSON(geoJsonData.value, {

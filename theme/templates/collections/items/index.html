@@ -52,8 +52,15 @@
                       :class="[sortIconClass, 'glyphicon']"></span>
                   </div>
                   <div v-if="th.key !== 'id'">
-                    <label class="wb-inv" :for="'search-'+th.key">Search column: [% th.key %]</label>
-                    <input type="text" class="form-control input-sm keyword-search-input" :id="'search-'+th.key" placeholder="Search keyword"  v-model="queryCols[th.key]" @keyup.enter="getItemsSorted()" />
+                    <label class="wb-inv" :for="'search-'+th.key">Keyword search for: [% th.key %]</label>
+                    <input 
+                      type="text"
+                      class="form-control input-sm keyword-search-input"
+                      title="eg. &quot;lake baker A&quot;"
+                      :id="'search-'+th.key"
+                      placeholder="Keyword(s)"
+                      v-model="queryCols[th.key]"
+                      @keyup.enter="getItemsSorted()" />
                   </div>
                 </th>
               </tr>
@@ -108,8 +115,18 @@
             <div class="col-xs-9 col-sm-6 text-right">
               <div v-text="showingLimitText"></div>
               <div class="btn-group btn-group-sm text-right">
-                <button title="Clear column search queries and reset to display the default results" class="btn btn-warning inline-block" @click="clearSearch"><span class="glyphicon glyphicon-remove"></span> Clear keywords</button>
-                <button title="Apply column search queries to the entire collection" class="btn btn-primary inline-block" @click="getItemsSorted()"><span class="glyphicon glyphicon-search"></span> Search collection</button>
+                <button 
+                  title="Clear column keyword search queries and reset to display the default results" 
+                  class="btn btn-warning inline-block" 
+                  @click="clearSearch"
+                  :disabled="queryColsIsEmpty">
+                  <span class="glyphicon glyphicon-remove"></span> Reset</button>
+                <button 
+                  title="Apply column keyword search queries to the entire collection" 
+                  class="btn btn-primary inline-block" 
+                  @click="getItemsSorted()"
+                  :disabled="queryColsIsEmpty">
+                  <span class="glyphicon glyphicon-search"></span> Search by keywords</button>
               </div>
               <div class="clearfix"></div>
             </div>
@@ -152,7 +169,7 @@
           // Items handling
           const { items, itemsJson, itemProps, getItems, itemsTotal, itemsLoading,
             currentPage, maxPages, prevPage, nextPage, limit, showingLimitText,
-            queryCols, clearQueryCols } = useItems()
+            queryCols, clearQueryCols, queryColsIsEmpty } = useItems()
           
           // Table columns
           const tableFields = computed(() => {
@@ -208,7 +225,7 @@
             sortIconClass, sortDir, currentSort, currentSortDir,
             limit, showingLimitText, currentPage, maxPages,
             itemsPath, linkToRow,
-            queryCols, clearSearch, getItemsSorted, prevPageItems, nextPageItems
+            queryCols, clearSearch, queryColsIsEmpty, getItemsSorted, prevPageItems, nextPageItems
           }
         }
       })

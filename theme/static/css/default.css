@@ -14,6 +14,15 @@
 .inline-block {
   display: inline-block;
 }
+.padding-tb-3 {
+  padding: 3px 15px 3px 15px;
+}
+.fixed-table-layout {
+  table-layout: fixed;
+}
+.keyword-search-input {
+  width: 150px;
+}
 
 .ellipsis {
   text-overflow: ellipsis;
