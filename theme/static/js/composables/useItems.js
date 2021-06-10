@@ -30,14 +30,24 @@ export default function useItems() {
   const limit = ref(10) // default
   const currentPage = ref(1)
   const showingLimitText = computed(() => {
-    let showText = `Showing ${parseInt(startindex.value) + 1} to ${parseInt(startindex.value) + parseInt(limit.value)} of ${itemsTotal.value}`
+    let upper = parseInt(startindex.value) + parseInt(limit.value)
+    if (upper >= itemsTotal.value) {
+      upper = itemsTotal.value
+    }
+    let showText = `Showing ${parseInt(startindex.value) + 1} to ${upper} of ${itemsTotal.value}`
     return showText
   })
   const startindex = computed(() => {
     if (currentPage.value === 1) {
       return 0
     } else {
-      return parseInt((currentPage.value - 1) * limit.value)
+      // - 1 for lower range from current page
+      const index = Math.floor((currentPage.value - 1) * limit.value)
+      if (index < limit.value) {
+        return 0
+      } else {
+        return index
+      }
     }
   })
   const maxPages = computed(() => {
@@ -89,6 +99,7 @@ export default function useItems() {
         newRequestUrl += '&sortby=' + (sortDir === 'desc' ? '-' : '') + sortCol
       }
     }
+
     if (requestUrl.value === newRequestUrl) {
       return false // prevent duplicate calls
     }
@@ -125,11 +136,6 @@ export default function useItems() {
           })
         }
       })
-  })
-
-  // reset page to 1 if there is a change in limit
-  watch(limit, () => {
-    currentPage.value = 1 // reset for limit
   })
 
   return {

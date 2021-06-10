@@ -119,7 +119,7 @@
                     class="input-sm form-control inline-block"
                     v-model="limit"
                     :disabled="itemsLoading"
-                    @change="getItemsSorted()">
+                    @change="limitChange()">
                       <option value="10">10</option>
                       <option value="100">100</option>
                       <option value="1000">1000</option>
@@ -215,6 +215,13 @@
             nextPage()
             getItemsSorted()
           }
+          const limitChange = function () {
+            // Cannot have current page > max pages on limit changes
+            if (currentPage.value > maxPages.value) {
+              currentPage.value = maxPages.value
+            }
+            getItemsSorted()
+          }
 
           // Map setup
           const itemsPath = '{{ data['items_path'] }}'
@@ -227,7 +234,7 @@
             items: filteredRows, // don't care for unfiltered
             searchText, searchTextLowered, truncate,
             sortIconClass, sortDir, currentSort, currentSortDir,
-            limit, showingLimitText, currentPage, maxPages,
+            limit, showingLimitText, currentPage, maxPages, limitChange,
             itemsPath, linkToRow,
             queryCols, clearSearch, queryColsIsEmpty, getItemsSorted, prevPageItems, nextPageItems
           }
