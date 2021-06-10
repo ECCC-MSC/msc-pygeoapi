@@ -106,7 +106,7 @@
     var geojson_data = {{ data |to_json }};
 
     // Null geometry check
-    if (geojson_data.features[0].geometry === null) {
+    if (geojson_data.geometry === null) {
       map.setView([0, 0], 1)
     } else {
       var items = new L.GeoJSON(geojson_data);
