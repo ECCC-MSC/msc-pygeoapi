@@ -64,7 +64,7 @@
               <tr>
                 <th v-for="(th, index) in tableFields"
                   :class="th.colClass">
-                  <div class="sortable ellipsis" @click="sortDir(th.key)" :title="th.text">
+                  <div class="sortable ellipsis" @click="changeSortDir(th.key)" :title="th.text">
                     <span v-text="truncate(th.text, 15)"></span>
                     <span
                       v-show="currentSort === th.key"
@@ -89,6 +89,7 @@
                 <td v-for="(th, index) in tableFields" v-html="linkToRow(item, th.key, itemsPath)">
                 </td>
               </tr>
+              <!-- START of noJs progressive enhancement -->
               {% for ft in data['features'] %}
               <tr v-if="noJs">
                 {% if data.get('uri_field') %}
@@ -105,6 +106,7 @@
                 {% endfor %}
               </tr>
             {% endfor %}
+            <!-- END of noJS -->
             </tbody>
           </table>
         </div>
@@ -116,14 +118,12 @@
                 <div class="form-group inline-block">
                   <label>Limit: </label>
                   <select
+                    id="select-limit"
                     class="input-sm form-control inline-block"
                     v-model="limit"
                     :disabled="itemsLoading"
                     @change="limitChange()">
-                      <option value="10">10</option>
-                      <option value="100">100</option>
-                      <option value="1000">1000</option>
-                      <option value="2000">2000</option>
+                      <option v-for="value of limitOptions" :value="value" v-text="value"></option>
                   </select>
                 </div>
               </div>
@@ -162,9 +162,8 @@
       import useItems from '{{ config['server']['url'] }}/static/js/composables/useItems.js?v={{ version }}'
       import useTableFilter from '{{ config['server']['url'] }}/static/js/composables/useTableFilter.js?v={{ version }}'
       import useMap from '{{ config['server']['url'] }}/static/js/composables/useMap.js?v={{ version }}'
-      import { createApp, ref, computed, watch, onMounted } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.7/vue.esm-browser.prod.js'
+      import { createApp, ref, computed, onBeforeMount, onMounted } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.7/vue.esm-browser.prod.js'
 
-      
       const app = createApp({
         delimiters: ['[%', '%]'],
         setup() {
@@ -172,7 +171,7 @@
 
           // Items handling
           const { items, itemsJson, itemProps, getItems, itemsTotal, itemsLoading,
-            currentPage, maxPages, prevPage, nextPage, limit, showingLimitText,
+            currentPage, maxPages, prevPage, nextPage, limit, showingLimitText, calcStartIndex,
             queryCols, clearQueryCols, queryColsIsEmpty } = useItems()
           
           // Table columns
@@ -195,8 +194,14 @@
           })
 
           // Table filtering
+          const defaultSortCol = 'id'
           const { searchText, searchTextLowered, truncate,
-            currentSort, currentSortDir, sortDir, sortIconClass, filteredRows, linkToRow } = useTableFilter(items, keyColumns, 'id')
+            currentSort, currentSortDir, sortDir, sortIconClass, filteredRows, linkToRow } = useTableFilter(items, keyColumns, defaultSortCol)
+          const changeSortDir = function (col) {
+            sortDir(col)
+            getItemsSorted()
+            updateQueryParams()
+          }
           
           // Collection searching
           const clearSearch = function() {
@@ -205,6 +210,7 @@
             getItemsSorted()
           }
           const getItemsSorted = function() {
+            updateQueryParams()
             getItems(currentSort.value, currentSortDir.value)
           }
           const prevPageItems = function() {
@@ -215,6 +221,7 @@
             nextPage()
             getItemsSorted()
           }
+          const limitOptions = [10, 100, 1000, 2000]
           const limitChange = function () {
             // Cannot have current page > max pages on limit changes
             if (currentPage.value > maxPages.value) {
@@ -229,12 +236,77 @@
           const tileLayerAttr = '{{ config['server']['map']['attribution'] }}'
           useMap('items-map', itemsJson, itemsPath, tileLayerUrl, tileLayerAttr)
 
+          // Permalink handling
+          const queryParams = new URLSearchParams(window.location.search)
+          const params = Object.fromEntries(queryParams.entries())
+          const updateQueryParams = function () {
+            queryParams.set('limit', limit.value)
+            queryParams.set('startindex', calcStartIndex())
+            if (currentSort.value !== defaultSortCol) { // don't apply sortby for default "id" column
+              let sortby = currentSort.value
+              if (currentSortDir.value === 'desc') {
+                sortby = '-' + sortby
+              }
+              queryParams.set('sortby', sortby)
+            } else {
+              queryParams.delete('sortby')
+            }
+            history.pushState(null, null, "?"+queryParams.toString())
+          }
+          onBeforeMount(() => { // on load permalink
+            // limit
+            if (queryParams.has('limit')) {
+              limit.value = parseInt(params.limit)
+            }
+
+            // pagination - startindex
+            if (queryParams.has('startindex')) {
+              // calculate currentPage with limit
+              const startindex = parseInt(params.startindex)
+              currentPage.value = Math.floor((startindex/limit.value) + 1)
+            }
+
+            // sort
+            if (queryParams.has('sortby')) {
+              const sortby = params.sortby + '' // string
+              if (sortby[0] === '-') { // descending sort
+                currentSortDir.value = 'desc'
+                currentSort.value = sortby.substr(1)
+              } else {
+                currentSort.value = sortby
+              }
+            }
+          })
+          onMounted(() => { // Add limit select option if new
+            // limit select option
+            if (queryParams.has('limit')) {
+              const limitValue = parseInt(params.limit)
+              if (!limitOptions.includes(limitValue)) {
+                limitOptions.push(limitValue)
+                limitOptions.sort((a,b) => a-b) // number sort
+              }
+            }
+          })
+
+          // initialize with base data retrieval
+          onMounted(() => {
+            getItems(currentSort.value, currentSortDir.value)
+              .then(() => { // success
+                if (Object.entries(queryCols.value).length === 0) {
+                  // initialize queryCols once
+                  itemProps.value.forEach((key) => {
+                    queryCols.value[key] = ''
+                  })
+                }
+              })
+          })
+
           return {
             tableFields, keyColumns, itemsTotal, itemsLoading,
             items: filteredRows, // don't care for unfiltered
             searchText, searchTextLowered, truncate,
-            sortIconClass, sortDir, currentSort, currentSortDir,
-            limit, showingLimitText, currentPage, maxPages, limitChange,
+            sortIconClass, changeSortDir, currentSort, currentSortDir,
+            limit, limitOptions, showingLimitText, currentPage, maxPages, limitChange,
             itemsPath, linkToRow,
             queryCols, clearSearch, queryColsIsEmpty, getItemsSorted, prevPageItems, nextPageItems
           }

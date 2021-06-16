@@ -37,7 +37,7 @@ export default function useItems() {
     let showText = `Showing ${parseInt(startindex.value) + 1} to ${upper} of ${itemsTotal.value}`
     return showText
   })
-  const startindex = computed(() => {
+  const calcStartIndex = () => {
     if (currentPage.value === 1) {
       return 0
     } else {
@@ -49,6 +49,9 @@ export default function useItems() {
         return index
       }
     }
+  }
+  const startindex = computed(() => {
+    return calcStartIndex()
   })
   const maxPages = computed(() => {
     return Math.ceil(itemsTotal.value / limit.value)
@@ -124,24 +127,11 @@ export default function useItems() {
       queryCols.value[key] = ''
     }
   }
-  
-  // initialize with base data retrieval
-  onMounted(() => {
-    getItems()
-      .then(() => { // success
-        if (Object.entries(queryCols.value).length === 0) {
-          // initialize queryCols once
-          itemProps.value.forEach((key) => {
-            queryCols.value[key] = ''
-          })
-        }
-      })
-  })
 
   return {
     itemsJson, itemsTotal, items, itemProps, limit,
     getItems, showingLimitText, itemsLoading,
-    nextPage, prevPage, currentPage, maxPages,
+    nextPage, prevPage, currentPage, maxPages, calcStartIndex,
     queryCols, clearQueryCols, queryColsIsEmpty
   }
 }
