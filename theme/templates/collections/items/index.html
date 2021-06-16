@@ -244,6 +244,7 @@
           const queryParams = new URLSearchParams(window.location.search)
           const nonQueryColumns = ['sortby', 'startindex', 'limit', 'f']
           const params = Object.fromEntries(queryParams.entries())
+          let historyState = 1
           const updateQueryParams = function () {
             queryParams.set('limit', limit.value)
             queryParams.set('startindex', calcStartIndex())
@@ -266,9 +267,9 @@
                 }
               }
             }
-            history.pushState(null, null, "?"+queryParams.toString())
+            history.pushState(params, null, "?"+queryParams.toString())
           }
-          onBeforeMount(() => { // on load permalink
+          const permalinkMount = function () {
             // limit
             if (queryParams.has('limit')) {
               limit.value = parseInt(params.limit)
@@ -308,12 +309,23 @@
                 queryCols.value[key] = params[key] + '' // stringify
               }
             }
+          }
+          onBeforeMount(() => { // on page load permalink
+            permalinkMount()
           })
 
           // initial httpRequest to populate table
           onMounted(() => {
             getItems(currentSort.value, currentSortDir.value)
           })
+
+          // history back handling
+          window.onpopstate = function (evt) {
+            history.pushState(null, null, location.href)
+            permalinkMount()
+            getItemsSorted()
+          }
+          
 
           return {
             tableFields, keyColumns, itemsTotal, itemsLoading,
