@@ -51,7 +51,7 @@
               <button 
                 title="Apply column keyword search queries to the entire collection" 
                 class="btn btn-primary" 
-                @click="getItemsSorted()"
+                @click="applyKeywordSearch()"
                 :disabled="queryColsIsEmpty">
                 <span class="glyphicon glyphicon-search"></span> Search by keywords</button>
             </div>
@@ -79,7 +79,7 @@
                       :id="'search-'+th.key"
                       placeholder="Keyword"
                       v-model="queryCols[th.key]"
-                      @keyup.enter="getItemsSorted()" />
+                      @keyup.enter="applyKeywordSearch()" />
                   </div>
                 </th>
               </tr>
@@ -105,7 +105,7 @@
                   {% endif %}
                 {% endfor %}
               </tr>
-            {% endfor %}
+              {% endfor %}
             <!-- END of noJS -->
             </tbody>
           </table>
@@ -209,9 +209,13 @@
             searchText.value = ''
             getItemsSorted()
           }
+          const applyKeywordSearch = function () {
+            currentPage.value = 1 // Auto set to page 1 for keyword search
+            getItemsSorted()
+          }
           const getItemsSorted = function() {
             updateQueryParams()
-            getItems(currentSort.value, currentSortDir.value)
+            return getItems(currentSort.value, currentSortDir.value)
           }
           const prevPageItems = function() {
             prevPage()
@@ -238,6 +242,7 @@
 
           // Permalink handling
           const queryParams = new URLSearchParams(window.location.search)
+          const nonQueryColumns = ['sortby', 'startindex', 'limit', 'f']
           const params = Object.fromEntries(queryParams.entries())
           const updateQueryParams = function () {
             queryParams.set('limit', limit.value)
@@ -251,6 +256,16 @@
             } else {
               queryParams.delete('sortby')
             }
+            for (const key of itemProps.value) {
+              queryParams.delete(key)
+            }
+            if (!queryColsIsEmpty.value) {
+              for (const [key, val] of Object.entries(queryCols.value)) {
+                if (val !== '') {
+                  queryParams.set(key, val)
+                }
+              }
+            }
             history.pushState(null, null, "?"+queryParams.toString())
           }
           onBeforeMount(() => { // on load permalink
@@ -258,6 +273,16 @@
             if (queryParams.has('limit')) {
               limit.value = parseInt(params.limit)
             }
+            onMounted(() => { // Add limit select option if new
+              // limit select option
+              if (queryParams.has('limit')) {
+                const limitValue = parseInt(params.limit)
+                if (!limitOptions.includes(limitValue)) {
+                  limitOptions.push(limitValue)
+                  limitOptions.sort((a,b) => a-b) // number sort
+                }
+              }
+            })
 
             // pagination - startindex
             if (queryParams.has('startindex')) {
@@ -276,29 +301,18 @@
                 currentSort.value = sortby
               }
             }
-          })
-          onMounted(() => { // Add limit select option if new
-            // limit select option
-            if (queryParams.has('limit')) {
-              const limitValue = parseInt(params.limit)
-              if (!limitOptions.includes(limitValue)) {
-                limitOptions.push(limitValue)
-                limitOptions.sort((a,b) => a-b) // number sort
+
+            // other columns / keyword searches
+            for (const key of queryParams.keys()) {
+              if (!nonQueryColumns.includes(key)) {
+                queryCols.value[key] = params[key] + '' // stringify
               }
             }
           })
 
-          // initialize with base data retrieval
+          // initial httpRequest to populate table
           onMounted(() => {
             getItems(currentSort.value, currentSortDir.value)
-              .then(() => { // success
-                if (Object.entries(queryCols.value).length === 0) {
-                  // initialize queryCols once
-                  itemProps.value.forEach((key) => {
-                    queryCols.value[key] = ''
-                  })
-                }
-              })
           })
 
           return {
@@ -308,7 +322,7 @@
             sortIconClass, changeSortDir, currentSort, currentSortDir,
             limit, limitOptions, showingLimitText, currentPage, maxPages, limitChange,
             itemsPath, linkToRow,
-            queryCols, clearSearch, queryColsIsEmpty, getItemsSorted, prevPageItems, nextPageItems
+            queryCols, clearSearch, queryColsIsEmpty, applyKeywordSearch, prevPageItems, nextPageItems
           }
         }
       })
