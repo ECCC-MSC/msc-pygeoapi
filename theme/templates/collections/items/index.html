@@ -273,7 +273,6 @@
           const permalinkMount = function () { // reads the URL query params and applies the component
             queryParams = new URLSearchParams(window.location.search)
             params = Object.fromEntries(queryParams.entries())
-            console.log(params)
 
             // limit
             if (queryParams.has('limit')) {
