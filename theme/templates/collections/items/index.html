@@ -51,7 +51,7 @@
               <button 
                 title="Apply column keyword search queries to the entire collection" 
                 class="btn btn-primary" 
-                @click="getItemsSorted()"
+                @click="applyKeywordSearch()"
                 :disabled="queryColsIsEmpty">
                 <span class="glyphicon glyphicon-search"></span> Search by keywords</button>
             </div>
@@ -64,7 +64,7 @@
               <tr>
                 <th v-for="(th, index) in tableFields"
                   :class="th.colClass">
-                  <div class="sortable ellipsis" @click="sortDir(th.key)" :title="th.text">
+                  <div class="sortable ellipsis" @click="changeSortDir(th.key)" :title="th.text">
                     <span v-text="truncate(th.text, 15)"></span>
                     <span
                       v-show="currentSort === th.key"
@@ -79,7 +79,7 @@
                       :id="'search-'+th.key"
                       placeholder="Keyword"
                       v-model="queryCols[th.key]"
-                      @keyup.enter="getItemsSorted()" />
+                      @keyup.enter="applyKeywordSearch()" />
                   </div>
                 </th>
               </tr>
@@ -89,6 +89,7 @@
                 <td v-for="(th, index) in tableFields" v-html="linkToRow(item, th.key, itemsPath)">
                 </td>
               </tr>
+              <!-- START of noJs progressive enhancement -->
               {% for ft in data['features'] %}
               <tr v-if="noJs">
                 {% if data.get('uri_field') %}
@@ -104,7 +105,8 @@
                   {% endif %}
                 {% endfor %}
               </tr>
-            {% endfor %}
+              {% endfor %}
+            <!-- END of noJS -->
             </tbody>
           </table>
         </div>
@@ -116,20 +118,19 @@
                 <div class="form-group inline-block">
                   <label>Limit: </label>
                   <select
+                    id="select-limit"
                     class="input-sm form-control inline-block"
                     v-model="limit"
                     :disabled="itemsLoading"
                     @change="limitChange()">
-                      <option value="10">10</option>
-                      <option value="100">100</option>
-                      <option value="1000">1000</option>
-                      <option value="2000">2000</option>
+                      <option v-for="value of limitOptions" :value="value" v-text="value"></option>
                   </select>
                 </div>
               </div>
             </div>
             <div class="col-xs-7 col-sm-6 text-right">
-              <div v-text="showingLimitText"></div>
+              <span v-text="showingLimitText"></span>
+              <span v-show="showingFilteredFromText !== ''" v-text="' (' + showingFilteredFromText + ')'"></span>
             </div>
           </div>
           <div class="alert alert-warning padding-tb-5 mrgn-bttm-0 mrgn-tp-sm">
@@ -162,9 +163,8 @@
       import useItems from '{{ config['server']['url'] }}/static/js/composables/useItems.js?v={{ version }}'
       import useTableFilter from '{{ config['server']['url'] }}/static/js/composables/useTableFilter.js?v={{ version }}'
       import useMap from '{{ config['server']['url'] }}/static/js/composables/useMap.js?v={{ version }}'
-      import { createApp, ref, computed, watch, onMounted } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.7/vue.esm-browser.prod.js'
+      import { createApp, ref, computed, onBeforeMount, onMounted } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.7/vue.esm-browser.prod.js'
 
-      
       const app = createApp({
         delimiters: ['[%', '%]'],
         setup() {
@@ -172,7 +172,7 @@
 
           // Items handling
           const { items, itemsJson, itemProps, getItems, itemsTotal, itemsLoading,
-            currentPage, maxPages, prevPage, nextPage, limit, showingLimitText,
+            currentPage, maxPages, prevPage, nextPage, limit, showingLimitText, calcStartIndex,
             queryCols, clearQueryCols, queryColsIsEmpty } = useItems()
           
           // Table columns
@@ -195,8 +195,13 @@
           })
 
           // Table filtering
-          const { searchText, searchTextLowered, truncate,
-            currentSort, currentSortDir, sortDir, sortIconClass, filteredRows, linkToRow } = useTableFilter(items, keyColumns, 'id')
+          const defaultSortCol = 'id'
+          const { searchText, searchTextLowered, truncate, showingFilteredFromText,
+            currentSort, currentSortDir, sortDir, sortIconClass, filteredRows, linkToRow } = useTableFilter(items, keyColumns, defaultSortCol)
+          const changeSortDir = function (col) {
+            sortDir(col)
+            getItemsSorted()
+          }
           
           // Collection searching
           const clearSearch = function() {
@@ -204,8 +209,13 @@
             searchText.value = ''
             getItemsSorted()
           }
-          const getItemsSorted = function() {
-            getItems(currentSort.value, currentSortDir.value)
+          const applyKeywordSearch = function () {
+            currentPage.value = 1 // Auto set to page 1 for keyword search
+            getItemsSorted()
+          }
+          const getItemsSorted = function(lastHistoryState = null) {
+            updateQueryParams(lastHistoryState)
+            return getItems(currentSort.value, currentSortDir.value)
           }
           const prevPageItems = function() {
             prevPage()
@@ -215,6 +225,7 @@
             nextPage()
             getItemsSorted()
           }
+          const limitOptions = [10, 100, 1000, 2000]
           const limitChange = function () {
             // Cannot have current page > max pages on limit changes
             if (currentPage.value > maxPages.value) {
@@ -229,14 +240,117 @@
           const tileLayerAttr = '{{ config['server']['map']['attribution'] }}'
           useMap('items-map', itemsJson, itemsPath, tileLayerUrl, tileLayerAttr)
 
+          // Permalink handling
+          let queryParams = new URLSearchParams(window.location.search)
+          const nonQueryColumns = ['sortby', 'startindex', 'limit', 'f']
+          let params = Object.fromEntries(queryParams.entries())
+          let historyState = 1 // internal state handling for back/forward
+          const updateQueryParams = function (lastHistoryState = null) {
+            queryParams = new URLSearchParams(window.location.search)
+            params = Object.fromEntries(queryParams.entries())
+            queryParams.set('limit', limit.value)
+            queryParams.set('startindex', calcStartIndex())
+            if (currentSort.value !== defaultSortCol) { // don't apply sortby for default "id" column
+              let sortby = currentSort.value
+              if (currentSortDir.value === 'desc') {
+                sortby = '-' + sortby
+              }
+              queryParams.set('sortby', sortby)
+            } else {
+              queryParams.delete('sortby')
+            }
+            for (const key of itemProps.value) {
+              queryParams.delete(key)
+            }
+            if (!queryColsIsEmpty.value) {
+              for (const [key, val] of Object.entries(queryCols.value)) {
+                if (val !== '') {
+                  queryParams.set(key, val)
+                }
+              }
+            }
+
+            // browser back/forward history handling
+            if (lastHistoryState !== null) {
+                historyState = lastHistoryState
+            }
+
+            // no browser back/forward was pressed
+            if (history.state !== lastHistoryState || history.state === null) {
+              history.pushState(historyState, null, '?' + queryParams.toString())
+              historyState++
+            }
+          }
+          const permalinkMount = function () { // reads the URL query params and applies to vm
+            queryParams = new URLSearchParams(window.location.search)
+            params = Object.fromEntries(queryParams.entries())
+
+            // limit
+            if (queryParams.has('limit')) {
+              limit.value = parseInt(params.limit)
+            }
+            onMounted(() => { // Add limit select option if new
+              // limit select option
+              if (queryParams.has('limit')) {
+                const limitValue = parseInt(params.limit)
+                if (!limitOptions.includes(limitValue)) {
+                  limitOptions.push(limitValue)
+                  limitOptions.sort((a,b) => a-b) // number sort
+                }
+              }
+            })
+
+            // pagination - startindex
+            if (queryParams.has('startindex')) {
+              // calculate currentPage with limit
+              const startindex = parseInt(params.startindex)
+              currentPage.value = Math.floor((startindex/limit.value) + 1)
+            }
+
+            // sort
+            if (queryParams.has('sortby')) {
+              const sortby = params.sortby + '' // stringify
+              if (sortby[0] === '-') { // descending sort
+                currentSortDir.value = 'desc'
+                currentSort.value = sortby.substr(1)
+              } else if (sortby[0] === '+') { // explicit ascending sort
+                currentSort.value = sortby.substr(1)
+              } else {
+                currentSort.value = sortby
+              }
+            }
+
+            // other columns / keyword searches
+            for (const key of queryParams.keys()) {
+              if (!nonQueryColumns.includes(key)) {
+                queryCols.value[key] = params[key] + '' // stringify
+              }
+            }
+          }
+          onBeforeMount(() => { // on page load permalink handling
+            permalinkMount()
+          })
+
+          // initial httpRequest to populate table
+          onMounted(() => {
+            getItems(currentSort.value, currentSortDir.value)
+          })
+
+          // history back handling
+          window.onpopstate = function (evt) {
+            evt.preventDefault()
+            permalinkMount()
+            getItemsSorted(evt.state)
+          }
+
           return {
             tableFields, keyColumns, itemsTotal, itemsLoading,
             items: filteredRows, // don't care for unfiltered
             searchText, searchTextLowered, truncate,
-            sortIconClass, sortDir, currentSort, currentSortDir,
-            limit, showingLimitText, currentPage, maxPages, limitChange,
+            sortIconClass, changeSortDir, currentSort, currentSortDir,
+            limit, limitOptions, showingLimitText, showingFilteredFromText, currentPage, maxPages, limitChange,
             itemsPath, linkToRow,
-            queryCols, clearSearch, queryColsIsEmpty, getItemsSorted, prevPageItems, nextPageItems
+            queryCols, clearSearch, queryColsIsEmpty, applyKeywordSearch, prevPageItems, nextPageItems
           }
         }
       })
