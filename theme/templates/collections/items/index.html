@@ -201,7 +201,6 @@
           const changeSortDir = function (col) {
             sortDir(col)
             getItemsSorted()
-            updateQueryParams()
           }
           
           // Collection searching
@@ -214,8 +213,8 @@
             currentPage.value = 1 // Auto set to page 1 for keyword search
             getItemsSorted()
           }
-          const getItemsSorted = function() {
-            updateQueryParams()
+          const getItemsSorted = function(lastHistoryState = null) {
+            updateQueryParams(lastHistoryState)
             return getItems(currentSort.value, currentSortDir.value)
           }
           const prevPageItems = function() {
@@ -245,8 +244,10 @@
           let queryParams = new URLSearchParams(window.location.search)
           const nonQueryColumns = ['sortby', 'startindex', 'limit', 'f']
           let params = Object.fromEntries(queryParams.entries())
-          let historyState = 1
-          const updateQueryParams = function () {
+          let historyState = 1 // internal state handling for back/forward
+          const updateQueryParams = function (lastHistoryState = null) {
+            queryParams = new URLSearchParams(window.location.search)
+            params = Object.fromEntries(queryParams.entries())
             queryParams.set('limit', limit.value)
             queryParams.set('startindex', calcStartIndex())
             if (currentSort.value !== defaultSortCol) { // don't apply sortby for default "id" column
@@ -268,9 +269,19 @@
                 }
               }
             }
-            history.pushState(params, null, "?"+queryParams.toString())
+
+            // browser back/forward history handling
+            if (lastHistoryState !== null) {
+                historyState = lastHistoryState
+            }
+
+            // no browser back/forward was pressed
+            if (history.state !== lastHistoryState || history.state === null) {
+              history.pushState(historyState, null, '?' + queryParams.toString())
+              historyState++
+            }
           }
-          const permalinkMount = function () { // reads the URL query params and applies the component
+          const permalinkMount = function () { // reads the URL query params and applies to vm
             queryParams = new URLSearchParams(window.location.search)
             params = Object.fromEntries(queryParams.entries())
 
@@ -327,9 +338,9 @@
 
           // history back handling
           window.onpopstate = function (evt) {
-            history.pushState(null, null, location.href)
+            evt.preventDefault()
             permalinkMount()
-            getItemsSorted()
+            getItemsSorted(evt.state)
           }
 
           return {
