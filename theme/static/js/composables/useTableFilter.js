@@ -117,16 +117,30 @@ export default function useTableFilter(rows, keyColumns, defaultSortCol) {
   // const maxPages = computed(() => {
   //   return Math.ceil(filteredNumEntries / pageSize)
   // })
-  const showingFilterText = computed(() => {
-    let showText = `Showing ${startEntryOfPage.value} to ${lastEntryOfPage.value} of ${filteredNumEntries.value}`
+  const filteredFromText = computed(() => {
     if (filteredNumEntries.value < totalSize.value) {
       if (totalSize.value === 1) {
         // singular case
-        showText += `(filtered from {totalSize} total entry)`
+        return `filtered from ${totalSize.value} total entry`
       } else { // > 1
         // plural case
-        showText += `(filtered from ${totalSize.value} total entries)`
+        return `filtered from ${totalSize.value} total entries`
       }
+    } else {
+      return ''
+    }
+  })
+  const showingFilteredFromText = computed(() => {
+    if (filteredFromText.value !== '') {
+      return filteredNumEntries.value + ' ' + filteredFromText.value
+    } else {
+      return ''
+    }
+  })
+  const showingFilterText = computed(() => {
+    let showText = `Showing ${startEntryOfPage.value} to ${lastEntryOfPage.value} of ${filteredNumEntries.value}`
+    if (filteredFromText.value !== '') {
+      showText += ` (${filteredFromText.value})`
     }
     return showText
   })
@@ -165,7 +179,7 @@ export default function useTableFilter(rows, keyColumns, defaultSortCol) {
   return {
     filteredRows, searchText, searchTextLowered,
     currentSortDir, currentSort, sortDir, sortIconClass, 
-    pageSize, currentPage, paginatedRows, prevPage, nextPage, showingFilterText,
+    pageSize, currentPage, paginatedRows, prevPage, nextPage, showingFilterText, showingFilteredFromText,
     truncateStripTags, stripTags, truncate, linkToRow
   }
 }

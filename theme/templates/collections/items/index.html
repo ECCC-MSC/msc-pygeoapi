@@ -129,7 +129,8 @@
               </div>
             </div>
             <div class="col-xs-7 col-sm-6 text-right">
-              <div v-text="showingLimitText"></div>
+              <span v-text="showingLimitText"></span>
+              <span v-show="showingFilteredFromText !== ''" v-text="' (' + showingFilteredFromText + ')'"></span>
             </div>
           </div>
           <div class="alert alert-warning padding-tb-5 mrgn-bttm-0 mrgn-tp-sm">
@@ -195,7 +196,7 @@
 
           // Table filtering
           const defaultSortCol = 'id'
-          const { searchText, searchTextLowered, truncate,
+          const { searchText, searchTextLowered, truncate, showingFilteredFromText,
             currentSort, currentSortDir, sortDir, sortIconClass, filteredRows, linkToRow } = useTableFilter(items, keyColumns, defaultSortCol)
           const changeSortDir = function (col) {
             sortDir(col)
@@ -241,9 +242,9 @@
           useMap('items-map', itemsJson, itemsPath, tileLayerUrl, tileLayerAttr)
 
           // Permalink handling
-          const queryParams = new URLSearchParams(window.location.search)
+          let queryParams = new URLSearchParams(window.location.search)
           const nonQueryColumns = ['sortby', 'startindex', 'limit', 'f']
-          const params = Object.fromEntries(queryParams.entries())
+          let params = Object.fromEntries(queryParams.entries())
           let historyState = 1
           const updateQueryParams = function () {
             queryParams.set('limit', limit.value)
@@ -269,7 +270,11 @@
             }
             history.pushState(params, null, "?"+queryParams.toString())
           }
-          const permalinkMount = function () {
+          const permalinkMount = function () { // reads the URL query params and applies the component
+            queryParams = new URLSearchParams(window.location.search)
+            params = Object.fromEntries(queryParams.entries())
+            console.log(params)
+
             // limit
             if (queryParams.has('limit')) {
               limit.value = parseInt(params.limit)
@@ -294,10 +299,15 @@
 
             // sort
             if (queryParams.has('sortby')) {
-              const sortby = params.sortby + '' // string
+              const sortby = params.sortby + '' // stringify
               if (sortby[0] === '-') { // descending sort
                 currentSortDir.value = 'desc'
                 currentSort.value = sortby.substr(1)
+              } else if (sortby[0] === '+') { // explicit ascending sort
+                currentSort.value = sortby.substr(1)
+                // remove '+' to simplify URL; ascending sort is implicit
+                queryParams.set('sortby', currentSort.value )
+                history.replaceState(null, null, "?"+queryParams.toString())
               } else {
                 currentSort.value = sortby
               }
@@ -310,7 +320,7 @@
               }
             }
           }
-          onBeforeMount(() => { // on page load permalink
+          onBeforeMount(() => { // on page load permalink handling
             permalinkMount()
           })
 
@@ -325,14 +335,13 @@
             permalinkMount()
             getItemsSorted()
           }
-          
 
           return {
             tableFields, keyColumns, itemsTotal, itemsLoading,
             items: filteredRows, // don't care for unfiltered
             searchText, searchTextLowered, truncate,
             sortIconClass, changeSortDir, currentSort, currentSortDir,
-            limit, limitOptions, showingLimitText, currentPage, maxPages, limitChange,
+            limit, limitOptions, showingLimitText, showingFilteredFromText, currentPage, maxPages, limitChange,
             itemsPath, linkToRow,
             queryCols, clearSearch, queryColsIsEmpty, applyKeywordSearch, prevPageItems, nextPageItems
           }
