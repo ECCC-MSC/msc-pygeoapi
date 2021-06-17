@@ -305,9 +305,6 @@
                 currentSort.value = sortby.substr(1)
               } else if (sortby[0] === '+') { // explicit ascending sort
                 currentSort.value = sortby.substr(1)
-                // remove '+' to simplify URL; ascending sort is implicit
-                queryParams.set('sortby', currentSort.value )
-                history.replaceState(null, null, "?"+queryParams.toString())
               } else {
                 currentSort.value = sortby
               }
