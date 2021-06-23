@@ -1,3 +1,14 @@
+msc-pygeoapi (0.9.0) bionic; urgency=medium
+
+  * implement Canada.ca theme
+  * add local OGC schemas
+  * add swob parser updates
+  * add realtime bulletins
+  * add LTCE custom properties
+  * add realtime AQHI
+
+ -- Tom Kralidis <tom.kralidis@canada.ca>  Wed, 23 Jun 2021 19:43:28 +0000
+
 msc-pygeoapi (0.8.10) bionic; urgency=medium
 
   * fix Canadian extents
