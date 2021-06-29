@@ -48,7 +48,7 @@ Third source dev environement by running. If not done already correctly configre
 
 Fourth build openapi document. Only needs to be done once
 ```bash
-pygeoapi generate-openapi-document -c $PYGEOAPI_CONFIG > $PYGEOAPI_OPENAPI
+pygeoapi openapi generate -c $PYGEOAPI_CONFIG > $PYGEOAPI_OPENAPI
 ```
 
 Fifth start pygeoapi
