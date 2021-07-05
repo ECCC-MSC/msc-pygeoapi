@@ -66,11 +66,11 @@ PLUGINS = {
         },
         'swob_realtime': {
             'filename_pattern': 'observations/swob-ml',
-            'handler': 'msc_pygeoapi.loader.swob_realtime.SWOBRealtimeLoader'  # noqa
+            'handler': 'msc_pygeoapi.loader.swob_realtime.SWOBRealtimeLoader'
         },
         'aqhi_realtime': {
             'filename_pattern': 'air_quality/aqhi',
-            'handler': 'msc_pygeoapi.loader.aqhi_realtime.AQHIRealtimeLoader'  # noqa
+            'handler': 'msc_pygeoapi.loader.aqhi_realtime.AQHIRealtimeLoader'
         }
     }
 }
