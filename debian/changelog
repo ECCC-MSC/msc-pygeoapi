@@ -1,3 +1,9 @@
+msc-pygeoapi (0.9.2) bionic; urgency=medium
+
+  * align OpenAPI document with pygeoapi 0.10.1
+
+ -- Tom Kralidis <tom.kralidis@canada.ca>  Wed, 07 Jul 2021 12:43:32 +0000
+
 msc-pygeoapi (0.9.1) bionic; urgency=medium
 
   * fix installation of theme and OGC schemas
