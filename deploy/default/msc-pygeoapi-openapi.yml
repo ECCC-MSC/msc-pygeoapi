@@ -16,23 +16,6 @@ components:
         - jsonld
         type: string
       style: form
-    lang:
-      description: The optional lang parameter instructs the server return a response
-        in a certain language, if supported.  If the language is not among the available
-        values, the Accept-Language header language will be used if it is supported.
-        If the header is missing, the default server language is used. Note that providers
-        may only support a single language (or often no language at all), that can
-        be different from the server language.  Language strings can be written in
-        a complex (e.g. "fr-CA,fr;q=0.9,en-US;q=0.8,en;q=0.7"), simple (e.g. "de")
-        or locale-like (e.g. "de-CH" or "fr_BE") fashion.
-      in: query
-      name: lang
-      required: false
-      schema:
-        default: en-CA
-        enum:
-        - en-CA
-        type: string
     properties:
       description: The properties that should be included for each feature. The parameter
         value is a comma-separated list of property names.
@@ -140,7 +123,7 @@ info:
     url: https://eccc-msc.github.io/open-data/licence/readme_en/
   termsOfService: https://www.canada.ca/en/transparency/terms.html
   title: MSC GeoMet - GeoMet-OGC-API
-  version: 0.11.dev0
+  version: 0.10.1
   x-keywords:
   - Weather
   - Meteorology
@@ -162,7 +145,6 @@ paths:
       operationId: getLandingPage
       parameters:
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/LandingPage
@@ -179,7 +161,6 @@ paths:
       operationId: getCollections
       parameters:
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collections
@@ -196,7 +177,6 @@ paths:
       operationId: describeAhccd-annualCollection
       parameters:
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -206,7 +186,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual metadata
+      summary: Get collection metadata
       tags:
       - ahccd-annual
   /collections/ahccd-annual/items:
@@ -231,23 +211,6 @@ paths:
           - csv
           type: string
         style: form
-      - &id002
-        description: The optional lang parameter instructs the server return a response
-          in a certain language, if supported.  If the language is not among the available
-          values, the Accept-Language header language will be used if it is supported.
-          If the header is missing, the default server language is used. Note that
-          providers may only support a single language (or often no language at all),
-          that can be different from the server language.  Language strings can be
-          written in a complex (e.g. "fr-CA,fr;q=0.9,en-US;q=0.8,en;q=0.7"), simple
-          (e.g. "de") or locale-like (e.g. "de-CH" or "fr_BE") fashion.
-        in: query
-        name: lang
-        required: false
-        schema:
-          default: en-CA
-          enum:
-          - en-CA
-          type: string
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -493,7 +456,6 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -513,7 +475,6 @@ paths:
       operationId: getAhccd-annualQueryables
       parameters:
       - *id001
-      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -532,7 +493,6 @@ paths:
       operationId: describeAhccd-monthlyCollection
       parameters:
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -542,8 +502,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
-        metadata
+      summary: Get collection metadata
       tags:
       - ahccd-monthly
   /collections/ahccd-monthly/items:
@@ -552,7 +511,6 @@ paths:
       operationId: getAhccd-monthlyFeatures
       parameters:
       - *id001
-      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -800,7 +758,6 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -820,7 +777,6 @@ paths:
       operationId: getAhccd-monthlyQueryables
       parameters:
       - *id001
-      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -840,7 +796,6 @@ paths:
       operationId: describeAhccd-seasonalCollection
       parameters:
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -850,8 +805,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal
-        metadata
+      summary: Get collection metadata
       tags:
       - ahccd-seasonal
   /collections/ahccd-seasonal/items:
@@ -860,7 +814,6 @@ paths:
       operationId: getAhccd-seasonalFeatures
       parameters:
       - *id001
-      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -1107,7 +1060,6 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -1127,7 +1079,6 @@ paths:
       operationId: getAhccd-seasonalQueryables
       parameters:
       - *id001
-      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -1147,7 +1098,6 @@ paths:
       operationId: describeAhccd-stationsCollection
       parameters:
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -1157,8 +1107,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Stations
-        metadata
+      summary: Get collection metadata
       tags:
       - ahccd-stations
   /collections/ahccd-stations/items:
@@ -1167,7 +1116,6 @@ paths:
       operationId: getAhccd-stationsFeatures
       parameters:
       - *id001
-      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -1301,7 +1249,6 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -1321,7 +1268,6 @@ paths:
       operationId: getAhccd-stationsQueryables
       parameters:
       - *id001
-      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -1341,7 +1287,6 @@ paths:
       operationId: describeAhccd-trendsCollection
       parameters:
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -1351,7 +1296,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends metadata
+      summary: Get collection metadata
       tags:
       - ahccd-trends
   /collections/ahccd-trends/items:
@@ -1360,7 +1305,6 @@ paths:
       operationId: getAhccd-trendsFeatures
       parameters:
       - *id001
-      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -1479,7 +1423,6 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -1499,7 +1442,6 @@ paths:
       operationId: getAhccd-trendsQueryables
       parameters:
       - *id001
-      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -1529,7 +1471,6 @@ paths:
       operationId: describeAqhi-forecasts-realtimeCollection
       parameters:
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -1539,7 +1480,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: "Get Air Quality Health Index \u2013 Forecasts metadata"
+      summary: Get collection metadata
       tags:
       - aqhi-forecasts-realtime
   /collections/aqhi-forecasts-realtime/items:
@@ -1559,7 +1500,6 @@ paths:
       operationId: getAqhi-forecasts-realtimeFeatures
       parameters:
       - *id001
-      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -1688,7 +1628,6 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -1718,7 +1657,6 @@ paths:
       operationId: getAqhi-forecasts-realtimeQueryables
       parameters:
       - *id001
-      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -1748,7 +1686,6 @@ paths:
       operationId: describeAqhi-observations-realtimeCollection
       parameters:
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -1758,7 +1695,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: "Get Air Quality Health Index \u2013 Observations metadata"
+      summary: Get collection metadata
       tags:
       - aqhi-observations-realtime
   /collections/aqhi-observations-realtime/items:
@@ -1778,7 +1715,6 @@ paths:
       operationId: getAqhi-observations-realtimeFeatures
       parameters:
       - *id001
-      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -1899,7 +1835,6 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -1929,7 +1864,6 @@ paths:
       operationId: getAqhi-observations-realtimeQueryables
       parameters:
       - *id001
-      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -1948,7 +1882,6 @@ paths:
       operationId: describeBulletins-realtimeCollection
       parameters:
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -1958,7 +1891,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Real-time meteorological bulletins metadata
+      summary: Get collection metadata
       tags:
       - bulletins-realtime
   /collections/bulletins-realtime/items:
@@ -1967,7 +1900,6 @@ paths:
       operationId: getBulletins-realtimeFeatures
       parameters:
       - *id001
-      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -2053,7 +1985,6 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -2072,7 +2003,6 @@ paths:
       operationId: getBulletins-realtimeQueryables
       parameters:
       - *id001
-      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -2099,7 +2029,6 @@ paths:
       operationId: describeClimate-dailyCollection
       parameters:
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -2109,7 +2038,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Daily Climate Observations metadata
+      summary: Get collection metadata
       tags:
       - climate-daily
   /collections/climate-daily/items:
@@ -2126,7 +2055,6 @@ paths:
       operationId: getClimate-dailyFeatures
       parameters:
       - *id001
-      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -2446,7 +2374,6 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -2473,7 +2400,6 @@ paths:
       operationId: getClimate-dailyQueryables
       parameters:
       - *id001
-      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -2494,7 +2420,6 @@ paths:
       operationId: describeClimate-monthlyCollection
       parameters:
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -2504,7 +2429,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Monthly Climate Observation Summaries metadata
+      summary: Get collection metadata
       tags:
       - climate-monthly
   /collections/climate-monthly/items:
@@ -2515,7 +2440,6 @@ paths:
       operationId: getClimate-monthlyFeatures
       parameters:
       - *id001
-      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -2812,7 +2736,6 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -2833,7 +2756,6 @@ paths:
       operationId: getClimate-monthlyQueryables
       parameters:
       - *id001
-      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -2852,7 +2774,6 @@ paths:
       operationId: describeClimate-normalsCollection
       parameters:
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -2862,7 +2783,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get 1981-2010 Climate Normals metadata
+      summary: Get collection metadata
       tags:
       - climate-normals
   /collections/climate-normals/items:
@@ -2871,7 +2792,6 @@ paths:
       operationId: getClimate-normalsFeatures
       parameters:
       - *id001
-      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -3118,7 +3038,6 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -3137,7 +3056,6 @@ paths:
       operationId: getClimate-normalsQueryables
       parameters:
       - *id001
-      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -3156,7 +3074,6 @@ paths:
       operationId: describeClimate-stationsCollection
       parameters:
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -3166,7 +3083,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Climate Stations metadata
+      summary: Get collection metadata
       tags:
       - climate-stations
   /collections/climate-stations/items:
@@ -3175,7 +3092,6 @@ paths:
       operationId: getClimate-stationsFeatures
       parameters:
       - *id001
-      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -3428,7 +3344,6 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -3447,7 +3362,6 @@ paths:
       operationId: getClimate-stationsQueryables
       parameters:
       - *id001
-      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -3467,7 +3381,6 @@ paths:
       operationId: describeHydrometric-annual-peaksCollection
       parameters:
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -3477,7 +3390,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Annual Maximum and Minimum Instantaneous Water Level or Flow metadata
+      summary: Get collection metadata
       tags:
       - hydrometric-annual-peaks
   /collections/hydrometric-annual-peaks/items:
@@ -3487,7 +3400,6 @@ paths:
       operationId: getHydrometric-annual-peaksFeatures
       parameters:
       - *id001
-      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -3646,7 +3558,6 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -3667,7 +3578,6 @@ paths:
       operationId: getHydrometric-annual-peaksQueryables
       parameters:
       - *id001
-      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -3687,7 +3597,6 @@ paths:
       operationId: describeHydrometric-annual-statisticsCollection
       parameters:
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -3697,7 +3606,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Annual Maximum and Minimum Daily Water Level or Flow metadata
+      summary: Get collection metadata
       tags:
       - hydrometric-annual-statistics
   /collections/hydrometric-annual-statistics/items:
@@ -3707,7 +3616,6 @@ paths:
       operationId: getHydrometric-annual-statisticsFeatures
       parameters:
       - *id001
-      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -3858,7 +3766,6 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -3878,7 +3785,6 @@ paths:
       operationId: getHydrometric-annual-statisticsQueryables
       parameters:
       - *id001
-      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -3897,7 +3803,6 @@ paths:
       operationId: describeHydrometric-daily-meanCollection
       parameters:
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -3907,7 +3812,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Daily Mean of Water Level or Flow metadata
+      summary: Get collection metadata
       tags:
       - hydrometric-daily-mean
   /collections/hydrometric-daily-mean/items:
@@ -3916,7 +3821,6 @@ paths:
       operationId: getHydrometric-daily-meanFeatures
       parameters:
       - *id001
-      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -4042,7 +3946,6 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -4061,7 +3964,6 @@ paths:
       operationId: getHydrometric-daily-meanQueryables
       parameters:
       - *id001
-      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -4081,7 +3983,6 @@ paths:
       operationId: describeHydrometric-monthly-meanCollection
       parameters:
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -4091,7 +3992,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Monthly Mean of Water Level or Flow metadata
+      summary: Get collection metadata
       tags:
       - hydrometric-monthly-mean
   /collections/hydrometric-monthly-mean/items:
@@ -4101,7 +4002,6 @@ paths:
       operationId: getHydrometric-monthly-meanFeatures
       parameters:
       - *id001
-      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -4196,7 +4096,6 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -4216,7 +4115,6 @@ paths:
       operationId: getHydrometric-monthly-meanQueryables
       parameters:
       - *id001
-      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -4236,7 +4134,6 @@ paths:
       operationId: describeHydrometric-realtimeCollection
       parameters:
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -4246,7 +4143,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Real-time hydrometric data metadata
+      summary: Get collection metadata
       tags:
       - hydrometric-realtime
   /collections/hydrometric-realtime/items:
@@ -4256,7 +4153,6 @@ paths:
       operationId: getHydrometric-realtimeFeatures
       parameters:
       - *id001
-      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -4391,7 +4287,6 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -4411,7 +4306,6 @@ paths:
       operationId: getHydrometric-realtimeQueryables
       parameters:
       - *id001
-      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -4431,7 +4325,6 @@ paths:
       operationId: describeHydrometric-stationsCollection
       parameters:
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -4441,7 +4334,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Hydrometric Monitoring Stations metadata
+      summary: Get collection metadata
       tags:
       - hydrometric-stations
   /collections/hydrometric-stations/items:
@@ -4451,7 +4344,6 @@ paths:
       operationId: getHydrometric-stationsFeatures
       parameters:
       - *id001
-      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -4561,7 +4453,6 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -4581,7 +4472,6 @@ paths:
       operationId: getHydrometric-stationsQueryables
       parameters:
       - *id001
-      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -4608,7 +4498,6 @@ paths:
       operationId: describeLtce-precipitationCollection
       parameters:
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -4618,7 +4507,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: "Get Daily Extremes of Records (LTCE) \u2013 Precipitation metadata"
+      summary: Get collection metadata
       tags:
       - ltce-precipitation
   /collections/ltce-precipitation/items:
@@ -4635,7 +4524,6 @@ paths:
       operationId: getLtce-precipitationFeatures
       parameters:
       - *id001
-      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -4873,7 +4761,6 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -4901,7 +4788,6 @@ paths:
       operationId: getLtce-precipitationQueryables
       parameters:
       - *id001
-      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -4928,7 +4814,6 @@ paths:
       operationId: describeLtce-snowfallCollection
       parameters:
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -4938,7 +4823,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: "Get Daily Extremes of Records (LTCE) \u2013 Snowfall metadata"
+      summary: Get collection metadata
       tags:
       - ltce-snowfall
   /collections/ltce-snowfall/items:
@@ -4955,7 +4840,6 @@ paths:
       operationId: getLtce-snowfallFeatures
       parameters:
       - *id001
-      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -5193,7 +5077,6 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -5220,7 +5103,6 @@ paths:
       operationId: getLtce-snowfallQueryables
       parameters:
       - *id001
-      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -5250,7 +5132,6 @@ paths:
       operationId: describeLtce-stationsCollection
       parameters:
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -5260,7 +5141,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Virtual Climate Stations (LTCE) metadata
+      summary: Get collection metadata
       tags:
       - ltce-stations
   /collections/ltce-stations/items:
@@ -5280,7 +5161,6 @@ paths:
       operationId: getLtce-stationsFeatures
       parameters:
       - *id001
-      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -5432,7 +5312,6 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -5462,7 +5341,6 @@ paths:
       operationId: getLtce-stationsQueryables
       parameters:
       - *id001
-      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -5490,7 +5368,6 @@ paths:
       operationId: describeLtce-temperatureCollection
       parameters:
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -5500,7 +5377,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: "Get Daily Extremes of Records (LTCE) \u2013 Temperature metadata"
+      summary: Get collection metadata
       tags:
       - ltce-temperature
   /collections/ltce-temperature/items:
@@ -5518,7 +5395,6 @@ paths:
       operationId: getLtce-temperatureFeatures
       parameters:
       - *id001
-      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -6136,7 +6012,6 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -6164,7 +6039,6 @@ paths:
       operationId: getLtce-temperatureQueryables
       parameters:
       - *id001
-      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -6186,7 +6060,6 @@ paths:
       operationId: describeSwob-realtimeCollection
       parameters:
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -6196,7 +6069,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Surface Weather Observations metadata
+      summary: Get collection metadata
       tags:
       - swob-realtime
   /collections/swob-realtime/items:
@@ -6208,7 +6081,6 @@ paths:
       operationId: getSwob-realtimeFeatures
       parameters:
       - *id001
-      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -6455,12 +6327,12 @@ paths:
             - clg_hgt
             - clg_hgt-qa
             - clg_hgt-uom
-            - clg_typ_1
-            - clg_typ_1-qa
-            - clg_typ_1-uom
             - clg_typ_2
             - clg_typ_2-qa
             - clg_typ_2-uom
+            - clg_typ_3
+            - clg_typ_3-qa
+            - clg_typ_3-uom
             - clim_id-uom
             - clim_id-value
             - cor-uom
@@ -6768,7 +6640,6 @@ paths:
             - rnfl_amt_pst1mt
             - rnfl_amt_pst1mt-qa
             - rnfl_amt_pst1mt-uom
-            - rnfl_snc_last_syno_hr
             - rnfl_snc_last_syno_hr-qa
             - rnfl_snc_last_syno_hr-uom
             - rpt_typ-uom
@@ -6825,6 +6696,9 @@ paths:
             - sum_cld_cvr_3
             - sum_cld_cvr_3-qa
             - sum_cld_cvr_3-uom
+            - sum_cld_cvr_4
+            - sum_cld_cvr_4-qa
+            - sum_cld_cvr_4-uom
             - tc_id-uom
             - tc_id-value
             - tot_cld_amt
@@ -8549,27 +8423,6 @@ paths:
         style: form
       - explode: false
         in: query
-        name: clg_typ_1
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: clg_typ_1-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: clg_typ_1-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
         name: clg_typ_2
         required: false
         schema:
@@ -8585,6 +8438,27 @@ paths:
       - explode: false
         in: query
         name: clg_typ_2-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: clg_typ_3
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: clg_typ_3-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: clg_typ_3-uom
         required: false
         schema:
           type: string
@@ -10740,13 +10614,6 @@ paths:
         style: form
       - explode: false
         in: query
-        name: rnfl_snc_last_syno_hr
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
         name: rnfl_snc_last_syno_hr-qa
         required: false
         schema:
@@ -11133,6 +11000,27 @@ paths:
       - explode: false
         in: query
         name: sum_cld_cvr_3-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: sum_cld_cvr_4
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: sum_cld_cvr_4-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: sum_cld_cvr_4-uom
         required: false
         schema:
           type: string
@@ -11649,7 +11537,6 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -11671,7 +11558,6 @@ paths:
       operationId: getSwob-realtimeQueryables
       parameters:
       - *id001
-      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -11690,7 +11576,6 @@ paths:
       operationId: getConformanceDeclaration
       parameters:
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ConformanceDeclaration
@@ -11707,19 +11592,6 @@ paths:
       operationId: getOpenapi
       parameters:
       - $ref: '#/components/parameters/f'
-      - $ref: '#/components/parameters/lang'
-      - description: UI to render the OpenAPI document
-        explode: false
-        in: query
-        name: ui
-        required: false
-        schema:
-          default: swagger
-          enum:
-          - swagger
-          - redoc
-          type: string
-        style: form
       responses:
         '200':
           $ref: '#/components/responses/200'
