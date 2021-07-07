@@ -340,7 +340,7 @@ def clean_indexes(ctx, days, dataset, es, username, password, ignore_certs):
         indexes_to_delete = check_es_indexes_to_delete(indexes, days)
         if indexes_to_delete:
             click.echo('Deleting indexes {}'.format(indexes_to_delete))
-            conn.delete(','.join(indexes))
+            conn.delete(','.join(indexes_to_delete))
 
     click.echo('Done')
 
