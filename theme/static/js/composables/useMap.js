@@ -1,25 +1,62 @@
 import * as L from 'https://unpkg.com/leaflet@1.7.1/dist/leaflet-src.esm.js'
-import { watch, onMounted } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.7/vue.esm-browser.prod.js'
+import { ref, computed, watch, onMounted } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.7/vue.esm-browser.prod.js'
 
-export default function useMap(mapElemId, geoJsonData, itemsPath, tileLayerUrl, tileLayerAttr) {
+export default function useMap(mapElemId, geoJsonData, itemsPath, tileLayerUrl, tileLayerAttr, bboxPermalink) {
   let map, layerItems
+  const bbox = ref('')
+  // Leaflet LatLngBounds simple array format
+  const bboxLatLngBounds = computed(() => {
+    const bboxSplit = bbox.value.split(',')
+    if (bboxSplit.length < 4) {
+      return [[-85, -175], [85, 175]]
+    } else {
+      return [
+        [bboxSplit[1], bboxSplit[0]], 
+        [bboxSplit[3], bboxSplit[2]]
+      ]
+    }
+  })
 
   // map initialize
   const setupMap = function() {
     map = L.map(mapElemId).setView([45, -75], 5)
     map.addLayer(new L.TileLayer(
-        tileLayerUrl, {
-          maxZoom: 18,
-          attribution: tileLayerAttr
-        }
+      tileLayerUrl, {
+        minZoom: 2,
+        maxZoom: 15,
+        attribution: tileLayerAttr
+      }
     ))
     layerItems = new L.GeoJSON({type: 'FeatureCollection', features: []})
     map.addLayer(layerItems)
+    // update bbox for permalink feature
+    map.on('moveend', function(evt) {
+      const bboxString = evt.sourceTarget.getBounds().toBBoxString()
+      const bboxSplit = bboxString.split(',').map((x, i) => {
+        // ensure bounds don't extend past -180,-90,180,90
+        let coord = parseFloat(x).toFixed(2)
+        if (i % 2 === 0) { // lon
+          if (coord > 180) {
+            coord = 180
+          } else if (coord < -180) {
+            coord = -180
+          }
+        } else { // lat
+          if (coord > 90) {
+            coord = 90
+          } else if (coord < -90) {
+            coord = -90
+          }
+        }
+        return coord
+      })
+      bbox.value = bboxSplit.join(',')
+    })
   }
   onMounted(setupMap)
 
   // update map with new geoJson data
-  watch(geoJsonData, () => {
+  watch(geoJsonData, (newData, oldData) => {
     if (map.hasLayer(layerItems)) {
       map.removeLayer(layerItems)
     }
@@ -45,10 +82,14 @@ export default function useMap(mapElemId, geoJsonData, itemsPath, tileLayerUrl, 
       }
     })
     map.addLayer(layerItems)
-    map.fitBounds(layerItems.getBounds(), {maxZoom: 5})
+    if (bbox.value === '' || !bboxPermalink.value) {
+      map.fitBounds(layerItems.getBounds(), {maxZoom: 5})
+    } else if (Object.keys(oldData).length === 0) { // first time load
+      map.fitBounds(bboxLatLngBounds.value, {maxZoom: 10})
+    }
   })
 
   return {
-    setupMap
+    setupMap, bbox
   }
 }

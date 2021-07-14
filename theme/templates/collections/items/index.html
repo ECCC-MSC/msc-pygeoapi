@@ -30,6 +30,12 @@
         </div>
       </div>
       <div class="col-xs-12 mrgn-tp-sm">
+        <div class="checkbox-inline text-right">
+          <label for="bboxPermalinkCheck">
+            <input id="bboxPermalinkCheck" type="checkbox" v-model="bboxPermalink" @change="getItemsSorted()">
+            Only show items by map view
+          </label>
+        </div>
         <div class="form-inline row" aria-controls="items-table">
           <div class="form-group col-xs-5">
             <label class="wb-inv" for="filter-table">Filter table content</label>
@@ -163,7 +169,7 @@
       import useItems from '{{ config['server']['url'] }}/static/js/composables/useItems.js?v={{ version }}'
       import useTableFilter from '{{ config['server']['url'] }}/static/js/composables/useTableFilter.js?v={{ version }}'
       import useMap from '{{ config['server']['url'] }}/static/js/composables/useMap.js?v={{ version }}'
-      import { createApp, ref, computed, onBeforeMount, onMounted } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.7/vue.esm-browser.prod.js'
+      import { createApp, ref, computed, onBeforeMount, onMounted, watch } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.7/vue.esm-browser.prod.js'
 
       const app = createApp({
         delimiters: ['[%', '%]'],
@@ -213,10 +219,6 @@
             currentPage.value = 1 // Auto set to page 1 for keyword search
             getItemsSorted()
           }
-          const getItemsSorted = function(lastHistoryState = null) {
-            updateQueryParams(lastHistoryState)
-            return getItems(currentSort.value, currentSortDir.value)
-          }
           const prevPageItems = function() {
             prevPage()
             getItemsSorted()
@@ -233,16 +235,22 @@
             }
             getItemsSorted()
           }
+          const getItemsSorted = function(lastHistoryState = null) {
+            updateQueryParams(lastHistoryState)
+            // return for optional promise handling
+            return getItems(currentSort.value, currentSortDir.value, bboxPermalink.value ? bbox.value : '')
+          }
 
           // Map setup
           const itemsPath = '{{ data['items_path'] }}'
           const tileLayerUrl = '{{ config['server']['map']['url'] }}'
           const tileLayerAttr = '{{ config['server']['map']['attribution'] }}'
-          useMap('items-map', itemsJson, itemsPath, tileLayerUrl, tileLayerAttr)
+          const bboxPermalink = ref(false)
+          const { bbox } = useMap('items-map', itemsJson, itemsPath, tileLayerUrl, tileLayerAttr, bboxPermalink)
 
           // Permalink handling
           let queryParams = new URLSearchParams(window.location.search)
-          const nonQueryColumns = ['sortby', 'startindex', 'limit', 'f']
+          const nonQueryColumns = ['sortby', 'startindex', 'limit', 'f', 'bbox']
           let params = Object.fromEntries(queryParams.entries())
           let historyState = 1 // internal state handling for back/forward
           const updateQueryParams = function (lastHistoryState = null) {
@@ -269,10 +277,15 @@
                 }
               }
             }
+            if (bboxPermalink.value) {
+              queryParams.set('bbox', bbox.value)
+            } else {
+              queryParams.delete('bbox')
+            }
 
             // browser back/forward history handling
             if (lastHistoryState !== null) {
-                historyState = lastHistoryState
+              historyState = lastHistoryState
             }
 
             // no browser back/forward was pressed
@@ -281,6 +294,12 @@
               historyState++
             }
           }
+          // update json data after each map moveend event
+          watch(bbox, (newVal, oldVal) => {
+            if (newVal !== oldVal && oldVal !== '') { // prevent double XHR on load
+              getItemsSorted()
+            }
+          })
           const permalinkMount = function () { // reads the URL query params and applies to vm
             queryParams = new URLSearchParams(window.location.search)
             params = Object.fromEntries(queryParams.entries())
@@ -326,6 +345,12 @@
                 queryCols.value[key] = params[key] + '' // stringify
               }
             }
+
+            // bbox
+            if (queryParams.has('bbox')) {
+              bboxPermalink.value = true
+              bbox.value = params.bbox + '' // stringify
+            }
           }
           onBeforeMount(() => { // on page load permalink handling
             permalinkMount()
@@ -333,7 +358,7 @@
 
           // initial httpRequest to populate table
           onMounted(() => {
-            getItems(currentSort.value, currentSortDir.value)
+            getItems(currentSort.value, currentSortDir.value, bbox.value)
           })
 
           // history back handling
@@ -348,9 +373,9 @@
             items: filteredRows, // don't care for unfiltered
             searchText, searchTextLowered, truncate,
             sortIconClass, changeSortDir, currentSort, currentSortDir,
-            limit, limitOptions, showingLimitText, showingFilteredFromText, currentPage, maxPages, limitChange,
+            limit, limitOptions, showingLimitText, showingFilteredFromText, currentPage, maxPages, limitChange, bboxPermalink,
             itemsPath, linkToRow,
-            queryCols, clearSearch, queryColsIsEmpty, applyKeywordSearch, prevPageItems, nextPageItems
+            queryCols, clearSearch, queryColsIsEmpty, applyKeywordSearch, prevPageItems, nextPageItems, getItemsSorted
           }
         }
       })

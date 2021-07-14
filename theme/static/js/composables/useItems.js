@@ -80,9 +80,9 @@ export default function useItems() {
     }
     return isEmpty
   })
-  const getItems = async (sortCol = '', sortDir = '') => {
+  const getItems = async (sortCol = '', sortDir = '', bbox = '') => {
     // Request URL
-    let newRequestUrl = `?f=json&limit=${limit.value}&startindex=${startindex.value}`  // relative to /items
+    let newRequestUrl = `${window.location.pathname}?f=json&limit=${limit.value}&startindex=${startindex.value}`  // relative to /items
 
     // Query params
     let newQueryColValues = []
@@ -96,11 +96,15 @@ export default function useItems() {
     }
 
     // Optional sort
-    // console.log('Resulting sortCol and sortDir: ', sortCol + ' / ' + sortDir)
     if (sortCol !== '' && sortDir !== '') {
       if (sortCol !== 'id') { // id is an internal column
         newRequestUrl += '&sortby=' + (sortDir === 'desc' ? '-' : '') + sortCol
       }
+    }
+
+    // Optional bbox
+    if (bbox !== '') {
+      newRequestUrl += '&bbox=' + bbox
     }
 
     if (requestUrl.value === newRequestUrl) {
