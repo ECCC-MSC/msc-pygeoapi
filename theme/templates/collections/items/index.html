@@ -176,12 +176,12 @@
         setup() {
           const noJs = ref(false) // progressive enhancement
 
-          // Items handling
+          /* Items handling */
           const { items, itemsJson, itemProps, getItems, itemsTotal, itemsLoading,
             currentPage, maxPages, prevPage, nextPage, limit, showingLimitText, calcStartIndex,
             queryCols, clearQueryCols, queryColsIsEmpty } = useItems()
           
-          // Table columns
+          /* Table columns */
           const tableFields = computed(() => {
             const fields = []
             if (typeof itemProps === 'undefined') {
@@ -200,7 +200,7 @@
             return tableFields.value.map(field => field.key)
           })
 
-          // Table filtering
+          /* Table filtering */
           const defaultSortCol = 'id'
           const { searchText, searchTextLowered, truncate, showingFilteredFromText,
             currentSort, currentSortDir, sortDir, sortIconClass, filteredRows, linkToRow } = useTableFilter(items, keyColumns, defaultSortCol)
@@ -209,7 +209,7 @@
             getItemsSorted()
           }
           
-          // Collection searching
+          /* Collection searching */
           const clearSearch = function() {
             clearQueryCols()
             searchText.value = ''
@@ -241,19 +241,27 @@
             return getItems(currentSort.value, currentSortDir.value, bboxPermalink.value ? bbox.value : '')
           }
 
-          // Map setup
+          /* Map setup */
           const itemsPath = '{{ data['items_path'] }}'
           const tileLayerUrl = '{{ config['server']['map']['url'] }}'
           const tileLayerAttr = '{{ config['server']['map']['attribution'] }}'
           const bboxPermalink = ref(false)
           const { bbox } = useMap('items-map', itemsJson, itemsPath, tileLayerUrl, tileLayerAttr, bboxPermalink)
 
-          // Permalink handling
+          /* Permalink handling */
           let queryParams = new URLSearchParams(window.location.search)
           const nonQueryColumns = ['sortby', 'startindex', 'limit', 'f', 'bbox']
           let params = Object.fromEntries(queryParams.entries())
           let historyState = 1 // internal state handling for back/forward
-          const updateQueryParams = function (lastHistoryState = null) {
+          // update JSON and JSONLD href 
+          const updateJsonLinks = function() {
+            let jsonLink = document.getElementById('json-format-url')
+            jsonLink.href = '?' + queryParams.toString() + '&f=json'
+            let jsonLdLink = document.getElementById('jsonld-format-url')
+            jsonLdLink.href = '?' + queryParams.toString() + '&f=jsonld'
+          }
+          // updates URL query params with current state
+          const updateQueryParams = function(lastHistoryState = null) {
             queryParams = new URLSearchParams(window.location.search)
             params = Object.fromEntries(queryParams.entries())
             queryParams.set('limit', limit.value)
@@ -293,6 +301,8 @@
               history.pushState(historyState, null, '?' + queryParams.toString())
               historyState++
             }
+
+            updateJsonLinks()
           }
           // update json data after each map moveend event
           watch(bbox, (newVal, oldVal) => {
@@ -300,24 +310,20 @@
               getItemsSorted()
             }
           })
-          const permalinkMount = function () { // reads the URL query params and applies to vm
+          // reads the URL query params and applies to vm
+          const permalinkMount = function () {
             queryParams = new URLSearchParams(window.location.search)
             params = Object.fromEntries(queryParams.entries())
 
             // limit
             if (queryParams.has('limit')) {
-              limit.value = parseInt(params.limit)
-            }
-            onMounted(() => { // Add limit select option if new
-              // limit select option
-              if (queryParams.has('limit')) {
-                const limitValue = parseInt(params.limit)
-                if (!limitOptions.includes(limitValue)) {
-                  limitOptions.push(limitValue)
-                  limitOptions.sort((a,b) => a-b) // number sort
-                }
+              const limitValue = parseInt(params.limit)
+              if (!limitOptions.includes(limitValue)) {
+                limitOptions.push(limitValue)
+                limitOptions.sort((a,b) => a-b) // number sort
               }
-            })
+              limit.value = limitValue
+            }
 
             // pagination - startindex
             if (queryParams.has('startindex')) {
@@ -352,13 +358,15 @@
               bbox.value = params.bbox + '' // stringify
             }
           }
-          onBeforeMount(() => { // on page load permalink handling
+          // on page load permalink handling
+          onBeforeMount(() => {
             permalinkMount()
           })
 
-          // initial httpRequest to populate table
+          // initial httpRequest to populate table and update JSON links
           onMounted(() => {
             getItems(currentSort.value, currentSortDir.value, bbox.value)
+            updateJsonLinks()
           })
 
           // history back handling
