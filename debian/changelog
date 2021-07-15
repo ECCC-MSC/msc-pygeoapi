@@ -1,3 +1,9 @@
+msc-pygeoapi (0.9.4) bionic; urgency=medium
+
+  * fix imports for cleanups
+
+ -- Tom Kralidis <tom.kralidis@canada.ca>  Thu, 15 Jul 2021 13:01:24 +0000
+
 msc-pygeoapi (0.9.3) bionic; urgency=medium
 
   * fix AQHI cleanups
