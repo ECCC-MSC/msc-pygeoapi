@@ -46,9 +46,9 @@ try:
     from msc_pygeoapi.loader.marine_weather_realtime import marine_weather
     from msc_pygeoapi.loader.cap_alerts_realtime import cap_alerts
     from msc_pygeoapi.loader.swob_realtime import swob_realtime
+    from msc_pygeoapi.loader.aqhi_realtime import aqhi_realtime
     from msc_pygeoapi.loader.ltce import ltce
     from msc_pygeoapi.loader.climate_archive import climate_archive
-    from msc_pygeoapi.loader.aqhi_realtime import aqhi_realtime
 except ImportError as err:
     LOGGER.info('loaders not imported')
     LOGGER.debug(err)
@@ -71,9 +71,9 @@ try:
     data.add_command(marine_weather)
     data.add_command(cap_alerts)
     data.add_command(swob_realtime)
+    data.add_command(aqhi_realtime)
     data.add_command(ltce)
     data.add_command(climate_archive)
-    data.add_command(aqhi_realtime)
 except NameError as err:
     LOGGER.info('loaders not found')
     LOGGER.debug(err)
