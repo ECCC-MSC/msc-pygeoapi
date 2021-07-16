@@ -306,7 +306,7 @@
           }
           // update json data after each map moveend event
           watch(bbox, (newVal, oldVal) => {
-            if (newVal !== oldVal && oldVal !== '') { // prevent double XHR on load
+            if (newVal !== oldVal && oldVal !== '') { // prevent double XHR on initial load
               getItemsSorted()
             }
           })
