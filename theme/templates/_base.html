@@ -44,18 +44,44 @@
           <section id="wb-lng" class="col-xs-3 col-sm-12 pull-right text-right">
             <h2 class="wb-inv">JSON selection</h2>
             <ul class="list-inline mrgn-bttm-0">
+              {% set links_found = namespace(json=0, jsonld=0) %}
+
+              {% for link in data['links'] %}
+              {% if link['rel'] == 'alternate' and link['type'] and link['type'] in ['application/json', 'application/geo+json'] %}
+              {% set links_found.json = 1 %}
               <li>
-                <a href="{{ data['links'] | map(rel='self') | attr('href') }}?f=json">
+                <a id="json-format-url" href="{{ link['href'] }}">
                   <span class="hidden-xs">JSON</span>
                   <abbr title="JSON" class="visible-xs h3 mrgn-tp-sm mrgn-bttm-0 text-uppercase">JSON</abbr>
                 </a>
               </li>
+              {% elif link['rel'] == 'alternate' and link['type'] and link['type'] == 'application/ld+json' %}
+              {% set links_found.jsonld = 1 %}
               <li>
-                <a href="{{ data['links'] | map(rel='self') | attr('href') }}?f=jsonld">
+                <a id="jsonld-format-url" href="{{ link['href'] }}">
                   <span class="hidden-xs">JSON-LD</span>
                   <abbr title="JSON-LD" class="visible-xs h3 mrgn-tp-sm mrgn-bttm-0 text-uppercase">JSON-LD</abbr>
                 </a>
               </li>
+              {% endif %}
+              {% endfor %}
+
+              {% if links_found.json == 0 %}
+              <li>
+                <a id="json-format-url" href="?f=json">
+                  <span class="hidden-xs">JSON</span>
+                  <abbr title="JSON" class="visible-xs h3 mrgn-tp-sm mrgn-bttm-0 text-uppercase">JSON</abbr>
+                </a>
+              </li>
+              {% endif %}
+              {% if links_found.jsonld == 0 %}
+              <li>
+                <a id="jsonld-format-url" href="?f=jsonld">
+                  <span class="hidden-xs">JSON-LD</span>
+                  <abbr title="JSON-LD" class="visible-xs h3 mrgn-tp-sm mrgn-bttm-0 text-uppercase">JSON-LD</abbr>
+                </a>
+              </li>
+              {% endif %}
             </ul>
           </section>
 
