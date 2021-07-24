@@ -86,84 +86,59 @@ PROCESS_METADATA = {
         'href': 'https://canada.ca/services-climatiques',
         'hreflang': 'fr-CA'
     }],
-    'inputs': [{
-        'id': 'layer',
-        'title': 'layer name',
-        'input': {
-            'literalDataDomain': {
-                'dataType': 'string',
-                'valueDefinition': {
-                    'anyValue': True
-                }
-            }
+    'inputs': {
+        'layer': {
+            'title': 'layer name',
+            'schema': {
+                'type': 'number',
+            },
+            'minOccurs': 1,
+            'maxOccurs': 1
         },
-        'minOccurs': 1,
-        'maxOccurs': 1
-    }, {
-        'id': 'y',
-        'title': 'y coordinate',
-        'input': {
-            'literalDataDomain': {
-                'dataType': 'float',
-                'valueDefinition': {
-                    'anyValue': True
-                }
-            }
+        'y': {
+            'title': 'y coordinate',
+            'schema': {
+                'type': 'number',
+            },
+            'minOccurs': 1,
+            'maxOccurs': 1
         },
-        'minOccurs': 1,
-        'maxOccurs': 1
-    }, {
-        'id': 'x',
-        'title': 'x coordinate',
-        'input': {
-            'literalDataDomain': {
-                'dataType': 'float',
-                'valueDefinition': {
-                    'anyValue': True
-                }
-            }
+        'x': {
+            'title': 'x coordinate',
+            'schema': {
+                'type': 'number',
+            },
+            'minOccurs': 1,
+            'maxOccurs': 1
         },
-        'minOccurs': 1,
-        'maxOccurs': 1
-    }, {
-        'id': 'format',
-        'title': 'format: GeoJSON or CSV',
-        'input': {
-            'literalDataDomain': {
-                'dataType': 'string',
-                'valueDefinition': {
-                    'anyValue': True
-                }
-            }
-        },
-        'minOccurs': 1,
-        'maxOccurs': 1
-    }],
-    'outputs': [{
-        'id': 'raster-drill-response',
-        'title': 'output raster drill',
-        'output': {
-            'formats': [{
-                'mimeType': 'application/json'
-            }, {
-                'mimeType': 'text/csv'
-            }]
+        'format': {
+            'title': 'format: GeoJSON or CSV',
+            'schema': {
+                'type': 'string',
+            },
+            'minOccurs': 1,
+            'maxOccurs': 1
         }
-    }],
+    },
+    'outputs': {
+        'raster-drill-response': {
+            'title': 'output raster drill',
+            'schema': {
+                'oneOf': [{
+                    'contentMediaType': 'application/json'
+                }, {
+                    'contentMediaType': 'application/json'
+                }]
+            }
+        }
+    },
     'example': {
-        "inputs": [{
-            "id": "layer",
-            "value": "CMIP5.TT.RCP26.YEAR.ANO_PCTL50"
-        }, {
-            "id": "y",
-            "value": 51.132831196692806
-        }, {
-            "id": "x",
-            "value": -114.74968888274337
-        }, {
-            "id": "format",
-            "value": "CSV"
-        }]
+        "inputs": {
+            "layer": "CMIP5.TT.RCP26.YEAR.ANO_PCTL50",
+            "y": 51.132831196692806,
+            "x": -114.74968888274337,
+            "format": "CSV"
+        }
     }
 }
 
