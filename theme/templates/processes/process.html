@@ -26,19 +26,19 @@
             </tr>
             </thead>
             <tbody>
-              {% for input_ in data['inputs'] %}
+              {% for key, value in data['inputs'].items() %}
               <tr>
                 <td>
-                  {{ input_.id }}
+                  {{ key }}
                 </td>
                 <td>
-                  {{ input_.title|striptags|truncate }}
+                  {{ value.title|striptags|truncate }}
                 </td>
                 <td>
-                  {{ input_.input.literalDataDomain.dataType }}
+                  {{ value.schema.type }}
                 </td>
                 <td>
-                  {{ input_.abstract }}
+                  {{ value.description }}
                 </td>
               </tr>
               {% endfor %}
@@ -56,12 +56,12 @@
             </tr>
             </thead>
             <tbody>
-              {% for output_ in data['outputs'] %}
+              {% for key, value in data['outputs'].items() %}
               <tr>
-                <td>{{ output_['id'] }}</td>
-                <td>{{ output_['title'] }}</td>
+                <td>{{ key }}</td>
+                <td>{{ value.title] }}</td>
                 <td>
-                  {{ output_['description'] | striptags | truncate }}
+                  {{ value.description | striptags | truncate }}
                 </td>
               </tr>
               {% endfor %}
