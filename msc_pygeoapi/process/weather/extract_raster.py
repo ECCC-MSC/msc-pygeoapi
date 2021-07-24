@@ -60,66 +60,49 @@ PROCESS_METADATA = {
         'hreflang': 'fr-CA'
 
     }],
-    'inputs': [{
-        'id': 'model',
-        'title': 'model',
-        'input': {
-            'literalDataDomain': {
-                'dataType': 'string',
-                'valueDefinition': {
-                    'anyValue': True
-                }
-            }
+    'inputs': {
+        'model': {
+            'title': 'model',
+            'schema': {
+                'type': 'string'
+            },
+            'minOccurs': 1,
+            'maxOccurs': 1
         },
-        'minOccurs': 1,
-        'maxOccurs': 1
-    }, {
-        'id': 'forecast_hours_',
-        'title': 'forecast_hours_',
-        'input': {
-            'literalDataDomain': {
-                'dataType': 'string',
-                'valueDefinition': {
-                    'anyValue': True
-                }
-            }
+        'forecast_hours_': {
+            'title': 'forecast_hours_',
+            'schema': {
+                'type': 'string'
+            },
+            'minOccurs': 1,
+            'maxOccurs': 1,
         },
-        'minOccurs': 1,
-        'maxOccurs': 1
-    }, {
-        'id': 'model_run',
-        'title': 'model_run',
-        'input': {
-            'literalDataDomain': {
-                'dataType': 'string',
-                'valueDefinition': {
-                    'anyValue': True
-                }
-            }
+        'model_run': {
+            'title': 'model_run',
+            'schema': {
+                'type': 'string'
+            },
+            'minOccurs': 1,
+            'maxOccurs': 1,
         },
-        'minOccurs': 1,
-        'maxOccurs': 1
-    }, {
-        'id': 'input_geojson',
-        'title': 'input_geojson',
-        'input': {
-            'formats': [{
-                'mimeType': 'application/json'
-            }]
-        },
-        'minOccurs': 1,
-        'maxOccurs': 1
-    }],
-    'outputs': [{
-        'id': 'extract_raster_response',
-        'title': 'extract_raster_response',
-        'output': {
-            'formats': [{
-                'mimeType': 'application/json'
-            }]
+        'input_geojson': {
+            'title': 'input_geojson',
+            'schema': {
+                'type': 'object'
+            },
+            'minOccurs': 1,
+            'maxOccurs': 1,
         }
-    }],
-
+    },
+    'outputs': {
+        'extract_raster_response': {
+            'title': 'extract_raster_response',
+            'schema': {
+                'type': 'object',
+                'contentMediaType': 'application/json'
+            }
+        }
+    }
 }
 
 ES_INDEX = 'hackathon-lp'
