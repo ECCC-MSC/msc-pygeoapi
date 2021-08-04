@@ -1096,8 +1096,8 @@ resources:
             - type: feature
               name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/aqhi-forecasts-realtime.*
-              id_field: ID
-              time_field: datetime_utc
+              id_field: id
+              time_field: publication_datetime
 
     aqhi-observations-realtime:
         type: collection
@@ -1128,8 +1128,8 @@ resources:
             - type: feature
               name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/aqhi-observations-realtime.*
-              id_field: ID
-              time_field: datetime_utc
+              id_field: id
+              time_field: observation_datetime
 
     msc-datamart:
         type: stac-collection
