@@ -1,10 +1,13 @@
 # =================================================================
 #
-# Author: Etienne Pelletier <etienne.pelletier@canada.ca>
-#         Felix Laframboise <felix.laframboise@canada.ca>
+# Author: Etienne Pelletier <etienne.pelletier@ec.gc.ca>
+#         Felix Laframboise <felix.laframboise@ec.gc.ca>
+#         Louis-Philippe Rousseau-Lambert
+#             <louis-philippe.rousseaulambert@ec.gc.ca>
 #
 # Copyright (c) 2020 Etienne Pelletier
 # Copyright (c) 2021 Felix Laframboise
+# Copyright (c) 2021 Louis-Philippe Rousseau-Lambert
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -65,7 +68,7 @@ MAPPINGS = {
             'geometry': {'type': 'geo_shape'},
             'properties': {
                 'properties': {
-                    'ID': {
+                    'id': {
                         'type': 'text',
                         'fields': {'raw': {'type': 'keyword'}},
                     },
@@ -73,31 +76,31 @@ MAPPINGS = {
                         'type': 'text',
                         'fields': {'raw': {'type': 'keyword'}},
                     },
-                    'region_name_en': {
+                    'location_name_en': {
                         'type': 'text',
                         'fields': {'raw': {'type': 'keyword'}},
                     },
-                    'region_name_fr': {
+                    'location_name_fr': {
                         'type': 'text',
                         'fields': {'raw': {'type': 'keyword'}},
                     },
-                    'region': {
+                    'location_id': {
                         'type': 'text',
                         'fields': {'raw': {'type': 'keyword'}},
                     },
-                    'datetime_utc': {
+                    'publication_datetime': {
                         'type': 'date',
                         'format': 'strict_date_time_no_millis',
                     },
-                    'datetime_text_en': {
+                    'forecast_datetime_text_en': {
                         'type': 'text',
                         'fields': {'raw': {'type': 'keyword'}},
                     },
-                    'datetime_text_fr': {
+                    'forecast_datetime_text_fr': {
                         'type': 'text',
                         'fields': {'raw': {'type': 'keyword'}},
                     },
-                    'hourly_forecast_utc': {
+                    'forecast_datetime': {
                         'type': 'date',
                         'format': 'strict_date_time_no_millis',
                     },
@@ -111,7 +114,7 @@ MAPPINGS = {
             'geometry': {'type': 'geo_shape'},
             'properties': {
                 'properties': {
-                    'ID': {
+                    'id': {
                         'type': 'text',
                         'fields': {'raw': {'type': 'keyword'}},
                     },
@@ -119,27 +122,27 @@ MAPPINGS = {
                         'type': 'text',
                         'fields': {'raw': {'type': 'keyword'}},
                     },
-                    'region_name_en': {
+                    'location_name_en': {
                         'type': 'text',
                         'fields': {'raw': {'type': 'keyword'}},
                     },
-                    'region_name_fr': {
+                    'location_name_fr': {
                         'type': 'text',
                         'fields': {'raw': {'type': 'keyword'}},
                     },
-                    'region': {
+                    'location_id': {
                         'type': 'text',
                         'fields': {'raw': {'type': 'keyword'}},
                     },
-                    'datetime_utc': {
+                    'observation_datetime': {
                         'type': 'date',
                         'format': 'strict_date_time_no_millis',
                     },
-                    'datetime_text_en': {
+                    'observation_datetime_text_en': {
                         'type': 'text',
                         'fields': {'raw': {'type': 'keyword'}},
                     },
-                    'datetime_text_fr': {
+                    'observation_datetime_text_fr': {
                         'type': 'text',
                         'fields': {'raw': {'type': 'keyword'}},
                     },
@@ -193,20 +196,20 @@ class AQHIRealtimeLoader(BaseLoader):
         :return: `bool` of parse status
         """
         # parse filepath
-        pattern = 'AQ_{type}_{region}_{date_}.json'
+        pattern = '{date_}_MSC_AQHI-{type}_{region}.json'
         filename = self.filepath.name
         parsed_filename = parse(pattern, filename)
 
         # set class attributes
         type_ = parsed_filename.named['type']
-        if type_ == 'FCST':
+        if type_ == 'Forecasts':
             self.type = 'forecasts'
-        if type_ == 'OBS':
+        if type_ == 'Observation':
             self.type = 'observations'
 
         self.region = parsed_filename.named['region']
         self.date_ = datetime.strptime(
-            parsed_filename.named['date_'], '%Y%m%d%H%M'
+            parsed_filename.named['date_'], '%Y%m%dT%H%MZ'
         )
 
         return True
@@ -228,9 +231,6 @@ class AQHIRealtimeLoader(BaseLoader):
                 features = [data]
 
         for feature in features:
-            # set document id and clean out unnecessery properties
-            feature['id'] = feature.pop('ID', None)
-
             # set ES index name for feature
             es_index = '{}{}'.format(
                 INDEX_BASENAME.format(self.type),
@@ -364,7 +364,7 @@ def delete_indexes(ctx, dataset, es, username, password, ignore_certs,
     conn = ElasticsearchConnector(conn_config)
 
     if dataset == 'all':
-        indexes = 'aqhi_*'
+        indexes = 'aqhi-*'
     else:
         indexes = '{}*'.format(INDEX_BASENAME.format(dataset))
 
@@ -373,8 +373,10 @@ def delete_indexes(ctx, dataset, es, username, password, ignore_certs,
     conn.delete(indexes)
 
     if index_template:
-        click.echo('Deleting index template {}'.format(INDEX_BASENAME))
-        conn.delete_template(INDEX_BASENAME)
+        for type_ in ('forecasts', 'observations'):
+            index_name = INDEX_BASENAME.format(type_)
+            click.echo('Deleting index template {}'.format(index_name))
+            conn.delete_template(index_name)
 
     click.echo('Done')
 
