@@ -133,6 +133,7 @@ MAPPINGS = {
                     'location_id': {
                         'type': 'text',
                         'fields': {'raw': {'type': 'keyword'}},
+                        'index': 'true'
                     },
                     'observation_datetime': {
                         'type': 'date',
@@ -145,6 +146,9 @@ MAPPINGS = {
                     'observation_datetime_text_fr': {
                         'type': 'text',
                         'fields': {'raw': {'type': 'keyword'}},
+                    },
+                    'latest': {
+                        'type': 'boolean',
                     },
                     'aqhi': {'type': 'float'},
                 }
@@ -195,6 +199,7 @@ class AQHIRealtimeLoader(BaseLoader):
         time, and region name.
         :return: `bool` of parse status
         """
+
         # parse filepath
         pattern = '{date_}_MSC_AQHI-{type}_{region}.json'
         filename = self.filepath.name
@@ -223,6 +228,7 @@ class AQHIRealtimeLoader(BaseLoader):
         :returns: Generator of Elasticsearch actions to upsert the AQHI
                   forecasts/observations
         """
+
         with open(self.filepath.resolve()) as f:
             data = json.load(f)
             if self.type == "forecasts":
@@ -236,6 +242,7 @@ class AQHIRealtimeLoader(BaseLoader):
                 INDEX_BASENAME.format(self.type),
                 self.date_.strftime('%Y-%m-%d'),
             )
+            feature['properties']['latest'] = True
 
             self.items.append(feature)
 
@@ -248,6 +255,46 @@ class AQHIRealtimeLoader(BaseLoader):
             }
 
             yield action
+
+    def update_latest_status(self):
+        """
+        update old observation AQHI status to False
+
+        :return `bool` of update status
+        """
+
+        lt_date = self.date_.strftime('%Y-%m-%dT%H:%M:%SZ')
+
+        query = {"script": {
+            "source": "ctx._source.properties.latest=false",
+            "lang": "painless"
+            },
+            "query": {
+                    "bool": {
+                        "must": [{
+                            "match": {
+                                "properties.location_id": self.region
+                            }
+                        }, {
+                            "range": {
+                                "properties.observation_datetime": {
+                                    "lt": lt_date,
+                                }
+                            }
+                        }]
+                    }
+                }
+            }
+
+        # create list of today and yesterday index
+        index_ = '{}*'.format(INDEX_BASENAME.format(self.type))
+
+        try:
+            self.conn.update_by_query(query, index_)
+        except Exception as err:
+            LOGGER.warning('{}: failed to update ES index'.format(err))
+
+        return True
 
     def load_data(self, filepath):
         """
@@ -265,6 +312,10 @@ class AQHIRealtimeLoader(BaseLoader):
         # generate geojson features
         package = self.generate_geojson_features()
         self.conn.submit_elastic_package(package, request_size=80000)
+
+        if self.type == 'observations':
+            LOGGER.debug('Updating Observation status')
+            self.update_latest_status()
 
         return True
 
