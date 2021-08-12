@@ -266,5 +266,19 @@ class ElasticsearchConnector(BaseConnector):
 
         return True
 
+    def update_by_query(self, query, name):
+        """
+        update an Elasticsearch feature
+
+        :param query: `str` query template
+        :param name: `str` index name
+
+        :return: `bool` of index update status
+        """
+
+        self.Elasticsearch.update_by_query(body=query, index=name)
+
+        return True
+
     def __repr__(self):
         return '<ElasticsearchConnector> {}'.format(self.url)
