@@ -1,12 +1,15 @@
+#cartopy
 click<8
 elasticsearch
 gdal
 lxml
+matplotlib==2.1.1
 parse
+Pillow
 pyproj
 python-slugify
 pyyaml
-rasterio
+rasterio==1.1.4
 requests
 sqlalchemy
 unicodecsv

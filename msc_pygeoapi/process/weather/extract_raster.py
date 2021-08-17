@@ -30,20 +30,43 @@
 import click
 import json
 import logging
+import os
 
-from elasticsearch import Elasticsearch, exceptions
+from elasticsearch import exceptions, logger as elastic_logger
 import rasterio
 import rasterio.mask
 from rasterio.crs import CRS
 from rasterio.io import MemoryFile
+import shutil
+import urllib.request
+
+from msc_pygeoapi.connector.elasticsearch_ import ElasticsearchConnector
+from msc_pygeoapi.env import (
+    MSC_PYGEOAPI_LOGGING_LOGLEVEL,
+    MSC_PYGEOAPI_ES_URL,
+    MSC_PYGEOAPI_ES_USERNAME,
+    MSC_PYGEOAPI_ES_PASSWORD,
+    MSC_PYGEOAPI_CACHEDIR
+)
+from msc_pygeoapi.util import (
+    configure_es_connection
+)
 
 LOGGER = logging.getLogger(__name__)
+elastic_logger.setLevel(getattr(logging, MSC_PYGEOAPI_LOGGING_LOGLEVEL))
 
 PROCESS_METADATA = {
     'version': '0.1.0',
     'id': 'extract-raster',
-    'title': 'Extract raster data',
-    'description': 'extract raster data by point, line, polygon',
+    'title': {
+        'en': 'Extract raster data',
+        'fr': 'Extraction des données Raster'
+    },
+    'description': {
+        'en': 'extract raster data by point, line, polygon',
+        'fr': 'Extraction des données raster '
+              'par point, ligne ou polygon'
+    },
     'keywords': ['extract raster'],
     'links': [{
         'type': 'text/html',
@@ -59,69 +82,69 @@ PROCESS_METADATA = {
         'hreflang': 'fr-CA'
 
     }],
-    'inputs': [{
-        'id': 'model',
-        'title': 'model',
-        'input': {
-            'literalDataDomain': {
-                'dataType': 'string',
-                'valueDefinition': {
-                    'anyValue': True
-                }
-            }
+    'inputs': {
+        'model': {
+            'title': 'model',
+            'schema': {
+                'type': 'string'
+            },
+            'minOccurs': 1,
+            'maxOccurs': 1
         },
-        'minOccurs': 1,
-        'maxOccurs': 1
-    }, {
-        'id': 'forecast_hours_',
-        'title': 'forecast_hours_',
-        'input': {
-            'literalDataDomain': {
-                'dataType': 'string',
-                'valueDefinition': {
-                    'anyValue': True
-                }
-            }
+        'forecast_hours_': {
+            'title': 'forecast_hours_',
+            'schema': {
+                'type': 'string'
+            },
+            'minOccurs': 1,
+            'maxOccurs': 1,
         },
-        'minOccurs': 1,
-        'maxOccurs': 1
-    }, {
-        'id': 'model_run',
-        'title': 'model_run',
-        'input': {
-            'literalDataDomain': {
-                'dataType': 'string',
-                'valueDefinition': {
-                    'anyValue': True
-                }
-            }
+        'model_run': {
+            'title': 'model_run',
+            'schema': {
+                'type': 'string'
+            },
+            'minOccurs': 1,
+            'maxOccurs': 1,
         },
-        'minOccurs': 1,
-        'maxOccurs': 1
-    }, {
-        'id': 'input_geojson',
-        'title': 'input_geojson',
-        'input': {
-            'formats': [{
-                'mimeType': 'application/json'
-            }]
-        },
-        'minOccurs': 1,
-        'maxOccurs': 1
-    }],
-    'outputs': [{
-        'id': 'extract_raster_response',
-        'title': 'extract_raster_response',
-        'output': {
-            'formats': [{
-                'mimeType': 'application/json'
-            }]
+        'input_geojson': {
+            'title': 'input_geojson',
+            'schema': {
+                'type': 'object'
+            },
+            'minOccurs': 1,
+            'maxOccurs': 1,
         }
-    }],
-
+    },
+    'outputs': {
+        'extract_raster_response': {
+            'title': 'extract_raster_response',
+            'schema': {
+                'type': 'object',
+                'contentMediaType': 'application/json'
+            }
+        }
+    },
+    'example': {
+        'inputs': {
+            "model": "HRDPS",
+            "forecast_hours_": "2021-09-12T06:00:00Z",
+            "model_run": "2021-09-12T00:00:00Z",
+            "input_geojson": {"type": "FeatureCollection",
+                              "features": [{
+                                    "type": "Feature",
+                                    "id": "id0",
+                                    "geometry": {"type": "Point",
+                                                 "coordinates": [-100.0,
+                                                                 45.0]},
+                                    "properties": {"type": "point"}
+                                    }]}
+        }
+    }
 }
 
-ES_INDEX = 'hackathon-lp'
+
+ES_INDEX = 'geomet-data-registry-nightly'
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 
 
@@ -135,7 +158,12 @@ def get_files(layers, fh, mr):
 
     :returns: list of three file paths
     """
-    es = Elasticsearch()
+
+    conn_config = configure_es_connection(MSC_PYGEOAPI_ES_URL,
+                                          MSC_PYGEOAPI_ES_USERNAME,
+                                          MSC_PYGEOAPI_ES_PASSWORD)
+    es = ElasticsearchConnector(conn_config)
+
     list_files = []
 
     for layer in layers:
@@ -157,7 +185,8 @@ def get_files(layers, fh, mr):
             }
 
             try:
-                res = es.search(index=ES_INDEX, body=s_object)
+                res = es.search(s_object, ES_INDEX)
+
                 try:
                     filepath = (res['hits']['hits'][0]
                                 ['_source']['properties']['filepath'])
@@ -165,16 +194,20 @@ def get_files(layers, fh, mr):
                            ['properties']['forecast_hour_datetime'])
                     mr = (res['hits']['hits'][0]['_source']
                           ['properties']['reference_datetime'])
+                    dd_path = (res['hits']['hits'][0]['_source']
+                               ['properties']['url'][0])
 
                     files['filepath'] = filepath
                     files['forecast_hour'] = fh_
                     files['model_run'] = mr
+                    files['url'] = dd_path
 
                     list_files.append(files)
 
                 except IndexError as error:
                     msg = 'invalid input value: {}' .format(error)
                     LOGGER.error(msg)
+                    LOGGER.error(res)
                     return None, None
 
             except exceptions.ElasticsearchException as error:
@@ -185,7 +218,62 @@ def get_files(layers, fh, mr):
     return list_files
 
 
-def get_point(raster_list, input_geojson):
+def set_proj(src):
+    """
+    set crs and affine transformation
+    for non global models
+
+    :param src: source data opened with rasterio
+
+    :returns: src with the right projection parameters
+    """
+
+    dataset_name = src.name
+    hrdps_crs = '+proj=stere +lat_0=90 +lat_ts=60 +lon_0=252 +x_0=0 +y_0=0 +R=6371229 +units=m +no_defs'  # noqa
+    hrdps_transform = (-2099127.494496938, 2500.0,
+                       0.0, -2099388.521499629, 0.0, -2500.0)
+    rdps_crs = '+proj=stere +lat_0=90 +lat_ts=60 +lon_0=249 +x_0=0 +y_0=0 +R=6371229 +units=m +no_defs'  # noqa
+    rdps_transform = (-4556441.403315245, 10000.0,
+                      0.0, 920682.1411659503, 0.0, -10000.0)
+
+    if 'CMC_reg' in dataset_name:
+        src._crs = rdps_crs
+        src._transform = rdps_transform
+    elif 'hrdps' in dataset_name:
+        src._crs = hrdps_crs
+        src._transform = hrdps_transform
+
+    return src
+
+
+def check_file(raster_path, raster_url):
+    """
+    Check if the file exist on disk
+    If it does not exists, download the file
+
+    :param raster_path: Raster file path
+    :param raster_url: Raster file url
+
+    :returns: file path with valid file
+    """
+
+    if os.path.isfile(raster_path):
+        file_name = raster_path
+    else:
+        file_name = os.path.join(MSC_PYGEOAPI_CACHEDIR,
+                                 raster_path.split('/')[-1])
+
+        if os.path.isfile(file_name):
+            return file_name
+
+        response = urllib.request.urlopen(raster_url)
+        with open(file_name, 'wb') as out_file:
+            shutil.copyfileobj(response, out_file)
+
+    return file_name
+
+
+def get_point(raster_list, file_url, input_geojson):
     """
     clips a raster by a point
 
@@ -200,7 +288,10 @@ def get_point(raster_list, input_geojson):
 
     in_coords = input_geojson['features'][0]['geometry']['coordinates']
 
-    for raster_path in raster_list:
+    for i in range(0, len(raster_list)):
+        raster_path = raster_list[i]
+        raster_url = file_url[i]
+        raster_path = check_file(raster_path, raster_url)
         if "TMP" in raster_path:
             data_type = "Temperature Data"
         if "WDIR" in raster_path:
@@ -213,11 +304,15 @@ def get_point(raster_list, input_geojson):
                 geom[0].pop("type")
             if "id" in geom[0].keys():
                 geom[0].pop("id")
+
+            src = set_proj(src)
+
             shapes = [
                 rasterio.warp.transform_geom(
                     CRS.from_string('EPSG:4326'),
                     src.crs,
                     geom[0]['geometry'])]
+
             out_image, out_transform = rasterio.mask.mask(
                 src, shapes, crop=True)
             with MemoryFile() as memfile:
@@ -239,7 +334,7 @@ def get_point(raster_list, input_geojson):
     return to_return
 
 
-def get_line(raster_list, input_geojson):
+def get_line(raster_list, file_url, input_geojson):
     """
     clips a raster by a line
 
@@ -253,7 +348,10 @@ def get_line(raster_list, input_geojson):
     iterat = 0
     input_line = input_geojson['features'][0]['geometry']['coordinates']
 
-    for raster_path in raster_list:
+    for i in range(0, len(raster_list)):
+        raster_path = raster_list[i]
+        raster_url = file_url[i]
+        raster_path = check_file(raster_path, raster_url)
         if "TMP" in raster_path:
             data_type = "Temperature Data"
         if "WDIR" in raster_path:
@@ -268,6 +366,9 @@ def get_line(raster_list, input_geojson):
                     geom[0].pop("type")
                 if "id" in geom[0].keys():
                     geom[0].pop("id")
+
+                src = set_proj(src)
+
                 shapes = [
                     rasterio.warp.transform_geom(
                         CRS.from_string('EPSG:4326'),
@@ -306,7 +407,7 @@ def get_line(raster_list, input_geojson):
     return to_return
 
 
-def summ_stats_poly(raster_list, input_geojson):
+def summ_stats_poly(raster_list, file_url, input_geojson):
     """
     clips a raster by a polygon
 
@@ -320,7 +421,10 @@ def summ_stats_poly(raster_list, input_geojson):
     iterat = 0
     input_poly = input_geojson['features'][0]['geometry']['coordinates']
 
-    for raster_path in raster_list:
+    for i in range(0, len(raster_list)):
+        raster_path = raster_list[i]
+        raster_url = file_url[i]
+        raster_path = check_file(raster_path, raster_url)
         if "TMP" in raster_path:
             data_type = "Temperature Data"
         if "WDIR" in raster_path:
@@ -335,6 +439,9 @@ def summ_stats_poly(raster_list, input_geojson):
                     geom[0].pop("type")
                 if "id" in geom[0].keys():
                     geom[0].pop("id")
+
+                src = set_proj(src)
+
                 shapes = [
                     rasterio.warp.transform_geom(
                         CRS.from_string('EPSG:4326'),
@@ -515,9 +622,7 @@ def write_output(features, forecast_hours, poly, line, point):
 @click.option('--input_geojson', 'input_geojson', help='shape to clip by')
 def extract_raster(ctx, model, forecast_hours_, model_run, input_geojson):
     output_geojson = extract_raster_main(
-        model, forecast_hours_, model_run, input_geojson)
-
-    return output_geojson
+        model, forecast_hours_, model_run, json.loads(input_geojson))
 
     if output_geojson is not None:
         click.echo(json.dumps(output_geojson))
@@ -538,6 +643,10 @@ def extract_raster_main(model, forecast_hours_, model_run, input_geojson):
 
     if model.upper() == 'HRDPS':
         model = 'HRDPS.CONTINENTAL_{}'
+    elif model.upper() == 'GDPS':
+        model = 'GDPS.ETA_{}'
+    elif model.upper() == 'RDPS':
+        model = 'RDPS.ETA_{}'
 
     for layer in var_list:
         layers.append(model.format(layer))
@@ -545,13 +654,16 @@ def extract_raster_main(model, forecast_hours_, model_run, input_geojson):
     result = get_files(layers, forecast_hours_, model_run)
 
     raster_list = []
+    file_url = []
     forecast_hours = set()
     for element in result:
         raster_list.append(element["filepath"])
         forecast_hours.add(element["forecast_hour"])
+        file_url.append(element["url"])
     forecast_hours = list(forecast_hours)
     forecast_hours.sort()
     raster_list.sort()
+    file_url.sort()
 
     features = []
     poly = False
@@ -561,15 +673,17 @@ def extract_raster_main(model, forecast_hours_, model_run, input_geojson):
     for feature in input_geojson['features']:
         if feature['geometry']['type'] in ["Polygon", "MultiPolygon"]:
             poly = True
-            features.append(summ_stats_poly(raster_list, input_geojson))
+            features.append(summ_stats_poly(raster_list,
+                                            file_url,
+                                            input_geojson))
             break
         elif feature['geometry']['type'] in ["LineString", "MultiLineString"]:
             line = True
-            features.append(get_line(raster_list, input_geojson))
+            features.append(get_line(raster_list, file_url, input_geojson))
             break
         elif feature['geometry']['type'] in ["Point", "MultiPoint"]:
             point = True
-            features.append(get_point(raster_list, input_geojson))
+            features.append(get_point(raster_list, file_url, input_geojson))
 
     output_geojson = write_output(features, forecast_hours, poly, line, point)
 
@@ -594,10 +708,10 @@ try:
             BaseProcessor.__init__(self, provider_def, PROCESS_METADATA)
 
         def execute(self, data):
-            model = data["model"]
-            forecast_hours_ = data["forecast_hours_"]
-            model_run = data["model_run"]
-            input_geojson = data["input_geojson"]
+            model = data.get("model")
+            forecast_hours_ = data.get("forecast_hours_")
+            model_run = data.get("model_run")
+            input_geojson = data.get("input_geojson")
 
             output_geojson = extract_raster_main(
                 model, forecast_hours_, model_run, input_geojson)

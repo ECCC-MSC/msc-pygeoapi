@@ -30,19 +30,19 @@
 import click
 import logging
 
+from msc_pygeoapi.process.weather.extract_raster import (extract_raster)
+# from msc_pygeoapi.process.weather.generate_vigilance import generate_vigilance # noqa
+
 LOGGER = logging.getLogger(__name__)
-
-
-try:
-    from msc_pygeoapi.process.weather.extract_raster import (extract_raster)
-except ImportError as err:
-    LOGGER.warning('Could not import weather process module')
-    LOGGER.warning(err)
 
 
 @click.group()
 def execute():
     pass
+
+
+execute.add_command(extract_raster)
+# execute.add_command(generate_vigilance)
 
 
 @click.group()
@@ -51,9 +51,3 @@ def weather():
 
 
 weather.add_command(execute)
-
-try:
-    execute.add_command(extract_raster)
-except NameError as err:
-    LOGGER.warning('Could not import weather process subcommand')
-    LOGGER.warning(err)

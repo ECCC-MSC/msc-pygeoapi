@@ -127,7 +127,7 @@ PROCESS_METADATA = {
                 'oneOf': [{
                     'contentMediaType': 'application/json'
                 }, {
-                    'contentMediaType': 'application/json'
+                    'contentMediaType': 'text/csv'
                 }]
             }
         }

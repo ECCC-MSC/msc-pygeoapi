@@ -1,0 +1,8 @@
+    extract-raster:
+        type: process
+        processor:
+            name: msc_pygeoapi.process.weather.extract_raster.ExtractRasterProcessor
+#    generate-vigilance:
+#        type: process
+#        processor:
+#            name: msc_pygeoapi.process.weather.generate_vigilance.GenerateVigilanceProcessor

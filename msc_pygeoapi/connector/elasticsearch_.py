@@ -30,7 +30,7 @@
 import logging
 from urllib.parse import urlparse
 
-from elasticsearch import Elasticsearch
+from elasticsearch import Elasticsearch, exceptions
 from elasticsearch.helpers import streaming_bulk, BulkIndexError
 
 from msc_pygeoapi.connector.base import BaseConnector
@@ -276,9 +276,25 @@ class ElasticsearchConnector(BaseConnector):
         :return: `bool` of index update status
         """
 
-        self.Elasticsearch.update_by_query(body=query, index=name)
+        try:
+            self.Elasticsearch.update_by_query(body=query, index=name)
+        except exceptions.NotFoundError as err:
+            LOGGER.error('Could not update index: {}'.format(err))
+            return False
 
         return True
+
+    def search(self, query, name):
+        """
+        search an Elasticsearch index template
+
+        :param query: `str` query template
+        :param name: `str` index name
+
+        :return: list of requested features
+        """
+
+        return self.Elasticsearch.search(body=query, index=name)
 
     def __repr__(self):
         return '<ElasticsearchConnector> {}'.format(self.url)
