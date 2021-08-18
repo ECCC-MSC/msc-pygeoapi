@@ -564,10 +564,10 @@ try:
         def execute(self, data):
             mimetype = 'application/json'
 
-            layer = data['layer']
-            x = float(data['x'])
-            y = float(data['y'])
-            format_ = data['format']
+            layer = data.get('layer')
+            x = float(data.get('x'))
+            y = float(data.get('y'))
+            format_ = data.get('format')
 
             try:
                 output = raster_drill(layer, x, y, format_)
