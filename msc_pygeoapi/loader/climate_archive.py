@@ -490,6 +490,92 @@ class ClimateArchiveLoader(BaseLoader):
             index_name = 'climate_public_daily_data'
             self.conn.create(index_name, mapping, overwrite=True)
 
+            if index == 'hourly_stn':
+                mapping = {
+                    "settings": {"number_of_shards": 1, "number_of_replicas": 0},
+                    "mappings": {
+                        "_meta": {"geomfields": {"geometry": "POINT"}},
+                        "properties": {
+                            "type": {"type": "text"},
+                            "properties": {
+                                "properties": {
+                                    "CLIMATE_IDENTIFIER": {
+                                        "type": "text",
+                                        "fields": {"raw": {"type": "keyword"}},
+                                    },
+                                    "STATION_NAME": {
+                                        "type": "text",
+                                        "fields": {"raw": {"type": "keyword"}},
+                                    },
+                                    "DEW_POINT_TEMPERATURE_FLAG": {
+                                        "type": "text",
+                                        "fields": {"raw": {"type": "keyword"}},
+                                    },
+                                    "HUMIDEX_FLAG": {
+                                        "type": "text",
+                                        "fields": {"raw": {"type": "keyword"}},
+                                    },
+                                    "PRECIPITATION_AMOUNT_FLAG": {
+                                        "type": "text",
+                                        "fields": {"raw": {"type": "keyword"}},
+                                    },
+                                    "REL_HUMIDITY_FLAG": {
+                                        "type": "text",
+                                        "fields": {"raw": {"type": "keyword"}},
+                                    },
+                                    "STATION_PRESSURE_FLAG": {
+                                        "type": "text",
+                                        "fields": {"raw": {"type": "keyword"}},
+                                    },
+                                    "TEMPERATURE_FLAG": {
+                                        "type": "text",
+                                        "fields": {"raw": {"type": "keyword"}},
+                                    },
+                                    "WIND_CHILL_FLAG": {
+                                        "type": "text",
+                                        "fields": {"raw": {"type": "keyword"}},
+                                    },
+                                    "WIND_DIRECTION_FLAG": {
+                                        "type": "text",
+                                        "fields": {"raw": {"type": "keyword"}},
+                                    },
+                                    "WIND_SPEED_FLAG": {
+                                        "type": "text",
+                                        "fields": {"raw": {"type": "keyword"}},
+                                    },
+                                    "VISIBILITY_FLAG": {
+                                        "type": "text",
+                                        "fields": {"raw": {"type": "keyword"}},
+                                    },
+                                    "DEW_POINT_TEMPERATURE": {"type": "float"},
+                                    "HUMIDEX": {"type": "float"},
+                                    "PRECIPITATION_AMOUNT": {"type": "float"},
+                                    "REL_HUMIDITY": {"type": "float"},
+                                    "STATION_PRESSURE": {"type": "float"},
+                                    "TEMPERATURE": {"type": "float"},
+                                    "VISIBILITY": {"type": "float"},
+                                    "WEATHER": {"type": "text"},
+                                    "WIND_CHILL": {"type": "float"},
+                                    "WIND_DIRECTION": {"type": "float"},
+                                    "WIND_SPEED": {"type": "float"},
+                                    "LOCAL_YEAR": {"type": "integer"},
+                                    "LOCAL_MONTH": {"type": "integer"},
+                                    "LOCAL_DAY": {"type": "integer"},
+                                    "LOCAL_TIME": {"type": "time"},
+                                    "LOCAL_DATE": {
+                                        "type": "date",
+                                        "format": "yyyy-MM-dd HH:mm:ss",
+                                    },
+                                }
+                            },
+                            "geometry": {"type": "geo_shape"},
+                        },
+                    },
+                }
+
+            index_name = 'climate_public_hourly_data'
+            self.conn.create(index_name, mapping, overwrite=True)
+
     def generate_stations(self):
         """
         Queries stations data from the db, and reformats
