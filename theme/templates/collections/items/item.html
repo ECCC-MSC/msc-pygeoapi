@@ -103,7 +103,7 @@
             attribution: '{{ config['server']['map']['attribution'] }}'
         }
     ));
-    var geojson_data = {{ data |to_json }};
+    var geojson_data = {{ data |to_json | safe }};
 
     // Null geometry check
     if (geojson_data.geometry === null) {
