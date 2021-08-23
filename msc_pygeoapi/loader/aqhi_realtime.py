@@ -242,7 +242,8 @@ class AQHIRealtimeLoader(BaseLoader):
                 INDEX_BASENAME.format(self.type),
                 self.date_.strftime('%Y-%m-%d'),
             )
-            feature['properties']['latest'] = True
+            if self.type == 'observations':
+                feature['properties']['latest'] = True
 
             self.items.append(feature)
 
