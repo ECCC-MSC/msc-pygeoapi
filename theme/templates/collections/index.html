@@ -59,7 +59,7 @@
 
     <script>
       // Jinja rendered JSON
-      const JSON_DATA = {{ data |to_json }};
+      const JSON_DATA = {{ data | to_json | safe }};
     </script>
     <script type="module">
       import useCollections from '{{ config['server']['url'] }}/static/js/composables/useCollections.js?v={{ version }}'
