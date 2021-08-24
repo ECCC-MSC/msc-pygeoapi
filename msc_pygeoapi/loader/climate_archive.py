@@ -884,6 +884,89 @@ class ClimateArchiveLoader(BaseLoader):
                         f"Bad STN ID: {insert_dict['STN_ID']}, skipping"
                         f" records for this station"
                     )
+    
+    def generate_hourly_data(self, stn_dict, date=None):
+        """
+        Queries hourly data from the db, and reformats
+        data so it can be inserted into Elasticsearch.
+
+        Returns a generator of dictionaries that represent upsert actions
+        into Elasticsearch's bulk API.
+
+        :param cur: oracle cursor to perform queries against.
+        :param stn_dict: mapping of station IDs to station information.
+        :param date: date to start fetching data from.
+        :returns: generator of bulk API upsert actions.
+        """
+
+        for station in stn_dict:
+            if not date:
+                try:
+                    self.cur.execute(
+                        f'select * from CCCS_PORTAL.PUBLIC_HOURLY_DATA '
+                        f'where STN_ID={station}'
+                    )
+                except Exception as err:
+                    LOGGER.error(
+                        f'Could not fetch records from oracle due to:'
+                        f' {str(err)}.'
+                    )
+            else:
+                try:
+                    self.cur.execute(
+                        (
+                            f"select * from CCCS_PORTAL.PUBLIC_HOURLY_DATA "
+                            f"where STN_ID={station} and "
+                            f"LOCAL_DATE > TO_TIMESTAMP('{date} 00:00:00', "
+                            f"'YYYY-MM-DD HH24:MI:SS')"
+                        )
+                    )
+                except Exception as err:
+                    LOGGER.error(
+                        f'Could not fetch records from oracle due to:'
+                        f' {str(err)}.'
+                    )
+
+            for row in self.cur:
+                insert_dict = dict(
+                    zip([x[0] for x in self.cur.description], row)
+                )
+                # Transform Date fields from datetime to string.
+                insert_dict['LOCAL_DATE'] = (
+                    str(insert_dict['LOCAL_DATE'])
+                    if insert_dict['LOCAL_DATE'] is not None
+                    else insert_dict['LOCAL_DATE']
+                )
+
+                insert_dict['ID'] = '{}.{}.{}.{}'.format(
+                    insert_dict['CLIMATE_IDENTIFIER'],
+                    insert_dict['LOCAL_YEAR'],
+                    insert_dict['LOCAL_MONTH'],
+                    insert_dict['LOCAL_DAY'],
+                )
+                if insert_dict['STN_ID'] in stn_dict:
+                    coords = stn_dict[insert_dict['STN_ID']]['coordinates']
+                    insert_dict['STATION_NAME'] = stn_dict[
+                        insert_dict['STN_ID']
+                    ]['STATION_NAME']
+                    wrapper = {
+                        'type': 'Feature',
+                        'properties': insert_dict,
+                        'geometry': {'type': 'Point', 'coordinates': coords},
+                    }
+                    action = {
+                        '_id': insert_dict['ID'],
+                        '_index': 'climate_public_hourly_data',
+                        '_op_type': 'update',
+                        'doc': wrapper,
+                        'doc_as_upsert': True,
+                    }
+                    yield action
+                else:
+                    LOGGER.error(
+                        f"Bad STN ID: {insert_dict['STN_ID']}, skipping"
+                        f" records for this station"
+                    )
 
     def get_station_data(self, station, starting_from):
         """
