@@ -1107,7 +1107,7 @@ def climate_archive():
 @cli_options.OPTION_ES_PASSWORD()
 @cli_options.OPTION_ES_IGNORE_CERTS()
 @cli_options.OPTION_DATASET(
-    type=click.Choice(['all', 'stations', 'normals', 'monthly', 'daily']),
+    type=click.Choice(['all', 'stations', 'normals', 'monthly', 'daily', 'hourly']),
 )
 @click.option(
     '--station', help='station ID (STN_ID) of station to load', required=False,
@@ -1139,7 +1139,7 @@ def add(
     loader = ClimateArchiveLoader(db, conn_config)
 
     if dataset == 'all':
-        datasets_to_process = ['daily', 'monthly', 'normals', 'stations']
+        datasets_to_process = ['hourly', 'daily', 'monthly', 'normals', 'stations']
     else:
         datasets_to_process = [dataset]
 
@@ -1192,6 +1192,18 @@ def add(
             loader.conn.submit_elastic_package(dailies)
         except Exception as err:
             msg = 'Could not populate daily index: {}'.format(err)
+            raise click.ClickException(msg)
+    
+    if 'hourly' in datasets_to_process:
+        try:
+            click.echo('Populating hourly index')
+            stn_dict = loader.get_station_data(station, starting_from)
+            if not (date or station or starting_from):
+                loader.create_index('hourly_summary')
+            dailies = loader.generate_hourly_data(stn_dict, date)
+            loader.conn.submit_elastic_package(dailies)
+        except Exception as err:
+            msg = 'Could not populate hourly index: {}'.format(err)
             raise click.ClickException(msg)
 
     loader.db_conn.close()
