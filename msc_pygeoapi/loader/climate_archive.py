@@ -490,7 +490,7 @@ class ClimateArchiveLoader(BaseLoader):
             index_name = 'climate_public_daily_data'
             self.conn.create(index_name, mapping, overwrite=True)
 
-            if index == 'hourly_stn':
+            if index == 'hourly_summary':
                 mapping = {
                     "settings": {"number_of_shards": 1, "number_of_replicas": 0},
                     "mappings": {
@@ -507,7 +507,15 @@ class ClimateArchiveLoader(BaseLoader):
                                         "type": "text",
                                         "fields": {"raw": {"type": "keyword"}},
                                     },
+                                    "STN_ID": {
+                                        "type": "text",
+                                        "fields": {"raw": {"type": "keyword"}},
+                                    },
                                     "DEW_POINT_TEMPERATURE_FLAG": {
+                                        "type": "text",
+                                        "fields": {"raw": {"type": "keyword"}},
+                                    },
+                                    "DRY_BULB_TEMPERATURE_FLAG": {
                                         "type": "text",
                                         "fields": {"raw": {"type": "keyword"}},
                                     },
@@ -548,6 +556,7 @@ class ClimateArchiveLoader(BaseLoader):
                                         "fields": {"raw": {"type": "keyword"}},
                                     },
                                     "DEW_POINT_TEMPERATURE": {"type": "float"},
+                                    "DRY_BULB_TEMPERATURE": {"type": "float"},
                                     "HUMIDEX": {"type": "float"},
                                     "PRECIPITATION_AMOUNT": {"type": "float"},
                                     "REL_HUMIDITY": {"type": "float"},
@@ -558,10 +567,13 @@ class ClimateArchiveLoader(BaseLoader):
                                     "WIND_CHILL": {"type": "float"},
                                     "WIND_DIRECTION": {"type": "float"},
                                     "WIND_SPEED": {"type": "float"},
+                                    "LONGITUDE_DECIMAL_DEGREES": {"type": "float"},
+                                    "LATITUDE_DECIMAL_DEGREES": {"type": "float"},
                                     "LOCAL_YEAR": {"type": "integer"},
                                     "LOCAL_MONTH": {"type": "integer"},
                                     "LOCAL_DAY": {"type": "integer"},
-                                    "LOCAL_TIME": {"type": "time"},
+                                    "LOCAL_TIME": {"type": "integer"},
+                                    "LOCAL_HOUR": {"type": "integer"},
                                     "LOCAL_DATE": {
                                         "type": "date",
                                         "format": "yyyy-MM-dd HH:mm:ss",
@@ -943,6 +955,8 @@ class ClimateArchiveLoader(BaseLoader):
                     insert_dict['LOCAL_YEAR'],
                     insert_dict['LOCAL_MONTH'],
                     insert_dict['LOCAL_DAY'],
+                    insert_dict['LOCAL_TIME'],
+                    insert_dict['LOCAL_HOUR'],
                 )
                 if insert_dict['STN_ID'] in stn_dict:
                     coords = stn_dict[insert_dict['STN_ID']]['coordinates']
@@ -1200,8 +1214,8 @@ def add(
             stn_dict = loader.get_station_data(station, starting_from)
             if not (date or station or starting_from):
                 loader.create_index('hourly_summary')
-            dailies = loader.generate_hourly_data(stn_dict, date)
-            loader.conn.submit_elastic_package(dailies)
+            hourlies = loader.generate_hourly_data(stn_dict, date)
+            loader.conn.submit_elastic_package(hourlies)
         except Exception as err:
             msg = 'Could not populate hourly index: {}'.format(err)
             raise click.ClickException(msg)
