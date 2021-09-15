@@ -171,6 +171,12 @@ export default function useTableFilter(rows, keyColumns, defaultSortCol) {
   const linkToRow = function(row, key, itemPath) {
     if (key === 'id') {
       return `<a href="${itemPath + '/' + row[key]}">${row[key]}</a>`
+    } else if (key === 'links') {
+      let linksList = ''
+      row[key].forEach(element =>
+        linksList += '<li><a href="' + element['href'] + '">' + element['title'] + '</a></li>'
+      ) 
+      return `${linksList}`
     } else {
       return row[key]
     }
