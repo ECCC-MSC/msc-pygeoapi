@@ -490,100 +490,111 @@ class ClimateArchiveLoader(BaseLoader):
             index_name = 'climate_public_daily_data'
             self.conn.create(index_name, mapping, overwrite=True)
 
-            if index == 'hourly_summary':
-                mapping = {
-                    "settings": {"number_of_shards": 1, "number_of_replicas": 0},
-                    "mappings": {
-                        "_meta": {"geomfields": {"geometry": "POINT"}},
+        if index == 'hourly_summary':
+            mapping = {
+                "settings": {"number_of_shards": 1, "number_of_replicas": 0},
+                "mappings": {
+                    "_meta": {"geomfields": {"geometry": "POINT"}},
+                    "properties": {
+                        "type": {"type": "text"},
                         "properties": {
-                            "type": {"type": "text"},
                             "properties": {
-                                "properties": {
-                                    "CLIMATE_IDENTIFIER": {
-                                        "type": "text",
-                                        "fields": {"raw": {"type": "keyword"}},
-                                    },
-                                    "STATION_NAME": {
-                                        "type": "text",
-                                        "fields": {"raw": {"type": "keyword"}},
-                                    },
-                                    "STN_ID": {
-                                        "type": "text",
-                                        "fields": {"raw": {"type": "keyword"}},
-                                    },
-                                    "DEW_POINT_TEMPERATURE_FLAG": {
-                                        "type": "text",
-                                        "fields": {"raw": {"type": "keyword"}},
-                                    },
-                                    "DRY_BULB_TEMPERATURE_FLAG": {
-                                        "type": "text",
-                                        "fields": {"raw": {"type": "keyword"}},
-                                    },
-                                    "HUMIDEX_FLAG": {
-                                        "type": "text",
-                                        "fields": {"raw": {"type": "keyword"}},
-                                    },
-                                    "PRECIPITATION_AMOUNT_FLAG": {
-                                        "type": "text",
-                                        "fields": {"raw": {"type": "keyword"}},
-                                    },
-                                    "REL_HUMIDITY_FLAG": {
-                                        "type": "text",
-                                        "fields": {"raw": {"type": "keyword"}},
-                                    },
-                                    "STATION_PRESSURE_FLAG": {
-                                        "type": "text",
-                                        "fields": {"raw": {"type": "keyword"}},
-                                    },
-                                    "TEMPERATURE_FLAG": {
-                                        "type": "text",
-                                        "fields": {"raw": {"type": "keyword"}},
-                                    },
-                                    "WIND_CHILL_FLAG": {
-                                        "type": "text",
-                                        "fields": {"raw": {"type": "keyword"}},
-                                    },
-                                    "WIND_DIRECTION_FLAG": {
-                                        "type": "text",
-                                        "fields": {"raw": {"type": "keyword"}},
-                                    },
-                                    "WIND_SPEED_FLAG": {
-                                        "type": "text",
-                                        "fields": {"raw": {"type": "keyword"}},
-                                    },
-                                    "VISIBILITY_FLAG": {
-                                        "type": "text",
-                                        "fields": {"raw": {"type": "keyword"}},
-                                    },
-                                    "DEW_POINT_TEMPERATURE": {"type": "float"},
-                                    "DRY_BULB_TEMPERATURE": {"type": "float"},
-                                    "HUMIDEX": {"type": "float"},
-                                    "PRECIPITATION_AMOUNT": {"type": "float"},
-                                    "REL_HUMIDITY": {"type": "float"},
-                                    "STATION_PRESSURE": {"type": "float"},
-                                    "TEMPERATURE": {"type": "float"},
-                                    "VISIBILITY": {"type": "float"},
-                                    "WEATHER": {"type": "text"},
-                                    "WIND_CHILL": {"type": "float"},
-                                    "WIND_DIRECTION": {"type": "float"},
-                                    "WIND_SPEED": {"type": "float"},
-                                    "LONGITUDE_DECIMAL_DEGREES": {"type": "float"},
-                                    "LATITUDE_DECIMAL_DEGREES": {"type": "float"},
-                                    "LOCAL_YEAR": {"type": "integer"},
-                                    "LOCAL_MONTH": {"type": "integer"},
-                                    "LOCAL_DAY": {"type": "integer"},
-                                    "LOCAL_TIME": {"type": "integer"},
-                                    "LOCAL_HOUR": {"type": "integer"},
-                                    "LOCAL_DATE": {
-                                        "type": "date",
-                                        "format": "yyyy-MM-dd HH:mm:ss",
-                                    },
-                                }
-                            },
-                            "geometry": {"type": "geo_shape"},
+                                "CLIMATE_IDENTIFIER": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "STATION_NAME": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "STN_ID": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "DEW_POINT_TEMPERATURE_FLAG": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "DRY_BULB_TEMPERATURE_FLAG": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "HUMIDEX_FLAG": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "PRECIPITATION_AMOUNT_FLAG": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "PROVINCE_CODE": {
+                                "type": "text",
+                                "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "REL_HUMIDITY_FLAG": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "STATION_PRESSURE_FLAG": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "TEMPERATURE_FLAG": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "WEATHER_ENG_DESC": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "WEATHER_FRE_DESC": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "WIND_CHILL_FLAG": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "WIND_DIRECTION_FLAG": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "WIND_SPEED_FLAG": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "VISIBILITY_FLAG": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "DEW_POINT_TEMPERATURE": {"type": "float"},
+                                "DRY_BULB_TEMPERATURE": {"type": "float"},
+                                "HUMIDEX": {"type": "float"},
+                                "PRECIPITATION_AMOUNT": {"type": "float"},
+                                "REL_HUMIDITY": {"type": "float"},
+                                "STATION_PRESSURE": {"type": "float"},
+                                "TEMPERATURE": {"type": "float"},
+                                "VISIBILITY": {"type": "float"},
+                                "WIND_CHILL": {"type": "float"},
+                                "WIND_DIRECTION": {"type": "float"},
+                                "WIND_SPEED": {"type": "float"},
+                                "LONGITUDE_DECIMAL_DEGREES": {"type": "float"},
+                                "LATITUDE_DECIMAL_DEGREES": {"type": "float"},
+                                "LOCAL_YEAR": {"type": "integer"},
+                                "LOCAL_MONTH": {"type": "integer"},
+                                "LOCAL_DAY": {"type": "integer"},
+                                "LOCAL_HOUR": {"type": "integer"},
+                                "LOCAL_DATE": {
+                                    "type": "date",
+                                    "format": "yyyy-MM-dd HH:mm:ss",
+                                },
+                            }
                         },
+                        "geometry": {"type": "geo_shape"},
                     },
-                }
+                },
+            }
+                
 
             index_name = 'climate_public_hourly_data'
             self.conn.create(index_name, mapping, overwrite=True)
@@ -950,16 +961,18 @@ class ClimateArchiveLoader(BaseLoader):
                     else insert_dict['LOCAL_DATE']
                 )
 
-                insert_dict['ID'] = '{}.{}.{}.{}'.format(
+                insert_dict['ID'] = '{}.{}.{}.{}.{}'.format(
                     insert_dict['CLIMATE_IDENTIFIER'],
                     insert_dict['LOCAL_YEAR'],
                     insert_dict['LOCAL_MONTH'],
                     insert_dict['LOCAL_DAY'],
-                    insert_dict['LOCAL_TIME'],
                     insert_dict['LOCAL_HOUR'],
                 )
                 if insert_dict['STN_ID'] in stn_dict:
                     coords = stn_dict[insert_dict['STN_ID']]['coordinates']
+                    insert_dict['PROVINCE_CODE'] = stn_dict[
+                        insert_dict['STN_ID']
+                    ]['PROVINCE_CODE']
                     insert_dict['STATION_NAME'] = stn_dict[
                         insert_dict['STN_ID']
                     ]['STATION_NAME']
