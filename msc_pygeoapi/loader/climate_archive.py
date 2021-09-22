@@ -593,7 +593,7 @@ class ClimateArchiveLoader(BaseLoader):
                         "geometry": {"type": "geo_shape"},
                     },
                 },
-            } 
+            }
 
             index_name = 'climate_public_hourly_data'
             self.conn.create(index_name, mapping, overwrite=True)
@@ -1168,10 +1168,10 @@ def add(
 
     if dataset == 'all':
         datasets_to_process = [
-            'hourly', 
-            'daily', 
-            'monthly', 
-            'normals', 
+            'hourly',
+            'daily',
+            'monthly',
+            'normals',
             'stations',
         ]
     else:
