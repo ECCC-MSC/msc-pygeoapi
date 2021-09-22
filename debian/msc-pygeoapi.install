@@ -5,4 +5,4 @@ deploy/default/msc-pygeoapi.wsgi opt/msc-pygeoapi/app
 deploy/default/sarracenia/*.conf opt/msc-pygeoapi/etc/sarracenia
 msc_pygeoapi/event.py opt/msc-pygeoapi
 debian/schemas.opengis.net opt/msc-pygeoapi/schemas.opengis.net
-theme opt/msc-pygeoapi/theme
+theme opt/msc-pygeoapi
