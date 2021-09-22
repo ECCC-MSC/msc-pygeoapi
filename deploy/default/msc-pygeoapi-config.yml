@@ -603,6 +603,64 @@ resources:
                   - MAX_REL_HUMIDITY
                   - MAX_REL_HUMIDITY_FLAG
 
+    climate-hourly:
+        type: collection
+        title: Hourly Climate Observations
+        description: "TODO"
+        keywords: [Climate, Climate archives, Climate change]
+        crs:
+            - CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title: Climate Data Online
+              href: https://climate.weather.gc.ca
+              hreflang: en-CA
+        extents:
+            spatial:
+                bbox: [-142, 42, -52, 84]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+            temporal:
+                begin: 1840-01-01T00:00:00Z #TODO
+                end: null # or empty
+        providers:
+            - type: feature
+              default: true
+              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
+              data: http://localhost:9200/climate_public_hourly_data
+              id_field: ID
+              time_field: LOCAL_DATE
+              properties:
+                  - STATION_NAME
+                  - CLIMATE_IDENTIFIER
+                  - ID
+                  - LOCAL_DATE
+                  - PROVINCE_CODE
+                  - LOCAL_YEAR
+                  - LOCAL_MONTH
+                  - LOCAL_DAY
+                  - LOCAL_HOUR
+                  - DEW_POINT_TEMP
+                  - DEW_POINT_TEMP_FLAG
+                  - DRY_BULB_TEMP
+                  - DRY_BULB_TEMP_FLAG
+                  - HUMIDEX
+                  - HUMIDEX_FLAG
+                  - PRECIP_AMOUNT
+                  - PRECIP_AMOUNT_FLAG
+                  - RELATIVE_HUMIDITY
+                  - RELATIVE_HUMIDITY_FLAG
+                  - STATION_PRESSURE
+                  - STATION_PRESSURE_FLAG
+                  - VISIBILITY
+                  - VISIBILITY_FLAG
+                  - WINDCHILL
+                  - WINDCHILL_FLAG
+                  - WIND_DIRECTION
+                  - WIND_DIRECTION_FLAG
+                  - WIND_SPEED
+                  - WIND_SPEED_FLAG
+
     ahccd-stations:
         type: collection
         title: Adjusted and Homogenized Canadian Climate Data (AHCCD) Stations
