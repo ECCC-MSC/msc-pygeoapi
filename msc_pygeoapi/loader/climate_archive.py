@@ -528,8 +528,8 @@ class ClimateArchiveLoader(BaseLoader):
                                     "fields": {"raw": {"type": "keyword"}},
                                 },
                                 "PROVINCE_CODE": {
-                                "type": "text",
-                                "fields": {"raw": {"type": "keyword"}},
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
                                 },
                                 "REL_HUMIDITY_FLAG": {
                                     "type": "text",
@@ -593,8 +593,7 @@ class ClimateArchiveLoader(BaseLoader):
                         "geometry": {"type": "geo_shape"},
                     },
                 },
-            }
-                
+            } 
 
             index_name = 'climate_public_hourly_data'
             self.conn.create(index_name, mapping, overwrite=True)
@@ -907,7 +906,7 @@ class ClimateArchiveLoader(BaseLoader):
                         f"Bad STN ID: {insert_dict['STN_ID']}, skipping"
                         f" records for this station"
                     )
-    
+
     def generate_hourly_data(self, stn_dict, date=None):
         """
         Queries hourly data from the db, and reformats
@@ -1134,7 +1133,9 @@ def climate_archive():
 @cli_options.OPTION_ES_PASSWORD()
 @cli_options.OPTION_ES_IGNORE_CERTS()
 @cli_options.OPTION_DATASET(
-    type=click.Choice(['all', 'stations', 'normals', 'monthly', 'daily', 'hourly']),
+    type=click.Choice(
+        ['all', 'stations', 'normals', 'monthly', 'daily', 'hourly']
+    ),
 )
 @click.option(
     '--station', help='station ID (STN_ID) of station to load', required=False,
@@ -1166,7 +1167,13 @@ def add(
     loader = ClimateArchiveLoader(db, conn_config)
 
     if dataset == 'all':
-        datasets_to_process = ['hourly', 'daily', 'monthly', 'normals', 'stations']
+        datasets_to_process = [
+            'hourly', 
+            'daily', 
+            'monthly', 
+            'normals', 
+            'stations',
+        ]
     else:
         datasets_to_process = [dataset]
 
@@ -1220,7 +1227,7 @@ def add(
         except Exception as err:
             msg = 'Could not populate daily index: {}'.format(err)
             raise click.ClickException(msg)
-    
+
     if 'hourly' in datasets_to_process:
         try:
             click.echo('Populating hourly index')
