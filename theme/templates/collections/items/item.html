@@ -67,10 +67,6 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>id</td>
-                <td>{{ data.id }}</td>
-              </tr>
               {% for k, v in data['properties'].items() %}
               <tr>
                 <td>{{ k }}</td>
@@ -103,7 +99,7 @@
             attribution: '{{ config['server']['map']['attribution'] }}'
         }
     ));
-    var geojson_data = {{ data |to_json }};
+    var geojson_data = {{ data |to_json | safe }};
 
     // Null geometry check
     if (geojson_data.geometry === null) {

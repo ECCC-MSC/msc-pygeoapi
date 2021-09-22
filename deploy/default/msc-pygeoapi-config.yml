@@ -8,7 +8,7 @@ server:
     encoding: utf-8
     language: en-CA
     # cors: true
-    pretty_print: true
+    pretty_print: false
     limit: 500
     templates:
         path: ${MSC_PYGEOAPI_TEMPLATES}

@@ -90,7 +90,7 @@
 {% block extrafoot %}
     <script>
     // Jinja rendered JSON
-    const JSON_DATA = {{ data |to_json }};
+    const JSON_DATA = {{ data | to_json | safe }};
     
     var map = L.map('items-map').setView([0, 0], 1);
     map.addLayer(new L.TileLayer(

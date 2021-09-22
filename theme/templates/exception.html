@@ -1,0 +1,10 @@
+{% extends "_base.html" %}
+{% block title %}{{ super() }} Exception {% endblock %}
+{% block crumbs %}{{ super() }}
+{% endblock %}
+{% block body %}
+    <section id="exception">
+      <h2>Exception</h2>
+      <p>{{ data['description'] }}</p>
+    </section>
+{% endblock %}
