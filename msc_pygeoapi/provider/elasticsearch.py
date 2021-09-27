@@ -138,7 +138,7 @@ class ElasticsearchProvider(BaseProvider):
                 else:
                     type_ = v['type']
 
-                fields_[k] = type_
+                fields_[k] = {'type': type_}
 
         return fields_
 
