@@ -36,7 +36,7 @@ from msc_pygeoapi.log import setup_logger
 from msc_pygeoapi.process import process
 
 
-__version__ = '0.9.6'
+__version__ = '0.9.7'
 
 setup_logger(MSC_PYGEOAPI_LOGGING_LOGLEVEL, MSC_PYGEOAPI_LOGGING_LOGFILE)
 

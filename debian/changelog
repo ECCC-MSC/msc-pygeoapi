@@ -1,3 +1,9 @@
+msc-pygeoapi (0.9.7) bionic; urgency=medium
+
+  * fix ES provider ref
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Mon, Sep 27 2021 18:38:16 +0000
+
 msc-pygeoapi (0.9.6) bionic; urgency=medium
 
   * fix theme installation on debian
