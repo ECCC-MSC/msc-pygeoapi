@@ -17,7 +17,7 @@ export default function useItems() {
       // map items to only show its properties
       return itemsJson.value.features.map((item) => {
         return {
-          id: item.id, // include default "id"
+          id: item.id, // include root "id"
           ...item.properties
         }
       })
@@ -97,7 +97,7 @@ export default function useItems() {
 
     // Optional sort
     if (sortCol !== '' && sortDir !== '') {
-      if (sortCol !== 'id') { // id is an internal column
+      if (sortCol !== 'id') { // root id is an internal column
         newRequestUrl += '&sortby=' + (sortDir === 'desc' ? '-' : '') + sortCol
       }
     }
@@ -117,7 +117,10 @@ export default function useItems() {
       const resp = await axios.get(requestUrl.value)
       itemsJson.value = resp.data // original JSON data
       if (itemProps.value.length === 0) { // initalize itemProps once from JSON data
-        itemProps.value = Object.keys(items.value[0])
+        // use first row for keys 
+        itemProps.value = Object.keys(items.value[0]).filter((value) => {
+          return value !== ID_FIELD // and remove duplicate id field (use root ID)
+        })
       }
       itemsLoading.value = false
     } catch (err) {
