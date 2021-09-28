@@ -1,13 +1,23 @@
 {% extends "_base.html" %}
+{% set ptitle = data['properties'][data['title_field']] or ("Item {}".format(data['id'])) %}
 {# Optionally renders an img element, otherwise standard value or link rendering #}
 {% macro render_item_value(v, width) -%}
     {% set val = v | string | trim %}
     {% if val|length and val.lower().endswith(('.jpg', '.jpeg', '.png', '.gif', '.bmp')) %}
         {# Ends with image extension: render img element with link to image #}
-        <a href="{{ val }}"><img src="{{ val }}" alt="" width="{{ width }}"/></a>
+        <a href="{{ val }}"><img src="{{ val }}" alt="{{ val.split('/') | last }}" width="{{ width }}"/></a>
+        {% elif v is string or v is number %}
+        {{ val | urlize() }}
+    {% elif v is mapping %}
+      {% for i,j in v.items() %}
+        <i>{{ i }}:</i> {{ render_item_value(j, 60) }}<br/>
+      {% endfor %}
+    {% elif v is iterable %}
+      {% for i in v %}
+        {{ render_item_value(i, 60) }}
+      {% endfor %}
     {% else %}
-        {# All other cases: text or link value #}
-        {{ v | urlize() }}
+      {{ val | urlize() }}
     {% endif %}
 {%- endmacro %}
 {% block title %}{{ super() }} {{ data['title'] }} - {{ data['id'] }}{% endblock %}
@@ -18,8 +28,8 @@
   <li><a href="{{ link['href'] }}">{{ link['title'] }}</a></li>
   {% endif %}
 {% endfor %}
-<li><a href="../items">Items</a></li>
-<li><a href="./{{ data['id'] }}">Item {{ data['id'] }}</a></li>
+<li><a href="../items">{% trans %}Items{% endtrans %}</a></li>
+<li><a href="./{{ data['id'] }}">{{ ptitle | truncate( 25 ) }}</a></li>
 {% endblock %}
 {% block extrahead %}
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
@@ -47,9 +57,9 @@
                 <div class="col-sm-12">
                   {% for link in data['links'] %}
                   {% if link['rel'] == 'prev' %}
-                  <a role="button" href="./{{ data['prev'] }}">Previous</a>
+                  <a role="button" href="./{{ data['prev'] }}">{% trans %}Prev{% endtrans %}</a>
                   {% elif link['rel'] == 'next' %}
-                  <a role="button" href="./{{ data['next'] }}">Next</a>
+                  <a role="button" href="./{{ data['next'] }}">{% trans %}Next{% endtrans %}</a>
                   {% endif %}
                   {% endfor %}
                 </div>
@@ -62,28 +72,46 @@
             <table class="table table-striped">
               <thead>
               <tr>
-                <th>Property</th>
-                <th>Value</th>
+                <th>{% trans %}Property{% endtrans %}</th>
+                <th>{% trans %}Value{% endtrans %}</th>
               </tr>
             </thead>
             <tbody>
-              {% for k, v in data['properties'].items() %}
-              <tr>
-                <td>{{ k }}</td>
-                {% if k == 'links' %}
-                <td>
-                    <ul>
-                        {% for l in v %}
-                        <li><a href="{{ l['href'] }}">{{ l['title'] }}</a></li>
-                        {% endfor %}
-                    </ul>
-                </td>
-                {% else %}
-                  <td>{{ render_item_value(v, 80) }}</td>
+              {% if data.uri_field %}
+                <tr>
+                  <td>{{ data.uri_field }}</td>
+                  <td><a href="{{ data['properties'].get(data.uri_field) }}" title="{{ data['properties'].get(data.uri_field) }}">{{ data['properties'].pop(data.uri_field) }}</a></td>
+                </tr>
                 {% endif %}
-              </tr>
-              {% endfor %}
-            </tbody>
+                <tr>
+                  <td>id</td>
+                  <td>{{ data.id }}</td>
+                </tr>
+                {% for k, v in data['properties'].items() %}
+                  {% if k != data['id_field'] %}
+                  <tr>
+                    <td>{{ k }}</td>
+                    {% if k in ['links', 'associations'] %}
+                    <td>
+                      <ul>
+                        {% for l in v %}
+                          {% if l['href'] %}
+                            <li><a href="{{ l['href'] }}" title="{{ l['title'] or l['href'].split('/') }}">{{ l['title'] or (l['href'].split('/') | last) | truncate( 25 ) }}</a>
+                            {% if l['type'] %}
+                              ({{ l['type'] }})
+                            {% endif %}
+                            </li>
+                          {% endif %}
+                        {% endfor %}
+                      </ul>
+                    </td>
+                    {% else %}
+                      <td>{{ render_item_value(v, 80) }}</td>
+                    {% endif %}
+                  </tr>
+                  {% endif %}
+                {% endfor %}
+              </tbody>
             </table>
         </div>
       </div>
