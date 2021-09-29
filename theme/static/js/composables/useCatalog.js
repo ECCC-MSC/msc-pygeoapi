@@ -30,7 +30,8 @@ export default function useCatalog() {
         if (Object.prototype.hasOwnProperty.call(link, 'title')) { // null title check for older stac json
           link.name = link.title
         } else {
-          link.name = link.href
+          const splitLink = link.href.split('/')
+          link.name = splitLink[splitLink.length-1] // last path
         }
         children.push(link)
       }
