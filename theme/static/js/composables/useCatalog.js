@@ -27,7 +27,12 @@ export default function useCatalog() {
     let children = []
     links.value.forEach(link => {
       if (link.rel === 'item') {
-        link.name = link.title
+        if (Object.prototype.hasOwnProperty.call(link, 'title')) { // null title check for older stac json
+          link.name = link.title
+        } else {
+          const splitLink = link.href.split('/')
+          link.name = splitLink[splitLink.length-1] // last path
+        }
         children.push(link)
       }
     })
