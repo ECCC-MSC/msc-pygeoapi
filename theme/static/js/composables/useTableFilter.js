@@ -157,10 +157,15 @@ export default function useTableFilter(rows, keyColumns, defaultSortCol) {
 
   // html/string modications for table presentation
   const stripTags = function(htmlString) {
+    if (htmlString == null) { // undefined/null catch
+      return ''
+    }
     return htmlString.replace(/<[^>]+>/g, '')
   }
   const truncate = function (str, num) {
-    if (str.length <= num) {
+    if (str == null) { // undefined/null catch
+      return ''
+    } else if (str.length <= num) {
       return str
     }
     return str.slice(0, num) + '...'
