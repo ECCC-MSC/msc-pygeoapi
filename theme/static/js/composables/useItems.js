@@ -117,10 +117,8 @@ export default function useItems() {
       const resp = await axios.get(requestUrl.value)
       itemsJson.value = resp.data // original JSON data
       if (itemProps.value.length === 0) { // initalize itemProps once from JSON data
-        // use first row for keys 
-        itemProps.value = Object.keys(items.value[0]).filter((value) => {
-          return value !== ID_FIELD // and remove duplicate id field (use root ID)
-        })
+        // use first row for list of keys/properties
+        itemProps.value = Object.keys(items.value[0])
       }
       itemsLoading.value = false
     } catch (err) {
