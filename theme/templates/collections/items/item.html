@@ -20,7 +20,7 @@
       {{ val | urlize() }}
     {% endif %}
 {%- endmacro %}
-{% block title %}{{ ptitle }} - {{ super() }}{% endblock %}
+{% block title %}{{ super() }} {{ ptitle }}{% endblock %}
 {% block crumbs %}{{ super() }}
 <li><a href="../../../collections">Collections</a></li>
 {% for link in data['links'] %}
