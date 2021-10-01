@@ -165,6 +165,9 @@
 {% block extrafoot %}
 {% if data['features'] %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+    <script>
+      const ID_FIELD = '{{ data.get('id_field') }}'; // primary ID field (from Jinja2 template)
+    </script>
     <script type="module">
       import useItems from '{{ config['server']['url'] }}/static/js/composables/useItems.js?v={{ version }}'
       import useTableFilter from '{{ config['server']['url'] }}/static/js/composables/useTableFilter.js?v={{ version }}'
@@ -266,7 +269,7 @@
             params = Object.fromEntries(queryParams.entries())
             queryParams.set('limit', limit.value)
             queryParams.set('startindex', calcStartIndex())
-            if (currentSort.value !== defaultSortCol) { // don't apply sortby for default "id" column
+            if (currentSort.value !== defaultSortCol) { // don't apply sortby for root "id" column
               let sortby = currentSort.value
               if (currentSortDir.value === 'desc') {
                 sortby = '-' + sortby
