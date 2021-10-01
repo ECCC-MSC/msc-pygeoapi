@@ -197,14 +197,21 @@
                 colClass: ''
               })
               itemProps.value.forEach((prop) => {
+                // avoid duplicate id for none case
+                if ((prop.toLowerCase() === 'id') && (ID_FIELD.toLowerCase() === 'none')) {
+                  return // skip
+                } 
+
                 // avoid duplicate columns if root id and ID_FIELD are the same
-                if ((prop.toLowerCase() !== ID_FIELD.toLowerCase()) && (prop.toLowerCase() !== 'id')) {
-                  fields.push({
-                    key: prop,
-                    text: prop,
-                    colClass: ''
-                  })
+                if (prop.toLowerCase() === ID_FIELD.toLowerCase()) {
+                  return // skip
                 }
+
+                fields.push({
+                  key: prop,
+                  text: prop,
+                  colClass: ''
+                })
               })
             }
             return fields
