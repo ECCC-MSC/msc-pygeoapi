@@ -1,6 +1,12 @@
+msc-pygeoapi (0.9.9) bionic; urgency=medium
+
+  * fix template to align with pygeoapi 0.10.1
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Fri, Oct 01 2021 11:38:23 +0000
+
 msc-pygeoapi (0.9.8) bionic; urgency=medium
 
-  * fix alignment issues with pygeoapi 0.9.8
+  * fix alignment issues with pygeoapi 0.10.1
 
  -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Wed, Sep 29 2021 20:30:16 +0000
 
