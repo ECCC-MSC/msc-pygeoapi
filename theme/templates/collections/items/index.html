@@ -197,7 +197,8 @@
                 colClass: ''
               })
               itemProps.value.forEach((prop) => {
-                if (prop.toLowerCase() !== ID_FIELD.toLowerCase()) { // avoid duplicate columns if root id and ID_FIELD are the same
+                // avoid duplicate columns if root id and ID_FIELD are the same
+                if ((prop.toLowerCase() !== ID_FIELD.toLowerCase()) && (prop.toLowerCase() !== 'id')) {
                   fields.push({
                     key: prop,
                     text: prop,
