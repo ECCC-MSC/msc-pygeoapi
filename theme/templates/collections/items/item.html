@@ -20,15 +20,15 @@
       {{ val | urlize() }}
     {% endif %}
 {%- endmacro %}
-{% block title %}{{ super() }} {{ data['title'] }} - {{ data['id'] }}{% endblock %}
+{% block title %}{{ super() }} {{ ptitle }}{% endblock %}
 {% block crumbs %}{{ super() }}
 <li><a href="../../../collections">Collections</a></li>
 {% for link in data['links'] %}
   {% if link.rel == 'collection' %}
-  <li><a href="{{ link['href'] }}">{{ link['title'] }}</a></li>
+  <li><a href="{{ link['href'] }}">{{ link['title'] | truncate( 25 ) }}</a></li>
   {% endif %}
 {% endfor %}
-<li><a href="../items">{% trans %}Items{% endtrans %}</a></li>
+<li><a href="../items">Items</a></li>
 <li><a href="./{{ data['id'] }}">{{ ptitle | truncate( 25 ) }}</a></li>
 {% endblock %}
 {% block extrahead %}
@@ -57,9 +57,9 @@
                 <div class="col-sm-12">
                   {% for link in data['links'] %}
                   {% if link['rel'] == 'prev' %}
-                  <a role="button" href="./{{ data['prev'] }}">{% trans %}Prev{% endtrans %}</a>
+                  <a role="button" href="./{{ data['prev'] }}">Prev</a>
                   {% elif link['rel'] == 'next' %}
-                  <a role="button" href="./{{ data['next'] }}">{% trans %}Next{% endtrans %}</a>
+                  <a role="button" href="./{{ data['next'] }}">Next</a>
                   {% endif %}
                   {% endfor %}
                 </div>
@@ -72,8 +72,8 @@
             <table class="table table-striped">
               <thead>
               <tr>
-                <th>{% trans %}Property{% endtrans %}</th>
-                <th>{% trans %}Value{% endtrans %}</th>
+                <th>Property</th>
+                <th>Value</th>
               </tr>
             </thead>
             <tbody>
