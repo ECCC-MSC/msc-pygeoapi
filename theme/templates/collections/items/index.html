@@ -165,6 +165,9 @@
 {% block extrafoot %}
 {% if data['features'] %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+    <script>
+      const ID_FIELD = '{{ data.get('id_field') }}'; // primary ID field (from Jinja2 template)
+    </script>
     <script type="module">
       import useItems from '{{ config['server']['url'] }}/static/js/composables/useItems.js?v={{ version }}'
       import useTableFilter from '{{ config['server']['url'] }}/static/js/composables/useTableFilter.js?v={{ version }}'
@@ -187,13 +190,23 @@
             if (typeof itemProps === 'undefined') {
               return []
             }
-            itemProps.value.forEach((prop) => {
-              fields.push({
-                key: prop,
-                text: prop,
+            if (itemProps.value.length > 0) {
+              fields.push({ // root id property
+                key: 'id',
+                text: 'id',
                 colClass: ''
               })
-            })
+              itemProps.value.forEach((prop) => {
+                // avoid duplicate columns if root id and ID_FIELD are the same
+                if ((prop.toLowerCase() !== ID_FIELD.toLowerCase()) && (prop.toLowerCase() !== 'id')) {
+                  fields.push({
+                    key: prop,
+                    text: prop,
+                    colClass: ''
+                  })
+                }
+              })
+            }
             return fields
           })
           const keyColumns = computed(() => {
@@ -201,7 +214,7 @@
           })
 
           /* Table filtering */
-          const defaultSortCol = 'id'
+          const defaultSortCol = 'id' // root id
           const { searchText, searchTextLowered, truncate, showingFilteredFromText,
             currentSort, currentSortDir, sortDir, sortIconClass, filteredRows, linkToRow } = useTableFilter(items, keyColumns, defaultSortCol)
           const changeSortDir = function (col) {
@@ -266,7 +279,7 @@
             params = Object.fromEntries(queryParams.entries())
             queryParams.set('limit', limit.value)
             queryParams.set('startindex', calcStartIndex())
-            if (currentSort.value !== defaultSortCol) { // don't apply sortby for default "id" column
+            if (currentSort.value !== defaultSortCol) { // don't apply sortby for root "id" column
               let sortby = currentSort.value
               if (currentSortDir.value === 'desc') {
                 sortby = '-' + sortby
