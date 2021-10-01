@@ -190,13 +190,22 @@
             if (typeof itemProps === 'undefined') {
               return []
             }
-            itemProps.value.forEach((prop) => {
-              fields.push({
-                key: prop,
-                text: prop,
+            if (itemProps.value.length > 0) {
+              fields.push({ // root id property
+                key: 'id',
+                text: 'id',
                 colClass: ''
               })
-            })
+              itemProps.value.forEach((prop) => {
+                if (prop.toLowerCase() !== ID_FIELD.toLowerCase()) { // avoid duplicate columns if root id and ID_FIELD are the same
+                  fields.push({
+                    key: prop,
+                    text: prop,
+                    colClass: ''
+                  })
+                }
+              })
+            }
             return fields
           })
           const keyColumns = computed(() => {
@@ -204,7 +213,7 @@
           })
 
           /* Table filtering */
-          const defaultSortCol = 'id'
+          const defaultSortCol = 'id' // root id
           const { searchText, searchTextLowered, truncate, showingFilteredFromText,
             currentSort, currentSortDir, sortDir, sortIconClass, filteredRows, linkToRow } = useTableFilter(items, keyColumns, defaultSortCol)
           const changeSortDir = function (col) {
