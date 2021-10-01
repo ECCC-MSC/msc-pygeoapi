@@ -1,3 +1,9 @@
+msc-pygeoapi (0.9.10) bionic; urgency=medium
+
+  * fix duplicate ID issues on some collections in UI
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Fri, Oct 01 2021 16:38:58 +0000
+
 msc-pygeoapi (0.9.9) bionic; urgency=medium
 
   * fix template to align with pygeoapi 0.10.1
