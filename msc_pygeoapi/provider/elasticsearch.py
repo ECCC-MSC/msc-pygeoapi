@@ -228,11 +228,17 @@ class ElasticsearchProvider(BaseProvider):
         if properties:
             LOGGER.debug('processing properties')
             for prop in properties:
+                prop_name = self.mask_prop(prop[0])
                 pf = {
                     'match': {
-                        self.mask_prop(prop[0]): prop[1]
+                        prop_name: {
+                            'query': prop[1]
+                        }
                     }
                 }
+                if '|' not in prop[1]:
+                    pf['match'][prop_name]['minimum_should_match'] = '100%'
+
                 query['query']['bool']['filter'].append(pf)
 
         if sortby:
