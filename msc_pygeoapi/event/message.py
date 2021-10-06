@@ -1,8 +1,8 @@
 # =================================================================
 #
-# Author: Tom Kralidis <tom.kralidis@canada.ca>
+# Author: Tom Kralidis <tom.kralidis@ec.gc.ca>
 #
-# Copyright (c) 2020 Tom Kralidis
+# Copyright (c) 2021 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -28,14 +28,14 @@
 # =================================================================
 
 
-class Event(object):
+class MessageEvent:
     """core event"""
 
     def __init__(self, parent):
         """initialize"""
         pass
 
-    def dispatch(self, parent):
+    def on_message(self, parent):
         """
         sarracenia dispatcher
 
@@ -61,5 +61,4 @@ class Event(object):
         return '<Event>'
 
 
-event = Event(self)  # noqa
-self.on_message = self.on_file = event.dispatch  # noqa
+self.plugin = 'MessageEvent'  # noqa
