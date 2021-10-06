@@ -26,38 +26,3 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 #
 # =================================================================
-
-
-class Event:
-    """core event"""
-
-    def __init__(self, parent):
-        """initialize"""
-        pass
-
-    def dispatch(self, parent):
-        """
-        sarracenia dispatcher
-
-        :param parent: `sarra.sr_subscribe.sr_subscribe`
-
-        :returns: `bool` of dispatch result
-        """
-
-        try:
-            from msc_pygeoapi.handler.core import CoreHandler
-
-            filepath = parent.msg.local_file
-            parent.logger.debug('Filepath: {}'.format(filepath))
-            handler = CoreHandler(filepath)
-            result = handler.handle()
-            parent.logger.debug('Result: {}'.format(result))
-            return True
-        except Exception as err:
-            parent.logger.warning(err)
-            return False
-
-    def __repr__(self):
-        return '<Event>'
-
-self.plugin = 'FileEvent'
