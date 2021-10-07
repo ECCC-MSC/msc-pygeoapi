@@ -1,9 +1,8 @@
-#!/bin/sh
 # =================================================================
 #
-# Author: Tom Kralidis <tom.kralidis@canada.ca>
+# Author: Tom Kralidis <tom.kralidis@ec.gc.ca>
 #
-# Copyright (c) 2020 Tom Kralidis
+# Copyright (c) 2021 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -27,22 +26,3 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 #
 # =================================================================
-
-export MSC_PYGEOAPI_ES_TIMEOUT=90
-export MSC_PYGEOAPI_ES_URL=http://localhost:9200
-export MSC_PYGEOAPI_CACHEDIR=/tmp
-export MSC_PYGEOAPI_OGC_API_URL=https://api.wxod-dev.cmc.ec.gc.ca/
-export MSC_PYGEOAPI_OGC_API_URL_BASEPATH=/
-export MSC_PYGEOAPI_METPX_EVENT_FILE_PY=/opt/msc-pygeoapi/event/file_.py
-export MSC_PYGEOAPI_METPX_EVENT_MESSAGE_PY=/opt/msc-pygeoapi/event/message.py
-
-export XDG_CACHE_HOME=/tmp/geoadm-sarra-logs
-
-export PYGEOAPI_CONFIG=/opt/msc-pygeoapi/conf/msc-pygeoapi-config.yml
-export PYGEOAPI_OPENAPI=/opt/msc-pygeoapi/conf/msc-pygeoapi-openapi.yml
-
-mkdir -p $XDG_CACHE_HOME
-chown -R geoadm.geoadm $XDG_CACHE_HOME
-
-# prepare hydrometric realtime
-#msc-pygeoapi data hydrometric_realtime cache-stations

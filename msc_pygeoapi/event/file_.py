@@ -1,9 +1,8 @@
-#!/bin/sh
 # =================================================================
 #
-# Author: Tom Kralidis <tom.kralidis@canada.ca>
+# Author: Tom Kralidis <tom.kralidis@ec.gc.ca>
 #
-# Copyright (c) 2020 Tom Kralidis
+# Copyright (c) 2021 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -28,21 +27,38 @@
 #
 # =================================================================
 
-export MSC_PYGEOAPI_ES_TIMEOUT=90
-export MSC_PYGEOAPI_ES_URL=http://localhost:9200
-export MSC_PYGEOAPI_CACHEDIR=/tmp
-export MSC_PYGEOAPI_OGC_API_URL=https://api.wxod-dev.cmc.ec.gc.ca/
-export MSC_PYGEOAPI_OGC_API_URL_BASEPATH=/
-export MSC_PYGEOAPI_METPX_EVENT_FILE_PY=/opt/msc-pygeoapi/event/file_.py
-export MSC_PYGEOAPI_METPX_EVENT_MESSAGE_PY=/opt/msc-pygeoapi/event/message.py
 
-export XDG_CACHE_HOME=/tmp/geoadm-sarra-logs
+class FileEvent:
+    """core event"""
 
-export PYGEOAPI_CONFIG=/opt/msc-pygeoapi/conf/msc-pygeoapi-config.yml
-export PYGEOAPI_OPENAPI=/opt/msc-pygeoapi/conf/msc-pygeoapi-openapi.yml
+    def __init__(self, parent):
+        """initialize"""
+        pass
 
-mkdir -p $XDG_CACHE_HOME
-chown -R geoadm.geoadm $XDG_CACHE_HOME
+    def on_file(self, parent):
+        """
+        sarracenia dispatcher
 
-# prepare hydrometric realtime
-#msc-pygeoapi data hydrometric_realtime cache-stations
+        :param parent: `sarra.sr_subscribe.sr_subscribe`
+
+        :returns: `bool` of dispatch result
+        """
+
+        try:
+            from msc_pygeoapi.handler.core import CoreHandler
+
+            filepath = parent.msg.local_file
+            parent.logger.debug('Filepath: {}'.format(filepath))
+            handler = CoreHandler(filepath)
+            result = handler.handle()
+            parent.logger.debug('Result: {}'.format(result))
+            return True
+        except Exception as err:
+            parent.logger.warning(err)
+            return False
+
+    def __repr__(self):
+        return '<Event>'
+
+
+self.plugin = 'FileEvent'  # noqa
