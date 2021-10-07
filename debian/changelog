@@ -1,3 +1,10 @@
+msc-pygeoapi (0.9.11) bionic; urgency=medium
+
+  * fix ES provider for property queries with spaces
+  * split event handler into files and messages
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Thu, Oct 07 2021 17:33:44 +0000
+
 msc-pygeoapi (0.9.10) bionic; urgency=medium
 
   * fix duplicate ID issues on some collections in UI
