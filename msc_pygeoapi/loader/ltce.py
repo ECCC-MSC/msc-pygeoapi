@@ -999,7 +999,8 @@ def ltce():
 @cli_options.OPTION_ES_IGNORE_CERTS()
 @cli_options.OPTION_DATASET(
     type=click.Choice(
-        ['all', 'stations', 'temperature', 'precipitation', 'snowfall']
+        ['all', 'observations', 'stations', 'temperature', 'precipitation',
+         'snowfall']
     ),
     help='LTCE dataset to load',
 )
@@ -1021,7 +1022,13 @@ def add(ctx, db, es, username, password, ignore_certs, dataset):
             'stations',
             'temperature',
             'precipitation',
-            'snowfall',
+            'snowfall'
+        ]
+    elif dataset == 'observations':
+        datasets_to_process = [
+            'temperature',
+            'precipitation',
+            'snowfall'
         ]
     else:
         datasets_to_process = [dataset]
