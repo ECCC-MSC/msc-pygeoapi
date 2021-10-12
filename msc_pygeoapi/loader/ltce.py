@@ -1112,7 +1112,6 @@ def confirm(ctx, param, value):
 @click.option(
     '--index_name',
     '-i',
-    type=click.Choice(INDICES),
     help='msc-pygeoapi LTCE index name to delete',
 )
 @cli_options.OPTION_ELASTICSEARCH()
@@ -1130,8 +1129,10 @@ def delete_indexes(ctx, index_name, es, username, password, ignore_certs):
     loader = LtceLoader(conn_config=conn_config)
 
     if index_name:
-        LOGGER.info('Deleting ES index {}'.format(index_name))
-        loader.conn.delete(index_name)
+        for i in index_name.split(","):
+            if i in INDICES:
+                LOGGER.info('Deleting ES index {}'.format(i))
+                loader.conn.delete(i)
         return True
     else:
         LOGGER.info('Deleting all LTCE ES indices')
