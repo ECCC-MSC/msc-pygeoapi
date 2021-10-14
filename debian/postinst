@@ -46,3 +46,6 @@ chown -R geoadm.geoadm $XDG_CACHE_HOME
 
 # prepare hydrometric realtime
 #msc-pygeoapi data hydrometric_realtime cache-stations
+
+MSC_PYGEOAPI_VERSION=`dpkg-parsechangelog -SVersion`
+sed -i 's/MSC_PYGEOAPI_VERSION/$MSC_PYGEOAPI_VERSION/' /opt/msc-pygeoapi/theme/templates/_base.html
