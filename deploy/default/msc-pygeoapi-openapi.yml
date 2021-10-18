@@ -1938,7 +1938,7 @@ paths:
       - aqhi-observations-realtime
   /collections/bulletins-realtime:
     get:
-      description: Real-time meteorological bulletins (last 180 days)
+      description: Real-time meteorological bulletins (last 170 days)
       operationId: describeBulletins-realtimeCollection
       parameters:
       - $ref: '#/components/parameters/f'
@@ -1956,7 +1956,7 @@ paths:
       - bulletins-realtime
   /collections/bulletins-realtime/items:
     get:
-      description: Real-time meteorological bulletins (last 180 days)
+      description: Real-time meteorological bulletins (last 170 days)
       operationId: getBulletins-realtimeFeatures
       parameters:
       - *id001
@@ -2041,7 +2041,7 @@ paths:
       - bulletins-realtime
   /collections/bulletins-realtime/items/{featureId}:
     get:
-      description: Real-time meteorological bulletins (last 180 days)
+      description: Real-time meteorological bulletins (last 170 days)
       operationId: getBulletins-realtimeFeature
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
@@ -2060,7 +2060,7 @@ paths:
       - bulletins-realtime
   /collections/bulletins-realtime/queryables:
     get:
-      description: Real-time meteorological bulletins (last 180 days)
+      description: Real-time meteorological bulletins (last 170 days)
       operationId: getBulletins-realtimeQueryables
       parameters:
       - *id001
@@ -8265,8 +8265,9 @@ tags:
     The AQHI is calculated from data observed in real time, without being verified
     (quality control).
   name: aqhi-observations-realtime
-- description: Real-time meteorological bulletins (last 180 days)
+- description: Real-time meteorological bulletins (last 170 days)
   name: bulletins-realtime
 - description: Raster Drill process
   name: raster-drill
+
 
