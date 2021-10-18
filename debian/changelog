@@ -1,3 +1,9 @@
+msc-pygeoapi (0.9.12) bionic; urgency=medium
+
+  * update bulletins retention time
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Mon, Oct 18 2021 18:47:42 +0000
+
 msc-pygeoapi (0.9.11) bionic; urgency=medium
 
   * fix ES provider for property queries with spaces
