@@ -43,7 +43,7 @@ from msc_pygeoapi.util import (
 LOGGER = logging.getLogger(__name__)
 
 # cleanup settings
-DAYS_TO_KEEP = 180
+DAYS_TO_KEEP = 170
 
 # index settings
 INDEX_BASENAME = 'bulletins.'
