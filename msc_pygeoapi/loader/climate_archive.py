@@ -563,8 +563,12 @@ class ClimateArchiveLoader(BaseLoader):
                                     "type": "text",
                                     "fields": {"raw": {"type": "keyword"}},
                                 },
-                                "LONGITUDE_DECIMAL_DEGREES": {"type": "half_float"},
-                                "LATITUDE_DECIMAL_DEGREES": {"type": "half_float"},
+                                "LONGITUDE_DECIMAL_DEGREES": {
+                                    "type": "half_float",
+                                },
+                                "LATITUDE_DECIMAL_DEGREES": {
+                                    "type": "half_float",
+                                },
                                 "DRY_BULB_TEMP": {"type": "half_float"},
                                 "DEW_POINT_TEMP": {"type": "half_float"},
                                 "RELATIVE_HUMIDITY": {"type": "half_float"},
