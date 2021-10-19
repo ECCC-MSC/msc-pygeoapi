@@ -1,3 +1,9 @@
+msc-pygeoapi (0.9.13) bionic; urgency=medium
+
+  * update bulletins retention time
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Tue, Oct 19 2021 11:59:54 +0000
+
 msc-pygeoapi (0.9.12) bionic; urgency=medium
 
   * update bulletins retention time
