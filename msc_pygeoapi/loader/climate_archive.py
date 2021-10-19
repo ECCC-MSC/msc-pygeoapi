@@ -499,6 +499,10 @@ class ClimateArchiveLoader(BaseLoader):
                         "type": {"type": "text"},
                         "properties": {
                             "properties": {
+                                "STN_ID": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
                                 "CLIMATE_IDENTIFIER": {
                                     "type": "text",
                                     "fields": {"raw": {"type": "keyword"}},
@@ -507,27 +511,11 @@ class ClimateArchiveLoader(BaseLoader):
                                     "type": "text",
                                     "fields": {"raw": {"type": "keyword"}},
                                 },
-                                "STN_ID": {
+                                "DRY_BULB_TEMP_FLAG": {
                                     "type": "text",
                                     "fields": {"raw": {"type": "keyword"}},
                                 },
-                                "DEW_POINT_TEMPERATURE_FLAG": {
-                                    "type": "text",
-                                    "fields": {"raw": {"type": "keyword"}},
-                                },
-                                "DRY_BULB_TEMPERATURE_FLAG": {
-                                    "type": "text",
-                                    "fields": {"raw": {"type": "keyword"}},
-                                },
-                                "HUMIDEX_FLAG": {
-                                    "type": "text",
-                                    "fields": {"raw": {"type": "keyword"}},
-                                },
-                                "PRECIPITATION_AMOUNT_FLAG": {
-                                    "type": "text",
-                                    "fields": {"raw": {"type": "keyword"}},
-                                },
-                                "PROVINCE_CODE": {
+                                "DEW_POINT_TEMP_FLAG": {
                                     "type": "text",
                                     "fields": {"raw": {"type": "keyword"}},
                                 },
@@ -535,23 +523,7 @@ class ClimateArchiveLoader(BaseLoader):
                                     "type": "text",
                                     "fields": {"raw": {"type": "keyword"}},
                                 },
-                                "STATION_PRESSURE_FLAG": {
-                                    "type": "text",
-                                    "fields": {"raw": {"type": "keyword"}},
-                                },
-                                "TEMPERATURE_FLAG": {
-                                    "type": "text",
-                                    "fields": {"raw": {"type": "keyword"}},
-                                },
-                                "WEATHER_ENG_DESC": {
-                                    "type": "text",
-                                    "fields": {"raw": {"type": "keyword"}},
-                                },
-                                "WEATHER_FRE_DESC": {
-                                    "type": "text",
-                                    "fields": {"raw": {"type": "keyword"}},
-                                },
-                                "WIND_CHILL_FLAG": {
+                                "PRECIP_AMOUNT_FLAG": {
                                     "type": "text",
                                     "fields": {"raw": {"type": "keyword"}},
                                 },
@@ -567,27 +539,54 @@ class ClimateArchiveLoader(BaseLoader):
                                     "type": "text",
                                     "fields": {"raw": {"type": "keyword"}},
                                 },
-                                "DEW_POINT_TEMPERATURE": {"type": "float"},
-                                "DRY_BULB_TEMPERATURE": {"type": "float"},
-                                "HUMIDEX": {"type": "float"},
-                                "PRECIPITATION_AMOUNT": {"type": "float"},
-                                "REL_HUMIDITY": {"type": "float"},
-                                "STATION_PRESSURE": {"type": "float"},
-                                "TEMPERATURE": {"type": "float"},
-                                "VISIBILITY": {"type": "float"},
-                                "WIND_CHILL": {"type": "float"},
-                                "WIND_DIRECTION": {"type": "float"},
-                                "WIND_SPEED": {"type": "float"},
-                                "LONGITUDE_DECIMAL_DEGREES": {"type": "float"},
-                                "LATITUDE_DECIMAL_DEGREES": {"type": "float"},
-                                "LOCAL_YEAR": {"type": "integer"},
-                                "LOCAL_MONTH": {"type": "integer"},
-                                "LOCAL_DAY": {"type": "integer"},
-                                "LOCAL_HOUR": {"type": "integer"},
+                                "STATION_PRESSURE_FLAG": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "HUMIDEX_FLAG": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "WINDCHILL_FLAG": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "PROVINCE_CODE": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "WEATHER_ENG_DESC": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "WEATHER_FRE_DESC": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "LONGITUDE_DECIMAL_DEGREES": {"type": "half_float"},
+                                "LATITUDE_DECIMAL_DEGREES": {"type": "half_float"},
+                                "DRY_BULB_TEMP": {"type": "half_float"},
+                                "DEW_POINT_TEMP": {"type": "half_float"},
+                                "RELATIVE_HUMIDITY": {"type": "half_float"},
+                                "PRECIP_AMOUNT": {"type": "half_float"},
+                                "WIND_DIRECTION": {"type": "half_float"},
+                                "WIND_SPEED": {"type": "half_float"},
+                                "VISIBILITY": {"type": "half_float"},
+                                "STATION_PRESSURE": {"type": "half_float"},
+                                "HUMIDEX": {"type": "half_float"},
+                                "WINDCHILL": {"type": "half_float"},
+                                "LOCAL_YEAR": {"type": "short"},
+                                "LOCAL_MONTH": {"type": "byte"},
+                                "LOCAL_DAY": {"type": "byte"},
+                                "LOCAL_HOUR": {"type": "byte"},
                                 "LOCAL_DATE": {
                                     "type": "date",
                                     "format": "yyyy-MM-dd HH:mm:ss",
                                 },
+                                "UTC_YEAR": {"type": "short"},
+                                "UTC_MONTH": {"type": "byte"},
+                                "UTC_DAY": {"type": "byte"},
+                                "UTC_DATE": {"type": "date"},
                             }
                         },
                         "geometry": {"type": "geo_shape"},
