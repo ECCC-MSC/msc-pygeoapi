@@ -1162,7 +1162,7 @@ resources:
     bulletins-realtime:
         type: collection
         title: Real-time meteorological bulletins
-        description: Real-time meteorological bulletins (last 170 days)
+        description: Real-time meteorological bulletins (last 140 days)
         keywords: [alphanumerical, binary, bulletins]
         crs:
             - CRS84
