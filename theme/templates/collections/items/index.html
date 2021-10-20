@@ -197,8 +197,8 @@
                 colClass: ''
               })
               itemProps.value.forEach((prop) => {
-                // avoid duplicate id for none case
-                if ((prop.toLowerCase() === 'id') && (ID_FIELD.toLowerCase() === 'none')) {
+                // avoid duplicate column id case that matches root id
+                if ((prop.toLowerCase() === 'id')) {
                   return // skip
                 } 
 
