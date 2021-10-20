@@ -111,6 +111,7 @@ resources:
               name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/hydrometric_stations
               id_field: IDENTIFIER
+              title_field: IDENTIFIER
 
     hydrometric-daily-mean:
         type: collection
@@ -158,6 +159,7 @@ resources:
               name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/hydrometric_daily_mean
               id_field: IDENTIFIER
+              title_field: IDENTIFIER
               time_field: DATE
               properties:
                   - IDENTIFIER
@@ -217,6 +219,7 @@ resources:
               name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/hydrometric_monthly_mean
               id_field: IDENTIFIER
+              title_field: IDENTIFIER
               time_field: DATE
               properties:
                   - IDENTIFIER
@@ -273,6 +276,7 @@ resources:
               name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/hydrometric_annual_statistics
               id_field: IDENTIFIER
+              title_field: IDENTIFIER
               time_field: MAX_DATE
               properties:
                   - IDENTIFIER
@@ -336,6 +340,7 @@ resources:
               name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/hydrometric_annual_peaks
               id_field: IDENTIFIER
+              title_field: IDENTIFIER
               time_field: DATE
               properties:
                   - DATE
@@ -395,6 +400,7 @@ resources:
               name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/hydrometric_realtime.*
               id_field: IDENTIFIER
+              title_field: IDENTIFIER
               time_field: DATETIME
 
     climate-normals:
@@ -423,6 +429,7 @@ resources:
               name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/climate_normals_data
               id_field: ID
+              title_field: ID
               time_field: DATE_CALCULATED
               properties:
                   - STATION_NAME
@@ -478,6 +485,7 @@ resources:
               name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/climate_station_information
               id_field: CLIMATE_IDENTIFIER
+              title_field: CLIMATE_IDENTIFIER
 
     climate-monthly:
         type: collection
@@ -505,6 +513,7 @@ resources:
               name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/climate_public_climate_summary
               id_field: ID
+              title_field: ID
               time_field: LOCAL_DATE
               properties:
                   - LATITUDE
@@ -566,6 +575,7 @@ resources:
               name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/climate_public_daily_data
               id_field: ID
+              title_field: ID
               time_field: LOCAL_DATE
               properties:
                   - STATION_NAME
@@ -626,6 +636,7 @@ resources:
               name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/ahccd_stations
               id_field: identifier__identifiant
+              title_field: identifier__identifiant
 
     ahccd-annual:
         type: collection
@@ -653,6 +664,7 @@ resources:
               name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/ahccd_annual
               id_field: identifier__identifiant
+              title_field: identifier__identifiant
               time_field: year__annee
               properties:
                   - lat__lat
@@ -708,6 +720,7 @@ resources:
               name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/ahccd_seasonal
               id_field: identifier__identifiant
+              title_field: identifier__identifiant
               time_field: year__annee
               properties:
                   - lat__lat
@@ -763,6 +776,7 @@ resources:
               name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/ahccd_monthly
               id_field: identifier__identifiant
+              title_field: identifier__identifiant
               time_field: date
               properties:
                   - lat__lat
@@ -819,6 +833,7 @@ resources:
               name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/ahccd_trends
               id_field: identifier__identifiant
+              title_field: identifier__identifiant
               properties:
                   - identifier__identifiant
                   - station_id__id_station
@@ -861,6 +876,7 @@ resources:
               name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/swob_realtime.*
               id_field: id
+              title_field: id
               time_field: date_tm-value
 
     ltce-stations:
@@ -883,6 +899,7 @@ resources:
               name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/ltce_stations
               id_field: IDENTIFIER
+              title_field: IDENTIFIER
 
     ltce-temperature:
         type: collection
@@ -904,6 +921,7 @@ resources:
               name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/ltce_temp_extremes
               id_field: IDENTIFIER
+              title_field: IDENTIFIER
               properties:
                   - VIRTUAL_STATION_NAME_E
                   - VIRTUAL_STATION_NAME_F
@@ -995,6 +1013,7 @@ resources:
               name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/ltce_precip_extremes
               id_field: IDENTIFIER
+              title_field: IDENTIFIER
               properties:
                   - VIRTUAL_STATION_NAME_E
                   - VIRTUAL_STATION_NAME_F
@@ -1041,6 +1060,7 @@ resources:
               name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/ltce_snow_extremes
               id_field: IDENTIFIER
+              title_field: IDENTIFIER
               properties:
                   - VIRTUAL_STATION_NAME_E
                   - VIRTUAL_STATION_NAME_F
@@ -1097,6 +1117,7 @@ resources:
               name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/aqhi-forecasts-realtime.*
               id_field: id
+              title_field: id
               time_field: publication_datetime
 
     aqhi-observations-realtime:
@@ -1129,6 +1150,7 @@ resources:
               name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/aqhi-observations-realtime.*
               id_field: id
+              title_field: id
               time_field: observation_datetime
 
     msc-datamart:
@@ -1184,6 +1206,7 @@ resources:
               name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
               data: http://localhost:9200/bulletins.*
               id_field: identifier
+              title_field: identifier
               time_field: datetime
 
     raster-drill:
