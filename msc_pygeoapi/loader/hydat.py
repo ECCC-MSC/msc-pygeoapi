@@ -1206,6 +1206,7 @@ def hydat():
 
 @click.command()
 @click.pass_context
+@cli_options.OPTION_BATCH_SIZE()
 @cli_options.OPTION_DB(help='Path to HYDAT SQLite database')
 @cli_options.OPTION_ELASTICSEARCH()
 @cli_options.OPTION_ES_USERNAME()
@@ -1222,7 +1223,7 @@ def hydat():
         ]
     )
 )
-def add(ctx, db, es, username, password, ignore_certs, dataset):
+def add(ctx, db, es, username, password, ignore_certs, dataset, batch_size=None):
     """Loads HYDAT data into Elasticsearch"""
 
     conn_config = configure_es_connection(es, username, password, ignore_certs)
@@ -1265,6 +1266,8 @@ def add(ctx, db, es, username, password, ignore_certs, dataset):
             loader.create_index('stations')
             stations = loader.generate_stations(
                 station_table, annual_peaks_table, annual_stats_table)
+            if batch_size!=None:
+                loader.conn.submit_elastic_package(stations, batch_size)
             loader.conn.submit_elastic_package(stations)
         except Exception as err:
             msg = 'Could not populate stations index: {}'.format(err)
@@ -1276,6 +1279,8 @@ def add(ctx, db, es, username, password, ignore_certs, dataset):
             loader.create_index('observations')
             means = loader.generate_means(discharge_var, level_var,
                                           station_table, symbol_table)
+            if batch_size!=None:
+                loader.conn.submit_elastic_package(means, batch_size)
             loader.conn.submit_elastic_package(means)
         except Exception as err:
             msg = 'Could not populate observations indexes: {}'.format(err)
@@ -1288,6 +1293,8 @@ def add(ctx, db, es, username, password, ignore_certs, dataset):
             stats = loader.generate_annual_stats(annual_stats_table,
                                                  data_types_table,
                                                  station_table, symbol_table)
+            if batch_size!=None:
+                loader.conn.submit_elastic_package(stats, batch_size)
             loader.conn.submit_elastic_package(stats)
         except Exception as err:
             msg = 'Could not populate annual statistics index: {}'.format(err)
@@ -1300,6 +1307,8 @@ def add(ctx, db, es, username, password, ignore_certs, dataset):
             peaks = loader.generate_annual_peaks(annual_peaks_table,
                                                  data_types_table,
                                                  symbol_table, station_table)
+            if batch_size!=None:
+                loader.conn.submit_elastic_package(peaks, batch_size)
             loader.conn.submit_elastic_package(peaks)
         except Exception as err:
             msg = 'Could not populate annual peaks index: {}'.format(err)

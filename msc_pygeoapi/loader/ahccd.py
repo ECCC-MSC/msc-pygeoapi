@@ -36,7 +36,7 @@ import logging
 
 import click
 
-from msc_pygeoapi import cli_options
+from msc_pygeoapi import cli, cli_options
 from msc_pygeoapi.connector.elasticsearch_ import ElasticsearchConnector
 from msc_pygeoapi.loader.base import BaseLoader
 from msc_pygeoapi.util import configure_es_connection
@@ -540,12 +540,13 @@ CTL_HELP = '''
 @cli_options.OPTION_ES_USERNAME()
 @cli_options.OPTION_ES_PASSWORD()
 @cli_options.OPTION_ES_IGNORE_CERTS()
+@cli_options.OPTION_BATCH_SIZE()
 @cli_options.OPTION_DATASET(
     type=click.Choice(
         ['all', 'stations', 'trends', 'annual', 'seasonal', 'monthly']
     )
 )
-def add(ctx, ctl, es, username, password, ignore_certs, dataset):
+def add(ctx, ctl, es, username, password, ignore_certs, dataset, batch_size=None):
     """Loads AHCCD data from JSON into Elasticsearch"""
 
     conn_config = configure_es_connection(es, username, password, ignore_certs)
@@ -577,6 +578,8 @@ def add(ctx, ctl, es, username, password, ignore_certs, dataset):
             click.echo('Populating {} index'.format(dtp))
             loader.create_index(dtp)
             dtp_data = loader.generate_docs(ctl_dict[dtp], dtp)
+            if batch_size!=None:
+                loader.conn.submit_elastic_package(dtp_data, batch_size)
             loader.conn.submit_elastic_package(dtp_data)
         except Exception as err:
             msg = 'Could not populate {} index: {}'.format(dtp, err)

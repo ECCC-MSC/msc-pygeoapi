@@ -937,6 +937,7 @@ def climate_archive():
 @cli_options.OPTION_ES_USERNAME()
 @cli_options.OPTION_ES_PASSWORD()
 @cli_options.OPTION_ES_IGNORE_CERTS()
+@cli_options.OPTION_BATCH_SIZE()
 @cli_options.OPTION_DATASET(
     type=click.Choice(['all', 'stations', 'normals', 'monthly', 'daily']),
 )
@@ -959,6 +960,7 @@ def add(
     password,
     ignore_certs,
     dataset,
+    batch_size=None,
     station=None,
     starting_from=False,
     date=None,
@@ -981,6 +983,8 @@ def add(
             click.echo('Populating stations index')
             loader.create_index('stations')
             stations = loader.generate_stations()
+            if batch_size!=None:
+                loader.conn.submit_elastic_package(stations, batch_size)
             loader.conn.submit_elastic_package(stations)
         except Exception as err:
             msg = 'Could not populate stations index: {}'.format(err)
@@ -996,6 +1000,8 @@ def add(
             normals = loader.generate_normals(
                 stn_dict, normals_dict, periods_dict
             )
+            if batch_size!=None:
+                loader.conn.submit_elastic_package(normals, batch_size)
             loader.conn.submit_elastic_package(normals)
         except Exception as err:
             msg = 'Could not populate normals index: {}'.format(err)
@@ -1008,6 +1014,8 @@ def add(
             if not (date or station or starting_from):
                 loader.create_index('monthly_summary')
             monthlies = loader.generate_monthly_data(stn_dict, date)
+            if batch_size!=None:
+                loader.conn.submit_elastic_package(monthlies, batch_size)
             loader.conn.submit_elastic_package(monthlies)
         except Exception as err:
             msg = 'Could not populate montly index: {}'.format(err)
@@ -1020,6 +1028,8 @@ def add(
             if not (date or station or starting_from):
                 loader.create_index('daily_summary')
             dailies = loader.generate_daily_data(stn_dict, date)
+            if batch_size!=None:
+                loader.conn.submit_elastic_package(dailies, batch_size)
             loader.conn.submit_elastic_package(dailies)
         except Exception as err:
             msg = 'Could not populate daily index: {}'.format(err)

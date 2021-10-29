@@ -34,7 +34,7 @@ import click
 from elasticsearch import logger as elastic_logger
 from slugify import slugify
 
-from msc_pygeoapi import cli_options
+from msc_pygeoapi import cli, cli_options
 from msc_pygeoapi.connector.elasticsearch_ import ElasticsearchConnector
 from msc_pygeoapi.env import MSC_PYGEOAPI_LOGGING_LOGLEVEL
 from msc_pygeoapi.loader.base import BaseLoader
@@ -992,6 +992,7 @@ def ltce():
 
 @click.command()
 @click.pass_context
+@cli_options.OPTION_BATCH_SIZE()
 @cli_options.OPTION_DB()
 @cli_options.OPTION_ELASTICSEARCH()
 @cli_options.OPTION_ES_USERNAME()
@@ -1004,7 +1005,7 @@ def ltce():
     ),
     help='LTCE dataset to load',
 )
-def add(ctx, db, es, username, password, ignore_certs, dataset):
+def add(ctx, db, es, username, password, ignore_certs, dataset, batch_size=None):
     """
     Loads Long Term Climate Extremes(LTCE) data from Oracle DB
     into Elasticsearch.
@@ -1036,6 +1037,8 @@ def add(ctx, db, es, username, password, ignore_certs, dataset):
     if 'stations' in datasets_to_process:
         try:
             stations = loader.generate_stations()
+            if batch_size!=None:
+                loader.conn.submit_elastic_package(stations, batch_size)
             loader.conn.submit_elastic_package(stations)
             LOGGER.info('Stations populated.')
         except Exception as err:
@@ -1047,6 +1050,8 @@ def add(ctx, db, es, username, password, ignore_certs, dataset):
     if 'temperature' in datasets_to_process:
         try:
             temp_extremes = loader.generate_daily_temp_extremes()
+            if batch_size!=None:
+                loader.conn.submit_elastic_package(temp_extremes, batch_size)
             loader.conn.submit_elastic_package(temp_extremes)
             LOGGER.info('Daily temperature extremes populated.')
         except Exception as err:
@@ -1060,6 +1065,8 @@ def add(ctx, db, es, username, password, ignore_certs, dataset):
     if 'precipitation' in datasets_to_process:
         try:
             precip_extremes = loader.generate_daily_precip_extremes()
+            if batch_size!=None:
+                loader.conn.submit_elastic_package(precip_extremes, batch_size)
             loader.conn.submit_elastic_package(precip_extremes)
             LOGGER.info('Daily precipitation extremes populated.')
         except Exception as err:
@@ -1073,6 +1080,8 @@ def add(ctx, db, es, username, password, ignore_certs, dataset):
     if 'snowfall' in datasets_to_process:
         try:
             snow_extremes = loader.generate_daily_snow_extremes()
+            if batch_size!=None:
+                loader.conn.submit_elastic_package(snow_extremes, batch_size)
             loader.conn.submit_elastic_package(snow_extremes)
             LOGGER.info('Daily snowfall extremes populated.')
         except Exception as err:
