@@ -1248,6 +1248,8 @@ def add(
             if not (date or station or starting_from):
                 loader.create_index('hourly_summary')
             hourlies = loader.generate_hourly_data(stn_dict, date)
+            if batch_size!=None:
+                loader.conn.submit_elastic_package(hourlies, batch_size)
             loader.conn.submit_elastic_package(hourlies)
         except Exception as err:
             msg = 'Could not populate hourly index: {}'.format(err)
