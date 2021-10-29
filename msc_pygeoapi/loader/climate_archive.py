@@ -490,6 +490,117 @@ class ClimateArchiveLoader(BaseLoader):
             index_name = 'climate_public_daily_data'
             self.conn.create(index_name, mapping, overwrite=True)
 
+        if index == 'hourly_summary':
+            mapping = {
+                "settings": {"number_of_shards": 1, "number_of_replicas": 0},
+                "mappings": {
+                    "_meta": {"geomfields": {"geometry": "POINT"}},
+                    "properties": {
+                        "type": {"type": "text"},
+                        "properties": {
+                            "properties": {
+                                "STN_ID": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "CLIMATE_IDENTIFIER": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "STATION_NAME": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "DRY_BULB_TEMP_FLAG": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "DEW_POINT_TEMP_FLAG": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "REL_HUMIDITY_FLAG": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "PRECIP_AMOUNT_FLAG": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "WIND_DIRECTION_FLAG": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "WIND_SPEED_FLAG": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "VISIBILITY_FLAG": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "STATION_PRESSURE_FLAG": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "HUMIDEX_FLAG": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "WINDCHILL_FLAG": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "PROVINCE_CODE": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "WEATHER_ENG_DESC": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "WEATHER_FRE_DESC": {
+                                    "type": "text",
+                                    "fields": {"raw": {"type": "keyword"}},
+                                },
+                                "LONGITUDE_DECIMAL_DEGREES": {
+                                    "type": "float",
+                                },
+                                "LATITUDE_DECIMAL_DEGREES": {
+                                    "type": "float",
+                                },
+                                "DRY_BULB_TEMP": {"type": "float"},
+                                "DEW_POINT_TEMP": {"type": "float"},
+                                "RELATIVE_HUMIDITY": {"type": "float"},
+                                "PRECIP_AMOUNT": {"type": "float"},
+                                "WIND_DIRECTION": {"type": "float"},
+                                "WIND_SPEED": {"type": "float"},
+                                "VISIBILITY": {"type": "float"},
+                                "STATION_PRESSURE": {"type": "float"},
+                                "HUMIDEX": {"type": "float"},
+                                "WINDCHILL": {"type": "float"},
+                                "LOCAL_YEAR": {"type": "integer"},
+                                "LOCAL_MONTH": {"type": "integer"},
+                                "LOCAL_DAY": {"type": "integer"},
+                                "LOCAL_HOUR": {"type": "integer"},
+                                "LOCAL_DATE": {
+                                    "type": "date",
+                                    "format": "yyyy-MM-dd HH:mm:ss",
+                                },
+                                "UTC_YEAR": {"type": "integer"},
+                                "UTC_MONTH": {"type": "integer"},
+                                "UTC_DAY": {"type": "integer"},
+                                "UTC_DATE": {"type": "date"},
+                            }
+                        },
+                        "geometry": {"type": "geo_shape"},
+                    },
+                },
+            }
+
+            index_name = 'climate_public_hourly_data'
+            self.conn.create(index_name, mapping, overwrite=True)
+
     def generate_stations(self):
         """
         Queries stations data from the db, and reformats
@@ -799,6 +910,93 @@ class ClimateArchiveLoader(BaseLoader):
                         f" records for this station"
                     )
 
+    def generate_hourly_data(self, stn_dict, date=None):
+        """
+        Queries hourly data from the db, and reformats
+        data so it can be inserted into Elasticsearch.
+
+        Returns a generator of dictionaries that represent upsert actions
+        into Elasticsearch's bulk API.
+
+        :param cur: oracle cursor to perform queries against.
+        :param stn_dict: mapping of station IDs to station information.
+        :param date: date to start fetching data from.
+        :returns: generator of bulk API upsert actions.
+        """
+
+        for station in stn_dict:
+            if not date:
+                try:
+                    self.cur.execute(
+                        f'select * from CCCS_PORTAL.PUBLIC_HOURLY_DATA '
+                        f'where STN_ID={station}'
+                    )
+                except Exception as err:
+                    LOGGER.error(
+                        f'Could not fetch records from oracle due to:'
+                        f' {str(err)}.'
+                    )
+            else:
+                try:
+                    self.cur.execute(
+                        (
+                            f"select * from CCCS_PORTAL.PUBLIC_HOURLY_DATA "
+                            f"where STN_ID={station} and "
+                            f"LOCAL_DATE > TO_TIMESTAMP('{date} 00:00:00', "
+                            f"'YYYY-MM-DD HH24:MI:SS')"
+                        )
+                    )
+                except Exception as err:
+                    LOGGER.error(
+                        f'Could not fetch records from oracle due to:'
+                        f' {str(err)}.'
+                    )
+
+            for row in self.cur:
+                insert_dict = dict(
+                    zip([x[0] for x in self.cur.description], row)
+                )
+                # Transform Date fields from datetime to string.
+                insert_dict['LOCAL_DATE'] = (
+                    str(insert_dict['LOCAL_DATE'])
+                    if insert_dict['LOCAL_DATE'] is not None
+                    else insert_dict['LOCAL_DATE']
+                )
+
+                insert_dict['ID'] = '{}.{}.{}.{}.{}'.format(
+                    insert_dict['CLIMATE_IDENTIFIER'],
+                    insert_dict['LOCAL_YEAR'],
+                    insert_dict['LOCAL_MONTH'],
+                    insert_dict['LOCAL_DAY'],
+                    insert_dict['LOCAL_HOUR'],
+                )
+                if insert_dict['STN_ID'] in stn_dict:
+                    coords = stn_dict[insert_dict['STN_ID']]['coordinates']
+                    insert_dict['PROVINCE_CODE'] = stn_dict[
+                        insert_dict['STN_ID']
+                    ]['PROVINCE_CODE']
+                    insert_dict['STATION_NAME'] = stn_dict[
+                        insert_dict['STN_ID']
+                    ]['STATION_NAME']
+                    wrapper = {
+                        'type': 'Feature',
+                        'properties': insert_dict,
+                        'geometry': {'type': 'Point', 'coordinates': coords},
+                    }
+                    action = {
+                        '_id': insert_dict['ID'],
+                        '_index': 'climate_public_hourly_data',
+                        '_op_type': 'update',
+                        'doc': wrapper,
+                        'doc_as_upsert': True,
+                    }
+                    yield action
+                else:
+                    LOGGER.error(
+                        f"Bad STN ID: {insert_dict['STN_ID']}, skipping"
+                        f" records for this station"
+                    )
+
     def get_station_data(self, station, starting_from):
         """
         Creates a mapping of station ID to station coordinates and province
@@ -939,7 +1137,9 @@ def climate_archive():
 @cli_options.OPTION_ES_IGNORE_CERTS()
 @cli_options.OPTION_BATCH_SIZE()
 @cli_options.OPTION_DATASET(
-    type=click.Choice(['all', 'stations', 'normals', 'monthly', 'daily']),
+    type=click.Choice(
+        ['all', 'stations', 'normals', 'monthly', 'daily', 'hourly']
+    ),
 )
 @click.option(
     '--station', help='station ID (STN_ID) of station to load', required=False,
@@ -972,7 +1172,13 @@ def add(
     loader = ClimateArchiveLoader(db, conn_config)
 
     if dataset == 'all':
-        datasets_to_process = ['daily', 'monthly', 'normals', 'stations']
+        datasets_to_process = [
+            'hourly',
+            'daily',
+            'monthly',
+            'normals',
+            'stations',
+        ]
     else:
         datasets_to_process = [dataset]
 
@@ -1033,6 +1239,18 @@ def add(
             loader.conn.submit_elastic_package(dailies)
         except Exception as err:
             msg = 'Could not populate daily index: {}'.format(err)
+            raise click.ClickException(msg)
+
+    if 'hourly' in datasets_to_process:
+        try:
+            click.echo('Populating hourly index')
+            stn_dict = loader.get_station_data(station, starting_from)
+            if not (date or station or starting_from):
+                loader.create_index('hourly_summary')
+            hourlies = loader.generate_hourly_data(stn_dict, date)
+            loader.conn.submit_elastic_package(hourlies)
+        except Exception as err:
+            msg = 'Could not populate hourly index: {}'.format(err)
             raise click.ClickException(msg)
 
     loader.db_conn.close()
