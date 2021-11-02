@@ -640,10 +640,10 @@ resources:
                   - LOCAL_MONTH
                   - LOCAL_DAY
                   - LOCAL_HOUR
+                  - TEMP
+                  - TEMP_FLAG
                   - DEW_POINT_TEMP
                   - DEW_POINT_TEMP_FLAG
-                  - DRY_BULB_TEMP
-                  - DRY_BULB_TEMP_FLAG
                   - HUMIDEX
                   - HUMIDEX_FLAG
                   - PRECIP_AMOUNT

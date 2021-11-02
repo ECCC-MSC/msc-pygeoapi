@@ -511,7 +511,7 @@ class ClimateArchiveLoader(BaseLoader):
                                     "type": "text",
                                     "fields": {"raw": {"type": "keyword"}},
                                 },
-                                "DRY_BULB_TEMP_FLAG": {
+                                "TEMP_FLAG": {
                                     "type": "text",
                                     "fields": {"raw": {"type": "keyword"}},
                                 },
@@ -519,7 +519,7 @@ class ClimateArchiveLoader(BaseLoader):
                                     "type": "text",
                                     "fields": {"raw": {"type": "keyword"}},
                                 },
-                                "REL_HUMIDITY_FLAG": {
+                                "RELATIVE_HUMIDITY_FLAG": {
                                     "type": "text",
                                     "fields": {"raw": {"type": "keyword"}},
                                 },
@@ -569,7 +569,7 @@ class ClimateArchiveLoader(BaseLoader):
                                 "LATITUDE_DECIMAL_DEGREES": {
                                     "type": "float",
                                 },
-                                "DRY_BULB_TEMP": {"type": "float"},
+                                "TEMP": {"type": "float"},
                                 "DEW_POINT_TEMP": {"type": "float"},
                                 "RELATIVE_HUMIDITY": {"type": "float"},
                                 "PRECIP_AMOUNT": {"type": "float"},
