@@ -425,6 +425,12 @@ class LtceLoader(BaseLoader):
 
         results = [result['_source'] for result in results['hits']['hits']]
 
+        if not results:
+            LOGGER.error(
+                f'Received no results from Elasticsearch for {station_id} '
+                f'and {element_name}.'
+            )
+
         oldest_station = None
         most_recent_station = None
 
@@ -527,7 +533,13 @@ class LtceLoader(BaseLoader):
                 )
             )
 
-        for row in self.cur:
+        # fetch records and ensure that some records were retrieved
+        records = self.cur.fetchall()
+        if self.cur.rowcount == 0:
+            LOGGER.error('Stations SQL query returned 0 records.')
+            return False
+
+        for row in records:
             insert_dict = dict(zip([x[0] for x in self.cur.description], row))
             for key in insert_dict:
                 if key in ['START_DATE', 'END_DATE']:
@@ -648,7 +660,14 @@ class LtceLoader(BaseLoader):
 
         # dictionnary to store stations information once retrieved
         stations_dict = {}
-        for row in self.cur:
+
+        # fetch records and ensure that some records were retrieved
+        records = self.cur.fetchall()
+        if self.cur.rowcount == 0:
+            LOGGER.error('Temperature extremes SQL query returned 0 records.')
+            return False
+
+        for row in records:
             insert_dict = dict(zip([x[0] for x in self.cur.description], row))
 
             for key in insert_dict:
@@ -792,7 +811,15 @@ class LtceLoader(BaseLoader):
 
         stations_dict = {}
 
-        for row in self.cur:
+        # fetch records and ensure that some records were retrieved
+        records = self.cur.fetchall()
+        if self.cur.rowcount == 0:
+            LOGGER.error(
+                'Precipitation extremes SQL query returned 0 records.'
+            )
+            return False
+
+        for row in records:
             insert_dict = dict(zip([x[0] for x in self.cur.description], row))
 
             for key in insert_dict:
@@ -903,7 +930,13 @@ class LtceLoader(BaseLoader):
 
         stations_dict = {}
 
-        for row in self.cur:
+        # fetch records and ensure that some records were retrieved
+        records = self.cur.fetchall()
+        if self.cur.rowcount == 0:
+            LOGGER.error('Snowfall extremes SQL query returned 0 records.')
+            return False
+
+        for row in records:
             insert_dict = dict(zip([x[0] for x in self.cur.description], row))
 
             for key in insert_dict:
@@ -1036,8 +1069,11 @@ def add(ctx, db, es, username, password, ignore_certs, dataset):
     if 'stations' in datasets_to_process:
         try:
             stations = loader.generate_stations()
-            loader.conn.submit_elastic_package(stations)
-            LOGGER.info('Stations populated.')
+            if stations:
+                loader.conn.submit_elastic_package(stations)
+                LOGGER.info('Stations populated.')
+            else:
+                LOGGER.error('No stations populated.')
         except Exception as err:
             LOGGER.error(
                 'Could not populate stations due to: {}.'.format(str(err))
@@ -1047,8 +1083,11 @@ def add(ctx, db, es, username, password, ignore_certs, dataset):
     if 'temperature' in datasets_to_process:
         try:
             temp_extremes = loader.generate_daily_temp_extremes()
-            loader.conn.submit_elastic_package(temp_extremes)
-            LOGGER.info('Daily temperature extremes populated.')
+            if temp_extremes:
+                loader.conn.submit_elastic_package(temp_extremes)
+                LOGGER.info('Daily temperature extremes populated.')
+            else:
+                LOGGER.error('No temperature extremes populated.')
         except Exception as err:
             LOGGER.error(
                 'Could not populate daily temperature extremes due to: {}.'.format(  # noqa
@@ -1060,8 +1099,11 @@ def add(ctx, db, es, username, password, ignore_certs, dataset):
     if 'precipitation' in datasets_to_process:
         try:
             precip_extremes = loader.generate_daily_precip_extremes()
-            loader.conn.submit_elastic_package(precip_extremes)
-            LOGGER.info('Daily precipitation extremes populated.')
+            if precip_extremes:
+                loader.conn.submit_elastic_package(precip_extremes)
+                LOGGER.info('Daily precipitation extremes populated.')
+            else:
+                LOGGER.error('No precipitation extremes populated.')
         except Exception as err:
             LOGGER.error(
                 'Could not populate daily precipitations extremes due to: {}.'.format(  # noqa
@@ -1073,8 +1115,11 @@ def add(ctx, db, es, username, password, ignore_certs, dataset):
     if 'snowfall' in datasets_to_process:
         try:
             snow_extremes = loader.generate_daily_snow_extremes()
-            loader.conn.submit_elastic_package(snow_extremes)
-            LOGGER.info('Daily snowfall extremes populated.')
+            if snow_extremes:
+                loader.conn.submit_elastic_package(snow_extremes)
+                LOGGER.info('Daily snowfall extremes populated.')
+            else:
+                LOGGER.error('No snowfall extremes populated.')
         except Exception as err:
             LOGGER.error(
                 'Could not populate daily snowfall extremes due to: {}.'.format(  # noqa
