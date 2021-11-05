@@ -36,7 +36,7 @@ import logging
 
 import click
 
-from msc_pygeoapi import cli, cli_options
+from msc_pygeoapi import cli_options
 from msc_pygeoapi.connector.elasticsearch_ import ElasticsearchConnector
 from msc_pygeoapi.loader.base import BaseLoader
 from msc_pygeoapi.util import configure_es_connection

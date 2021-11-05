@@ -34,7 +34,7 @@ import click
 from elasticsearch import logger as elastic_logger
 from slugify import slugify
 
-from msc_pygeoapi import cli, cli_options
+from msc_pygeoapi import cli_options
 from msc_pygeoapi.connector.elasticsearch_ import ElasticsearchConnector
 from msc_pygeoapi.env import MSC_PYGEOAPI_LOGGING_LOGLEVEL
 from msc_pygeoapi.loader.base import BaseLoader
