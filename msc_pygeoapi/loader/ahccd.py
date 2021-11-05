@@ -546,7 +546,16 @@ CTL_HELP = '''
         ['all', 'stations', 'trends', 'annual', 'seasonal', 'monthly']
     )
 )
-def add(ctx, ctl, es, username, password, ignore_certs, dataset, batch_size=None):
+def add(
+    ctx,
+    ctl,
+    es,
+    username,
+    password,
+    ignore_certs,
+    dataset,
+    batch_size=None,
+):
     """Loads AHCCD data from JSON into Elasticsearch"""
 
     conn_config = configure_es_connection(es, username, password, ignore_certs)
@@ -578,7 +587,7 @@ def add(ctx, ctl, es, username, password, ignore_certs, dataset, batch_size=None
             click.echo('Populating {} index'.format(dtp))
             loader.create_index(dtp)
             dtp_data = loader.generate_docs(ctl_dict[dtp], dtp)
-            if batch_size!=None:
+            if batch_size is not None:
                 loader.conn.submit_elastic_package(dtp_data, batch_size)
             loader.conn.submit_elastic_package(dtp_data)
         except Exception as err:

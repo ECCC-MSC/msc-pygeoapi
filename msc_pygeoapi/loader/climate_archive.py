@@ -1189,7 +1189,7 @@ def add(
             click.echo('Populating stations index')
             loader.create_index('stations')
             stations = loader.generate_stations()
-            if batch_size!=None:
+            if batch_size is not None:
                 loader.conn.submit_elastic_package(stations, batch_size)
             loader.conn.submit_elastic_package(stations)
         except Exception as err:
@@ -1206,7 +1206,7 @@ def add(
             normals = loader.generate_normals(
                 stn_dict, normals_dict, periods_dict
             )
-            if batch_size!=None:
+            if batch_size is not None:
                 loader.conn.submit_elastic_package(normals, batch_size)
             loader.conn.submit_elastic_package(normals)
         except Exception as err:
@@ -1220,7 +1220,7 @@ def add(
             if not (date or station or starting_from):
                 loader.create_index('monthly_summary')
             monthlies = loader.generate_monthly_data(stn_dict, date)
-            if batch_size!=None:
+            if batch_size is not None:
                 loader.conn.submit_elastic_package(monthlies, batch_size)
             loader.conn.submit_elastic_package(monthlies)
         except Exception as err:
@@ -1234,7 +1234,7 @@ def add(
             if not (date or station or starting_from):
                 loader.create_index('daily_summary')
             dailies = loader.generate_daily_data(stn_dict, date)
-            if batch_size!=None:
+            if batch_size is not None:
                 loader.conn.submit_elastic_package(dailies, batch_size)
             loader.conn.submit_elastic_package(dailies)
         except Exception as err:
@@ -1248,7 +1248,7 @@ def add(
             if not (date or station or starting_from):
                 loader.create_index('hourly_summary')
             hourlies = loader.generate_hourly_data(stn_dict, date)
-            if batch_size!=None:
+            if batch_size is not None:
                 loader.conn.submit_elastic_package(hourlies, batch_size)
             loader.conn.submit_elastic_package(hourlies)
         except Exception as err:
