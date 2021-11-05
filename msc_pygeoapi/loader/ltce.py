@@ -1097,8 +1097,10 @@ def add(
             temp_extremes = loader.generate_daily_temp_extremes()
             if temp_extremes:
                 if batch_size is not None:
-                    loader.conn.submit_elastic_package(temp_extremes, 
-                                                       batch_size)
+                    loader.conn.submit_elastic_package(
+                        temp_extremes,
+                        batch_size,
+                    )
                 loader.conn.submit_elastic_package(temp_extremes)
                 LOGGER.info('Daily temperature extremes populated.')
             else:
@@ -1116,7 +1118,10 @@ def add(
             precip_extremes = loader.generate_daily_precip_extremes()
             if precip_extremes:
                 if batch_size is not None:
-                    loader.conn.submit_elastic_package(precip_extremes, batch_size)
+                    loader.conn.submit_elastic_package(
+                        precip_extremes,
+                        batch_size,
+                    )
                 loader.conn.submit_elastic_package(precip_extremes)
                 LOGGER.info('Daily precipitation extremes populated.')
             else:
@@ -1134,7 +1139,10 @@ def add(
             snow_extremes = loader.generate_daily_snow_extremes()
             if snow_extremes:
                 if batch_size is not None:
-                    loader.conn.submit_elastic_package(snow_extremes, batch_size)
+                    loader.conn.submit_elastic_package(
+                        snow_extremes,
+                        batch_size,
+                    )
                 loader.conn.submit_elastic_package(snow_extremes)
                 LOGGER.info('Daily snowfall extremes populated.')
             else:
