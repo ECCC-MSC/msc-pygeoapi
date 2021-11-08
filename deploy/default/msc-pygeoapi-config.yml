@@ -963,13 +963,12 @@ resources:
               data: http://localhost:9200/ltce_temp_extremes
               id_field: IDENTIFIER
               properties:
+                  - WXO_CITY_CODE
                   - VIRTUAL_STATION_NAME_E
                   - VIRTUAL_STATION_NAME_F
                   - VIRTUAL_CLIMATE_ID
-                  - PROVINCE_CODE
-                  - WXO_CITY_CODE
-                  - LOCAL_DAY
                   - LOCAL_MONTH
+                  - LOCAL_DAY
                   - RECORD_HIGH_MAX_TEMP
                   - RECORD_HIGH_MAX_TEMP_YR
                   - PREV_RECORD_HIGH_MAX_TEMP
@@ -1026,6 +1025,7 @@ resources:
                   - FOURTH_LOW_MIN_TEMP_YEAR
                   - FIFTH_LOW_MIN_TEMP
                   - FIFTH_LOW_MIN_TEMP_YEAR
+                  - PROVINCE_CODE                  
                   - MIN_TEMP_RECORD_BEGIN
                   - MIN_TEMP_RECORD_END
                   - MAX_TEMP_RECORD_BEGIN
@@ -1054,13 +1054,12 @@ resources:
               data: http://localhost:9200/ltce_precip_extremes
               id_field: IDENTIFIER
               properties:
+                  - WXO_CITY_CODE
                   - VIRTUAL_STATION_NAME_E
                   - VIRTUAL_STATION_NAME_F
                   - VIRTUAL_CLIMATE_ID
-                  - PROVINCE_CODE
-                  - WXO_CITY_CODE
-                  - LOCAL_DAY
                   - LOCAL_MONTH
+                  - LOCAL_DAY
                   - RECORD_PRECIPITATION
                   - RECORD_PRECIPITATION_YR
                   - PREV_RECORD_PRECIPITATION
@@ -1075,6 +1074,7 @@ resources:
                   - FOURTH_PRECIPITATION_YEAR
                   - FIFTH_PRECIPITATION
                   - FIFTH_PRECIPITATION_YEAR
+                  - PROVINCE_CODE
                   - RECORD_BEGIN
                   - RECORD_END
                   - IDENTIFIER
@@ -1100,13 +1100,12 @@ resources:
               data: http://localhost:9200/ltce_snow_extremes
               id_field: IDENTIFIER
               properties:
+                  - WXO_CITY_CODE
                   - VIRTUAL_STATION_NAME_E
                   - VIRTUAL_STATION_NAME_F
                   - VIRTUAL_CLIMATE_ID
-                  - PROVINCE_CODE
-                  - WXO_CITY_CODE
-                  - LOCAL_DAY
                   - LOCAL_MONTH
+                  - LOCAL_DAY
                   - RECORD_SNOWFALL
                   - RECORD_SNOWFALL_YR
                   - PREV_RECORD_SNOWFALL
@@ -1121,6 +1120,7 @@ resources:
                   - FOURTH_SNOWFALL_YEAR
                   - FIFTH_SNOWFALL
                   - FIFTH_SNOWFALL_YEAR
+                  - PROVINCE_CODE
                   - RECORD_BEGIN
                   - RECORD_END
                   - IDENTIFIER
