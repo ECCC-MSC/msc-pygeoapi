@@ -131,6 +131,10 @@ class ElasticsearchProvider(BaseProvider):
             self.is_gdal = True
             p = ii[self.index_name]['mappings']
 
+        except IndexError:
+            LOGGER.warning('could not get fields; returning empty set')
+            return {}
+
         for k, v in p['properties'].items():
             if 'type' in v:
                 if v['type'] == 'text':
