@@ -16,6 +16,23 @@ components:
         - jsonld
         type: string
       style: form
+    lang:
+      description: The optional lang parameter instructs the server return a response
+        in a certain language, if supported.  If the language is not among the available
+        values, the Accept-Language header language will be used if it is supported.
+        If the header is missing, the default server language is used. Note that providers
+        may only support a single language (or often no language at all), that can
+        be different from the server language.  Language strings can be written in
+        a complex (e.g. "fr-CA,fr;q=0.9,en-US;q=0.8,en;q=0.7"), simple (e.g. "de")
+        or locale-like (e.g. "de-CH" or "fr_BE") fashion.
+      in: query
+      name: lang
+      required: false
+      schema:
+        default: en-CA
+        enum:
+        - en-CA
+        type: string
     properties:
       description: The properties that should be included for each feature. The parameter
         value is a comma-separated list of property names.
@@ -123,7 +140,7 @@ info:
     url: https://eccc-msc.github.io/open-data/licence/readme_en/
   termsOfService: https://www.canada.ca/en/transparency/terms.html
   title: MSC GeoMet - GeoMet-OGC-API
-  version: 0.10.1
+  version: 0.12.dev0
   x-keywords:
   - Weather
   - Meteorology
@@ -145,6 +162,7 @@ paths:
       operationId: getLandingPage
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/LandingPage
@@ -161,6 +179,7 @@ paths:
       operationId: getCollections
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collections
@@ -177,6 +196,7 @@ paths:
       operationId: describeAhccd-annualCollection
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -186,7 +206,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get collection metadata
+      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual metadata
       tags:
       - ahccd-annual
   /collections/ahccd-annual/items:
@@ -211,6 +231,23 @@ paths:
           - csv
           type: string
         style: form
+      - &id002
+        description: The optional lang parameter instructs the server return a response
+          in a certain language, if supported.  If the language is not among the available
+          values, the Accept-Language header language will be used if it is supported.
+          If the header is missing, the default server language is used. Note that
+          providers may only support a single language (or often no language at all),
+          that can be different from the server language.  Language strings can be
+          written in a complex (e.g. "fr-CA,fr;q=0.9,en-US;q=0.8,en;q=0.7"), simple
+          (e.g. "de") or locale-like (e.g. "de-CH" or "fr_BE") fashion.
+        in: query
+        name: lang
+        required: false
+        schema:
+          default: en-CA
+          enum:
+          - en-CA
+          type: string
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -456,6 +493,7 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -475,6 +513,7 @@ paths:
       operationId: getAhccd-annualQueryables
       parameters:
       - *id001
+      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -493,6 +532,7 @@ paths:
       operationId: describeAhccd-monthlyCollection
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -502,7 +542,8 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get collection metadata
+      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
+        metadata
       tags:
       - ahccd-monthly
   /collections/ahccd-monthly/items:
@@ -511,6 +552,7 @@ paths:
       operationId: getAhccd-monthlyFeatures
       parameters:
       - *id001
+      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -758,6 +800,7 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -777,6 +820,7 @@ paths:
       operationId: getAhccd-monthlyQueryables
       parameters:
       - *id001
+      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -796,6 +840,7 @@ paths:
       operationId: describeAhccd-seasonalCollection
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -805,7 +850,8 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get collection metadata
+      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal
+        metadata
       tags:
       - ahccd-seasonal
   /collections/ahccd-seasonal/items:
@@ -814,6 +860,7 @@ paths:
       operationId: getAhccd-seasonalFeatures
       parameters:
       - *id001
+      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -1060,6 +1107,7 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -1079,6 +1127,7 @@ paths:
       operationId: getAhccd-seasonalQueryables
       parameters:
       - *id001
+      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -1098,6 +1147,7 @@ paths:
       operationId: describeAhccd-stationsCollection
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -1107,7 +1157,8 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get collection metadata
+      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Stations
+        metadata
       tags:
       - ahccd-stations
   /collections/ahccd-stations/items:
@@ -1116,6 +1167,7 @@ paths:
       operationId: getAhccd-stationsFeatures
       parameters:
       - *id001
+      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -1249,6 +1301,7 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -1268,6 +1321,7 @@ paths:
       operationId: getAhccd-stationsQueryables
       parameters:
       - *id001
+      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -1287,6 +1341,7 @@ paths:
       operationId: describeAhccd-trendsCollection
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -1296,7 +1351,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get collection metadata
+      summary: Get Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends metadata
       tags:
       - ahccd-trends
   /collections/ahccd-trends/items:
@@ -1305,6 +1360,7 @@ paths:
       operationId: getAhccd-trendsFeatures
       parameters:
       - *id001
+      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -1423,6 +1479,7 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -1442,6 +1499,7 @@ paths:
       operationId: getAhccd-trendsQueryables
       parameters:
       - *id001
+      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -1471,6 +1529,7 @@ paths:
       operationId: describeAqhi-forecasts-realtimeCollection
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -1480,7 +1539,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get collection metadata
+      summary: "Get Air Quality Health Index \u2013 Forecasts metadata"
       tags:
       - aqhi-forecasts-realtime
   /collections/aqhi-forecasts-realtime/items:
@@ -1500,6 +1559,7 @@ paths:
       operationId: getAqhi-forecasts-realtimeFeatures
       parameters:
       - *id001
+      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -1510,17 +1570,7 @@ paths:
         required: false
         schema:
           items:
-            enum:
-            - ID
-            - aqhi
-            - aqhi_type
-            - datetime_text_en
-            - datetime_text_fr
-            - datetime_utc
-            - hourly_forecast_utc
-            - region
-            - region_name_en
-            - region_name_fr
+            enum: []
             type: string
           type: array
         style: form
@@ -1528,76 +1578,6 @@ paths:
       - $ref: https://raw.githubusercontent.com/opengeospatial/ogcapi-records/master/core/openapi/parameters/sortby.yaml
       - $ref: '#/components/parameters/startindex'
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
-      - explode: false
-        in: query
-        name: ID
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: aqhi
-        required: false
-        schema:
-          type: byte
-        style: form
-      - explode: false
-        in: query
-        name: aqhi_type
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: datetime_text_en
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: datetime_text_fr
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: datetime_utc
-        required: false
-        schema:
-          type: date
-        style: form
-      - explode: false
-        in: query
-        name: hourly_forecast_utc
-        required: false
-        schema:
-          type: date
-        style: form
-      - explode: false
-        in: query
-        name: region
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: region_name_en
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: region_name_fr
-        required: false
-        schema:
-          type: string
-        style: form
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
@@ -1628,6 +1608,7 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -1638,35 +1619,6 @@ paths:
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
       summary: "Get Air Quality Health Index \u2013 Forecasts item by id"
-      tags:
-      - aqhi-forecasts-realtime
-  /collections/aqhi-forecasts-realtime/queryables:
-    get:
-      description: The Air Quality Health Index (AQHI) is a scale designed to help
-        quantify the quality of the air in a certain region on a scale from 1 to 10.
-        When the amount of air pollution is very high, the number is reported as 10+.
-        It also includes a category that describes the health risk associated with
-        the index reading (e.g. Low, Moderate, High, or Very High Health Risk). The
-        AQHI is calculated based on the relative risks of a combination of common
-        air pollutants that are known to harm human health, including ground-level
-        ozone, particulate matter, and nitrogen dioxide. The AQHI formulation captures
-        only the short term or acute health risk (exposure of hour or days at a maximum).
-        The formulation of the AQHI may change over time to reflect new understanding
-        associated with air pollution health effects. The AQHI is calculated from
-        data observed in real time, without being verified (quality control).
-      operationId: getAqhi-forecasts-realtimeQueryables
-      parameters:
-      - *id001
-      responses:
-        '200':
-          $ref: '#/components/responses/Queryables'
-        '400':
-          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
-        '404':
-          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
-        '500':
-          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: "Get Air Quality Health Index \u2013 Forecasts queryables"
       tags:
       - aqhi-forecasts-realtime
   /collections/aqhi-observations-realtime:
@@ -1686,6 +1638,7 @@ paths:
       operationId: describeAqhi-observations-realtimeCollection
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -1695,7 +1648,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get collection metadata
+      summary: "Get Air Quality Health Index \u2013 Observations metadata"
       tags:
       - aqhi-observations-realtime
   /collections/aqhi-observations-realtime/items:
@@ -1715,6 +1668,7 @@ paths:
       operationId: getAqhi-observations-realtimeFeatures
       parameters:
       - *id001
+      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -1725,16 +1679,7 @@ paths:
         required: false
         schema:
           items:
-            enum:
-            - ID
-            - aqhi
-            - aqhi_type
-            - datetime_text_en
-            - datetime_text_fr
-            - datetime_utc
-            - region
-            - region_name_en
-            - region_name_fr
+            enum: []
             type: string
           type: array
         style: form
@@ -1742,69 +1687,6 @@ paths:
       - $ref: https://raw.githubusercontent.com/opengeospatial/ogcapi-records/master/core/openapi/parameters/sortby.yaml
       - $ref: '#/components/parameters/startindex'
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
-      - explode: false
-        in: query
-        name: ID
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: aqhi
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: aqhi_type
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: datetime_text_en
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: datetime_text_fr
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: datetime_utc
-        required: false
-        schema:
-          type: date
-        style: form
-      - explode: false
-        in: query
-        name: region
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: region_name_en
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: region_name_fr
-        required: false
-        schema:
-          type: string
-        style: form
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
@@ -1835,6 +1717,7 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -1847,41 +1730,13 @@ paths:
       summary: "Get Air Quality Health Index \u2013 Observations item by id"
       tags:
       - aqhi-observations-realtime
-  /collections/aqhi-observations-realtime/queryables:
-    get:
-      description: The Air Quality Health Index (AQHI) is a scale designed to help
-        quantify the quality of the air in a certain region on a scale from 1 to 10.
-        When the amount of air pollution is very high, the number is reported as 10+.
-        It also includes a category that describes the health risk associated with
-        the index reading (e.g. Low, Moderate, High, or Very High Health Risk). The
-        AQHI is calculated based on the relative risks of a combination of common
-        air pollutants that are known to harm human health, including ground-level
-        ozone, particulate matter, and nitrogen dioxide. The AQHI formulation captures
-        only the short term or acute health risk (exposure of hour or days at a maximum).
-        The formulation of the AQHI may change over time to reflect new understanding
-        associated with air pollution health effects. The AQHI is calculated from
-        data observed in real time, without being verified (quality control).
-      operationId: getAqhi-observations-realtimeQueryables
-      parameters:
-      - *id001
-      responses:
-        '200':
-          $ref: '#/components/responses/Queryables'
-        '400':
-          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
-        '404':
-          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
-        '500':
-          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: "Get Air Quality Health Index \u2013 Observations queryables"
-      tags:
-      - aqhi-observations-realtime
   /collections/bulletins-realtime:
     get:
       description: Real-time meteorological bulletins (last 140 days)
       operationId: describeBulletins-realtimeCollection
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -1891,7 +1746,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get collection metadata
+      summary: Get Real-time meteorological bulletins metadata
       tags:
       - bulletins-realtime
   /collections/bulletins-realtime/items:
@@ -1900,6 +1755,7 @@ paths:
       operationId: getBulletins-realtimeFeatures
       parameters:
       - *id001
+      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -1985,6 +1841,7 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -2003,6 +1860,7 @@ paths:
       operationId: getBulletins-realtimeQueryables
       parameters:
       - *id001
+      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -2029,6 +1887,7 @@ paths:
       operationId: describeClimate-dailyCollection
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -2038,7 +1897,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get collection metadata
+      summary: Get Daily Climate Observations metadata
       tags:
       - climate-daily
   /collections/climate-daily/items:
@@ -2055,6 +1914,7 @@ paths:
       operationId: getClimate-dailyFeatures
       parameters:
       - *id001
+      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -2374,6 +2234,7 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -2400,6 +2261,7 @@ paths:
       operationId: getClimate-dailyQueryables
       parameters:
       - *id001
+      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -2412,14 +2274,13 @@ paths:
       summary: Get Daily Climate Observations queryables
       tags:
       - climate-daily
-  /collections/climate-monthly:
+  /collections/climate-hourly:
     get:
-      description: A cross-country summary of the averages and extremes for the month,
-        including precipitation totals, max-min temperatures, and degree days. This
-        data is available from stations that produce daily data.
-      operationId: describeClimate-monthlyCollection
+      description: TODO
+      operationId: describeClimate-hourlyCollection
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -2429,7 +2290,345 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get collection metadata
+      summary: Get Hourly Climate Observations metadata
+      tags:
+      - climate-hourly
+  /collections/climate-hourly/items:
+    get:
+      description: TODO
+      operationId: getClimate-hourlyFeatures
+      parameters:
+      - *id001
+      - *id002
+      - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
+      - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
+      - description: The properties that should be included for each feature. The
+          parameter value is a comma-separated list of property names.
+        explode: false
+        in: query
+        name: properties
+        required: false
+        schema:
+          items:
+            enum:
+            - CLIMATE_IDENTIFIER
+            - DEW_POINT_TEMP
+            - DEW_POINT_TEMP_FLAG
+            - HUMIDEX
+            - HUMIDEX_FLAG
+            - ID
+            - LATITUDE_DECIMAL_DEGREES
+            - LOCAL_DATE
+            - LOCAL_DAY
+            - LOCAL_HOUR
+            - LOCAL_MONTH
+            - LOCAL_YEAR
+            - LONGITUDE_DECIMAL_DEGREES
+            - PRECIP_AMOUNT
+            - PRECIP_AMOUNT_FLAG
+            - PROVINCE_CODE
+            - RELATIVE_HUMIDITY
+            - RELATIVE_HUMIDITY_FLAG
+            - STATION_NAME
+            - STATION_PRESSURE
+            - STATION_PRESSURE_FLAG
+            - STN_ID
+            - TEMP
+            - TEMP_FLAG
+            - UTC_DATE
+            - UTC_DAY
+            - UTC_MONTH
+            - UTC_YEAR
+            - VISIBILITY
+            - VISIBILITY_FLAG
+            - WEATHER_ENG_DESC
+            - WEATHER_FRE_DESC
+            - WINDCHILL
+            - WINDCHILL_FLAG
+            - WIND_DIRECTION
+            - WIND_DIRECTION_FLAG
+            - WIND_SPEED
+            - WIND_SPEED_FLAG
+            type: string
+          type: array
+        style: form
+      - $ref: '#/components/parameters/skipGeometry'
+      - $ref: https://raw.githubusercontent.com/opengeospatial/ogcapi-records/master/core/openapi/parameters/sortby.yaml
+      - $ref: '#/components/parameters/startindex'
+      - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
+      - explode: false
+        in: query
+        name: CLIMATE_IDENTIFIER
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: DEW_POINT_TEMP
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: DEW_POINT_TEMP_FLAG
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: HUMIDEX
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: HUMIDEX_FLAG
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: ID
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: LOCAL_DATE
+        required: false
+        schema:
+          type: date
+        style: form
+      - explode: false
+        in: query
+        name: LOCAL_DAY
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: LOCAL_HOUR
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: LOCAL_MONTH
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: LOCAL_YEAR
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: PRECIP_AMOUNT
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: PRECIP_AMOUNT_FLAG
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: PROVINCE_CODE
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: RELATIVE_HUMIDITY
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: RELATIVE_HUMIDITY_FLAG
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: STATION_NAME
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: STATION_PRESSURE
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: STATION_PRESSURE_FLAG
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: TEMP
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: TEMP_FLAG
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: VISIBILITY
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: VISIBILITY_FLAG
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: WINDCHILL
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: WINDCHILL_FLAG
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: WIND_DIRECTION
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: WIND_DIRECTION_FLAG
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: WIND_SPEED
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: WIND_SPEED_FLAG
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        '200':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
+        '400':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        '404':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        '500':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Hourly Climate Observations items
+      tags:
+      - climate-hourly
+  /collections/climate-hourly/items/{featureId}:
+    get:
+      description: TODO
+      operationId: getClimate-hourlyFeature
+      parameters:
+      - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
+      - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
+      responses:
+        '200':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
+        '400':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        '404':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        '500':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Hourly Climate Observations item by id
+      tags:
+      - climate-hourly
+  /collections/climate-hourly/queryables:
+    get:
+      description: TODO
+      operationId: getClimate-hourlyQueryables
+      parameters:
+      - *id001
+      - *id002
+      responses:
+        '200':
+          $ref: '#/components/responses/Queryables'
+        '400':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        '404':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        '500':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Hourly Climate Observations queryables
+      tags:
+      - climate-hourly
+  /collections/climate-monthly:
+    get:
+      description: A cross-country summary of the averages and extremes for the month,
+        including precipitation totals, max-min temperatures, and degree days. This
+        data is available from stations that produce daily data.
+      operationId: describeClimate-monthlyCollection
+      parameters:
+      - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
+      responses:
+        '200':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
+        '400':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        '404':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        '500':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get Monthly Climate Observation Summaries metadata
       tags:
       - climate-monthly
   /collections/climate-monthly/items:
@@ -2440,6 +2639,7 @@ paths:
       operationId: getClimate-monthlyFeatures
       parameters:
       - *id001
+      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -2736,6 +2936,7 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -2756,6 +2957,7 @@ paths:
       operationId: getClimate-monthlyQueryables
       parameters:
       - *id001
+      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -2774,6 +2976,7 @@ paths:
       operationId: describeClimate-normalsCollection
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -2783,7 +2986,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get collection metadata
+      summary: Get 1981-2010 Climate Normals metadata
       tags:
       - climate-normals
   /collections/climate-normals/items:
@@ -2792,6 +2995,7 @@ paths:
       operationId: getClimate-normalsFeatures
       parameters:
       - *id001
+      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -3038,6 +3242,7 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -3056,6 +3261,7 @@ paths:
       operationId: getClimate-normalsQueryables
       parameters:
       - *id001
+      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -3074,6 +3280,7 @@ paths:
       operationId: describeClimate-stationsCollection
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -3083,7 +3290,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get collection metadata
+      summary: Get Climate Stations metadata
       tags:
       - climate-stations
   /collections/climate-stations/items:
@@ -3092,6 +3299,7 @@ paths:
       operationId: getClimate-stationsFeatures
       parameters:
       - *id001
+      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -3116,11 +3324,16 @@ paths:
             - FRE_PROV_NAME
             - FRE_STN_OPERATOR_ACRONYM
             - FRE_STN_OPERATOR_NAME
+            - HAS_HOURLY_DATA
             - HAS_MONTHLY_SUMMARY
             - HAS_NORMALS_DATA
+            - HLY_FIRST_DATE
+            - HLY_LAST_DATE
             - LAST_DATE
             - LATITUDE
             - LONGITUDE
+            - MLY_FIRST_DATE
+            - MLY_LAST_DATE
             - NORMAL_CODE
             - PROV_STATE_TERR_CODE
             - PUBLICATION_CODE
@@ -3229,6 +3442,13 @@ paths:
         style: form
       - explode: false
         in: query
+        name: HAS_HOURLY_DATA
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
         name: HAS_MONTHLY_SUMMARY
         required: false
         schema:
@@ -3237,6 +3457,20 @@ paths:
       - explode: false
         in: query
         name: HAS_NORMALS_DATA
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: HLY_FIRST_DATE
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: HLY_LAST_DATE
         required: false
         schema:
           type: string
@@ -3261,6 +3495,20 @@ paths:
         required: false
         schema:
           type: integer
+        style: form
+      - explode: false
+        in: query
+        name: MLY_FIRST_DATE
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: MLY_LAST_DATE
+        required: false
+        schema:
+          type: string
         style: form
       - explode: false
         in: query
@@ -3344,6 +3592,7 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -3362,6 +3611,7 @@ paths:
       operationId: getClimate-stationsQueryables
       parameters:
       - *id001
+      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -3381,6 +3631,7 @@ paths:
       operationId: describeHydrometric-annual-peaksCollection
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -3390,7 +3641,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get collection metadata
+      summary: Get Annual Maximum and Minimum Instantaneous Water Level or Flow metadata
       tags:
       - hydrometric-annual-peaks
   /collections/hydrometric-annual-peaks/items:
@@ -3400,6 +3651,7 @@ paths:
       operationId: getHydrometric-annual-peaksFeatures
       parameters:
       - *id001
+      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -3558,6 +3810,7 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -3578,6 +3831,7 @@ paths:
       operationId: getHydrometric-annual-peaksQueryables
       parameters:
       - *id001
+      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -3597,6 +3851,7 @@ paths:
       operationId: describeHydrometric-annual-statisticsCollection
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -3606,7 +3861,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get collection metadata
+      summary: Get Annual Maximum and Minimum Daily Water Level or Flow metadata
       tags:
       - hydrometric-annual-statistics
   /collections/hydrometric-annual-statistics/items:
@@ -3616,6 +3871,7 @@ paths:
       operationId: getHydrometric-annual-statisticsFeatures
       parameters:
       - *id001
+      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -3766,6 +4022,7 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -3785,6 +4042,7 @@ paths:
       operationId: getHydrometric-annual-statisticsQueryables
       parameters:
       - *id001
+      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -3803,6 +4061,7 @@ paths:
       operationId: describeHydrometric-daily-meanCollection
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -3812,7 +4071,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get collection metadata
+      summary: Get Daily Mean of Water Level or Flow metadata
       tags:
       - hydrometric-daily-mean
   /collections/hydrometric-daily-mean/items:
@@ -3821,6 +4080,7 @@ paths:
       operationId: getHydrometric-daily-meanFeatures
       parameters:
       - *id001
+      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -3946,6 +4206,7 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -3964,6 +4225,7 @@ paths:
       operationId: getHydrometric-daily-meanQueryables
       parameters:
       - *id001
+      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -3983,6 +4245,7 @@ paths:
       operationId: describeHydrometric-monthly-meanCollection
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -3992,7 +4255,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get collection metadata
+      summary: Get Monthly Mean of Water Level or Flow metadata
       tags:
       - hydrometric-monthly-mean
   /collections/hydrometric-monthly-mean/items:
@@ -4002,6 +4265,7 @@ paths:
       operationId: getHydrometric-monthly-meanFeatures
       parameters:
       - *id001
+      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -4096,6 +4360,7 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -4115,6 +4380,7 @@ paths:
       operationId: getHydrometric-monthly-meanQueryables
       parameters:
       - *id001
+      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -4134,6 +4400,7 @@ paths:
       operationId: describeHydrometric-realtimeCollection
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -4143,7 +4410,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get collection metadata
+      summary: Get Real-time hydrometric data metadata
       tags:
       - hydrometric-realtime
   /collections/hydrometric-realtime/items:
@@ -4153,6 +4420,7 @@ paths:
       operationId: getHydrometric-realtimeFeatures
       parameters:
       - *id001
+      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -4287,6 +4555,7 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -4306,6 +4575,7 @@ paths:
       operationId: getHydrometric-realtimeQueryables
       parameters:
       - *id001
+      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -4325,6 +4595,7 @@ paths:
       operationId: describeHydrometric-stationsCollection
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -4334,7 +4605,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get collection metadata
+      summary: Get Hydrometric Monitoring Stations metadata
       tags:
       - hydrometric-stations
   /collections/hydrometric-stations/items:
@@ -4344,6 +4615,7 @@ paths:
       operationId: getHydrometric-stationsFeatures
       parameters:
       - *id001
+      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -4453,6 +4725,7 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -4472,6 +4745,7 @@ paths:
       operationId: getHydrometric-stationsQueryables
       parameters:
       - *id001
+      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -4498,6 +4772,7 @@ paths:
       operationId: describeLtce-precipitationCollection
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -4507,7 +4782,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get collection metadata
+      summary: "Get Daily Extremes of Records (LTCE) \u2013 Precipitation metadata"
       tags:
       - ltce-precipitation
   /collections/ltce-precipitation/items:
@@ -4524,6 +4799,7 @@ paths:
       operationId: getLtce-precipitationFeatures
       parameters:
       - *id001
+      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -4761,6 +5037,7 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -4788,6 +5065,7 @@ paths:
       operationId: getLtce-precipitationQueryables
       parameters:
       - *id001
+      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -4814,6 +5092,7 @@ paths:
       operationId: describeLtce-snowfallCollection
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -4823,7 +5102,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get collection metadata
+      summary: "Get Daily Extremes of Records (LTCE) \u2013 Snowfall metadata"
       tags:
       - ltce-snowfall
   /collections/ltce-snowfall/items:
@@ -4840,6 +5119,7 @@ paths:
       operationId: getLtce-snowfallFeatures
       parameters:
       - *id001
+      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -5077,6 +5357,7 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -5103,6 +5384,7 @@ paths:
       operationId: getLtce-snowfallQueryables
       parameters:
       - *id001
+      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -5132,6 +5414,7 @@ paths:
       operationId: describeLtce-stationsCollection
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -5141,7 +5424,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get collection metadata
+      summary: Get Virtual Climate Stations (LTCE) metadata
       tags:
       - ltce-stations
   /collections/ltce-stations/items:
@@ -5161,6 +5444,7 @@ paths:
       operationId: getLtce-stationsFeatures
       parameters:
       - *id001
+      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -5312,6 +5596,7 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -5341,6 +5626,7 @@ paths:
       operationId: getLtce-stationsQueryables
       parameters:
       - *id001
+      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -5368,6 +5654,7 @@ paths:
       operationId: describeLtce-temperatureCollection
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -5377,7 +5664,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get collection metadata
+      summary: "Get Daily Extremes of Records (LTCE) \u2013 Temperature metadata"
       tags:
       - ltce-temperature
   /collections/ltce-temperature/items:
@@ -5395,6 +5682,7 @@ paths:
       operationId: getLtce-temperatureFeatures
       parameters:
       - *id001
+      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -6012,6 +6300,7 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -6039,6 +6328,7 @@ paths:
       operationId: getLtce-temperatureQueryables
       parameters:
       - *id001
+      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -6060,6 +6350,7 @@ paths:
       operationId: describeSwob-realtimeCollection
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
@@ -6069,7 +6360,7 @@ paths:
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get collection metadata
+      summary: Get Surface Weather Observations metadata
       tags:
       - swob-realtime
   /collections/swob-realtime/items:
@@ -6081,6 +6372,7 @@ paths:
       operationId: getSwob-realtimeFeatures
       parameters:
       - *id001
+      - *id002
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
       - description: The properties that should be included for each feature. The
@@ -6099,28 +6391,17 @@ paths:
             - air_temp-qa
             - air_temp-uom
             - air_temp_1
-            - air_temp_1-qa
             - air_temp_1-uom
-            - air_temp_1hr_ago_1
-            - air_temp_1hr_ago_1-qa
-            - air_temp_1hr_ago_1-uom
-            - air_temp_1hr_ago_2
-            - air_temp_1hr_ago_2-qa
-            - air_temp_1hr_ago_2-uom
             - air_temp_2
-            - air_temp_2-qa
             - air_temp_2-uom
-            - air_temp_2hrs_ago_1
-            - air_temp_2hrs_ago_1-qa
-            - air_temp_2hrs_ago_1-uom
-            - air_temp_2hrs_ago_2
-            - air_temp_2hrs_ago_2-qa
-            - air_temp_2hrs_ago_2-uom
             - air_temp_3
             - air_temp_3-uom
             - altmetr_setng
             - altmetr_setng-qa
             - altmetr_setng-uom
+            - avg_air_temp_pst10mts
+            - avg_air_temp_pst10mts-qa
+            - avg_air_temp_pst10mts-uom
             - avg_air_temp_pst1hr
             - avg_air_temp_pst1hr-data_flag-code_src
             - avg_air_temp_pst1hr-data_flag-uom
@@ -6133,6 +6414,9 @@ paths:
             - avg_air_temp_pst1hr_2-uom
             - avg_air_temp_pst1hr_3
             - avg_air_temp_pst1hr_3-uom
+            - avg_batry_volt_pst10mts
+            - avg_batry_volt_pst10mts-qa
+            - avg_batry_volt_pst10mts-uom
             - avg_cum_pcpn_gag_wt_fltrd_pst5mts
             - avg_cum_pcpn_gag_wt_fltrd_pst5mts-qa
             - avg_cum_pcpn_gag_wt_fltrd_pst5mts-uom
@@ -6158,12 +6442,26 @@ paths:
             - avg_globl_solr_radn_pst1mt-data_flag-uom
             - avg_globl_solr_radn_pst1mt-data_flag-value
             - avg_globl_solr_radn_pst1mt-uom
+            - avg_max_wave_hgt_pst20mts
+            - avg_max_wave_hgt_pst20mts-qa
+            - avg_max_wave_hgt_pst20mts-uom
+            - avg_max_wave_pd_pst20mts
+            - avg_max_wave_pd_pst20mts-qa
+            - avg_max_wave_pd_pst20mts-uom
+            - avg_mslp_pst10mts
+            - avg_mslp_pst10mts-data_flag-code_src
+            - avg_mslp_pst10mts-data_flag-uom
+            - avg_mslp_pst10mts-data_flag-value
+            - avg_mslp_pst10mts-uom
             - avg_rel_hum_pst1hr
             - avg_rel_hum_pst1hr-data_flag-code_src
             - avg_rel_hum_pst1hr-data_flag-uom
             - avg_rel_hum_pst1hr-data_flag-value
             - avg_rel_hum_pst1hr-qa
             - avg_rel_hum_pst1hr-uom
+            - avg_sea_sfc_temp_pst10mts
+            - avg_sea_sfc_temp_pst10mts-qa
+            - avg_sea_sfc_temp_pst10mts-uom
             - avg_snw_dpth_pst5mts
             - avg_snw_dpth_pst5mts-qa
             - avg_snw_dpth_pst5mts-uom
@@ -6173,11 +6471,29 @@ paths:
             - avg_snw_dpth_pst5mts_2-uom
             - avg_snw_dpth_pst5mts_3
             - avg_snw_dpth_pst5mts_3-uom
+            - avg_solr_panl_crnt_pst10mts
+            - avg_solr_panl_crnt_pst10mts-qa
+            - avg_solr_panl_crnt_pst10mts-uom
+            - avg_stn_pres_pst10mts
+            - avg_stn_pres_pst10mts-qa
+            - avg_stn_pres_pst10mts-uom
+            - avg_stn_pres_pst10mts_1
+            - avg_stn_pres_pst10mts_1-qa
+            - avg_stn_pres_pst10mts_1-uom
+            - avg_stn_pres_pst10mts_2
+            - avg_stn_pres_pst10mts_2-qa
+            - avg_stn_pres_pst10mts_2-uom
             - avg_uvb_indx_pst1hr
             - avg_uvb_indx_pst1hr-qa
             - avg_vis_pst10mts
             - avg_vis_pst10mts-qa
             - avg_vis_pst10mts-uom
+            - avg_wave_hgt_pst20mts
+            - avg_wave_hgt_pst20mts-qa
+            - avg_wave_hgt_pst20mts-uom
+            - avg_wave_pd_pst20mts
+            - avg_wave_pd_pst20mts-qa
+            - avg_wave_pd_pst20mts-uom
             - avg_wnd_dir_10m_pst10mts
             - avg_wnd_dir_10m_pst10mts-data_flag-code_src
             - avg_wnd_dir_10m_pst10mts-data_flag-uom
@@ -6211,6 +6527,15 @@ paths:
             - avg_wnd_dir_10m_pst2mts_1-uom
             - avg_wnd_dir_10m_pst2mts_2
             - avg_wnd_dir_10m_pst2mts_2-uom
+            - avg_wnd_dir_pst10mts
+            - avg_wnd_dir_pst10mts-qa
+            - avg_wnd_dir_pst10mts-uom
+            - avg_wnd_dir_pst10mts_1
+            - avg_wnd_dir_pst10mts_1-qa
+            - avg_wnd_dir_pst10mts_1-uom
+            - avg_wnd_dir_pst10mts_2
+            - avg_wnd_dir_pst10mts_2-qa
+            - avg_wnd_dir_pst10mts_2-uom
             - avg_wnd_spd_10m_pst10mts
             - avg_wnd_spd_10m_pst10mts-data_flag-code_src
             - avg_wnd_spd_10m_pst10mts-data_flag-uom
@@ -6253,15 +6578,21 @@ paths:
             - avg_wnd_spd_pcpn_gag_pst1mt
             - avg_wnd_spd_pcpn_gag_pst1mt-qa
             - avg_wnd_spd_pcpn_gag_pst1mt-uom
-            - batry_crnt
-            - batry_crnt-qa
-            - batry_crnt-uom
+            - avg_wnd_spd_pst10mts
+            - avg_wnd_spd_pst10mts-qa
+            - avg_wnd_spd_pst10mts-uom
+            - avg_wnd_spd_pst10mts_1
+            - avg_wnd_spd_pst10mts_1-qa
+            - avg_wnd_spd_pst10mts_1-uom
+            - avg_wnd_spd_pst10mts_2
+            - avg_wnd_spd_pst10mts_2-qa
+            - avg_wnd_spd_pst10mts_2-uom
+            - avg_wtr_lvl_snsr_volt_pst10mts
+            - avg_wtr_lvl_snsr_volt_pst10mts-qa
+            - avg_wtr_lvl_snsr_volt_pst10mts-uom
             - batry_volt
+            - batry_volt-qa
             - batry_volt-uom
-            - batry_volt_1hr_ago
-            - batry_volt_1hr_ago-uom
-            - batry_volt_2hrs_ago
-            - batry_volt_2hrs_ago-uom
             - cld_amt_code
             - cld_amt_code-qa
             - cld_amt_code-uom
@@ -6297,18 +6628,6 @@ paths:
             - cld_bas_hgt_5-uom
             - cld_lyr_amt_rptg_mtd-uom
             - cld_lyr_amt_rptg_mtd-value
-            - cld_opcty_1
-            - cld_opcty_1-qa
-            - cld_opcty_1-uom
-            - cld_opcty_2
-            - cld_opcty_2-qa
-            - cld_opcty_2-uom
-            - cld_opcty_3
-            - cld_opcty_3-qa
-            - cld_opcty_3-uom
-            - cld_opcty_4
-            - cld_opcty_4-qa
-            - cld_opcty_4-uom
             - cld_typ_1
             - cld_typ_1-qa
             - cld_typ_1-uom
@@ -6324,28 +6643,16 @@ paths:
             - cld_typ_5
             - cld_typ_5-qa
             - cld_typ_5-uom
-            - clg_hgt
-            - clg_hgt-qa
-            - clg_hgt-uom
-            - clg_typ_2
-            - clg_typ_2-qa
-            - clg_typ_2-uom
-            - clg_typ_3
-            - clg_typ_3-qa
-            - clg_typ_3-uom
             - clim_id-uom
             - clim_id-value
             - cor-uom
             - cor-value
-            - cum_pcpn_amt
-            - cum_pcpn_amt-qa
-            - cum_pcpn_amt-uom
-            - cum_pcpn_amt_1hr_ago
-            - cum_pcpn_amt_1hr_ago-qa
-            - cum_pcpn_amt_1hr_ago-uom
-            - cum_pcpn_amt_2hrs_ago
-            - cum_pcpn_amt_2hrs_ago-qa
-            - cum_pcpn_amt_2hrs_ago-uom
+            - crnt_buoy_lat
+            - crnt_buoy_lat-qa
+            - crnt_buoy_lat-uom
+            - crnt_buoy_long
+            - crnt_buoy_long-qa
+            - crnt_buoy_long-uom
             - data_attrib_not-uom
             - data_attrib_not-value
             - data_avail
@@ -6412,6 +6719,15 @@ paths:
             - max_air_temp_pst6hrs-data_flag-value
             - max_air_temp_pst6hrs-qa
             - max_air_temp_pst6hrs-uom
+            - max_avg_wnd_spd_pst10mts
+            - max_avg_wnd_spd_pst10mts-qa
+            - max_avg_wnd_spd_pst10mts-uom
+            - max_avg_wnd_spd_pst10mts_1
+            - max_avg_wnd_spd_pst10mts_1-qa
+            - max_avg_wnd_spd_pst10mts_1-uom
+            - max_avg_wnd_spd_pst10mts_2
+            - max_avg_wnd_spd_pst10mts_2-qa
+            - max_avg_wnd_spd_pst10mts_2-uom
             - max_batry_volt_pst1hr
             - max_batry_volt_pst1hr-data_flag-code_src
             - max_batry_volt_pst1hr-data_flag-uom
@@ -6551,11 +6867,6 @@ paths:
             - pcpn_amt_pst10mts-data_flag-uom
             - pcpn_amt_pst10mts-data_flag-value
             - pcpn_amt_pst10mts-uom
-            - pcpn_amt_pst12hrs
-            - pcpn_amt_pst12hrs-data_flag-code_src
-            - pcpn_amt_pst12hrs-data_flag-uom
-            - pcpn_amt_pst12hrs-data_flag-value
-            - pcpn_amt_pst12hrs-uom
             - pcpn_amt_pst1hr
             - pcpn_amt_pst1hr-data_flag-code_src
             - pcpn_amt_pst1hr-data_flag-uom
@@ -6593,6 +6904,18 @@ paths:
             - pcpn_snc_last_syno_hr-data_flag-uom
             - pcpn_snc_last_syno_hr-data_flag-value
             - pcpn_snc_last_syno_hr-uom
+            - pk_wave_hgt_pst20mts
+            - pk_wave_hgt_pst20mts-qa
+            - pk_wave_hgt_pst20mts-uom
+            - pk_wave_hgt_pst35mts_10mts_ago
+            - pk_wave_hgt_pst35mts_10mts_ago-qa
+            - pk_wave_hgt_pst35mts_10mts_ago-uom
+            - pk_wave_pd_pst20mts
+            - pk_wave_pd_pst20mts-qa
+            - pk_wave_pd_pst20mts-uom
+            - pk_wave_pd_pst35mts_10mts_ago
+            - pk_wave_pd_pst35mts_10mts_ago-qa
+            - pk_wave_pd_pst35mts_10mts_ago-uom
             - pk_wnd_rmk
             - pk_wnd_rmk-data_flag-code_src
             - pk_wnd_rmk-data_flag-uom
@@ -6640,10 +6963,20 @@ paths:
             - rnfl_amt_pst1mt
             - rnfl_amt_pst1mt-qa
             - rnfl_amt_pst1mt-uom
+            - rnfl_snc_last_syno_hr
             - rnfl_snc_last_syno_hr-qa
             - rnfl_snc_last_syno_hr-uom
             - rpt_typ-uom
             - rpt_typ-value
+            - sig_wave_hgt_pst20mts
+            - sig_wave_hgt_pst20mts-qa
+            - sig_wave_hgt_pst20mts-uom
+            - sig_wave_hgt_pst35mts_10mts_ago
+            - sig_wave_hgt_pst35mts_10mts_ago-qa
+            - sig_wave_hgt_pst35mts_10mts_ago-uom
+            - sig_wave_pd_pst20mts
+            - sig_wave_pd_pst20mts-qa
+            - sig_wave_pd_pst20mts-uom
             - snw_dpth
             - snw_dpth-data_flag-code_src
             - snw_dpth-data_flag-uom
@@ -6652,34 +6985,10 @@ paths:
             - snw_dpth-uom
             - snw_dpth_1
             - snw_dpth_1-uom
-            - snw_dpth_1hr_ago
-            - snw_dpth_1hr_ago-qa
-            - snw_dpth_1hr_ago-uom
             - snw_dpth_2
             - snw_dpth_2-uom
-            - snw_dpth_2hrs_ago
-            - snw_dpth_2hrs_ago-qa
-            - snw_dpth_2hrs_ago-uom
             - snw_dpth_3
             - snw_dpth_3-uom
-            - snw_dpth_wtr_equiv
-            - snw_dpth_wtr_equiv-qa
-            - snw_dpth_wtr_equiv-uom
-            - snw_dpth_wtr_equiv_1hr_ago
-            - snw_dpth_wtr_equiv_1hr_ago-qa
-            - snw_dpth_wtr_equiv_1hr_ago-uom
-            - snw_dpth_wtr_equiv_2hrs_ago
-            - snw_dpth_wtr_equiv_2hrs_ago-qa
-            - snw_dpth_wtr_equiv_2hrs_ago-uom
-            - solr_panl_crnt
-            - solr_panl_crnt-qa
-            - solr_panl_crnt-uom
-            - solr_volt
-            - solr_volt-uom
-            - solr_volt_1hr_ago
-            - solr_volt_1hr_ago-uom
-            - solr_volt_2hrs_ago
-            - solr_volt_2hrs_ago-uom
             - stn_nam-uom
             - stn_nam-value
             - stn_pres
@@ -6693,20 +7002,11 @@ paths:
             - sum_cld_cvr_2
             - sum_cld_cvr_2-qa
             - sum_cld_cvr_2-uom
-            - sum_cld_cvr_3
-            - sum_cld_cvr_3-qa
-            - sum_cld_cvr_3-uom
-            - sum_cld_cvr_4
-            - sum_cld_cvr_4-qa
-            - sum_cld_cvr_4-uom
             - tc_id-uom
             - tc_id-value
             - tot_cld_amt
             - tot_cld_amt-qa
             - tot_cld_amt-uom
-            - tot_cld_opcty
-            - tot_cld_opcty-qa
-            - tot_cld_opcty-uom
             - tot_globl_solr_radn_pst1hr
             - tot_globl_solr_radn_pst1hr-data_flag-code_src
             - tot_globl_solr_radn_pst1hr-data_flag-uom
@@ -6716,12 +7016,7 @@ paths:
             - tot_globl_solr_radn_pst1mt
             - tot_globl_solr_radn_pst1mt-qa
             - tot_globl_solr_radn_pst1mt-uom
-            - trans_batry_volt
-            - trans_batry_volt-uom
-            - trans_batry_volt_1hr_ago
-            - trans_batry_volt_1hr_ago-uom
-            - trans_batry_volt_2hrs_ago
-            - trans_batry_volt_2hrs_ago-uom
+            - url
             - vert_vis
             - vert_vis-qa
             - vert_vis-uom
@@ -6764,11 +7059,9 @@ paths:
             - wnd_dir_10m_pst1mt_max_spd
             - wnd_dir_10m_pst1mt_max_spd-qa
             - wnd_dir_10m_pst1mt_max_spd-uom
-            - wnd_gst_char
-            - wnd_gst_char-qa
-            - wnd_gst_char-uom
-            - wtr_temp
-            - wtr_temp-uom
+            - wnd_snsr_vert_disp
+            - wnd_snsr_vert_disp-qa
+            - wnd_snsr_vert_disp-uom
             type: string
           type: array
         style: form
@@ -6827,56 +7120,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: air_temp_1-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
         name: air_temp_1-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: air_temp_1hr_ago_1
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: air_temp_1hr_ago_1-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: air_temp_1hr_ago_1-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: air_temp_1hr_ago_2
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: air_temp_1hr_ago_2-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: air_temp_1hr_ago_2-uom
         required: false
         schema:
           type: string
@@ -6890,56 +7134,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: air_temp_2-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
         name: air_temp_2-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: air_temp_2hrs_ago_1
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: air_temp_2hrs_ago_1-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: air_temp_2hrs_ago_1-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: air_temp_2hrs_ago_2
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: air_temp_2hrs_ago_2-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: air_temp_2hrs_ago_2-uom
         required: false
         schema:
           type: string
@@ -6975,6 +7170,27 @@ paths:
       - explode: false
         in: query
         name: altmetr_setng-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: avg_air_temp_pst10mts
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: avg_air_temp_pst10mts-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: avg_air_temp_pst10mts-uom
         required: false
         schema:
           type: string
@@ -7059,6 +7275,27 @@ paths:
       - explode: false
         in: query
         name: avg_air_temp_pst1hr_3-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: avg_batry_volt_pst10mts
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: avg_batry_volt_pst10mts-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: avg_batry_volt_pst10mts-uom
         required: false
         schema:
           type: string
@@ -7166,7 +7403,7 @@ paths:
         name: avg_globl_solr_radn_pst1hr
         required: false
         schema:
-          type: float
+          type: long
         style: form
       - explode: false
         in: query
@@ -7240,6 +7477,83 @@ paths:
         style: form
       - explode: false
         in: query
+        name: avg_max_wave_hgt_pst20mts
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: avg_max_wave_hgt_pst20mts-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: avg_max_wave_hgt_pst20mts-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: avg_max_wave_pd_pst20mts
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: avg_max_wave_pd_pst20mts-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: avg_max_wave_pd_pst20mts-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: avg_mslp_pst10mts
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: avg_mslp_pst10mts-data_flag-code_src
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: avg_mslp_pst10mts-data_flag-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: avg_mslp_pst10mts-data_flag-value
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: avg_mslp_pst10mts-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
         name: avg_rel_hum_pst1hr
         required: false
         schema:
@@ -7276,6 +7590,27 @@ paths:
       - explode: false
         in: query
         name: avg_rel_hum_pst1hr-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: avg_sea_sfc_temp_pst10mts
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: avg_sea_sfc_temp_pst10mts-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: avg_sea_sfc_temp_pst10mts-uom
         required: false
         schema:
           type: string
@@ -7345,6 +7680,90 @@ paths:
         style: form
       - explode: false
         in: query
+        name: avg_solr_panl_crnt_pst10mts
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: avg_solr_panl_crnt_pst10mts-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: avg_solr_panl_crnt_pst10mts-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: avg_stn_pres_pst10mts
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: avg_stn_pres_pst10mts-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: avg_stn_pres_pst10mts-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: avg_stn_pres_pst10mts_1
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: avg_stn_pres_pst10mts_1-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: avg_stn_pres_pst10mts_1-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: avg_stn_pres_pst10mts_2
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: avg_stn_pres_pst10mts_2-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: avg_stn_pres_pst10mts_2-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
         name: avg_uvb_indx_pst1hr
         required: false
         schema:
@@ -7374,6 +7793,48 @@ paths:
       - explode: false
         in: query
         name: avg_vis_pst10mts-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: avg_wave_hgt_pst20mts
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: avg_wave_hgt_pst20mts-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: avg_wave_hgt_pst20mts-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: avg_wave_pd_pst20mts
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: avg_wave_pd_pst20mts-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: avg_wave_pd_pst20mts-uom
         required: false
         schema:
           type: string
@@ -7605,6 +8066,69 @@ paths:
       - explode: false
         in: query
         name: avg_wnd_dir_10m_pst2mts_2-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: avg_wnd_dir_pst10mts
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: avg_wnd_dir_pst10mts-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: avg_wnd_dir_pst10mts-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: avg_wnd_dir_pst10mts_1
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: avg_wnd_dir_pst10mts_1-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: avg_wnd_dir_pst10mts_1-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: avg_wnd_dir_pst10mts_2
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: avg_wnd_dir_pst10mts_2-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: avg_wnd_dir_pst10mts_2-uom
         required: false
         schema:
           type: string
@@ -7905,21 +8429,84 @@ paths:
         style: form
       - explode: false
         in: query
-        name: batry_crnt
+        name: avg_wnd_spd_pst10mts
         required: false
         schema:
           type: float
         style: form
       - explode: false
         in: query
-        name: batry_crnt-qa
+        name: avg_wnd_spd_pst10mts-qa
         required: false
         schema:
           type: long
         style: form
       - explode: false
         in: query
-        name: batry_crnt-uom
+        name: avg_wnd_spd_pst10mts-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: avg_wnd_spd_pst10mts_1
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: avg_wnd_spd_pst10mts_1-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: avg_wnd_spd_pst10mts_1-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: avg_wnd_spd_pst10mts_2
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: avg_wnd_spd_pst10mts_2-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: avg_wnd_spd_pst10mts_2-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: avg_wtr_lvl_snsr_volt_pst10mts
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: avg_wtr_lvl_snsr_volt_pst10mts-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: avg_wtr_lvl_snsr_volt_pst10mts-uom
         required: false
         schema:
           type: string
@@ -7933,35 +8520,14 @@ paths:
         style: form
       - explode: false
         in: query
+        name: batry_volt-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
         name: batry_volt-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: batry_volt_1hr_ago
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: batry_volt_1hr_ago-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: batry_volt_2hrs_ago
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: batry_volt_2hrs_ago-uom
         required: false
         schema:
           type: string
@@ -8213,90 +8779,6 @@ paths:
         style: form
       - explode: false
         in: query
-        name: cld_opcty_1
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: cld_opcty_1-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: cld_opcty_1-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: cld_opcty_2
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: cld_opcty_2-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: cld_opcty_2-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: cld_opcty_3
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: cld_opcty_3-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: cld_opcty_3-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: cld_opcty_4
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: cld_opcty_4-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: cld_opcty_4-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
         name: cld_typ_1
         required: false
         schema:
@@ -8402,69 +8884,6 @@ paths:
         style: form
       - explode: false
         in: query
-        name: clg_hgt
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: clg_hgt-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: clg_hgt-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: clg_typ_2
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: clg_typ_2-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: clg_typ_2-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: clg_typ_3
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: clg_typ_3-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: clg_typ_3-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
         name: clim_id-uom
         required: false
         schema:
@@ -8493,63 +8912,42 @@ paths:
         style: form
       - explode: false
         in: query
-        name: cum_pcpn_amt
+        name: crnt_buoy_lat
         required: false
         schema:
           type: float
         style: form
       - explode: false
         in: query
-        name: cum_pcpn_amt-qa
+        name: crnt_buoy_lat-qa
         required: false
         schema:
           type: long
         style: form
       - explode: false
         in: query
-        name: cum_pcpn_amt-uom
+        name: crnt_buoy_lat-uom
         required: false
         schema:
           type: string
         style: form
       - explode: false
         in: query
-        name: cum_pcpn_amt_1hr_ago
+        name: crnt_buoy_long
         required: false
         schema:
           type: float
         style: form
       - explode: false
         in: query
-        name: cum_pcpn_amt_1hr_ago-qa
+        name: crnt_buoy_long-qa
         required: false
         schema:
           type: long
         style: form
       - explode: false
         in: query
-        name: cum_pcpn_amt_1hr_ago-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: cum_pcpn_amt_2hrs_ago
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: cum_pcpn_amt_2hrs_ago-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: cum_pcpn_amt_2hrs_ago-uom
+        name: crnt_buoy_long-uom
         required: false
         schema:
           type: string
@@ -8727,7 +9125,7 @@ paths:
         name: hdr_fwd_pwr
         required: false
         schema:
-          type: float
+          type: long
         style: form
       - explode: false
         in: query
@@ -8748,7 +9146,7 @@ paths:
         name: hdr_oscil_drft
         required: false
         schema:
-          type: float
+          type: long
         style: form
       - explode: false
         in: query
@@ -8769,7 +9167,7 @@ paths:
         name: hdr_refltd_pwr
         required: false
         schema:
-          type: float
+          type: long
         style: form
       - explode: false
         in: query
@@ -8790,7 +9188,7 @@ paths:
         name: hdr_suply_volt
         required: false
         schema:
-          type: float
+          type: long
         style: form
       - explode: false
         in: query
@@ -9012,6 +9410,69 @@ paths:
       - explode: false
         in: query
         name: max_air_temp_pst6hrs-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: max_avg_wnd_spd_pst10mts
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: max_avg_wnd_spd_pst10mts-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: max_avg_wnd_spd_pst10mts-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: max_avg_wnd_spd_pst10mts_1
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: max_avg_wnd_spd_pst10mts_1-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: max_avg_wnd_spd_pst10mts_1-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: max_avg_wnd_spd_pst10mts_2
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: max_avg_wnd_spd_pst10mts_2-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: max_avg_wnd_spd_pst10mts_2-uom
         required: false
         schema:
           type: string
@@ -9959,7 +10420,7 @@ paths:
         name: pcpn_amt_pst10mts
         required: false
         schema:
-          type: float
+          type: long
         style: form
       - explode: false
         in: query
@@ -9991,45 +10452,10 @@ paths:
         style: form
       - explode: false
         in: query
-        name: pcpn_amt_pst12hrs
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: pcpn_amt_pst12hrs-data_flag-code_src
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: pcpn_amt_pst12hrs-data_flag-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: pcpn_amt_pst12hrs-data_flag-value
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: pcpn_amt_pst12hrs-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
         name: pcpn_amt_pst1hr
         required: false
         schema:
-          type: float
+          type: long
         style: form
       - explode: false
         in: query
@@ -10071,7 +10497,7 @@ paths:
         name: pcpn_amt_pst24hrs
         required: false
         schema:
-          type: float
+          type: long
         style: form
       - explode: false
         in: query
@@ -10113,7 +10539,7 @@ paths:
         name: pcpn_amt_pst3hrs
         required: false
         schema:
-          type: float
+          type: long
         style: form
       - explode: false
         in: query
@@ -10155,7 +10581,7 @@ paths:
         name: pcpn_amt_pst6hrs
         required: false
         schema:
-          type: float
+          type: long
         style: form
       - explode: false
         in: query
@@ -10197,7 +10623,7 @@ paths:
         name: pcpn_amt_snc_top_of_hr
         required: false
         schema:
-          type: float
+          type: long
         style: form
       - explode: false
         in: query
@@ -10253,7 +10679,7 @@ paths:
         name: pcpn_snc_last_syno_hr
         required: false
         schema:
-          type: float
+          type: long
         style: form
       - explode: false
         in: query
@@ -10279,6 +10705,90 @@ paths:
       - explode: false
         in: query
         name: pcpn_snc_last_syno_hr-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: pk_wave_hgt_pst20mts
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: pk_wave_hgt_pst20mts-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: pk_wave_hgt_pst20mts-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: pk_wave_hgt_pst35mts_10mts_ago
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: pk_wave_hgt_pst35mts_10mts_ago-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: pk_wave_hgt_pst35mts_10mts_ago-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: pk_wave_pd_pst20mts
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: pk_wave_pd_pst20mts-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: pk_wave_pd_pst20mts-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: pk_wave_pd_pst35mts_10mts_ago
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: pk_wave_pd_pst35mts_10mts_ago-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: pk_wave_pd_pst35mts_10mts_ago-uom
         required: false
         schema:
           type: string
@@ -10554,7 +11064,7 @@ paths:
         name: rnfl_amt_pst1hr
         required: false
         schema:
-          type: float
+          type: long
         style: form
       - explode: false
         in: query
@@ -10596,7 +11106,7 @@ paths:
         name: rnfl_amt_pst1mt
         required: false
         schema:
-          type: float
+          type: long
         style: form
       - explode: false
         in: query
@@ -10611,6 +11121,13 @@ paths:
         required: false
         schema:
           type: string
+        style: form
+      - explode: false
+        in: query
+        name: rnfl_snc_last_syno_hr
+        required: false
+        schema:
+          type: float
         style: form
       - explode: false
         in: query
@@ -10636,6 +11153,69 @@ paths:
       - explode: false
         in: query
         name: rpt_typ-value
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: sig_wave_hgt_pst20mts
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: sig_wave_hgt_pst20mts-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: sig_wave_hgt_pst20mts-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: sig_wave_hgt_pst35mts_10mts_ago
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: sig_wave_hgt_pst35mts_10mts_ago-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: sig_wave_hgt_pst35mts_10mts_ago-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: sig_wave_pd_pst20mts
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: sig_wave_pd_pst20mts-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: sig_wave_pd_pst20mts-uom
         required: false
         schema:
           type: string
@@ -10698,27 +11278,6 @@ paths:
         style: form
       - explode: false
         in: query
-        name: snw_dpth_1hr_ago
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: snw_dpth_1hr_ago-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: snw_dpth_1hr_ago-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
         name: snw_dpth_2
         required: false
         schema:
@@ -10733,27 +11292,6 @@ paths:
         style: form
       - explode: false
         in: query
-        name: snw_dpth_2hrs_ago
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: snw_dpth_2hrs_ago-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: snw_dpth_2hrs_ago-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
         name: snw_dpth_3
         required: false
         schema:
@@ -10762,132 +11300,6 @@ paths:
       - explode: false
         in: query
         name: snw_dpth_3-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: snw_dpth_wtr_equiv
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: snw_dpth_wtr_equiv-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: snw_dpth_wtr_equiv-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: snw_dpth_wtr_equiv_1hr_ago
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: snw_dpth_wtr_equiv_1hr_ago-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: snw_dpth_wtr_equiv_1hr_ago-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: snw_dpth_wtr_equiv_2hrs_ago
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: snw_dpth_wtr_equiv_2hrs_ago-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: snw_dpth_wtr_equiv_2hrs_ago-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: solr_panl_crnt
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: solr_panl_crnt-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: solr_panl_crnt-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: solr_volt
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: solr_volt-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: solr_volt_1hr_ago
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: solr_volt_1hr_ago-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: solr_volt_2hrs_ago
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: solr_volt_2hrs_ago-uom
         required: false
         schema:
           type: string
@@ -10985,48 +11397,6 @@ paths:
         style: form
       - explode: false
         in: query
-        name: sum_cld_cvr_3
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: sum_cld_cvr_3-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: sum_cld_cvr_3-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: sum_cld_cvr_4
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: sum_cld_cvr_4-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: sum_cld_cvr_4-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
         name: tc_id-uom
         required: false
         schema:
@@ -11056,27 +11426,6 @@ paths:
       - explode: false
         in: query
         name: tot_cld_amt-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: tot_cld_opcty
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: tot_cld_opcty-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: tot_cld_opcty-uom
         required: false
         schema:
           type: string
@@ -11146,42 +11495,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: trans_batry_volt
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: trans_batry_volt-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: trans_batry_volt_1hr_ago
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: trans_batry_volt_1hr_ago-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: trans_batry_volt_2hrs_ago
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: trans_batry_volt_2hrs_ago-uom
+        name: url
         required: false
         schema:
           type: string
@@ -11482,35 +11796,21 @@ paths:
         style: form
       - explode: false
         in: query
-        name: wnd_gst_char
+        name: wnd_snsr_vert_disp
         required: false
         schema:
           type: long
         style: form
       - explode: false
         in: query
-        name: wnd_gst_char-qa
+        name: wnd_snsr_vert_disp-qa
         required: false
         schema:
           type: long
         style: form
       - explode: false
         in: query
-        name: wnd_gst_char-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: wtr_temp
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: wtr_temp-uom
+        name: wnd_snsr_vert_disp-uom
         required: false
         schema:
           type: string
@@ -11537,6 +11837,7 @@ paths:
       parameters:
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
@@ -11558,6 +11859,7 @@ paths:
       operationId: getSwob-realtimeQueryables
       parameters:
       - *id001
+      - *id002
       responses:
         '200':
           $ref: '#/components/responses/Queryables'
@@ -11576,6 +11878,7 @@ paths:
       operationId: getConformanceDeclaration
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
       responses:
         '200':
           $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ConformanceDeclaration
@@ -11592,6 +11895,19 @@ paths:
       operationId: getOpenapi
       parameters:
       - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
+      - description: UI to render the OpenAPI document
+        explode: false
+        in: query
+        name: ui
+        required: false
+        schema:
+          default: swagger
+          enum:
+          - swagger
+          - redoc
+          type: string
+        style: form
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -11630,47 +11946,19 @@ paths:
       summary: Get process metadata
       tags:
       - raster-drill
-  /processes/raster-drill/jobs:
-    get:
-      description: Raster Drill process
-      operationId: getRaster-drillJobs
-      responses:
-        '200':
-          $ref: '#/components/responses/200'
-        '404':
-          $ref: https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/master/core/openapi/responses/NotFound.yaml
-        default:
-          $ref: '#/components/responses/default'
-      summary: Retrieve job list for process
-      tags:
-      - raster-drill
+  /processes/raster-drill/execution:
     post:
       description: Raster Drill process
       operationId: executeRaster-drillJob
-      parameters:
-      - description: Response type
-        in: query
-        name: response
-        required: false
-        schema:
-          default: document
-          enum:
-          - raw
-          - document
-          type: string
       requestBody:
         content:
           application/json:
             example:
               inputs:
-              - id: layer
-                value: CMIP5.TT.RCP26.YEAR.ANO_PCTL50
-              - id: y
-                value: 51.132831196692806
-              - id: x
-                value: -114.74968888274337
-              - id: format
-                value: CSV
+                format: CSV
+                layer: CMIP5.TT.RCP26.YEAR.ANO_PCTL50
+                x: -114.74968888274337
+                y: 51.132831196692806
             schema:
               $ref: https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/master/core/openapi/schemas/execute.yaml
         description: Mandatory execute request JSON
@@ -11687,6 +11975,20 @@ paths:
         default:
           $ref: '#/components/responses/default'
       summary: Process Raster Drill process execution
+      tags:
+      - raster-drill
+  /processes/raster-drill/jobs:
+    get:
+      description: Raster Drill process
+      operationId: getRaster-drillJobs
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '404':
+          $ref: https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/master/core/openapi/responses/NotFound.yaml
+        default:
+          $ref: '#/components/responses/default'
+      summary: Retrieve job list for process
       tags:
       - raster-drill
   /stac:
@@ -11762,6 +12064,8 @@ tags:
     is currently operational, (2) Stations with long periods of record, (3) Stations
     that are co-located with the categories above and supplement the period of record'
   name: climate-daily
+- description: TODO
+  name: climate-hourly
 - description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Stations
   name: ahccd-stations
 - description: Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual
@@ -11849,5 +12153,4 @@ tags:
   name: bulletins-realtime
 - description: Raster Drill process
   name: raster-drill
-
 
