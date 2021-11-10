@@ -75,9 +75,7 @@ sed -i "s#https://api.wxod-dev.cmc.ec.gc.ca/#$MSC_PYGEOAPI_OGC_API_URL#g" msc-py
 sed -i 's#basepath: /#basepath: /msc-pygeoapi/nightly/latest#' msc-pygeoapi/deploy/nightly/msc-pygeoapi-config.yml
 sed -i 's^# cors: true^cors: true^' msc-pygeoapi/deploy/nightly/msc-pygeoapi-config.yml
 
-cp msc-pygeoapi/deploy/default/msc-pygeoapi-openapi.yml msc-pygeoapi/deploy/nightly
-sed -i "s#https://api.wxod-dev.cmc.ec.gc.ca/#$MSC_PYGEOAPI_OGC_API_URL#g" msc-pygeoapi/deploy/nightly/msc-pygeoapi-openapi.yml
-sed -i "s#http://schemas.opengis.net#$MSC_PYGEOAPI_OGC_API_URL/schemas#g" msc-pygeoapi/deploy/nightly/msc-pygeoapi-openapi.yml
+pygeoapi openapi generate msc-pygeoapi/deploy/nightly/msc-pygeoapi-config.yml > msc-pygeoapi/deploy/nightly/msc-pygeoapi-openapi.yml
 
 cd ..
 
