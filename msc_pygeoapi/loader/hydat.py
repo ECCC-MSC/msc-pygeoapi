@@ -1231,7 +1231,7 @@ def add(
     password,
     ignore_certs,
     dataset,
-    batch_size=None,
+    batch_size,
 ):
     """Loads HYDAT data into Elasticsearch"""
 
@@ -1275,9 +1275,7 @@ def add(
             loader.create_index('stations')
             stations = loader.generate_stations(
                 station_table, annual_peaks_table, annual_stats_table)
-            if batch_size is not None:
-                loader.conn.submit_elastic_package(stations, batch_size)
-            loader.conn.submit_elastic_package(stations)
+            loader.conn.submit_elastic_package(stations, batch_size)
         except Exception as err:
             msg = 'Could not populate stations index: {}'.format(err)
             raise click.ClickException(msg)
@@ -1288,9 +1286,7 @@ def add(
             loader.create_index('observations')
             means = loader.generate_means(discharge_var, level_var,
                                           station_table, symbol_table)
-            if batch_size is not None:
-                loader.conn.submit_elastic_package(means, batch_size)
-            loader.conn.submit_elastic_package(means)
+            loader.conn.submit_elastic_package(means, batch_size)
         except Exception as err:
             msg = 'Could not populate observations indexes: {}'.format(err)
             raise click.ClickException(msg)
@@ -1302,9 +1298,7 @@ def add(
             stats = loader.generate_annual_stats(annual_stats_table,
                                                  data_types_table,
                                                  station_table, symbol_table)
-            if batch_size is not None:
-                loader.conn.submit_elastic_package(stats, batch_size)
-            loader.conn.submit_elastic_package(stats)
+            loader.conn.submit_elastic_package(stats, batch_size)
         except Exception as err:
             msg = 'Could not populate annual statistics index: {}'.format(err)
             raise click.ClickException(msg)
@@ -1316,9 +1310,7 @@ def add(
             peaks = loader.generate_annual_peaks(annual_peaks_table,
                                                  data_types_table,
                                                  symbol_table, station_table)
-            if batch_size is not None:
-                loader.conn.submit_elastic_package(peaks, batch_size)
-            loader.conn.submit_elastic_package(peaks)
+            loader.conn.submit_elastic_package(peaks, batch_size)
         except Exception as err:
             msg = 'Could not populate annual peaks index: {}'.format(err)
             raise click.ClickException(msg)

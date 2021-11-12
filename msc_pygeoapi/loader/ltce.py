@@ -1046,7 +1046,7 @@ def add(
     password,
     ignore_certs,
     dataset,
-    batch_size=None,
+    batch_size,
 ):
     """
     Loads Long Term Climate Extremes(LTCE) data from Oracle DB
@@ -1080,9 +1080,7 @@ def add(
         try:
             stations = loader.generate_stations()
             if stations:
-                if batch_size is not None:
-                    loader.conn.submit_elastic_package(stations, batch_size)
-                loader.conn.submit_elastic_package(stations)
+                loader.conn.submit_elastic_package(stations, batch_size)
                 LOGGER.info('Stations populated.')
             else:
                 LOGGER.error('No stations populated.')
@@ -1096,12 +1094,7 @@ def add(
         try:
             temp_extremes = loader.generate_daily_temp_extremes()
             if temp_extremes:
-                if batch_size is not None:
-                    loader.conn.submit_elastic_package(
-                        temp_extremes,
-                        batch_size,
-                    )
-                loader.conn.submit_elastic_package(temp_extremes)
+                loader.conn.submit_elastic_package(temp_extremes, batch_size)
                 LOGGER.info('Daily temperature extremes populated.')
             else:
                 LOGGER.error('No temperature extremes populated.')
@@ -1117,12 +1110,7 @@ def add(
         try:
             precip_extremes = loader.generate_daily_precip_extremes()
             if precip_extremes:
-                if batch_size is not None:
-                    loader.conn.submit_elastic_package(
-                        precip_extremes,
-                        batch_size,
-                    )
-                loader.conn.submit_elastic_package(precip_extremes)
+                loader.conn.submit_elastic_package(precip_extremes, batch_size)
                 LOGGER.info('Daily precipitation extremes populated.')
             else:
                 LOGGER.error('No precipitation extremes populated.')
@@ -1138,12 +1126,7 @@ def add(
         try:
             snow_extremes = loader.generate_daily_snow_extremes()
             if snow_extremes:
-                if batch_size is not None:
-                    loader.conn.submit_elastic_package(
-                        snow_extremes,
-                        batch_size,
-                    )
-                loader.conn.submit_elastic_package(snow_extremes)
+                loader.conn.submit_elastic_package(snow_extremes, batch_size)
                 LOGGER.info('Daily snowfall extremes populated.')
             else:
                 LOGGER.error('No snowfall extremes populated.')

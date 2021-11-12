@@ -211,6 +211,7 @@ def OPTION_BATCH_SIZE(*args, **kwargs):
     default_args = ['--batch-size']
 
     default_kwargs = {
+        'default': 10000,
         'type': click.IntRange(1, 100000),
         'required': False,
         'help': 'Number of documents to upload at a time to ES index',

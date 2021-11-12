@@ -554,7 +554,7 @@ def add(
     password,
     ignore_certs,
     dataset,
-    batch_size=None,
+    batch_size,
 ):
     """Loads AHCCD data from JSON into Elasticsearch"""
 
@@ -587,9 +587,7 @@ def add(
             click.echo('Populating {} index'.format(dtp))
             loader.create_index(dtp)
             dtp_data = loader.generate_docs(ctl_dict[dtp], dtp)
-            if batch_size is not None:
-                loader.conn.submit_elastic_package(dtp_data, batch_size)
-            loader.conn.submit_elastic_package(dtp_data)
+            loader.conn.submit_elastic_package(dtp_data, batch_size)
         except Exception as err:
             msg = 'Could not populate {} index: {}'.format(dtp, err)
             raise click.ClickException(msg)
