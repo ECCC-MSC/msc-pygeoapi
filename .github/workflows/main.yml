@@ -20,7 +20,7 @@ jobs:
     - name: Install requirements 📦
       run: |
         python3 -m pip install --upgrade pip
-        pip3 install wheel numpy==1.19.5 gdal==`gdal-config --version` cython pyproj==2.5.0
+        pip3 install "setuptools<58.0.0" wheel numpy==1.19.5 gdal==`gdal-config --version` cython pyproj==2.5.0
         pip3 install -r requirements-dev.txt
     - name: Install package 📦
       run: python3 setup.py install
