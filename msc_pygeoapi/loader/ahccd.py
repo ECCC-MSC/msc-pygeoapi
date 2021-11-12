@@ -540,12 +540,22 @@ CTL_HELP = '''
 @cli_options.OPTION_ES_USERNAME()
 @cli_options.OPTION_ES_PASSWORD()
 @cli_options.OPTION_ES_IGNORE_CERTS()
+@cli_options.OPTION_BATCH_SIZE()
 @cli_options.OPTION_DATASET(
     type=click.Choice(
         ['all', 'stations', 'trends', 'annual', 'seasonal', 'monthly']
     )
 )
-def add(ctx, ctl, es, username, password, ignore_certs, dataset):
+def add(
+    ctx,
+    ctl,
+    es,
+    username,
+    password,
+    ignore_certs,
+    dataset,
+    batch_size,
+):
     """Loads AHCCD data from JSON into Elasticsearch"""
 
     conn_config = configure_es_connection(es, username, password, ignore_certs)
@@ -577,7 +587,7 @@ def add(ctx, ctl, es, username, password, ignore_certs, dataset):
             click.echo('Populating {} index'.format(dtp))
             loader.create_index(dtp)
             dtp_data = loader.generate_docs(ctl_dict[dtp], dtp)
-            loader.conn.submit_elastic_package(dtp_data)
+            loader.conn.submit_elastic_package(dtp_data, batch_size)
         except Exception as err:
             msg = 'Could not populate {} index: {}'.format(dtp, err)
             raise click.ClickException(msg)

@@ -1025,6 +1025,7 @@ def ltce():
 
 @click.command()
 @click.pass_context
+@cli_options.OPTION_BATCH_SIZE()
 @cli_options.OPTION_DB()
 @cli_options.OPTION_ELASTICSEARCH()
 @cli_options.OPTION_ES_USERNAME()
@@ -1037,7 +1038,16 @@ def ltce():
     ),
     help='LTCE dataset to load',
 )
-def add(ctx, db, es, username, password, ignore_certs, dataset):
+def add(
+    ctx,
+    db,
+    es,
+    username,
+    password,
+    ignore_certs,
+    dataset,
+    batch_size,
+):
     """
     Loads Long Term Climate Extremes(LTCE) data from Oracle DB
     into Elasticsearch.
@@ -1070,7 +1080,7 @@ def add(ctx, db, es, username, password, ignore_certs, dataset):
         try:
             stations = loader.generate_stations()
             if stations:
-                loader.conn.submit_elastic_package(stations)
+                loader.conn.submit_elastic_package(stations, batch_size)
                 LOGGER.info('Stations populated.')
             else:
                 LOGGER.error('No stations populated.')
@@ -1084,7 +1094,7 @@ def add(ctx, db, es, username, password, ignore_certs, dataset):
         try:
             temp_extremes = loader.generate_daily_temp_extremes()
             if temp_extremes:
-                loader.conn.submit_elastic_package(temp_extremes)
+                loader.conn.submit_elastic_package(temp_extremes, batch_size)
                 LOGGER.info('Daily temperature extremes populated.')
             else:
                 LOGGER.error('No temperature extremes populated.')
@@ -1100,7 +1110,7 @@ def add(ctx, db, es, username, password, ignore_certs, dataset):
         try:
             precip_extremes = loader.generate_daily_precip_extremes()
             if precip_extremes:
-                loader.conn.submit_elastic_package(precip_extremes)
+                loader.conn.submit_elastic_package(precip_extremes, batch_size)
                 LOGGER.info('Daily precipitation extremes populated.')
             else:
                 LOGGER.error('No precipitation extremes populated.')
@@ -1116,7 +1126,7 @@ def add(ctx, db, es, username, password, ignore_certs, dataset):
         try:
             snow_extremes = loader.generate_daily_snow_extremes()
             if snow_extremes:
-                loader.conn.submit_elastic_package(snow_extremes)
+                loader.conn.submit_elastic_package(snow_extremes, batch_size)
                 LOGGER.info('Daily snowfall extremes populated.')
             else:
                 LOGGER.error('No snowfall extremes populated.')
