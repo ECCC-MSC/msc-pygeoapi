@@ -1,5 +1,17 @@
 {% extends "_base.html" %}
 {% block title %}{{ super() }} {{ data['title'] }} {% endblock %}
+{% block extralang %}
+{% for link in data['links'] %}
+{% if link['rel'] == 'alternate' and link['type'] == 'application/geo+json' %}
+<li>
+  <a id="csv-format-url" href="{{ link['href']|replace('f=json', 'f=csv') }}">
+    <span class="hidden-xs">CSV</span>
+    <abbr title="CSV" class="visible-xs h3 mrgn-tp-sm mrgn-bttm-0 text-uppercase">CSV</abbr>
+  </a>
+</li>
+{% endif %}
+{% endfor %}
+{% endblock %}
 {% block crumbs %}{{ super() }}
 <li><a href="{{ data['collections_path'] }}">Collections</a></li>
 {% for link in data['links'] %}
@@ -278,6 +290,8 @@
             jsonLink.href = '?' + queryParams.toString() + '&f=json'
             let jsonLdLink = document.getElementById('jsonld-format-url')
             jsonLdLink.href = '?' + queryParams.toString() + '&f=jsonld'
+            let csvLink = document.getElementById('csv-format-url')
+            csvLink.href = '?' + queryParams.toString() + '&f=csv'
           }
           // updates URL query params with current state
           const updateQueryParams = function(lastHistoryState = null) {
