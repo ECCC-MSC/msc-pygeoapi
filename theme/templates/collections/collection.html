@@ -63,7 +63,7 @@
       {% for link in data['links'] %}
         {% if link['rel'] == 'items' and link['type'] == 'application/geo+json' %}
           <li>GeoJSON</li>
-          <li>CSV</li>{# generally supported with GeoJSON #}
+          <li>CSV</li>{# generally supported with pygeoapi feature collections #}
         {% endif %}
       {% endfor %}
       </ul>
