@@ -291,7 +291,7 @@
             let jsonLdLink = document.getElementById('jsonld-format-url')
             jsonLdLink.href = '?' + queryParams.toString() + '&f=jsonld'
             let csvLink = document.getElementById('csv-format-url')
-            jsonLdLink.href = '?' + queryParams.toString() + '&f=csv'
+            csvLink.href = '?' + queryParams.toString() + '&f=csv'
           }
           // updates URL query params with current state
           const updateQueryParams = function(lastHistoryState = null) {
