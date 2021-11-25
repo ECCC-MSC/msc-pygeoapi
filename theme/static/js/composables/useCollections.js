@@ -1,7 +1,7 @@
 import { ref, computed } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.7/vue.esm-browser.prod.js'
 
 export default function useCollections() {
-  const collectionsJson = ref(JSON_DATA)
+  const collectionsJson = ref(JSON_DATA) // global JSON_DATA from jinja rendered JSON
   const collectionsTotal = computed(() => {
     if (Object.prototype.hasOwnProperty.call(collectionsJson.value, 'numberMatched')) {
       return collectionsJson.value.numberMatched
@@ -11,6 +11,19 @@ export default function useCollections() {
   })
   const collections = computed(() => {
     if (Object.prototype.hasOwnProperty.call(collectionsJson.value, 'collections')) {
+      // check for coverage type in links
+      collectionsJson.value.collections.forEach((collection) => {
+        if (!Object.prototype.hasOwnProperty.call(collection, 'itemType')) {
+          const links = collection.links
+          const linksLength = links.length
+          for (let i = 0; i < linksLength; i++) {
+            if (links[i].rel.search(/coverage/i) > -1) {
+              collection.itemType = 'coverage'
+              break
+            }
+          }
+        }
+      })
       return collectionsJson.value.collections
     } else {
       return []
