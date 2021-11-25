@@ -32,7 +32,11 @@ BASEDIR=/data/web/msc-pygeoapi-nightly
 PYGEOAPI_GITREPO=https://github.com/geopython/pygeoapi.git
 MSC_PYGEOAPI_GITREPO=https://github.com/ECCC-MSC/msc-pygeoapi.git
 DAYSTOKEEP=7
-MSC_PYGEOAPI_OGC_API_URL=https://geomet-dev-03-nightly.cmc.ec.gc.ca/msc-pygeoapi/nightly/latest/
+export MSC_PYGEOAPI_OGC_API_URL=https://geomet-dev-03-nightly.cmc.ec.gc.ca/msc-pygeoapi/nightly/latest/
+export MSC_PYGEOAPI_OGC_API_URL_BASEPATH=/
+export MSC_PYGEOAPI_TEMPLATES=/data/web/msc-pygeoapi-nightly/latest/msc-pygeoapi/theme/templates
+export MSC_PYGEOAPI_STATIC=/data/web/msc-pygeoapi-nightly/latest/msc-pygeoapi/theme/static
+export MSC_PYGEOAPI_OGC_SCHEMAS_LOCATION=/data/web/msc-pygeoapi-nightly/latest/schemas.opengis.net
 
 # you should be okay from here
 
