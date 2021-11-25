@@ -10,3 +10,4 @@ rasterio
 requests
 sqlalchemy
 unicodecsv
+xarray==0.10.2
