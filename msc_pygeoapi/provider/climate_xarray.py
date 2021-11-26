@@ -46,7 +46,7 @@ from pygeoapi.provider.xarray_ import (read_data,
 LOGGER = logging.getLogger(__name__)
 
 
-class CMIP5Provider(XarrayProvider):
+class ClimateProvider(XarrayProvider):
     """CMIP5 Provider"""
 
     def __init__(self, provider_def):
@@ -63,15 +63,15 @@ class CMIP5Provider(XarrayProvider):
             self._coverage_properties = self._get_coverage_properties()
 
             self.axes = [self._coverage_properties['x_axis_label'],
-                         self._coverage_properties['y_axis_label'],
-                         self._coverage_properties['time_axis_label']]
+                         self._coverage_properties['y_axis_label']]
 
             if 'RCP' in self.data:
                 self.axes.append('scenario')
             if 'season' in self.data:
                 self.axes.append('season')
             if 'avg_20years' not in self.data:
-                self.axes.append('percentile')
+                self.axes.extend([self._coverage_properties['time_axis_label'],
+                                  'percentile'])
 
             self.fields = self._coverage_properties['fields']
         except Exception as err:
@@ -89,11 +89,6 @@ class CMIP5Provider(XarrayProvider):
 
         domainset = super().get_coverage_domainset(self)
 
-        time_resolution = c_props['restime']['value']
-        time_period = c_props['restime']['period']
-        domainset['generalGrid']['axis'][2]['uomLabel'] = time_period
-        domainset['generalGrid']['axis'][2]['resolution'] = time_resolution
-
         new_axis_name = []
         new_axis = []
 
@@ -107,6 +102,13 @@ class CMIP5Provider(XarrayProvider):
                              'upperBound': 95,
                              'uomLabel': '%',
                              }])
+            time_resolution = c_props['restime']['value']
+            time_period = c_props['restime']['period']
+            domainset['generalGrid']['axis'][2]['uomLabel'] = time_period
+            domainset['generalGrid']['axis'][2]['resolution'] = time_resolution
+        else:
+            domainset['generalGrid']['axis'].pop(2)
+            domainset['generalGrid']['axisLabels'].pop(-1)
 
         if 'RCP' in self.data:
             new_axis.extend([{
@@ -128,6 +130,49 @@ class CMIP5Provider(XarrayProvider):
         domainset['generalGrid']['axis'].extend(new_axis)
 
         return domainset
+
+    def get_coverage_rangetype(self):
+        """
+        Provide coverage rangetype
+
+        :returns: CIS JSON object of rangetype metadata
+        """
+
+        rangetype = {
+            'type': 'DataRecord',
+            'field': []
+        }
+
+        for name, var in self._data.variables.items():
+            LOGGER.debug('Determining rangetype for {}'.format(name))
+
+            desc, units = None, None
+            if len(var.shape) >= 2:
+                parameter = self._get_parameter_metadata(
+                    name, var.attrs)
+                desc = parameter['description']
+                units = parameter['unit_label']
+
+                rangetype['field'].append({
+                    'id': name,
+                    'type': 'Quantity',
+                    'name': var.attrs.get('long_name') or desc,
+                    'encodingInfo': {
+                        'dataType': 'http://www.opengis.net/def/dataType/OGC/0/{}'.format(str(var.dtype))  # noqa
+                    },
+                    'nodata': 'null',
+                    'uom': {
+                        'id': 'http://www.opengis.net/def/uom/UCUM/{}'.format(
+                             units),
+                        'type': 'UnitReference',
+                        'code': units
+                    },
+                    '_meta': {
+                        'tags': var.attrs
+                    }
+                })
+
+        return rangetype
 
     def _get_coverage_properties(self):
         """
@@ -162,29 +207,20 @@ class CMIP5Provider(XarrayProvider):
                 self._data.coords[self.x_field].values[-1],
                 self._data.coords[self.y_field].values[-1],
             ],
-            'time_range': [
-                self._to_datetime_string(
-                    self._data.coords[self.time_field].values[0]
-                ),
-                self._to_datetime_string(
-                    self._data.coords[self.time_field].values[-1]
-                )
-            ],
+            'time_range': [0, 0],
+            'restime': 0,
+            'time_axis_label': self.time_field,
             'bbox_crs': 'http://www.opengis.net/def/crs/OGC/1.3/CRS84',
             'crs_type': 'GeographicCRS',
             'x_axis_label': self.x_field,
             'y_axis_label': self.y_field,
-            'time_axis_label': self.time_field,
             'width': self._data.dims[self.x_field],
             'height': self._data.dims[self.y_field],
-            'time': self._data.dims[self.time_field],
-            'time_duration': self.get_time_coverage_duration(),
             'bbox_units': 'degrees',
             'resx': np.abs(self._data.coords[self.x_field].values[1]
                            - self._data.coords[self.x_field].values[0]),
             'resy': np.abs(self._data.coords[self.y_field].values[1]
                            - self._data.coords[self.y_field].values[0]),
-            'restime': self.get_time_resolution()
         }
 
         if 'crs' in self._data.variables.keys():
@@ -199,9 +235,22 @@ class CMIP5Provider(XarrayProvider):
 
         properties['axes'] = [
             properties['x_axis_label'],
-            properties['y_axis_label'],
-            properties['time_axis_label']
+            properties['y_axis_label']
         ]
+
+        if 'avg_20years' not in self.data:
+            properties['axes'].append(properties['time_axis_label'])
+            properties['time_duration'] = self.get_time_coverage_duration()
+            properties['restime'] = self.get_time_resolution()
+            properties['time_range'] = [
+                self._to_datetime_string(
+                    self._data.coords[self.time_field].values[0]
+                ),
+                self._to_datetime_string(
+                    self._data.coords[self.time_field].values[-1]
+                )
+            ]
+            properties['time'] = self._data.dims[self.time_field]
 
         properties['fields'] = [name for name in self._data.variables
                                 if len(self._data.variables[name].shape) >= 3]
@@ -353,10 +402,13 @@ class CMIP5Provider(XarrayProvider):
                         slice(bbox[3], bbox[1])
 
             if datetime_ is not None:
-                if self._coverage_properties['time_axis_label'] in subsets:
-                    msg = 'datetime and temporal subsetting are exclusive'
+                if 'avg_20years' in self.data:
+                    msg = 'datetime not suported for 20 years average layers'
                     LOGGER.error(msg)
                     raise ProviderQueryError(msg)
+                elif self._coverage_properties['time_axis_label'] in subsets:
+                    msg = 'datetime and temporal subsetting are exclusive'
+                    LOGGER.error(msg)
                 else:
                     if '/' in datetime_:
 
