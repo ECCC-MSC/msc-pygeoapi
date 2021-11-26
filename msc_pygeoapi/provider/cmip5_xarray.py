@@ -226,7 +226,7 @@ class CMIP5Provider(XarrayProvider):
         else:
             return None
 
-    def _to_datetime_string(self, datetime_obj):
+    def _to_datetime_string(self, datetime_):
         """
         Convenience function to formulate string from various datetime objects
 
@@ -237,14 +237,15 @@ class CMIP5Provider(XarrayProvider):
 
         try:
             if 'monthly_ens' in self.data:
-                fmt = '%Y-%m'
+                month = datetime_.astype('datetime64[M]').astype(int) % 12 + 1
+                year = datetime_.astype('datetime64[Y]').astype(int) + 1970
+                value = '{}-{}'.format(year, str(month).zfill(2))
             else:
-                fmt = '%Y'
-            value = datetime_obj.strftime(fmt)
+                value = datetime_.astype('datetime64[Y]').astype(int) + 1970
+                value = str(value)
+            return value
         except Exception as err:
             LOGGER.error(err)
-
-        return value
 
     def query(self, range_subset=['tas'], subsets={},
               bbox=[], datetime_=None, format_='json'):
@@ -325,7 +326,7 @@ class CMIP5Provider(XarrayProvider):
         if any([self._coverage_properties['x_axis_label'] in subsets,
                 self._coverage_properties['y_axis_label'] in subsets,
                 self._coverage_properties['time_axis_label'] in subsets,
-                bbox is not None,
+                bbox,
                 datetime_ is not None]):
 
             LOGGER.debug('Creating spatio-temporal subset')
@@ -371,7 +372,7 @@ class CMIP5Provider(XarrayProvider):
 
             LOGGER.debug('Query parameters: {}'.format(query_params))
             try:
-                data = data.sel(query_params)
+                data = data.loc[query_params]
             except Exception as err:
                 LOGGER.warning(err)
                 raise ProviderQueryError(err)
