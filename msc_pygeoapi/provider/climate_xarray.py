@@ -265,7 +265,9 @@ class ClimateProvider(XarrayProvider):
 
         if self._data[self.time_field].size > 1:
 
-            if 'monthly_ens' in self.data:
+            self.monthly_data = ['monthly_ens', 'SPEI']
+
+            if any(month in self.data for month in self.monthly_data):
                 period = 'month'
             else:
                 period = 'year'
@@ -285,7 +287,7 @@ class ClimateProvider(XarrayProvider):
         """
 
         try:
-            if 'monthly_ens' in self.data:
+            if any(month in self.data for month in self.monthly_data):
                 month = datetime_.astype('datetime64[M]').astype(int) % 12 + 1
                 year = datetime_.astype('datetime64[Y]').astype(int) + 1970
                 value = '{}-{}'.format(year, str(month).zfill(2))
@@ -296,7 +298,7 @@ class ClimateProvider(XarrayProvider):
         except Exception as err:
             LOGGER.error(err)
 
-    def query(self, range_subset=['tas'], subsets={},
+    def query(self, range_subset=[], subsets={},
               bbox=[], datetime_=None, format_='json'):
         """
          Extract data from collection collection
@@ -320,7 +322,6 @@ class ClimateProvider(XarrayProvider):
                 elif scenario[0] not in ['RCP2.6', 'hist']:
                     scenario_value = scenario[0].replace('RCP', '')
                     self.data = self.data.replace('2.6', scenario_value)
-                    self._data = open_data(self.data)
             except Exception as err:
                 LOGGER.error(err)
                 raise ProviderQueryError(err)
@@ -335,7 +336,6 @@ class ClimateProvider(XarrayProvider):
                     pctl = str(percentile[0])
                     self.data = self.data.replace('pctl50',
                                                   'pctl{}'.format(pctl))
-                    self._data = open_data(self.data)
 
             except Exception as err:
                 LOGGER.error(err)
@@ -355,13 +355,14 @@ class ClimateProvider(XarrayProvider):
                     season = str(seasonal[0])
                     self.data = self.data.replace('DJF',
                                                   season)
-                    self._data = open_data(self.data)
 
             except Exception as err:
                 LOGGER.error(err)
                 raise ProviderQueryError(err)
 
             subsets.pop('season')
+
+        self._data = open_data(self.data)
 
         if not range_subset and not subsets and format_ != 'json':
             LOGGER.debug('No parameters specified, returning native data')
