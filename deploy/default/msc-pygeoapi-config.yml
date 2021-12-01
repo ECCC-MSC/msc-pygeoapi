@@ -2364,6 +2364,174 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
+    SPEI-1:historical:
+        type: collection
+        title: Historical SPEI-1
+        description: Historical SPEI-1
+        keywords:
+            - SPEI
+            - climate
+        extents:
+            spatial:
+                bbox: [-150.5,39.5,-49.5,85.5]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title: information
+              href: https://open.canada.ca/data/en/dataset/
+              hreflang: en-CA
+        providers:
+            - type: coverage
+              name: msc_pygeoapi.provider.spei_xarray.SPEIProvider
+              data: /data/geomet/feeds/dd.ops/climate/spei/netcdf/historical/SPEI-1/CMIP5_hist_SPEI-1_1900-2005_latlon1x1_SPEI_pctl50.nc
+              x_field: longitude
+              y_field: latitude
+              time_field: time
+              format:
+                  name: NetCDF
+                  mimetype: application/x-netcdf
+
+    SPEI-3:historical:
+        type: collection
+        title: Historical SPEI-3
+        description: Historical SPEI-3
+        keywords:
+            - SPEI
+            - climate
+        extents:
+            spatial:
+                bbox: [-150.5,39.5,-49.5,85.5]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title: information
+              href: https://open.canada.ca/data/en/dataset/
+              hreflang: en-CA
+        providers:
+            - type: coverage
+              name: msc_pygeoapi.provider.spei_xarray.SPEIProvider
+              data: /data/geomet/feeds/dd.ops/climate/spei/netcdf/historical/SPEI-3/CMIP5_hist_SPEI-3_1900-2005_latlon1x1_SPEI_pctl50.nc
+              x_field: longitude
+              y_field: latitude
+              time_field: time
+              format:
+                  name: NetCDF
+                  mimetype: application/x-netcdf
+
+    SPEI-12:historical:
+        type: collection
+        title: Historical SPEI-12
+        description: Historical SPEI-12
+        keywords:
+            - SPEI
+            - climate
+        extents:
+            spatial:
+                bbox: [-150.5,39.5,-49.5,85.5]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title: information
+              href: https://open.canada.ca/data/en/dataset/
+              hreflang: en-CA
+        providers:
+            - type: coverage
+              name: msc_pygeoapi.provider.spei_xarray.SPEIProvider
+              data: /data/geomet/feeds/dd.ops/climate/spei/netcdf/historical/SPEI-12/CMIP5_hist_SPEI-12_1900-2005_latlon1x1_SPEI_pctl50.nc
+              x_field: longitude
+              y_field: latitude
+              time_field: time
+              format:
+                  name: NetCDF
+                  mimetype: application/x-netcdf
+
+    SPEI-1:projected:
+        type: collection
+        title: Projected SPEI-1
+        description: Projected SPEI-1
+        keywords:
+            - SPEI
+            - climate
+        extents:
+            spatial:
+                bbox: [-150.5,39.5,-49.5,85.5]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title: information
+              href: https://open.canada.ca/data/en/dataset/
+              hreflang: en-CA
+        providers:
+            - type: coverage
+              name: msc_pygeoapi.provider.spei_xarray.SPEIProvider
+              data: /data/geomet/feeds/dd.ops/climate/spei/netcdf/scenarios/RCP2.6/SPEI-1/CMIP5_rcp2.6_SPEI-1_2006-2100_latlon1x1_SPEI_pctl50.nc
+              x_field: longitude
+              y_field: latitude
+              time_field: time
+              format:
+                  name: NetCDF
+                  mimetype: application/x-netcdf
+
+    SPEI-3:projected:
+        type: collection
+        title: Projected SPEI-3
+        description: Projected SPEI-3
+        keywords:
+            - SPEI
+            - climate
+        extents:
+            spatial:
+                bbox: [-150.5,39.5,-49.5,85.5]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title: information
+              href: https://open.canada.ca/data/en/dataset/
+              hreflang: en-CA
+        providers:
+            - type: coverage
+              name: msc_pygeoapi.provider.spei_xarray.SPEIProvider
+              data: /data/geomet/feeds/dd.ops/climate/spei/netcdf/scenarios/RCP2.6/SPEI-3/CMIP5_rcp2.6_SPEI-3_2006-2100_latlon1x1_SPEI_pctl50.nc
+              x_field: longitude
+              y_field: latitude
+              time_field: time
+              format:
+                  name: NetCDF
+                  mimetype: application/x-netcdf
+
+    SPEI-12:projected:
+        type: collection
+        title: Projected SPEI-12
+        description: Projected SPEI-12
+        keywords:
+            - SPEI
+            - climate
+        extents:
+            spatial:
+                bbox: [-150.5,39.5,-49.5,85.5]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title: information
+              href: https://open.canada.ca/data/en/dataset/
+              hreflang: en-CA
+        providers:
+            - type: coverage
+              name: msc_pygeoapi.provider.spei_xarray.SPEIProvider
+              data: /data/geomet/feeds/dd.ops/climate/spei/netcdf/scenarios/RCP2.6/SPEI-12/CMIP5_rcp2.6_SPEI-12_2006-2100_latlon1x1_SPEI_pctl50.nc
+              x_field: longitude
+              y_field: latitude
+              time_field: time
+              format:
+                  name: NetCDF
+                  mimetype: application/x-netcdf
+
     raster-drill:
         type: process
         processor:
