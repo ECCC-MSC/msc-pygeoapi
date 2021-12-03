@@ -2532,6 +2532,131 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
+    CanGRD:historical annual trend:
+        type: collection
+        title: CanGRD historical annual trend
+        description: CanGRD historical annual trend
+        keywords:
+            - CanGRD
+            - climate
+        extents:
+            spatial:
+                bbox: [-58.5,25.4,176.8,56.5]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title: information
+              href: https://open.canada.ca/data/en/dataset/
+              hreflang: en-CA
+        providers:
+            - type: coverage
+              name: msc_pygeoapi.provider.cangrd_rasterio.CanGRDProvider
+              data: /data/geomet/feeds/dd.ops/climate/cangrd/geotiff/historical/annual/trend/CANGRD_hist_annual_trend_ps50km_TMEAN_1948-2018.tif
+              format:
+                  name: GTiff
+                  mimetype: image/tiff
+
+    CanGRD:historical annual anomaly:
+        type: collection
+        title: CanGRD historical annual anomaly
+        description: CanGRD historical annual anomaly
+        keywords:
+            - CanGRD
+            - climate
+        extents:
+            spatial:
+                bbox: [-58.5,25.4,176.8,56.5]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title: information
+              href: https://open.canada.ca/data/en/dataset/
+              hreflang: en-CA
+        providers:
+            - type: coverage
+              name: msc_pygeoapi.provider.cangrd_rasterio.CanGRDProvider
+              data: /data/geomet/feeds/dd.ops/climate/cangrd/geotiff/historical/annual/anomaly/CANGRD_hist_annual_anom_ps50km_TMEAN_2018.tif
+              format:
+                  name: GTiff
+                  mimetype: image/tiff
+
+    CanGRD:historical monthly anomaly:
+        type: collection
+        title: CanGRD historical monthly anomaly
+        description: CanGRD historical monthly anomaly
+        keywords:
+            - CanGRD
+            - climate
+        extents:
+            spatial:
+                bbox: [-58.5,25.4,176.8,56.5]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title: information
+              href: https://open.canada.ca/data/en/dataset/
+              hreflang: en-CA
+        providers:
+            - type: coverage
+              name: msc_pygeoapi.provider.cangrd_rasterio.CanGRDProvider
+              data: /data/geomet/feeds/dd.ops/climate/cangrd/geotiff/historical/monthly_ens/anomaly/CANGRD_hist_monthly_anom_ps50km_TMEAN_2018-12.tif
+              format:
+                  name: GTiff
+                  mimetype: image/tiff
+
+    CanGRD:historical seasonal trend:
+        type: collection
+        title: CanGRD historical seasonal trend
+        description: CanGRD historical seasonal trend
+        keywords:
+            - CanGRD
+            - climate
+        extents:
+            spatial:
+                bbox: [-58.5,25.4,176.8,56.5]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title: information
+              href: https://open.canada.ca/data/en/dataset/
+              hreflang: en-CA
+        providers:
+            - type: coverage
+              name: msc_pygeoapi.provider.cangrd_rasterio.CanGRDProvider
+              data: /data/geomet/feeds/dd.ops/climate/cangrd/geotiff/historical/seasonal/DJF/trend/CANGRD_hist_DJF_trend_ps50km_TMEAN_1948-2018.tif
+              format:
+                  name: GTiff
+                  mimetype: image/tiff
+
+    CanGRD:historical seasonal anomaly:
+        type: collection
+        title: CanGRD historical seasonal anomaly
+        description: CanGRD historical seasonal anomaly
+        keywords:
+            - CanGRD
+            - climate
+        extents:
+            spatial:
+                bbox: [-58.5,25.4,176.8,56.5]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title: information
+              href: https://open.canada.ca/data/en/dataset/
+              hreflang: en-CA
+        providers:
+            - type: coverage
+              name: msc_pygeoapi.provider.cangrd_rasterio.CanGRDProvider
+              data: /data/geomet/feeds/dd.ops/climate/cangrd/geotiff/historical/seasonal/DJF/anomaly/CANGRD_hist_DJF_anom_ps50km_TMEAN_2018.tif
+              format:
+                  name: GTiff
+                  mimetype: image/tiff
+
     raster-drill:
         type: process
         processor:
