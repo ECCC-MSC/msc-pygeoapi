@@ -399,8 +399,18 @@ class ClimateProvider(XarrayProvider):
                 else:
                     query_params[self._coverage_properties['x_axis_label']] = \
                         slice(bbox[0], bbox[2])
-                    query_params[self._coverage_properties['y_axis_label']] = \
-                        slice(bbox[3], bbox[1])
+
+                    self._coverage_properties['time_axis_label']
+
+                    lat = self._data.coords[self.y_field]
+                    lat_field = self._coverage_properties['y_axis_label']
+
+                    if lat.values[1] > lat.values[0]:
+                        query_params[lat_field] = \
+                            slice(bbox[1], bbox[3])
+                    else:
+                        query_params[lat_field] = \
+                            slice(bbox[3], bbox[1])
 
             if datetime_ is not None:
                 if 'avg_20years' in self.data:
