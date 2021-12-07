@@ -371,7 +371,13 @@ class ClimateProvider(XarrayProvider):
             else:
                 return read_data(self.data)
 
-        data = self._data[[*range_subset]]
+        # set default variable if range_subset is None
+        range_subset_ = range_subset.copy()
+        if not range_subset:
+            name = list(self._data.variables.keys())[-1]
+            range_subset_.append(name)
+
+        data = self._data[[*range_subset_]]
 
         if any([self._coverage_properties['x_axis_label'] in subsets,
                 self._coverage_properties['y_axis_label'] in subsets,
@@ -470,7 +476,7 @@ class ClimateProvider(XarrayProvider):
         LOGGER.debug('Serializing data in memory')
         if format_ == 'json':
             LOGGER.debug('Creating output in CoverageJSON')
-            return self.gen_covjson(out_meta, data, range_subset)
+            return self.gen_covjson(out_meta, data, range_subset_)
         elif format_ == 'zarr':
             LOGGER.debug('Returning data in native zarr format')
             return _get_zarr_data(data)
