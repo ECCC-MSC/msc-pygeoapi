@@ -299,15 +299,22 @@ class CanGRDProvider(RasterioProvider):
             msg = 'Datetime is not supported for trend'
             LOGGER.error(msg)
             raise ProviderQueryError(msg)
-        elif datetime_ and 'month' not in self.data:
+
+        date_file_list = False
+
+        if datetime_:
             if '/' not in datetime_:
-                year = search('_{:d}.tif', self.data)[0]
-                self.data = self.data.replace(str(year), str(datetime_))
-        elif datetime_ and 'month' in self.data:
-            if '/' not in datetime_:
-                month = search('_{:d}-{:d}.tif', self.data)
-                month = '{}-{}'.format(month[0], str(month[1]).zfill(2))
-                self.data = self.data.replace(str(month), str(datetime_))
+                if 'month' in self.data:
+                    month = search('_{:d}-{:d}.tif', self.data)
+                    period = '{}-{}'.format(month[0], str(month[1]).zfill(2))
+                    self.data = self.data.replace(str(month), str(datetime_))
+                else:
+                    period = search('_{:d}.tif', self.data)[0]
+                self.data = self.data.replace(str(period), str(datetime_))
+            else:
+                date_file_list = self.get_file_list(datetime_,
+                                                    range_subset[0].upper())
+                args['indexes'] = list(range(1, len(date_file_list) + 1))
 
         with rasterio.open(self.data) as _data:
             LOGGER.debug('Creating output coverage metadata')
@@ -326,7 +333,7 @@ class CanGRDProvider(RasterioProvider):
                         filled=False,
                         shapes=shapes,
                         crop=True,
-                        indexes=args['indexes'])
+                        indexes=None)
                 except ValueError as err:
                     LOGGER.error(err)
                     raise ProviderQueryError(err)
@@ -356,16 +363,77 @@ class CanGRDProvider(RasterioProvider):
 
             out_meta['units'] = _data.units
 
-            LOGGER.debug('Serializing data in memory')
-            with MemoryFile() as memfile:
-                with memfile.open(**out_meta) as dest:
-                    dest.write(out_image)
-
-                if format_ == 'json':
+            # CovJSON output does not support multiple bands yet
+            # Only the first timestep is returned
+            if format_ == 'json':
+                if date_file_list:
+                    err = 'Date range not yet supported for CovJSON output'
+                    LOGGER.error(err)
+                    raise ProviderQueryError(err)
+                else:
                     LOGGER.debug('Creating output in CoverageJSON')
                     out_meta['bands'] = args['indexes']
                     return self.gen_covjson(out_meta, out_image)
+            else:
+                if date_file_list:
+                    LOGGER.debug('Serializing data in memory')
+                    with MemoryFile() as memfile:
 
-                else:  # return data in native format
-                    LOGGER.debug('Returning data in native format')
-                    return memfile.read()
+                        out_meta.update(count=len(date_file_list))
+
+                        with memfile.open(**out_meta) as dest:
+                            for id, layer in enumerate(date_file_list,
+                                                       start=1):
+                                with rasterio.open(layer) as src1:
+                                    if shapes:  # spatial subset
+                                        try:
+                                            LOGGER.debug('Clipping data')
+                                            out_image, out_transform = \
+                                                rasterio.mask.mask(
+                                                    src1,
+                                                    filled=False,
+                                                    shapes=shapes,
+                                                    crop=True,
+                                                    indexes=1)
+                                        except ValueError as err:
+                                            LOGGER.error(err)
+                                            raise ProviderQueryError(err)
+                                    dest.write_band(id, out_image)
+
+                        # return data in native format
+                        LOGGER.debug('Returning data in native format')
+                        return memfile.read()
+                else:
+                    LOGGER.debug('Serializing data in memory')
+                    with MemoryFile() as memfile:
+                        with memfile.open(**out_meta) as dest:
+                            dest.write(out_image)
+
+                        # return data in native format
+                        LOGGER.debug('Returning data in native format')
+                        return memfile.read()
+
+    def get_file_list(self, datetime_, variable):
+        """
+        Generate list of datetime from the query datetime_
+
+        :param datetime_: datetime from the query
+        :param variable: variable from query
+
+        :returns: sorted list of files
+        """
+
+        begin, end = datetime_.split('/')
+
+        file_path = pathlib.Path(self.data).parent.resolve()
+        file_path_ = glob.glob(os.path.join(file_path,
+                                            '*{}*'.format(variable)))
+        file_path_.sort()
+
+        begin_file_idx = [file_path_.index(i) for i
+                          in file_path_ if begin in i]
+        end_file_idx = [file_path_.index(i) for i in file_path_ if end in i]
+
+        query_file = file_path_[begin_file_idx[0]:end_file_idx[0] + 1]
+
+        return query_file
