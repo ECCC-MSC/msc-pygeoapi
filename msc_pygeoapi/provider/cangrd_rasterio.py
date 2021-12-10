@@ -398,6 +398,8 @@ class CanGRDProvider(RasterioProvider):
                                         except ValueError as err:
                                             LOGGER.error(err)
                                             raise ProviderQueryError(err)
+                                    else:
+                                        out_image = src1.read(indexes=1)
                                     dest.write_band(id, out_image)
 
                         # return data in native format
