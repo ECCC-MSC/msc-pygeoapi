@@ -184,6 +184,7 @@ class CapAlertsRealtimeLoader(BaseLoader):
 
         self.conn = ElasticsearchConnector(conn_config)
         self.conn.create(INDEX_NAME, mapping=SETTINGS)
+        self.references_arr = []
 
     def load_data(self, filepath):
         """
@@ -291,11 +292,13 @@ class CapAlertsRealtimeLoader(BaseLoader):
 
         identifier = _get_element(root,
                                   '{}identifier'.format(b_xml))
+
         references = _get_element(root,
-                                  '{}references'.format(b_xml)).split(' ')
-        self.references_arr = []
-        for ref in references:
-            self.references_arr.append(ref.split(',')[1])
+                                  '{}references'.format(b_xml))
+
+        if references:
+            for ref in references.split(' '):
+                self.references_arr.append(ref.split(',')[1])
 
         for grandchild in root.iter('{}info'.format(b_xml)):
             expires = _get_date_format(_get_element(grandchild,
@@ -480,7 +483,7 @@ def add(ctx, file_, directory, es, username, password, ignore_certs):
         files_to_process = [file_]
     elif directory is not None:
         for root, dirs, files in os.walk(directory):
-            for f in [file for file in files if file.endswith('.xml')]:
+            for f in [file for file in files if file.endswith('.cap')]:
                 files_to_process.append(os.path.join(root, f))
         files_to_process.sort(key=os.path.getmtime)
 
