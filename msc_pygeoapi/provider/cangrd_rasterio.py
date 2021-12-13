@@ -34,19 +34,19 @@ import os
 from parse import search
 import pathlib
 
-from pyproj import CRS, Transformer
 import rasterio
+from rasterio.crs import CRS
 from rasterio.io import MemoryFile
 import rasterio.mask
 
 from pygeoapi.provider.base import (BaseProvider, ProviderConnectionError,
                                     ProviderQueryError)
-from pygeoapi.provider.rasterio_ import RasterioProvider
 
 LOGGER = logging.getLogger(__name__)
 
 
-class CanGRDProvider(RasterioProvider):
+# TODO: use RasterioProvider once pyproj is updated on bionic
+class CanGRDProvider(BaseProvider):
     """CanGRD Provider"""
 
     def __init__(self, provider_def):
@@ -56,7 +56,7 @@ class CanGRDProvider(RasterioProvider):
         :returns: pygeoapi.provider.cangrdrasterio.CanGRDProvider
         """
 
-        BaseProvider.__init__(self, provider_def)
+        super().__init__(provider_def)
 
         try:
             self._data = rasterio.open(self.data)
@@ -74,6 +74,8 @@ class CanGRDProvider(RasterioProvider):
             LOGGER.warning(err)
             raise ProviderConnectionError(err)
 
+    # TODO: update domainset initialization with super
+    # once pyproj is updated on bionic
     def get_coverage_domainset(self):
         """
         Provide coverage domainset
@@ -81,7 +83,51 @@ class CanGRDProvider(RasterioProvider):
         :returns: CIS JSON object of domainset metadata
         """
 
-        domainset = super().get_coverage_domainset(self)
+        domainset = {
+            'type': 'DomainSet',
+            'generalGrid': {
+                'type': 'GeneralGridCoverage',
+                'srsName': self._coverage_properties['bbox_crs'],
+                'axisLabels': [
+                    self._coverage_properties['x_axis_label'],
+                    self._coverage_properties['y_axis_label']
+                ],
+                'axis': [{
+                    'type': 'RegularAxis',
+                    'axisLabel': self._coverage_properties['x_axis_label'],
+                    'lowerBound': self._coverage_properties['bbox'][0],
+                    'upperBound': self._coverage_properties['bbox'][2],
+                    'uomLabel': self._coverage_properties['bbox_units'],
+                    'resolution': self._coverage_properties['resx']
+                }, {
+                    'type': 'RegularAxis',
+                    'axisLabel': self._coverage_properties['y_axis_label'],
+                    'lowerBound': self._coverage_properties['bbox'][1],
+                    'upperBound': self._coverage_properties['bbox'][3],
+                    'uomLabel': self._coverage_properties['bbox_units'],
+                    'resolution': self._coverage_properties['resy']
+                }],
+                'gridLimits': {
+                    'type': 'GridLimits',
+                    'srsName': 'http://www.opengis.net/def/crs/OGC/0/Index2D',
+                    'axisLabels': ['i', 'j'],
+                    'axis': [{
+                        'type': 'IndexAxis',
+                        'axisLabel': 'i',
+                        'lowerBound': 0,
+                        'upperBound': self._coverage_properties['width']
+                    }, {
+                        'type': 'IndexAxis',
+                        'axisLabel': 'j',
+                        'lowerBound': 0,
+                        'upperBound': self._coverage_properties['height']
+                    }]
+                }
+            },
+            '_meta': {
+                'tags': self._coverage_properties['tags']
+            }
+        }
 
         new_axis_name = []
         new_axis = []
@@ -233,9 +279,16 @@ class CanGRDProvider(RasterioProvider):
                 LOGGER.debug('source bbox CRS and data CRS are different')
                 LOGGER.debug('reprojecting bbox into native coordinates')
 
-                t = Transformer.from_crs(crs_src, crs_dest, always_xy=True)
-                minx2, miny2 = t.transform(minx, miny)
-                maxx2, maxy2 = t.transform(maxx, maxy)
+                temp_geom_min = {"type": "Point", "coordinates": [minx, miny]}
+                temp_geom_max = {"type": "Point", "coordinates": [maxx, maxy]}
+
+                min_coord = rasterio.warp.transform_geom(crs_src, crs_dest,
+                                                         temp_geom_min)
+                minx2, miny2 = min_coord['coordinates']
+
+                max_coord = rasterio.warp.transform_geom(crs_src, crs_dest,
+                                                         temp_geom_max)
+                maxx2, maxy2 = max_coord['coordinates']
 
                 LOGGER.debug('Source coordinates: {}'.format(
                     [minx, miny, maxx, maxy]))
@@ -344,7 +397,7 @@ class CanGRDProvider(RasterioProvider):
                                  'transform': out_transform})
             else:  # no spatial subset
                 LOGGER.debug('Creating data in memory with band selection')
-                out_image = _data.read(indexes=args['indexes'])
+                out_image = _data.read(indexes=[1])
 
             if bbox:
                 out_meta['bbox'] = [bbox[0], bbox[1], bbox[2], bbox[3]]
@@ -415,6 +468,134 @@ class CanGRDProvider(RasterioProvider):
                         LOGGER.debug('Returning data in native format')
                         return memfile.read()
 
+    # TODO: remove once pyproj is updated on bionic
+    def gen_covjson(self, metadata, data):
+        """
+        Generate coverage as CoverageJSON representation
+        :param metadata: coverage metadata
+        :param data: rasterio DatasetReader object
+        :returns: dict of CoverageJSON representation
+        """
+
+        LOGGER.debug('Creating CoverageJSON domain')
+        minx, miny, maxx, maxy = metadata['bbox']
+
+        cj = {
+            'type': 'Coverage',
+            'domain': {
+                'type': 'Domain',
+                'domainType': 'Grid',
+                'axes': {
+                    'x': {
+                        'start': minx,
+                        'stop': maxx,
+                        'num': metadata['width']
+                    },
+                    'y': {
+                        'start': maxy,
+                        'stop': miny,
+                        'num': metadata['height']
+                    }
+                },
+                'referencing': [{
+                    'coordinates': ['x', 'y'],
+                    'system': {
+                        'type': self._coverage_properties['crs_type'],
+                        'id': self._coverage_properties['bbox_crs']
+                    }
+                }]
+            },
+            'parameters': {},
+            'ranges': {}
+        }
+
+        if metadata['bands'] is None:  # all bands
+            bands_select = range(1, len(self._data.dtypes) + 1)
+        else:
+            bands_select = metadata['bands']
+
+        LOGGER.debug('bands selected: {}'.format(bands_select))
+        for bs in bands_select:
+            pm = _get_parameter_metadata(
+                self._data.profile['driver'], self._data.tags(bs))
+
+            parameter = {
+                'type': 'Parameter',
+                'description': pm['description'],
+                'unit': {
+                    'symbol': pm['unit_label']
+                },
+                'observedProperty': {
+                    'id': pm['observed_property_id'],
+                    'label': {
+                        'en': pm['observed_property_name']
+                    }
+                }
+            }
+
+            cj['parameters'][pm['id']] = parameter
+
+        try:
+            for key in cj['parameters'].keys():
+                cj['ranges'][key] = {
+                    'type': 'NdArray',
+                    # 'dataType': metadata.dtypes[0],
+                    'dataType': 'float',
+                    'axisNames': ['y', 'x'],
+                    'shape': [metadata['height'], metadata['width']],
+                }
+                # TODO: deal with multi-band value output
+                cj['ranges'][key]['values'] = data.flatten().tolist()
+        except IndexError as err:
+            LOGGER.warning(err)
+            raise ProviderQueryError('Invalid query parameter')
+
+        return cj
+
+    # TODO: remove once pyproj is updated on bionic
+    def _get_coverage_properties(self):
+        """
+        Helper function to normalize coverage properties
+        :returns: `dict` of coverage properties
+        """
+
+        properties = {
+            'bbox': [
+                self._data.bounds.left,
+                self._data.bounds.bottom,
+                self._data.bounds.right,
+                self._data.bounds.top
+            ],
+            'bbox_crs': 'http://www.opengis.net/def/crs/OGC/1.3/CRS84',
+            'crs_type': 'GeographicCRS',
+            'bbox_units': 'deg',
+            'x_axis_label': 'Long',
+            'y_axis_label': 'Lat',
+            'width': self._data.width,
+            'height': self._data.height,
+            'resx': self._data.res[0],
+            'resy': self._data.res[1],
+            'num_bands': self._data.count,
+            'tags': self._data.tags()
+        }
+
+        if self._data.crs is not None:
+            if self._data.crs.is_projected:
+                properties['bbox_crs'] = '{}/{}'.format(
+                    'http://www.opengis.net/def/crs/OGC/1.3/',
+                    self._data.crs.to_epsg())
+
+                properties['x_axis_label'] = 'x'
+                properties['y_axis_label'] = 'y'
+                properties['bbox_units'] = self._data.crs.linear_units
+                properties['crs_type'] = 'ProjectedCRS'
+
+        properties['axes'] = [
+            properties['x_axis_label'], properties['y_axis_label']
+        ]
+
+        return properties
+
     def get_file_list(self, datetime_, variable):
         """
         Generate list of datetime from the query datetime_
@@ -439,3 +620,32 @@ class CanGRDProvider(RasterioProvider):
         query_file = file_path_[begin_file_idx[0]:end_file_idx[0] + 1]
 
         return query_file
+
+
+# TODO: remove once pyproj is updated on bionic
+def _get_parameter_metadata(driver, band):
+    """
+    Helper function to derive parameter name and units
+    :param driver: rasterio/GDAL driver name
+    :param band: int of band number
+    :returns: dict of parameter metadata
+    """
+
+    parameter = {
+        'id': None,
+        'description': None,
+        'unit_label': None,
+        'unit_symbol': None,
+        'observed_property_id': None,
+        'observed_property_name': None
+    }
+
+    if driver == 'GRIB':
+        parameter['id'] = band['GRIB_ELEMENT']
+        parameter['description'] = band['GRIB_COMMENT']
+        parameter['unit_label'] = band['GRIB_UNIT']
+        parameter['unit_symbol'] = band['GRIB_UNIT']
+        parameter['observed_property_id'] = band['GRIB_SHORT_NAME']
+        parameter['observed_property_name'] = band['GRIB_COMMENT']
+
+    return parameter
