@@ -1244,7 +1244,7 @@ resources:
               id_field: identifier
               time_field: datetime
 
-    CMIP5:projected-annual-anomaly:
+    climate:CMIP5:projected:annual:anomaly:
         type: collection
         title: Projected annual anomaly CMIP5
         description: Projected annual anomaly CMIP5
@@ -1272,7 +1272,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    CMIP5:projected-seasonal-anomaly:
+    climate:CMIP5:projected:seasonal:anomaly:
         type: collection
         title: Projected seasonal anomaly CMIP5
         description: Projected seasonal anomaly CMIP5
@@ -1300,7 +1300,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    CMIP5:projected-monthly-anomaly:
+    climate:CMIP5:projected:monthly:anomaly:
         type: collection
         title: Projected monthly anomaly CMIP5
         description: Projected monthly anomaly CMIP5
@@ -1328,7 +1328,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    CMIP5:projected-annual:
+    climate:CMIP5:projected:annual:
         type: collection
         title: Projected annual CMIP5
         description: Projected annual CMIP5
@@ -1356,7 +1356,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    CMIP5:projected-seasonal:
+    climate:CMIP5:projected:seasonal:
         type: collection
         title: Projected seasonal CMIP5
         description: Projected seasonal CMIP5
@@ -1384,7 +1384,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    CMIP5:projected-monthly:
+    climate:CMIP5:projected:monthly:
         type: collection
         title: Projected monthly CMIP5
         description: Projected monthly CMIP5
@@ -1412,7 +1412,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    CMIP5:projected-annual-anomaly-2021-2040:
+    climate:CMIP5:projected:annual:anomaly-2021-2040:
         type: collection
         title: Projected annual anomaly for 2021-2040 CMIP5
         description: Projected annual anomaly for 2021-2040 CMIP5
@@ -1440,7 +1440,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    CMIP5:projected-annual-anomaly-2041-2060:
+    climate:CMIP5:projected:annual:anomaly-2041-2060:
         type: collection
         title: Projected annual anomaly for 2041-2060 CMIP5
         description: Projected annual anomaly for 2041-2060 CMIP5
@@ -1468,7 +1468,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    CMIP5:projected-annual-anomaly-2061-2080:
+    climate:CMIP5:projected:annual:anomaly-2061-2080:
         type: collection
         title: Projected annual anomaly for 2061-2080 CMIP5
         description: Projected annual anomaly for 2061-2080 CMIP5
@@ -1496,7 +1496,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    CMIP5:projected-annual-anomaly-2081-2100:
+    climate:CMIP5:projected:annual:anomaly-2081-2100:
         type: collection
         title: Projected annual anomaly for 2081-2100 CMIP5
         description: Projected annual anomaly for 2081-2100 CMIP5
@@ -1524,7 +1524,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
  
-    CMIP5:projected-seasonal-anomaly-2021-2040:
+    climate:CMIP5:projected:seasonal:anomaly-2021-2040:
         type: collection
         title: Projected seasonal anomaly for 2021-2040 CMIP5
         description: Projected seasonal anomaly for 2021-2040 CMIP5
@@ -1552,7 +1552,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    CMIP5:projected-seasonal-anomaly-2041-2060:
+    climate:CMIP5:projected:seasonal:anomaly-2041-2060:
         type: collection
         title: Projected seasonal anomaly for 2041-2060 CMIP5
         description: Projected seasonal anomaly for 2041-2060 CMIP5
@@ -1580,7 +1580,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    CMIP5:projected-seasonal-anomaly-2061-2080:
+    climate:CMIP5:projected:seasonal:anomaly-2061-2080:
         type: collection
         title: Projected seasonal anomaly for 2061-2080 CMIP5
         description: Projected seasonal anomaly for 2061-2080 CMIP5
@@ -1608,7 +1608,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    CMIP5:projected-seasonal-anomaly-2081-2100:
+    climate:CMIP5:projected:seasonal:anomaly-2081-2100:
         type: collection
         title: Projected seasonal anomaly for 2081-2100 CMIP5
         description: Projected seasonal anomaly for 2081-2100 CMIP5
@@ -1636,7 +1636,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    CMIP5:historical-annual:
+    climate:CMIP5:historical:annual:
         type: collection
         title: Historical annual CMIP5
         description: Historical annual CMIP5
@@ -1664,7 +1664,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    CMIP5:historical-annual-anomaly:
+    climate:CMIP5:historical:annual:anomaly:
         type: collection
         title: Historical annual anomaly CMIP5
         description: Historical annual anomaly CMIP5
@@ -1692,7 +1692,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    CMIP5:historical-seasonal:
+    climate:CMIP5:historical:seasonal:
         type: collection
         title: Historical seasonal CMIP5
         description: Historical seasonal CMIP5
@@ -1720,7 +1720,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    CMIP5:historical-seasonal-anomaly:
+    climate:CMIP5:historical:seasonal:anomaly:
         type: collection
         title: Historical seasonal anomaly CMIP5
         description: Historical seasonal anomaly CMIP5
@@ -1748,7 +1748,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    CMIP5:historical-monthly:
+    climate:CMIP5:historical:monthly:
         type: collection
         title: Historical monthly CMIP5
         description: Historical monthly CMIP5
@@ -1776,7 +1776,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    CMIP5:historical-monthly-anomaly:
+    climate:CMIP5:historical:monthly:anomaly:
         type: collection
         title: Historical monthly anomaly CMIP5
         description: Historical monthly anomaly CMIP5
@@ -1804,7 +1804,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    DCS:projected-annual-anomaly:
+    climate:DCS:projected:annual:anomaly:
         type: collection
         title: Projected annual anomaly DCS
         description: Projected annual anomaly DCS
@@ -1813,7 +1813,7 @@ resources:
             - climate
         extents:
             spatial:
-                bbox: [-141,41,-52,83.5]
+                bbox: [-150,41,-52,83.5]
                 crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
         links:
             - type: text/html
@@ -1832,7 +1832,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    DCS:projected-seasonal-anomaly:
+    climate:DCS:projected:seasonal:anomaly:
         type: collection
         title: Projected seasonal anomaly DCS
         description: Projected seasonal anomaly DCS
@@ -1841,7 +1841,7 @@ resources:
             - climate
         extents:
             spatial:
-                bbox: [-141,41,-52,83.5]
+                bbox: [-150,41,-52,83.5]
                 crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
         links:
             - type: text/html
@@ -1860,7 +1860,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    DCS:projected-annual:
+    climate:DCS:projected:annual:
         type: collection
         title: Projected annual DCS
         description: Projected annual DCS
@@ -1869,7 +1869,7 @@ resources:
             - climate
         extents:
             spatial:
-                bbox: [-141,41,-52,83.5]
+                bbox: [-150,41,-52,83.5]
                 crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
         links:
             - type: text/html
@@ -1888,7 +1888,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    DCS:projected-seasonal:
+    climate:DCS:projected:seasonal:
         type: collection
         title: Projected seasonal DCS
         description: Projected seasonal DCS
@@ -1897,7 +1897,7 @@ resources:
             - climate
         extents:
             spatial:
-                bbox: [-141,41,-52,83.5]
+                bbox: [-150,41,-52,83.5]
                 crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
         links:
             - type: text/html
@@ -1916,7 +1916,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    DCS:projected-monthly:
+    climate:DCS:projected:monthly:
         type: collection
         title: Projected monthly DCS
         description: Projected monthly DCS
@@ -1925,7 +1925,7 @@ resources:
             - climate
         extents:
             spatial:
-                bbox: [-141,41,-52,83.5]
+                bbox: [-150,41,-52,83.5]
                 crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
         links:
             - type: text/html
@@ -1944,7 +1944,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    DCS:projected-annual-anomaly-2021-2040:
+    climate:DCS:projected:annual:anomaly-2021-2040:
         type: collection
         title: Projected annual anomaly for 2021-2040 DCS
         description: Projected annual anomaly for 2021-2040 DCS
@@ -1953,7 +1953,7 @@ resources:
             - climate
         extents:
             spatial:
-                bbox: [-141,41,-52,83.5]
+                bbox: [-150,41,-52,83.5]
                 crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
         links:
             - type: text/html
@@ -1972,7 +1972,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    DCS:projected-annual-anomaly-2041-2060:
+    climate:DCS:projected:annual:anomaly-2041-2060:
         type: collection
         title: Projected annual anomaly for 2041-2060 DCS
         description: Projected annual anomaly for 2041-2060 DCS
@@ -1981,7 +1981,7 @@ resources:
             - climate
         extents:
             spatial:
-                bbox: [-141,41,-52,83.5]
+                bbox: [-150,41,-52,83.5]
                 crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
         links:
             - type: text/html
@@ -2000,7 +2000,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    DCS:projected-annual-anomaly-2061-2080:
+    climate:DCS:projected:annual:anomaly-2061-2080:
         type: collection
         title: Projected annual anomaly for 2061-2080 DCS
         description: Projected annual anomaly for 2061-2080 DCS
@@ -2009,7 +2009,7 @@ resources:
             - climate
         extents:
             spatial:
-                bbox: [-141,41,-52,83.5]
+                bbox: [-150,41,-52,83.5]
                 crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
         links:
             - type: text/html
@@ -2028,7 +2028,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    DCS:projected-annual-anomaly-2081-2100:
+    climate:DCS:projected:annual:anomaly-2081-2100:
         type: collection
         title: Projected annual anomaly for 2081-2100 DCS
         description: Projected annual anomaly for 2081-2100 DCS
@@ -2037,7 +2037,7 @@ resources:
             - climate
         extents:
             spatial:
-                bbox: [-141,41,-52,83.5]
+                bbox: [-150,41,-52,83.5]
                 crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
         links:
             - type: text/html
@@ -2056,7 +2056,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
  
-    DCS:projected-seasonal-anomaly-2021-2040:
+    climate:DCS:projected:seasonal:anomaly-2021-2040:
         type: collection
         title: Projected seasonal anomaly for 2021-2040 DCS
         description: Projected seasonal anomaly for 2021-2040 DCS
@@ -2065,7 +2065,7 @@ resources:
             - climate
         extents:
             spatial:
-                bbox: [-141,41,-52,83.5]
+                bbox: [-150,41,-52,83.5]
                 crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
         links:
             - type: text/html
@@ -2084,7 +2084,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    DCS:projected-seasonal-anomaly-2041-2060:
+    climate:DCS:projected:seasonal:anomaly-2041-2060:
         type: collection
         title: Projected seasonal anomaly for 2041-2060 DCS
         description: Projected seasonal anomaly for 2041-2060 DCS
@@ -2093,7 +2093,7 @@ resources:
             - climate
         extents:
             spatial:
-                bbox: [-141,41,-52,83.5]
+                bbox: [-150,41,-52,83.5]
                 crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
         links:
             - type: text/html
@@ -2112,7 +2112,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    DCS:projected-seasonal-anomaly-2061-2080:
+    climate:DCS:projected:seasonal:anomaly-2061-2080:
         type: collection
         title: Projected seasonal anomaly for 2061-2080 DCS
         description: Projected seasonal anomaly for 2061-2080 DCS
@@ -2121,7 +2121,7 @@ resources:
             - climate
         extents:
             spatial:
-                bbox: [-141,41,-52,83.5]
+                bbox: [-150,41,-52,83.5]
                 crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
         links:
             - type: text/html
@@ -2140,7 +2140,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    DCS:projected-seasonal-anomaly-2081-2100:
+    climate:DCS:projected:seasonal:anomaly-2081-2100:
         type: collection
         title: Projected seasonal anomaly for 2081-2100 DCS
         description: Projected seasonal anomaly for 2081-2100 DCS
@@ -2149,7 +2149,7 @@ resources:
             - climate
         extents:
             spatial:
-                bbox: [-141,41,-52,83.5]
+                bbox: [-150,41,-52,83.5]
                 crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
         links:
             - type: text/html
@@ -2168,7 +2168,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    DCS:historical-annual:
+    climate:DCS:historical:annual:
         type: collection
         title: Historical annual DCS
         description: Historical annual DCS
@@ -2177,7 +2177,7 @@ resources:
             - climate
         extents:
             spatial:
-                bbox: [-141,41,-52,83.5]
+                bbox: [-150,41,-52,83.5]
                 crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
         links:
             - type: text/html
@@ -2196,7 +2196,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    DCS:historical-annual-anomaly:
+    climate:DCS:historical:annual:anomaly:
         type: collection
         title: Historical annual anomaly DCS
         description: Historical annual anomaly DCS
@@ -2205,7 +2205,7 @@ resources:
             - climate
         extents:
             spatial:
-                bbox: [-141,41,-52,83.5]
+                bbox: [-150,41,-52,83.5]
                 crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
         links:
             - type: text/html
@@ -2224,7 +2224,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    DCS:historical-seasonal:
+    climate:DCS:historical:seasonal:
         type: collection
         title: Historical seasonal DCS
         description: Historical seasonal DCS
@@ -2233,7 +2233,7 @@ resources:
             - climate
         extents:
             spatial:
-                bbox: [-141,41,-52,83.5]
+                bbox: [-150,41,-52,83.5]
                 crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
         links:
             - type: text/html
@@ -2252,7 +2252,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    DCS:historical-seasonal-anomaly:
+    climate:DCS:historical:seasonal:anomaly:
         type: collection
         title: Historical seasonal anomaly DCS
         description: Historical seasonal anomaly DCS
@@ -2261,7 +2261,7 @@ resources:
             - climate
         extents:
             spatial:
-                bbox: [-141,41,-52,83.5]
+                bbox: [-150,41,-52,83.5]
                 crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
         links:
             - type: text/html
@@ -2280,7 +2280,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    DCS:historical-monthly:
+    climate:DCS:historical:monthly:
         type: collection
         title: Historical monthly DCS
         description: Historical monthly DCS
@@ -2289,7 +2289,7 @@ resources:
             - climate
         extents:
             spatial:
-                bbox: [-141,41,-52,83.5]
+                bbox: [-150,41,-52,83.5]
                 crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
         links:
             - type: text/html
@@ -2308,35 +2308,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    Indices:projected:
-        type: collection
-        title: Projected indices
-        description: Projected indices
-        keywords:
-            - indices
-            - climate
-        extents:
-            spatial:
-                bbox: [-141,41,-52,83.5]
-                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-        links:
-            - type: text/html
-              rel: canonical
-              title: information
-              href: https://open.canada.ca/data/en/dataset/
-              hreflang: en-CA
-        providers:
-            - type: coverage
-              name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/indices/netcdf/scenarios/RCP2.6/INDICES_rcp2.6_2006-2100_latlon_0.086x0.086_*_pctl50.nc
-              x_field: lon
-              y_field: lat
-              time_field: time
-              format:
-                  name: NetCDF
-                  mimetype: application/x-netcdf
-
-    Indices:historical:
+    climate:indices:historical:
         type: collection
         title: Historical indices
         description: Historical indices
@@ -2345,7 +2317,7 @@ resources:
             - climate
         extents:
             spatial:
-                bbox: [-141,41,-52,83.5]
+                bbox: [-150,41,-52,83.5]
                 crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
         links:
             - type: text/html
@@ -2364,7 +2336,35 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    SPEI-1:historical:
+    climate:indices:projected:
+        type: collection
+        title: Projected indices
+        description: Projected indices
+        keywords:
+            - indices
+            - climate
+        extents:
+            spatial:
+                bbox: [-150,41,-52,83.5]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title: information
+              href: https://open.canada.ca/data/en/dataset/
+              hreflang: en-CA
+        providers:
+            - type: coverage
+              name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
+              data: /data/geomet/feeds/dd.ops/climate/indices/netcdf/scenarios/RCP2.6/INDICES_rcp2.6_2006-2100_latlon_0.086x0.086_*_pctl50.nc
+              x_field: lon
+              y_field: lat
+              time_field: time
+              format:
+                  name: NetCDF
+                  mimetype: application/x-netcdf
+
+    climate:SPEI-1:historical:
         type: collection
         title: Historical SPEI-1
         description: Historical SPEI-1
@@ -2392,7 +2392,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    SPEI-3:historical:
+    climate:SPEI-3:historical:
         type: collection
         title: Historical SPEI-3
         description: Historical SPEI-3
@@ -2420,7 +2420,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    SPEI-12:historical:
+    climate:SPEI-12:historical:
         type: collection
         title: Historical SPEI-12
         description: Historical SPEI-12
@@ -2448,7 +2448,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    SPEI-1:projected:
+    climate:SPEI-1:projected:
         type: collection
         title: Projected SPEI-1
         description: Projected SPEI-1
@@ -2476,7 +2476,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    SPEI-3:projected:
+    climate:SPEI-3:projected:
         type: collection
         title: Projected SPEI-3
         description: Projected SPEI-3
@@ -2504,7 +2504,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    SPEI-12:projected:
+    climate:SPEI-12:projected:
         type: collection
         title: Projected SPEI-12
         description: Projected SPEI-12
@@ -2532,7 +2532,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    CanGRD:historical annual trend:
+    climate:CanGRD:historical:annual:trend:
         type: collection
         title: CanGRD historical annual trend
         description: CanGRD historical annual trend
@@ -2557,7 +2557,7 @@ resources:
                   name: GTiff
                   mimetype: image/tiff
 
-    CanGRD:historical annual anomaly:
+    climate:CanGRD:historical:annual:anomaly:
         type: collection
         title: CanGRD historical annual anomaly
         description: CanGRD historical annual anomaly
@@ -2582,7 +2582,7 @@ resources:
                   name: GTiff
                   mimetype: image/tiff
 
-    CanGRD:historical monthly anomaly:
+    climate:CanGRD:historical:monthly:anomaly:
         type: collection
         title: CanGRD historical monthly anomaly
         description: CanGRD historical monthly anomaly
@@ -2607,7 +2607,7 @@ resources:
                   name: GTiff
                   mimetype: image/tiff
 
-    CanGRD:historical seasonal trend:
+    climate:CanGRD:historical:seasonal:trend:
         type: collection
         title: CanGRD historical seasonal trend
         description: CanGRD historical seasonal trend
@@ -2632,7 +2632,7 @@ resources:
                   name: GTiff
                   mimetype: image/tiff
 
-    CanGRD:historical seasonal anomaly:
+    climate:CanGRD:historical:seasonal:anomaly:
         type: collection
         title: CanGRD historical seasonal anomaly
         description: CanGRD historical seasonal anomaly
@@ -2657,7 +2657,7 @@ resources:
                   name: GTiff
                   mimetype: image/tiff
 
-    Weather:Analysis:RDPA:archive:24F:
+    weather:RDPA:15km:24F:
         type: collection
         title: Regional Deterministic Precipitation Analysis (RDPA) 24 hours accumulation archives
         description: Regional Deterministic Precipitation Analysis (RDPA) 24 hours accumulation archives at 15 km
@@ -2684,7 +2684,7 @@ resources:
                   name: GRIB
                   mimetype: application/x-grib2
 
-    Weather:Analysis:RDPA:archive:6F:
+    weather:RDPA:15km:6F:
         type: collection
         title: Regional Deterministic Precipitation Analysis (RDPA) 6 hours accumulation archives
         description: Regional Deterministic Precipitation Analysis (RDPA) 6 hours accumulation archives at 15 km
@@ -2711,7 +2711,7 @@ resources:
                   name: GRIB
                   mimetype: application/x-grib2
 
-    Weather:Analysis:RDPA:24F:
+    weather:RDPA:10km:24F:
         type: collection
         title: Regional Deterministic Precipitation Analysis (RDPA) 24 hours accumulation
         description: Regional Deterministic Precipitation Analysis (RDPA) 24 hours accumulation at 10 km
@@ -2738,7 +2738,7 @@ resources:
                   name: GRIB
                   mimetype: application/x-grib2
 
-    Weather:Analysis:RDPA:6F:
+    weather:RDPA:10km:6F:
         type: collection
         title: Regional Deterministic Precipitation Analysis (RDPA) 6 hours accumulation
         description: Regional Deterministic Precipitation Analysis (RDPA) 6 hours accumulation at 10 km
@@ -2765,7 +2765,7 @@ resources:
                   name: GRIB
                   mimetype: application/x-grib2
 
-    Weather:Analysis:RDPA:24P:
+    weather:RDPA:10km:24P:
         type: collection
         title: Regional Deterministic Precipitation Analysis (RDPA) 24 hours accumulation (preliminary)
         description: Regional Deterministic Precipitation Analysis (RDPA) 24 hours accumulation at 10 km (preliminary)
@@ -2792,7 +2792,7 @@ resources:
                   name: GRIB
                   mimetype: application/x-grib2
 
-    Weather:Analysis:RDPA:6P:
+    weather:RDPA:10km:6P:
         type: collection
         title: Regional Deterministic Precipitation Analysis (RDPA) 6 hours accumulation (preliminary)
         description: Regional Deterministic Precipitation Analysis (RDPA) 6 hours accumulation at 10 km (preliminary)
