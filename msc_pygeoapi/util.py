@@ -129,6 +129,22 @@ def strftime_rfc3339(datetimeobj):
     return datetimeobj.strftime(DATETIME_RFC3339_FMT)
 
 
+def generate_datetime_range(start, end, delta):
+    """
+    Generator that yields datetime objects between start and end,
+    inclusively.
+    :param start: datetime object
+    :param end: datetime object
+    :param delta: timedelta object
+    :return: Generator of datetime objects
+    """
+
+    current = start
+    while current <= end:
+        yield current
+        current += delta
+
+
 def check_es_indexes_to_delete(indexes, days):
     """
     helper function to determine ES indexes that are older than a certain date
