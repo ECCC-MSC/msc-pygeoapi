@@ -72,6 +72,8 @@ class ClimateProvider(XarrayProvider):
             if 'avg_20years' not in self.data:
                 self.axes.extend([self._coverage_properties['time_axis_label'],
                                   'percentile'])
+            else:
+                self.axes.append('P20Y-Avg')
 
             self.fields = self._coverage_properties['fields']
         except Exception as err:
@@ -107,6 +109,14 @@ class ClimateProvider(XarrayProvider):
             domainset['generalGrid']['axis'][2]['uomLabel'] = time_period
             domainset['generalGrid']['axis'][2]['resolution'] = time_resolution
         else:
+            new_axis_name.extend(['P20Y-Avg'])
+            new_axis.extend([{
+                             'type': 'IrregularAxis',
+                             'axisLabel': 'P20Y-Avg',
+                             'coordinate': ['2021-2040', '2041-2060',
+                                            '2061-2080', '2081-2100'],
+                             }])
+
             domainset['generalGrid']['axis'].pop(2)
             domainset['generalGrid']['axisLabels'].pop(-1)
 
@@ -343,6 +353,22 @@ class ClimateProvider(XarrayProvider):
 
             subsets.pop('percentile')
 
+        if 'P20Y-Avg' in subsets:
+            years_avg = subsets['P20Y-Avg']
+
+            try:
+                if len(years_avg) > 1:
+                    msg = 'multiple 20 years average are not supported'
+                    LOGGER.error(msg)
+                    raise ProviderQueryError(msg)
+                elif years_avg[0] not in ['2021-2040']:
+                    self.data = self.data.replace('2021-2040', years_avg[0])
+            except Exception as err:
+                LOGGER.error(err)
+                raise ProviderQueryError(err)
+
+            subsets.pop('P20Y-Avg')
+
         if 'season' in subsets:
             seasonal = subsets['season']
 
@@ -459,19 +485,23 @@ class ClimateProvider(XarrayProvider):
                 data.coords[self.x_field].values[-1],
                 data.coords[self.y_field].values[-1]
             ],
-            "time": [
+            'time': [None, None],
+            "driver": "xarray",
+            "height": data.dims[self.y_field],
+            "width": data.dims[self.x_field],
+            "time_steps": 1,
+            "variables": {var_name: var.attrs
+                          for var_name, var in data.variables.items()}
+        }
+
+        if 'avg_20years' not in self.data:
+            out_meta["time"] = [
                 self._to_datetime_string(
                     data.coords[self.time_field].values[0]),
                 self._to_datetime_string(
                     data.coords[self.time_field].values[-1])
-            ],
-            "driver": "xarray",
-            "height": data.dims[self.y_field],
-            "width": data.dims[self.x_field],
-            "time_steps": data.dims[self.time_field],
-            "variables": {var_name: var.attrs
-                          for var_name, var in data.variables.items()}
-        }
+            ]
+            out_meta['time_steps'] = data.dims[self.time_field]
 
         LOGGER.debug('Serializing data in memory')
         if format_ == 'json':

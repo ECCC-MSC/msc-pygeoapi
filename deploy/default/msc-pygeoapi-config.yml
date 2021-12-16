@@ -1412,10 +1412,10 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    climate:CMIP5:projected:annual:anomaly-2021-2040:
+    climate:CMIP5:projected:annual:anomaly:P20Y-Avg:
         type: collection
-        title: Projected annual anomaly for 2021-2040 CMIP5
-        description: Projected annual anomaly for 2021-2040 CMIP5
+        title: Projected annual anomaly for 20 years average CMIP5
+        description: Projected annual anomaly for 20 years average CMIP5
         keywords:
             - cmip5
             - climate
@@ -1439,95 +1439,11 @@ resources:
               format:
                   name: NetCDF
                   mimetype: application/x-netcdf
-
-    climate:CMIP5:projected:annual:anomaly-2041-2060:
-        type: collection
-        title: Projected annual anomaly for 2041-2060 CMIP5
-        description: Projected annual anomaly for 2041-2060 CMIP5
-        keywords:
-            - cmip5
-            - climate
-        extents:
-            spatial:
-                bbox: [-150,40,-45,90]
-                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-        links:
-            - type: text/html
-              rel: canonical
-              title: information
-              href: https://open.canada.ca/data/en/dataset/eddd6eaf-34d7-4452-a994-3d928115a68b
-              hreflang: en-CA
-        providers:
-            - type: coverage
-              name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/cmip5/netcdf/scenarios/RCP2.6/annual/avg_20years/CMIP5_rcp2.6_annual_2041-2060_latlon1x1_*_pctl50_P1Y.nc
-              x_field: lon
-              y_field: lat
-              time_field: time
-              format:
-                  name: NetCDF
-                  mimetype: application/x-netcdf
-
-    climate:CMIP5:projected:annual:anomaly-2061-2080:
-        type: collection
-        title: Projected annual anomaly for 2061-2080 CMIP5
-        description: Projected annual anomaly for 2061-2080 CMIP5
-        keywords:
-            - cmip5
-            - climate
-        extents:
-            spatial:
-                bbox: [-150,40,-45,90]
-                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-        links:
-            - type: text/html
-              rel: canonical
-              title: information
-              href: https://open.canada.ca/data/en/dataset/eddd6eaf-34d7-4452-a994-3d928115a68b
-              hreflang: en-CA
-        providers:
-            - type: coverage
-              name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/cmip5/netcdf/scenarios/RCP2.6/annual/avg_20years/CMIP5_rcp2.6_annual_2061-2080_latlon1x1_*_pctl50_P1Y.nc
-              x_field: lon
-              y_field: lat
-              time_field: time
-              format:
-                  name: NetCDF
-                  mimetype: application/x-netcdf
-
-    climate:CMIP5:projected:annual:anomaly-2081-2100:
-        type: collection
-        title: Projected annual anomaly for 2081-2100 CMIP5
-        description: Projected annual anomaly for 2081-2100 CMIP5
-        keywords:
-            - cmip5
-            - climate
-        extents:
-            spatial:
-                bbox: [-150,40,-45,90]
-                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-        links:
-            - type: text/html
-              rel: canonical
-              title: information
-              href: https://open.canada.ca/data/en/dataset/eddd6eaf-34d7-4452-a994-3d928115a68b
-              hreflang: en-CA
-        providers:
-            - type: coverage
-              name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/cmip5/netcdf/scenarios/RCP2.6/annual/avg_20years/CMIP5_rcp2.6_annual_2081-2100_latlon1x1_*_pctl50_P1Y.nc
-              x_field: lon
-              y_field: lat
-              time_field: time
-              format:
-                  name: NetCDF
-                  mimetype: application/x-netcdf
  
-    climate:CMIP5:projected:seasonal:anomaly-2021-2040:
+    climate:CMIP5:projected:seasonal:anomaly:P20Y-Avg:
         type: collection
-        title: Projected seasonal anomaly for 2021-2040 CMIP5
-        description: Projected seasonal anomaly for 2021-2040 CMIP5
+        title: Projected seasonal anomaly for 20 years average CMIP5
+        description: Projected seasonal anomaly for 20 years average CMIP5
         keywords:
             - cmip5
             - climate
@@ -1545,90 +1461,6 @@ resources:
             - type: coverage
               name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
               data: /data/geomet/feeds/dd.ops/climate/cmip5/netcdf/scenarios/RCP2.6/seasonal/DJF/avg_20years/CMIP5_rcp2.6_DJF_2021-2040_latlon1x1_*_pctl50_P1Y.nc
-              x_field: lon
-              y_field: lat
-              time_field: time
-              format:
-                  name: NetCDF
-                  mimetype: application/x-netcdf
-
-    climate:CMIP5:projected:seasonal:anomaly-2041-2060:
-        type: collection
-        title: Projected seasonal anomaly for 2041-2060 CMIP5
-        description: Projected seasonal anomaly for 2041-2060 CMIP5
-        keywords:
-            - cmip5
-            - climate
-        extents:
-            spatial:
-                bbox: [-150,40,-45,90]
-                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-        links:
-            - type: text/html
-              rel: canonical
-              title: information
-              href: https://open.canada.ca/data/en/dataset/eddd6eaf-34d7-4452-a994-3d928115a68b
-              hreflang: en-CA
-        providers:
-            - type: coverage
-              name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/cmip5/netcdf/scenarios/RCP2.6/seasonal/DJF/avg_20years/CMIP5_rcp2.6_DJF_2041-2060_latlon1x1_*_pctl50_P1Y.nc
-              x_field: lon
-              y_field: lat
-              time_field: time
-              format:
-                  name: NetCDF
-                  mimetype: application/x-netcdf
-
-    climate:CMIP5:projected:seasonal:anomaly-2061-2080:
-        type: collection
-        title: Projected seasonal anomaly for 2061-2080 CMIP5
-        description: Projected seasonal anomaly for 2061-2080 CMIP5
-        keywords:
-            - cmip5
-            - climate
-        extents:
-            spatial:
-                bbox: [-150,40,-45,90]
-                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-        links:
-            - type: text/html
-              rel: canonical
-              title: information
-              href: https://open.canada.ca/data/en/dataset/eddd6eaf-34d7-4452-a994-3d928115a68b
-              hreflang: en-CA
-        providers:
-            - type: coverage
-              name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/cmip5/netcdf/scenarios/RCP2.6/seasonal/DJF/avg_20years/CMIP5_rcp2.6_DJF_2061-2080_latlon1x1_*_pctl50_P1Y.nc
-              x_field: lon
-              y_field: lat
-              time_field: time
-              format:
-                  name: NetCDF
-                  mimetype: application/x-netcdf
-
-    climate:CMIP5:projected:seasonal:anomaly-2081-2100:
-        type: collection
-        title: Projected seasonal anomaly for 2081-2100 CMIP5
-        description: Projected seasonal anomaly for 2081-2100 CMIP5
-        keywords:
-            - cmip5
-            - climate
-        extents:
-            spatial:
-                bbox: [-150,40,-45,90]
-                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-        links:
-            - type: text/html
-              rel: canonical
-              title: information
-              href: https://open.canada.ca/data/en/dataset/eddd6eaf-34d7-4452-a994-3d928115a68b
-              hreflang: en-CA
-        providers:
-            - type: coverage
-              name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/cmip5/netcdf/scenarios/RCP2.6/seasonal/DJF/avg_20years/CMIP5_rcp2.6_DJF_2081-2100_latlon1x1_*_pctl50_P1Y.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -1944,10 +1776,10 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    climate:DCS:projected:annual:anomaly-2021-2040:
+    climate:DCS:projected:annual:anomaly:P20Y-Avg:
         type: collection
-        title: Projected annual anomaly for 2021-2040 DCS
-        description: Projected annual anomaly for 2021-2040 DCS
+        title: Projected annual anomaly for 20 years average DCS
+        description: Projected annual anomaly for 20 years average DCS
         keywords:
             - dcs
             - climate
@@ -1972,94 +1804,10 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    climate:DCS:projected:annual:anomaly-2041-2060:
+    climate:DCS:projected:seasonal:anomaly:P20Y-Avg:
         type: collection
-        title: Projected annual anomaly for 2041-2060 DCS
-        description: Projected annual anomaly for 2041-2060 DCS
-        keywords:
-            - dcs
-            - climate
-        extents:
-            spatial:
-                bbox: [-150,41,-52,83.5]
-                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-        links:
-            - type: text/html
-              rel: canonical
-              title: information
-              href: https://open.canada.ca/data/en/dataset/eddd6eaf-34d7-4452-a994-3d928115a68b
-              hreflang: en-CA
-        providers:
-            - type: coverage
-              name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/dcs/netcdf/scenarios/RCP2.6/annual/avg_20years/DCS_rcp2.6_annual_2041-2060_latlon0.086x0.086_*_pctl50_P1Y.nc
-              x_field: lon
-              y_field: lat
-              time_field: time
-              format:
-                  name: NetCDF
-                  mimetype: application/x-netcdf
-
-    climate:DCS:projected:annual:anomaly-2061-2080:
-        type: collection
-        title: Projected annual anomaly for 2061-2080 DCS
-        description: Projected annual anomaly for 2061-2080 DCS
-        keywords:
-            - dcs
-            - climate
-        extents:
-            spatial:
-                bbox: [-150,41,-52,83.5]
-                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-        links:
-            - type: text/html
-              rel: canonical
-              title: information
-              href: https://open.canada.ca/data/en/dataset/eddd6eaf-34d7-4452-a994-3d928115a68b
-              hreflang: en-CA
-        providers:
-            - type: coverage
-              name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/dcs/netcdf/scenarios/RCP2.6/annual/avg_20years/DCS_rcp2.6_annual_2061-2080_latlon0.086x0.086_*_pctl50_P1Y.nc
-              x_field: lon
-              y_field: lat
-              time_field: time
-              format:
-                  name: NetCDF
-                  mimetype: application/x-netcdf
-
-    climate:DCS:projected:annual:anomaly-2081-2100:
-        type: collection
-        title: Projected annual anomaly for 2081-2100 DCS
-        description: Projected annual anomaly for 2081-2100 DCS
-        keywords:
-            - dcs
-            - climate
-        extents:
-            spatial:
-                bbox: [-150,41,-52,83.5]
-                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-        links:
-            - type: text/html
-              rel: canonical
-              title: information
-              href: https://open.canada.ca/data/en/dataset/eddd6eaf-34d7-4452-a994-3d928115a68b
-              hreflang: en-CA
-        providers:
-            - type: coverage
-              name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/dcs/netcdf/scenarios/RCP2.6/annual/avg_20years/DCS_rcp2.6_annual_2081-2100_latlon0.086x0.086_*_pctl50_P1Y.nc
-              x_field: lon
-              y_field: lat
-              time_field: time
-              format:
-                  name: NetCDF
-                  mimetype: application/x-netcdf
- 
-    climate:DCS:projected:seasonal:anomaly-2021-2040:
-        type: collection
-        title: Projected seasonal anomaly for 2021-2040 DCS
-        description: Projected seasonal anomaly for 2021-2040 DCS
+        title: Projected seasonal anomaly for 20 years average DCS
+        description: Projected seasonal anomaly for 20 years average DCS
         keywords:
             - dcs
             - climate
@@ -2077,90 +1825,6 @@ resources:
             - type: coverage
               name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
               data: /data/geomet/feeds/dd.ops/climate/dcs/netcdf/scenarios/RCP2.6/seasonal/DJF/avg_20years/DCS_rcp2.6_DJF_2021-2040_latlon0.086x0.086_*_pctl50_P1Y.nc
-              x_field: lon
-              y_field: lat
-              time_field: time
-              format:
-                  name: NetCDF
-                  mimetype: application/x-netcdf
-
-    climate:DCS:projected:seasonal:anomaly-2041-2060:
-        type: collection
-        title: Projected seasonal anomaly for 2041-2060 DCS
-        description: Projected seasonal anomaly for 2041-2060 DCS
-        keywords:
-            - dcs
-            - climate
-        extents:
-            spatial:
-                bbox: [-150,41,-52,83.5]
-                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-        links:
-            - type: text/html
-              rel: canonical
-              title: information
-              href: https://open.canada.ca/data/en/dataset/eddd6eaf-34d7-4452-a994-3d928115a68b
-              hreflang: en-CA
-        providers:
-            - type: coverage
-              name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/dcs/netcdf/scenarios/RCP2.6/seasonal/DJF/avg_20years/DCS_rcp2.6_DJF_2041-2060_latlon0.086x0.086_*_pctl50_P1Y.nc
-              x_field: lon
-              y_field: lat
-              time_field: time
-              format:
-                  name: NetCDF
-                  mimetype: application/x-netcdf
-
-    climate:DCS:projected:seasonal:anomaly-2061-2080:
-        type: collection
-        title: Projected seasonal anomaly for 2061-2080 DCS
-        description: Projected seasonal anomaly for 2061-2080 DCS
-        keywords:
-            - dcs
-            - climate
-        extents:
-            spatial:
-                bbox: [-150,41,-52,83.5]
-                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-        links:
-            - type: text/html
-              rel: canonical
-              title: information
-              href: https://open.canada.ca/data/en/dataset/eddd6eaf-34d7-4452-a994-3d928115a68b
-              hreflang: en-CA
-        providers:
-            - type: coverage
-              name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/dcs/netcdf/scenarios/RCP2.6/seasonal/DJF/avg_20years/DCS_rcp2.6_DJF_2061-2080_latlon0.086x0.086_*_pctl50_P1Y.nc
-              x_field: lon
-              y_field: lat
-              time_field: time
-              format:
-                  name: NetCDF
-                  mimetype: application/x-netcdf
-
-    climate:DCS:projected:seasonal:anomaly-2081-2100:
-        type: collection
-        title: Projected seasonal anomaly for 2081-2100 DCS
-        description: Projected seasonal anomaly for 2081-2100 DCS
-        keywords:
-            - dcs
-            - climate
-        extents:
-            spatial:
-                bbox: [-150,41,-52,83.5]
-                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-        links:
-            - type: text/html
-              rel: canonical
-              title: information
-              href: https://open.canada.ca/data/en/dataset/eddd6eaf-34d7-4452-a994-3d928115a68b
-              hreflang: en-CA
-        providers:
-            - type: coverage
-              name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/dcs/netcdf/scenarios/RCP2.6/seasonal/DJF/avg_20years/DCS_rcp2.6_DJF_2081-2100_latlon0.086x0.086_*_pctl50_P1Y.nc
               x_field: lon
               y_field: lat
               time_field: time
