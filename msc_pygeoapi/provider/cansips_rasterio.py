@@ -272,7 +272,13 @@ class CanSIPSProvider(BaseProvider):
             raise ProviderQueryError(err)
 
         range_subset[0] = int(range_subset[0])
-        self.get_file_list(self.var_list[range_subset[0] - 1])
+        try:
+            var_list = self.var_list[range_subset[0] - 1]
+        except IndexError as err:
+            LOGGER.error(err)
+            raise ProviderQueryError(err)
+
+        self.get_file_list(var_list)
         self.member = subsets['member']
 
         args = {

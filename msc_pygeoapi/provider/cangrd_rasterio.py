@@ -325,9 +325,10 @@ class CanGRDProvider(BaseProvider):
             }]
 
         if range_subset[0].upper() != 'TMEAN':
+            var = range_subset[0].upper()
             try:
-                self.data = self.data.replace('TMEAN', range_subset[0].upper())
-            except ValueError as err:
+                self.data = self.get_file_list(var)[-1]
+            except IndexError as err:
                 LOGGER.error(err)
                 raise ProviderQueryError(err)
 
@@ -365,8 +366,8 @@ class CanGRDProvider(BaseProvider):
                     period = search('_{:d}.tif', self.data)[0]
                 self.data = self.data.replace(str(period), str(datetime_))
             else:
-                date_file_list = self.get_file_list(datetime_,
-                                                    range_subset[0].upper())
+                date_file_list = self.get_file_list(range_subset[0].upper(),
+                                                    datetime_)
                 args['indexes'] = list(range(1, len(date_file_list) + 1))
 
         with rasterio.open(self.data) as _data:
@@ -596,7 +597,7 @@ class CanGRDProvider(BaseProvider):
 
         return properties
 
-    def get_file_list(self, datetime_, variable):
+    def get_file_list(self, variable, datetime_=None):
         """
         Generate list of datetime from the query datetime_
 
@@ -606,20 +607,24 @@ class CanGRDProvider(BaseProvider):
         :returns: sorted list of files
         """
 
-        begin, end = datetime_.split('/')
-
         file_path = pathlib.Path(self.data).parent.resolve()
         file_path_ = glob.glob(os.path.join(file_path,
                                             '*{}*'.format(variable)))
         file_path_.sort()
 
-        begin_file_idx = [file_path_.index(i) for i
-                          in file_path_ if begin in i]
-        end_file_idx = [file_path_.index(i) for i in file_path_ if end in i]
+        if datetime_:
+            begin, end = datetime_.split('/')
 
-        query_file = file_path_[begin_file_idx[0]:end_file_idx[0] + 1]
+            begin_file_idx = [file_path_.index(
+                i) for i in file_path_ if begin in i]
+            end_file_idx = [file_path_.index(
+                i) for i in file_path_ if end in i]
 
-        return query_file
+            query_file = file_path_[begin_file_idx[0]:end_file_idx[0] + 1]
+
+            return query_file
+        else:
+            return file_path_
 
 
 # TODO: remove once pyproj is updated on bionic
