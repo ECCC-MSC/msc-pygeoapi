@@ -1328,7 +1328,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    climate:CMIP5:projected:annual:
+    climate:CMIP5:projected:annual:absolute:
         type: collection
         title: Projected annual CMIP5
         description: Projected annual CMIP5
@@ -1356,7 +1356,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    climate:CMIP5:projected:seasonal:
+    climate:CMIP5:projected:seasonal:absolute:
         type: collection
         title: Projected seasonal CMIP5
         description: Projected seasonal CMIP5
@@ -1384,7 +1384,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    climate:CMIP5:projected:monthly:
+    climate:CMIP5:projected:monthly:absolute:
         type: collection
         title: Projected monthly CMIP5
         description: Projected monthly CMIP5
@@ -1412,7 +1412,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    climate:CMIP5:projected:annual:anomaly:P20Y-Avg:
+    climate:CMIP5:projected:annual:P20Y-Avg:
         type: collection
         title: Projected annual anomaly for 20 years average CMIP5
         description: Projected annual anomaly for 20 years average CMIP5
@@ -1440,7 +1440,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
  
-    climate:CMIP5:projected:seasonal:anomaly:P20Y-Avg:
+    climate:CMIP5:projected:seasonal:P20Y-Avg:
         type: collection
         title: Projected seasonal anomaly for 20 years average CMIP5
         description: Projected seasonal anomaly for 20 years average CMIP5
@@ -1468,7 +1468,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    climate:CMIP5:historical:annual:
+    climate:CMIP5:historical:annual:absolute:
         type: collection
         title: Historical annual CMIP5
         description: Historical annual CMIP5
@@ -1524,7 +1524,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    climate:CMIP5:historical:seasonal:
+    climate:CMIP5:historical:seasonal:absolute:
         type: collection
         title: Historical seasonal CMIP5
         description: Historical seasonal CMIP5
@@ -1580,7 +1580,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    climate:CMIP5:historical:monthly:
+    climate:CMIP5:historical:monthly:absolute:
         type: collection
         title: Historical monthly CMIP5
         description: Historical monthly CMIP5
@@ -1692,7 +1692,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    climate:DCS:projected:annual:
+    climate:DCS:projected:annual:absolute:
         type: collection
         title: Projected annual DCS
         description: Projected annual DCS
@@ -1720,7 +1720,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    climate:DCS:projected:seasonal:
+    climate:DCS:projected:seasonal:absolute:
         type: collection
         title: Projected seasonal DCS
         description: Projected seasonal DCS
@@ -1748,7 +1748,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    climate:DCS:projected:monthly:
+    climate:DCS:projected:monthly:absolute:
         type: collection
         title: Projected monthly DCS
         description: Projected monthly DCS
@@ -1776,7 +1776,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    climate:DCS:projected:annual:anomaly:P20Y-Avg:
+    climate:DCS:projected:annual:P20Y-Avg:
         type: collection
         title: Projected annual anomaly for 20 years average DCS
         description: Projected annual anomaly for 20 years average DCS
@@ -1804,7 +1804,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    climate:DCS:projected:seasonal:anomaly:P20Y-Avg:
+    climate:DCS:projected:seasonal:P20Y-Avg:
         type: collection
         title: Projected seasonal anomaly for 20 years average DCS
         description: Projected seasonal anomaly for 20 years average DCS
@@ -1832,7 +1832,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    climate:DCS:historical:annual:
+    climate:DCS:historical:annual:absolute:
         type: collection
         title: Historical annual DCS
         description: Historical annual DCS
@@ -1888,7 +1888,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    climate:DCS:historical:seasonal:
+    climate:DCS:historical:seasonal:absolute:
         type: collection
         title: Historical seasonal DCS
         description: Historical seasonal DCS
@@ -1944,7 +1944,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    climate:DCS:historical:monthly:
+    climate:DCS:historical:monthly:absolute:
         type: collection
         title: Historical monthly DCS
         description: Historical monthly DCS
@@ -2482,6 +2482,8 @@ resources:
               format:
                   name: GRIB
                   mimetype: application/x-grib2
+
+    weather:CanSIPS:250km:forecast:members:
 
     raster-drill:
         type: process
