@@ -5,6 +5,7 @@
 #
 # Copyright (c) 2021 Louis-Philippe Rousseau-Lambert
 #
+
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
 # files (the "Software"), to deal in the Software without
@@ -28,14 +29,15 @@
 #
 # =================================================================
 
+from datetime import date, datetime
 import glob
 import logging
 import os
 from parse import search
 import pathlib
 
+from dateutil.relativedelta import relativedelta
 import rasterio
-from rasterio.crs import CRS
 from rasterio.io import MemoryFile
 import rasterio.mask
 
@@ -46,30 +48,46 @@ LOGGER = logging.getLogger(__name__)
 
 
 # TODO: use RasterioProvider once pyproj is updated on bionic
-class CanGRDProvider(BaseProvider):
-    """CanGRD Provider"""
+class CanSIPSProvider(BaseProvider):
+    """RDPA Provider"""
 
     def __init__(self, provider_def):
         """
         Initialize object
         :param provider_def: provider definition
-        :returns: pygeoapi.provider.cangrdrasterio.CanGRDProvider
+        :returns: pygeoapi.provider.cansips_rasterio.CanSIPSProvider
         """
 
         super().__init__(provider_def)
 
         try:
+            self.file_list = []
+            self.member = []
+
+            self.var = 'cansips_forecast_raw_latlon2.5x2.5_TMP_TGL_2m_'
+            self.get_file_list(self.var)
+
+            self.data = self.file_list[0]
+
+            self.var_list = ['cansips_forecast_raw_latlon2.5x2.5_TMP_TGL_2m',
+                             'cansips_forecast_raw_latlon2.5x2.5_HGT_ISBL_0500', # noqa
+                             'cansips_forecast_raw_latlon2.5x2.5_PRATE_SFC_0',
+                             'cansips_forecast_raw_latlon2.5x2.5_PRMSL_MSL_0',
+                             'cansips_forecast_raw_latlon2.5x2.5_TMP_ISBL_0850', # noqa
+                             'cansips_forecast_raw_latlon2.5x2.5_WTMP_SFC_0']
+
             self._data = rasterio.open(self.data)
             self._coverage_properties = self._get_coverage_properties()
             self.axes = self._coverage_properties['axes']
-            if 'season' in self.data:
-                self.axes.append('season')
-            self.crs = self._coverage_properties['bbox_crs']
+            self.axes.extend(['time', 'dim_reference_time', 'member'])
             self.num_bands = self._coverage_properties['num_bands']
-            # list of variables are not in metadata
-            # we need to have them in the code
-            self.fields = ['tmean', 'tmax', 'tmin', 'pcp']
+            self.crs = self._coverage_properties['bbox_crs']
+            self.fields = [str(num) for num in range(1, self.num_bands+1)]
             self.native_format = provider_def['format']['name']
+
+            # Needed to set the variable for each collection
+            # We intialize the collection matadata through this function
+            self.coverage = self.get_coverage_domainset()
         except Exception as err:
             LOGGER.warning(err)
             raise ProviderConnectionError(err)
@@ -137,46 +155,43 @@ class CanGRDProvider(BaseProvider):
                 'axisLabel': 'time',
                 'lowerBound': '',
                 'upperBound': '',
+                'uomLabel': 'month',
+                'resolution': 1
+            }
+
+        dim_ref_time_axis = {
+                'type': 'RegularAxis',
+                'axisLabel': 'dim_reference_time',
+                'lowerBound': '2013-04',
+                'upperBound': '',
+                'uomLabel': 'month',
+                'resolution': 1
+            }
+
+        member_axis = {
+                'type': 'RegularAxis',
+                'axisLabel': 'member',
+                'lowerBound': 20,
+                'upperBound': 1,
                 'uomLabel': '',
                 'resolution': 1
             }
 
-        if 'trend' not in self.data:
-            file_path = pathlib.Path(self.data).parent.resolve()
-            file_path_ = glob.glob(os.path.join(file_path, '*TMEAN*'))
-            file_path_.sort()
-            begin_file, end_file = file_path_[0], file_path_[-1]
+        _, end = self.get_end_time_from_file()
+        dim_ref_time_axis['upperBound'] = end
 
-            if 'monthly' not in self.data:
-                begin = search('_{:d}.tif', begin_file)[0]
-                end = search('_{:d}.tif', end_file)[0]
-                time_axis['uomLabel'] = 'year'
-            else:
-                begin = search('_{:d}-{:d}.tif', begin_file)
-                begin = '{}-{}'.format(begin[0], str(begin[1]).zfill(2))
+        time_axis['lowerBound'] = self.get_time_from_dim(end, 1)
+        time_axis['upperBound'] = self.get_time_from_dim(end, 13)
 
-                end = search('_{:d}-{:d}.tif', end_file)
-                end = '{}-{}'.format(end[0], str(end[1]).zfill(2))
-                time_axis['uomLabel'] = 'month'
-
-            time_axis['lowerBound'] = begin
-            time_axis['upperBound'] = end
-            new_axis_name.append('time')
-            new_axis.extend([time_axis])
-
-        if 'season' in self.data:
-            new_axis.extend([{
-                             'type': 'IrregularAxis',
-                             'axisLabel': 'season',
-                             'coordinate': ['DJF', 'MAM', 'JJA', 'SON']
-                             }])
-            new_axis_name.append('season')
+        new_axis_name.extend(['time', 'dim_reference_time', 'member'])
+        new_axis.extend([time_axis, dim_ref_time_axis, member_axis])
 
         domainset['generalGrid']['axisLabels'].extend(new_axis_name)
         domainset['generalGrid']['axis'].extend(new_axis)
 
         return domainset
 
+    # TODO: remove once pyproj is updated on bionic
     def get_coverage_rangetype(self, *args, **kwargs):
         """
         Provide coverage rangetype
@@ -188,52 +203,58 @@ class CanGRDProvider(BaseProvider):
             'field': []
         }
 
-        dtype, nodataval = self._data.dtypes, self._data.nodatavals
+        for var in self.var_list:
 
-        var_dict = {'TMEAN': {'units': '[C]',
-                              'name': 'Mean temperature [C]',
-                              'id': 'tmean'},
-                    'TMAX': {'units': '[C]',
-                             'name': 'Maximum temperature [C]',
-                             'id': 'tmax'},
-                    'TMIN': {'units': '[C]',
-                             'name': 'Minimum temperature [C]',
-                             'id': 'tmin'},
-                    'PCP': {'units': '[%]',
-                            'name': 'Total precipitation [%]',
-                            'id': 'pcp'},
-                    }
+            self._data = rasterio.open(self.data.replace(
+                'cansips_forecast_raw_latlon2.5x2.5_TMP_TGL_2m', var))
 
-        if 'trend' in self.data:
-            var_key = ['TMEAN', 'PCP']
-        else:
-            var_key = var_dict.keys()
+            i, dtype, nodataval = self._data.indexes[0], \
+                self._data.dtypes[0], self._data.nodatavals[0]
 
-        for var in var_key:
+            LOGGER.debug('Determing rangetype for band {}'.format(i))
+
+            tags = self._data.tags(i)
+            keys_to_remove = ['GRIB_FORECAST_SECONDS',
+                              'GRIB_IDS',
+                              'GRIB_PDS_TEMPLATE_ASSEMBLED_VALUES',
+                              'GRIB_REF_TIME',
+                              'GRIB_VALID_TIME']
+
+            for keys in keys_to_remove:
+                tags.pop(keys)
+
+            name, units = None, None
+            if self._data.units[i-1] is None:
+                parameter = _get_parameter_metadata(
+                    self._data.profile['driver'], self._data.tags(i))
+                name = parameter['description']
+                units = parameter['unit_label']
+
+            if 'TMP_ISBL_0850' in var:
+                name = 'Temperature [C] at 850 mb'
+
             rangetype['field'].append({
-                'id': var_dict[var]['id'],
+                'id': self.var_list.index(var) + 1,
                 'type': 'Quantity',
-                'name': var_dict[var]['name'],
+                'name': name,
                 'encodingInfo': {
                     'dataType': 'http://www.opengis.net/def/dataType/OGC/0/{}'.format(dtype)  # noqa
                 },
                 'nodata': nodataval,
                 'uom': {
                     'id': 'http://www.opengis.net/def/uom/UCUM/{}'.format(
-                         var_dict[var]['units']),
+                         units),
                     'type': 'UnitReference',
-                    'code': var_dict[var]['units']
+                    'code': units
                 },
                 '_meta': {
-                    'tags': {
-                        'long_name': var_dict[var]['name']
-                    }
+                    'tags': tags
                 }
             })
 
         return rangetype
 
-    def query(self, range_subset=['TMEAN'], subsets={}, bbox=[],
+    def query(self, range_subset=[1], subsets={'member': [1]}, bbox=[],
               datetime_=None, format_='json', **kwargs):
         """
         Extract data from collection collection
@@ -244,6 +265,20 @@ class CanGRDProvider(BaseProvider):
         :param format_: data format of output
         :returns: coverage data as dict of CoverageJSON or native format
         """
+
+        if len(range_subset) > 1:
+            err = 'Only one range-subset value is supported'
+            LOGGER.error(err)
+            raise ProviderQueryError(err)
+
+        range_subset[0] = int(range_subset[0])
+        try:
+            self.get_file_list(self.var_list[range_subset[0] - 1])
+        except IndexError as err:
+            LOGGER.error(err)
+            raise ProviderQueryError(err)
+
+        self.member = subsets['member']
 
         args = {
             'indexes': None
@@ -260,51 +295,26 @@ class CanGRDProvider(BaseProvider):
         if len(bbox) > 0:
             minx, miny, maxx, maxy = bbox
 
-            crs_src = CRS.from_epsg(4326)
-            crs_dest = self._data.crs
+            LOGGER.debug('Source coordinates: {}'.format(
+                [minx, miny, maxx, maxy]))
 
-            if crs_src == crs_dest:
-                LOGGER.debug('source bbox CRS and data CRS are the same')
-                shapes = [{
-                   'type': 'Polygon',
-                   'coordinates': [[
-                       [minx, miny],
-                       [minx, maxy],
-                       [maxx, maxy],
-                       [maxx, miny],
-                       [minx, miny],
-                   ]]
-                }]
-            else:
-                LOGGER.debug('source bbox CRS and data CRS are different')
-                LOGGER.debug('reprojecting bbox into native coordinates')
+            # because cansips long is from 0 to 360
+            minx += 180
+            maxx += 180
 
-                temp_geom_min = {"type": "Point", "coordinates": [minx, miny]}
-                temp_geom_max = {"type": "Point", "coordinates": [maxx, maxy]}
+            LOGGER.debug('Destination coordinates: {}'.format(
+                [minx, miny, maxx, maxy]))
 
-                min_coord = rasterio.warp.transform_geom(crs_src, crs_dest,
-                                                         temp_geom_min)
-                minx2, miny2 = min_coord['coordinates']
-
-                max_coord = rasterio.warp.transform_geom(crs_src, crs_dest,
-                                                         temp_geom_max)
-                maxx2, maxy2 = max_coord['coordinates']
-
-                LOGGER.debug('Source coordinates: {}'.format(
-                    [minx, miny, maxx, maxy]))
-                LOGGER.debug('Destination coordinates: {}'.format(
-                    [minx2, miny2, maxx2, maxy2]))
-
-                shapes = [{
-                   'type': 'Polygon',
-                   'coordinates': [[
-                       [minx2, miny2],
-                       [minx2, maxy2],
-                       [maxx2, maxy2],
-                       [maxx2, miny2],
-                       [minx2, miny2],
-                   ]]
-                }]
+            shapes = [{
+                'type': 'Polygon',
+                'coordinates': [[
+                    [minx, miny],
+                    [minx, maxy],
+                    [maxx, maxy],
+                    [maxx, miny],
+                    [minx, miny],
+                ]]
+            }]
 
         elif (self._coverage_properties['x_axis_label'] in subsets and
                 self._coverage_properties['y_axis_label'] in subsets):
@@ -324,55 +334,34 @@ class CanGRDProvider(BaseProvider):
                ]]
             }]
 
-        if range_subset[0].upper() != 'TMEAN':
-            var = range_subset[0].upper()
-            try:
-                self.data = self.get_file_list(var)[-1]
-            except IndexError as err:
-                LOGGER.error(err)
-                raise ProviderQueryError(err)
+        bands = []
 
-        if 'season' in subsets:
-            seasonal = subsets['season']
+        if 'dim_reference_time' in subsets:
+            year, month = subsets['dim_reference_time'][0].split('-')
+        else:
+            year, month = self.get_latest_dim_reference_time()
 
-            try:
-                if len(seasonal) > 1:
-                    msg = 'multiple seasons are not supported'
-                    LOGGER.error(msg)
-                    raise ProviderQueryError(msg)
-                elif seasonal != ['DJF']:
-                    season = str(seasonal[0])
-                    self.data = self.data.replace('DJF',
-                                                  season)
-
-            except Exception as err:
-                LOGGER.error(err)
-                raise ProviderQueryError(err)
-
-        if datetime_ and 'trend' in self.data:
-            msg = 'Datetime is not supported for trend'
-            LOGGER.error(msg)
-            raise ProviderQueryError(msg)
-
-        date_file_list = False
+        self.data = self.data.replace('2013', year)
+        self.data = self.data.replace('04', month)
 
         if datetime_:
-            if '/' not in datetime_:
-                if 'month' in self.data:
-                    month = search('_{:d}-{:d}.tif', self.data)
-                    period = '{}-{}'.format(month[0], str(month[1]).zfill(2))
-                    self.data = self.data.replace(str(month), str(datetime_))
-                else:
-                    period = search('_{:d}.tif', self.data)[0]
-                self.data = self.data.replace(str(period), str(datetime_))
-            else:
-                date_file_list = self.get_file_list(range_subset[0].upper(),
-                                                    datetime_)
-                args['indexes'] = list(range(1, len(date_file_list) + 1))
+            bands = self.get_band_datetime(datetime_, year, month)
+        else:
+            num_months_1 = 1 + 12 * (self.member[0] - 1)
+            num_months_2 = 12 + 12 * (self.member[0] - 1)
+            bands = list(range(num_months_1, num_months_2 + 1))
 
-        with rasterio.open(self.data) as _data:
+        LOGGER.debug('Selecting bands')
+        args['indexes'] = bands
+
+        var = self.var_list[range_subset[0] - 1]
+        self.data = self.data.replace(
+            'cansips_forecast_raw_latlon2.5x2.5_TMP_TGL_2m', var)
+
+        with rasterio.open(self.data) as self._data:
             LOGGER.debug('Creating output coverage metadata')
-            out_meta = _data.meta
+
+            out_meta = self._data.meta
 
             if self.options is not None:
                 LOGGER.debug('Adding dataset options')
@@ -383,11 +372,11 @@ class CanGRDProvider(BaseProvider):
                 try:
                     LOGGER.debug('Clipping data with bbox')
                     out_image, out_transform = rasterio.mask.mask(
-                        _data,
+                        self._data,
                         filled=False,
                         shapes=shapes,
                         crop=True,
-                        indexes=None)
+                        indexes=args['indexes'])
                 except ValueError as err:
                     LOGGER.error(err)
                     raise ProviderQueryError(err)
@@ -398,7 +387,7 @@ class CanGRDProvider(BaseProvider):
                                  'transform': out_transform})
             else:  # no spatial subset
                 LOGGER.debug('Creating data in memory with band selection')
-                out_image = _data.read(indexes=[1])
+                out_image = self._data.read(indexes=args['indexes'])
 
             if bbox:
                 out_meta['bbox'] = [bbox[0], bbox[1], bbox[2], bbox[3]]
@@ -409,65 +398,36 @@ class CanGRDProvider(BaseProvider):
                 ]
             else:
                 out_meta['bbox'] = [
-                    _data.bounds.left,
-                    _data.bounds.bottom,
-                    _data.bounds.right,
-                    _data.bounds.top
+                    self._data.bounds.left,
+                    self._data.bounds.bottom,
+                    self._data.bounds.right,
+                    self._data.bounds.top
                 ]
 
-            out_meta['units'] = _data.units
+            out_meta['units'] = self._data.units
 
             # CovJSON output does not support multiple bands yet
             # Only the first timestep is returned
             if format_ == 'json':
-                if date_file_list:
+
+                if '/' in datetime_:
                     err = 'Date range not yet supported for CovJSON output'
                     LOGGER.error(err)
                     raise ProviderQueryError(err)
                 else:
                     LOGGER.debug('Creating output in CoverageJSON')
-                    out_meta['bands'] = args['indexes']
+                    out_meta['bands'] = [1]
                     return self.gen_covjson(out_meta, out_image)
             else:
-                if date_file_list:
-                    LOGGER.debug('Serializing data in memory')
-                    with MemoryFile() as memfile:
+                LOGGER.debug('Serializing data in memory')
+                out_meta.update(count=len(args['indexes']))
+                with MemoryFile() as memfile:
+                    with memfile.open(**out_meta) as dest:
+                        dest.write(out_image)
 
-                        out_meta.update(count=len(date_file_list))
-
-                        with memfile.open(**out_meta) as dest:
-                            for id, layer in enumerate(date_file_list,
-                                                       start=1):
-                                with rasterio.open(layer) as src1:
-                                    if shapes:  # spatial subset
-                                        try:
-                                            LOGGER.debug('Clipping data')
-                                            out_image, out_transform = \
-                                                rasterio.mask.mask(
-                                                    src1,
-                                                    filled=False,
-                                                    shapes=shapes,
-                                                    crop=True,
-                                                    indexes=1)
-                                        except ValueError as err:
-                                            LOGGER.error(err)
-                                            raise ProviderQueryError(err)
-                                    else:
-                                        out_image = src1.read(indexes=1)
-                                    dest.write_band(id, out_image)
-
-                        # return data in native format
-                        LOGGER.debug('Returning data in native format')
-                        return memfile.read()
-                else:
-                    LOGGER.debug('Serializing data in memory')
-                    with MemoryFile() as memfile:
-                        with memfile.open(**out_meta) as dest:
-                            dest.write(out_image)
-
-                        # return data in native format
-                        LOGGER.debug('Returning data in native format')
-                        return memfile.read()
+                    # return data in native format
+                    LOGGER.debug('Returning data in native format')
+                    return memfile.read()
 
     # TODO: remove once pyproj is updated on bionic
     def gen_covjson(self, metadata, data):
@@ -557,6 +517,7 @@ class CanGRDProvider(BaseProvider):
     def _get_coverage_properties(self):
         """
         Helper function to normalize coverage properties
+
         :returns: `dict` of coverage properties
         """
 
@@ -601,38 +562,168 @@ class CanGRDProvider(BaseProvider):
         """
         Generate list of datetime from the query datetime_
 
-        :param datetime_: datetime from the query
         :param variable: variable from query
+        :param datetime_: forecast time from the query
 
-        :returns: sorted list of files
+        :returns: True
         """
 
-        file_path = pathlib.Path(self.data).parent.resolve()
-        file_path_ = glob.glob(os.path.join(file_path,
-                                            '*{}*'.format(variable)))
-        file_path_.sort()
+        try:
+            file_path = pathlib.Path(self.data).parent.resolve()
 
-        if datetime_:
-            begin, end = datetime_.split('/')
+            file_path = str(file_path).split('/')
+            file_path[-1] = '*'
+            file_path[-2] = '*'
 
-            begin_file_idx = [file_path_.index(
-                i) for i in file_path_ if begin in i]
-            end_file_idx = [file_path_.index(
-                i) for i in file_path_ if end in i]
+            file_path_ = glob.glob(os.path.join('/'.join(file_path),
+                                                '{}*'.format(variable)))
+            file_path_.sort()
 
-            query_file = file_path_[begin_file_idx[0]:end_file_idx[0] + 1]
+            if datetime_:
+                begin, end = datetime_.split('/')
 
-            return query_file
+                begin_file_idx = [file_path_.index(i) for i
+                                  in file_path_ if begin in i]
+                end_file_idx = [file_path_.index(i) for i
+                                in file_path_ if end in i]
+
+                self.file_list = file_path_[
+                    begin_file_idx[0]:end_file_idx[0] + 1]
+                return True
+            else:
+                self.file_list = file_path_
+                return True
+
+        except ValueError as err:
+            LOGGER.error(err)
+            return False
+
+    def get_end_time_from_file(self):
+        """
+        Get first and last file of list and set end time from file name
+
+        :returns: list of begin and end time as string
+        """
+
+        pattern = 'TMP_TGL_2m_{}_allmembers.grib2'
+
+        begin = search(pattern, self.file_list[0])[0]
+        end = search(pattern, self.file_list[-1])[0]
+
+        return begin, end
+
+    def get_time_from_dim(self, ref_time, months):
+        """
+        Get last file of list and set end time from file name
+
+        :param ref_time: dim_reference_time as string (yyyy-mm)
+        :param months: number of months to add to ref_time
+
+        :returns: relative time as string
+        """
+
+        year, month = ref_time.split('-')
+
+        forecast_time = date(int(year), int(month), 1) + \
+            relativedelta(months=+months)
+        forecast_time = datetime.strftime(forecast_time, '%Y-%m')
+
+        return forecast_time
+
+    def get_months_number(self, possible_time, year, month, datetime_):
+        """
+        Get the difference in number of months between
+        dim_reference_time (year, month) and datetime_
+
+        :param possible_time: list of possible time from dim_refenrence_time
+        :param year: year from dim_refenrence_time
+        :param month: month from dim_refenrence_time
+        :param datetime_: forecast time from the query
+
+        :returns: number of months as integer
+        """
+
+        if datetime_ not in possible_time:
+            err = 'Not a valid datetime'
+            LOGGER.error(err)
+            raise ProviderQueryError(err)
         else:
-            return file_path_
+            # from dim_ref_time
+            begin_date = datetime(int(year), int(month), 1)
+            # from datetime_
+            year2, month2 = datetime_.split('-')
+            end_date = datetime(int(year2), int(month2), 1)
+            num_months = (end_date.year - begin_date.year) \
+                * 12 + (end_date.month - begin_date.month)
+            return num_months
+
+    def get_band_datetime(self, datetime_, year, month):
+        """
+        generate list of bands from dim_refenrece_time and datetime_
+
+        :param datetime_: forecast time from the query
+        :param year: year from dim_refenrence_time
+        :param month: month from dim_refenrence_time
+
+        :returns: list of bands
+        """
+
+        # making a list of the datetime for the given dim_ref_time
+        possible_time = []
+        for i in range(1, 13):
+            possible_time.append(self.get_time_from_dim(
+                '{}-{}'.format(year, month), i))
+
+        if '/' not in datetime_:
+            if datetime_ not in possible_time:
+                err = 'Not a valid datetime'
+                LOGGER.error(err)
+                raise ProviderQueryError(err)
+            else:
+                num_months = self.get_months_number(
+                    possible_time, year, month, datetime_)
+                return [num_months + 12 * (self.member[0] - 1)]
+
+        else:
+            datetime1, datetime2 = datetime_.split('/')
+            if datetime1 not in possible_time or \
+                    datetime2 not in possible_time:
+                err = 'Not a valid datetime'
+                LOGGER.error(err)
+                raise ProviderQueryError(err)
+            num_months_1 = self.get_months_number(
+                possible_time, year, month, datetime1)
+            num_months_2 = self.get_months_number(
+                possible_time, year, month, datetime2)
+
+            num_months_1 = num_months_1 + 12 * (self.member[0] - 1)
+            num_months_2 = num_months_2 + 12 * (self.member[0] - 1)
+            return (list(range(num_months_1, num_months_2 + 1)))
+
+    def get_latest_dim_reference_time(self):
+        """
+        Get year and month for latests available
+        dim_reference_time
+
+        :returns: [year, month] as string
+        """
+
+        dict = self.coverage['generalGrid']['axis']
+
+        drt_dict = next(item for item in dict if item[
+            "axisLabel"] == "dim_reference_time")
+
+        return drt_dict['upperBound'].split('-')
 
 
 # TODO: remove once pyproj is updated on bionic
 def _get_parameter_metadata(driver, band):
     """
     Helper function to derive parameter name and units
+
     :param driver: rasterio/GDAL driver name
     :param band: int of band number
+
     :returns: dict of parameter metadata
     """
 
