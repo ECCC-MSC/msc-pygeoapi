@@ -1364,7 +1364,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    climate:CMIP5:projected:annual:raw:
+    climate:CMIP5:projected:annual:absolute:
         type: collection
         title: Projected annual CMIP5
         description: The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5) are provided. Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.
@@ -1404,7 +1404,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    climate:CMIP5:projected:seasonal:raw:
+    climate:CMIP5:projected:seasonal:absolute:
         type: collection
         title: Projected seasonal CMIP5
         description: The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5) are provided. Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.
@@ -1444,7 +1444,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    climate:CMIP5:projected:monthly:raw:
+    climate:CMIP5:projected:monthly:absolute:
         type: collection
         title: Projected monthly CMIP5
         description: The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5) are provided. Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.
@@ -1564,7 +1564,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    climate:CMIP5:historical:annual:raw:
+    climate:CMIP5:historical:annual:absolute:
         type: collection
         title: Historical annual CMIP5
         description: The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5) are provided. Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.
@@ -1644,7 +1644,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    climate:CMIP5:historical:seasonal:raw:
+    climate:CMIP5:historical:seasonal:absolute:
         type: collection
         title: Historical seasonal CMIP5
         description: The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5) are provided. Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.
@@ -1724,7 +1724,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    climate:CMIP5:historical:monthly:raw:
+    climate:CMIP5:historical:monthly:absolute:
         type: collection
         title: Historical monthly CMIP5
         description: The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5) are provided. Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.
@@ -1868,7 +1868,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    climate:DCS:projected:annual:raw:
+    climate:DCS:projected:annual:absolute:
         type: collection
         title: Projected annual DCS
         description: The Statistically downscaled climate scenarios dataset provides projected changes in temperature and precipitation, with respect to the reference period of 1986-2005, for three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). The median projected changes across the downscaled multi-model ensemble are shown.
@@ -1900,7 +1900,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    climate:DCS:projected:seasonal:raw:
+    climate:DCS:projected:seasonal:absolute:
         type: collection
         title: Projected seasonal DCS
         description: The Statistically downscaled climate scenarios dataset provides projected changes in temperature and precipitation, with respect to the reference period of 1986-2005, for three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). The median projected changes across the downscaled multi-model ensemble are shown.
@@ -1932,7 +1932,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    climate:DCS:projected:monthly:raw:
+    climate:DCS:projected:monthly:absolute:
         type: collection
         title: Projected monthly DCS
         description: The Statistically downscaled climate scenarios dataset provides projected changes in temperature and precipitation, with respect to the reference period of 1986-2005, for three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). The median projected changes across the downscaled multi-model ensemble are shown.
@@ -2028,7 +2028,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    climate:DCS:historical:annual:raw:
+    climate:DCS:historical:annual:absolute:
         type: collection
         title: Historical annual DCS
         description: The Statistically downscaled climate scenarios dataset provides projected changes in temperature and precipitation, with respect to the reference period of 1986-2005, for three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). The median projected changes across the downscaled multi-model ensemble are shown.
@@ -2092,7 +2092,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    climate:DCS:historical:seasonal:raw:
+    climate:DCS:historical:seasonal:absolute:
         type: collection
         title: Historical seasonal DCS
         description: The Statistically downscaled climate scenarios dataset provides projected changes in temperature and precipitation, with respect to the reference period of 1986-2005, for three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). The median projected changes across the downscaled multi-model ensemble are shown.
@@ -2156,7 +2156,7 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
-    climate:DCS:historical:monthly:raw:
+    climate:DCS:historical:monthly:absolute:
         type: collection
         title: Historical monthly DCS
         description: The Statistically downscaled climate scenarios dataset provides projected changes in temperature and precipitation, with respect to the reference period of 1986-2005, for three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). The median projected changes across the downscaled multi-model ensemble are shown.
@@ -2540,6 +2540,7 @@ resources:
         type: collection
         title: CanGRD historical monthly anomaly
         description: Gridded monthly mean temperature anomalies derived from daily minimum, maximum and mean surface air temperatures (degrees Celsius) and anomalies derived from daily total precipitation is available at a 50km resolution across Canada. The Canadian gridded data (CANGRD) are interpolated from homogenized temperature (i.e., AHCCD datasets). Homogenized temperatures incorporate adjustments to the original station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation. The anomalies are the difference between the temperature for a given year or season and a baseline value (defined as the average over 1961-1990 as the reference period). The yearly and seasonal temperature anomalies were computed for the years 1948 to 2017. The data will continue to be updated every year. For precipitation, the Canadian gridded data (CANGRD) are interpolated from adjusted precipitation (i.e., AHCCD datasets). Adjusted precipitation data incorporate adjustments to the original station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation. The anomalies are the percentage difference between the value for a given year or season and a baseline value (defined as the average over 1961-1990 as the reference period). The yearly and seasonal relative precipitation anomalies were computed for the years 1948 to 2014. The data will be updated as time permits.
+        keywords:
             - precipitation
             - temperature
             - gridding
