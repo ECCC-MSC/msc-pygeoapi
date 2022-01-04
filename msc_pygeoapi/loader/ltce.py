@@ -3,6 +3,7 @@
 # Author: Etienne Pelletier <etienne.pelletier@canada.ca>
 #
 # Copyright (c) 2020 Etienne Pelletier
+# Copyright (c) 2022 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -26,12 +27,12 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 #
 # =================================================================
+
 from datetime import datetime
 import logging
 
 import cx_Oracle
 import click
-from elasticsearch import logger as elastic_logger
 from slugify import slugify
 
 from msc_pygeoapi import cli_options
@@ -47,7 +48,6 @@ from msc_pygeoapi.util import (
 LOGGER = logging.getLogger(__name__)
 
 LOGGER.setLevel(getattr(logging, MSC_PYGEOAPI_LOGGING_LOGLEVEL))
-elastic_logger.setLevel(getattr(logging, MSC_PYGEOAPI_LOGGING_LOGLEVEL))
 
 INDEX_NAME = 'ltce_{}'
 
