@@ -8,6 +8,7 @@
 # Copyright (c) 2020 Etienne Pelletier
 # Copyright (c) 2021 Felix Laframboise
 # Copyright (c) 2021 Louis-Philippe Rousseau-Lambert
+# Copyright (c) 2022 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -39,14 +40,10 @@ import os
 from pathlib import Path
 
 import click
-from elasticsearch import logger as elastic_logger
 from parse import parse
 
 from msc_pygeoapi import cli_options
 from msc_pygeoapi.connector.elasticsearch_ import ElasticsearchConnector
-from msc_pygeoapi.env import (
-    MSC_PYGEOAPI_LOGGING_LOGLEVEL
-)
 from msc_pygeoapi.loader.base import BaseLoader
 from msc_pygeoapi.util import (
     configure_es_connection,
@@ -54,7 +51,6 @@ from msc_pygeoapi.util import (
 )
 
 LOGGER = logging.getLogger(__name__)
-elastic_logger.setLevel(getattr(logging, MSC_PYGEOAPI_LOGGING_LOGLEVEL))
 
 # cleanup settings
 DAYS_TO_KEEP = 3

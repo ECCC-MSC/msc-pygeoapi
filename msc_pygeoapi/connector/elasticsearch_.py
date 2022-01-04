@@ -3,6 +3,7 @@
 # Author: Etienne <etienne.pelletier@canada.ca>
 #
 # Copyright (c) 2021 Etienne Pelletier
+# Copyright (c) 2022 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -30,7 +31,7 @@
 import logging
 from urllib.parse import urlparse
 
-from elasticsearch import Elasticsearch
+from elasticsearch import Elasticsearch, logger as elastic_logger
 from elasticsearch.helpers import streaming_bulk, BulkIndexError
 
 from msc_pygeoapi.connector.base import BaseConnector
@@ -39,9 +40,11 @@ from msc_pygeoapi.env import (
     MSC_PYGEOAPI_ES_PASSWORD,
     MSC_PYGEOAPI_ES_URL,
     MSC_PYGEOAPI_ES_TIMEOUT,
+    MSC_PYGEOAPI_LOGGING_LOGLEVEL
 )
 
 LOGGER = logging.getLogger(__name__)
+elastic_logger.setLevel(getattr(logging, MSC_PYGEOAPI_LOGGING_LOGLEVEL))
 
 
 class ElasticsearchConnector(BaseConnector):
