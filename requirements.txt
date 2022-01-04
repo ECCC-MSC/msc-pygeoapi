@@ -1,5 +1,5 @@
 click<8
-elasticsearch
+elasticsearch==7.0.2
 gdal
 lxml
 parse
