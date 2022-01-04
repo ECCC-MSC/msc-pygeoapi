@@ -1,8 +1,6 @@
 {% extends "_base.html" %}
 {% block title %}{{ super() }} Job status {% endblock %}
 {% block crumbs %}{{ super() }}
-<li><a href="../../">Processes</a></li>
-<li><a href="../">{{ data['process']['title'] }}</a></li>
 <li><a href="./">Jobs</a></li>
 <li><a href="./{{ data['jobs']['jobID'] }}">{{ data['jobs']['jobID'] }}</a></li>
 {% endblock %}

@@ -1,8 +1,6 @@
 {% extends "_base.html" %}
 {% block title %}{{ super() }} Jobs {% endblock %}
 {% block crumbs %}{{ super() }}
-<li><a href="../../processes">Processes</a></li>
-<li><a href="../{{ data.process.id }}">{{ data.process.title }}</a></li>
 <li><a href="./jobs">Jobs</a></li>
 {% endblock %}
 {% block body %}
@@ -13,7 +11,8 @@
             <caption>Jobs</caption>
             <thead>
               <tr>
-                <th>ID</th>
+                <th>Job ID</th>
+                <th>Process ID</th>
                 <th>Start</th>
                 <th>Duration</th>
                 <th>Progress</th>
@@ -22,9 +21,10 @@
               </tr>
             </thead>
             <tbody>
-              {% for job in data.jobs %}
+              {% for job in data.jobs.jobs %}
               <tr>
-                <td class="small"><a href="{{ config['server']['url'] }}/processes/{{data.process.id}}/jobs/{{ job.jobID}}">{{ job.jobID }}</a></td>
+                <td class="small"><a href="{{ config['server']['url'] }}/jobs/{{ job.jobID }}">{{ job.jobID }}</a></td>
+                <td class="small"><a href="{{ config['server']['url'] }}/processes/{{ job.processID }}">{{ job.processID }}</a></td>
                 <td><abbr title="{{ job.job_start_datetime|format_datetime }}">{{ job.job_start_datetime|format_datetime }}</abbr></td>
                 <td>
                   {% if job.status == 'running' %}
