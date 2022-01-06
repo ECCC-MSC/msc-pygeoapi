@@ -37,8 +37,7 @@ from pygeoapi.provider.base import (BaseProvider,
                                     ProviderQueryError)
 from msc_pygeoapi.provider.climate_xarray import (ClimateProvider,
                                                   open_data)
-from pygeoapi.provider.xarray_ import (read_data,
-                                       _get_zarr_data)
+from pygeoapi.provider.xarray_ import (_get_zarr_data)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -137,13 +136,6 @@ class SPEIProvider(ClimateProvider):
             subsets.pop('percentile')
 
         self._data = open_data(self.data)
-
-        if not range_subset and not subsets and format_ != 'json':
-            LOGGER.debug('No parameters specified, returning native data')
-            if format_ == 'zarr':
-                return _get_zarr_data(self._data)
-            else:
-                return read_data(self.data)
 
         data = self._data[[*range_subset]]
 
