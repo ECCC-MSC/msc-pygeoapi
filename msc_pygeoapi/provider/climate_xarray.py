@@ -38,8 +38,7 @@ from pygeoapi.provider.base import (BaseProvider,
                                     ProviderConnectionError,
                                     ProviderNoDataError,
                                     ProviderQueryError)
-from pygeoapi.provider.xarray_ import (read_data,
-                                       XarrayProvider,
+from pygeoapi.provider.xarray_ import (XarrayProvider,
                                        _convert_float32_to_float64,
                                        _get_zarr_data)
 
@@ -389,13 +388,6 @@ class ClimateProvider(XarrayProvider):
             subsets.pop('season')
 
         self._data = open_data(self.data)
-
-        if not range_subset and not subsets and format_ != 'json':
-            LOGGER.debug('No parameters specified, returning native data')
-            if format_ == 'zarr':
-                return _get_zarr_data(self._data)
-            else:
-                return read_data(self.data)
 
         # set default variable if range_subset is None
         range_subset_ = range_subset.copy()
