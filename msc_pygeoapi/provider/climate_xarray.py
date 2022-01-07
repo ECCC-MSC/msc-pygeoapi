@@ -44,6 +44,8 @@ from pygeoapi.provider.xarray_ import (XarrayProvider,
 
 LOGGER = logging.getLogger(__name__)
 
+DCS_VAR = ('tx', 'tm', 'tn', 'pr')
+
 
 class ClimateProvider(XarrayProvider):
     """CMIP5 Provider"""
@@ -162,6 +164,15 @@ class ClimateProvider(XarrayProvider):
                 desc = parameter['description']
                 units = parameter['unit_label']
 
+                if 'dcs' in self.data:
+                    if 'monthly' not in self.data:
+                        name = name[:2]
+                    else:
+                        dcs = {'pr': 'pr', 'tasmax': 'tx',
+                               'tmean': 'tm', 'tasmin': 'tn',
+                               'time_bnds': 'time_bnds'}
+                        name = dcs[name]
+
                 rangetype['field'].append({
                     'id': name,
                     'type': 'Quantity',
@@ -263,6 +274,8 @@ class ClimateProvider(XarrayProvider):
 
         properties['fields'] = [name for name in self._data.variables
                                 if len(self._data.variables[name].shape) >= 3]
+        if 'dcs' in self.data:
+            properties['fields'].extend(('tx', 'tm', 'tn', 'pr'))
 
         return properties
 
@@ -391,9 +404,22 @@ class ClimateProvider(XarrayProvider):
 
         # set default variable if range_subset is None
         range_subset_ = range_subset.copy()
+
         if not range_subset:
             name = list(self._data.variables.keys())[-1]
             range_subset_.append(name)
+        elif 'dcs' in self.data:
+            dcs_range_subset = []
+            if 'monthly' not in self.data:
+                for v in range_subset_:
+                    dcs_range_subset.append(next(k for k in list(
+                        self._data.variables.keys()) if v in k))
+            else:
+                dcs = {'pr': 'pr', 'tx': 'tasmax',
+                       'tm': 'tmean', 'tn': 'tasmin'}
+                for v in range_subset_:
+                    dcs_range_subset.append(dcs[v])
+            range_subset_ = dcs_range_subset
 
         data = self._data[[*range_subset_]]
 
