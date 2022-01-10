@@ -52,7 +52,7 @@ class ElasticsearchConnector(BaseConnector):
 
     def __init__(self, connector_def={}):
         """
-        Elasticticsearch connection initialization
+        Elasticsearch connection initialization
 
         :param connector_def: connection definition dictionnary
 
@@ -117,7 +117,7 @@ class ElasticsearchConnector(BaseConnector):
 
     def create(self, index_name, mapping, overwrite=False):
         """
-        create an Elaticsearch index
+        create an Elasticsearch index
 
         :param index_name: name of in index to create
         :mapping: `dict` mapping of index to create
@@ -146,7 +146,7 @@ class ElasticsearchConnector(BaseConnector):
 
     def get(self, pattern):
         """
-        get list of Elaticsearch index matching a pattern
+        get list of Elasticsearch index matching a pattern
 
         :param pattern: `str` of pattern to match
 
