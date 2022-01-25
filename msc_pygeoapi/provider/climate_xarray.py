@@ -421,7 +421,28 @@ class ClimateProvider(XarrayProvider):
                     dcs_range_subset.append(dcs[v])
             range_subset_ = dcs_range_subset
 
-        data = self._data[[*range_subset_]]
+        # workaround for inconsistent time values in the NetCDF
+        if 'cmip5' in self.data:
+            if len(range_subset) > 1:
+                err = 'Only one range-subset value is supported for this data'
+                LOGGER.error(err)
+                raise ProviderQueryError(err)
+            try:
+                cmip5_var = {'pr': 'PCP',
+                             'sfcWind': 'SFCWND',
+                             'sic': 'SICECONC',
+                             'sit': 'SICETHKN',
+                             'snd': 'SNDPT',
+                             'tas': 'TEMP'}
+                _var = cmip5_var[range_subset_[0]]
+                cmip5_file = self.data.replace('*', _var)
+            except KeyError as err:
+                LOGGER.error(err)
+                msg = 'Not a validd range-subset value'
+                raise ProviderQueryError(msg)
+            data = xarray.open_dataset(cmip5_file)
+        else:
+            data = self._data[[*range_subset_]]
 
         if any([self._coverage_properties['x_axis_label'] in subsets,
                 self._coverage_properties['y_axis_label'] in subsets,
