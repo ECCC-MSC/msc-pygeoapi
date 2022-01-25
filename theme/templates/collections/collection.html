@@ -61,9 +61,14 @@
       <h3>Output Formats</h3>
       <ul>
       {% for link in data['links'] %}
+        {# oapiFeatures datasets; GeoJSON #}
         {% if link['rel'] == 'items' and link['type'] == 'application/geo+json' %}
           <li>GeoJSON</li>
           <li>CSV</li>{# generally supported with pygeoapi feature collections #}
+        {% endif %}
+        {# oapiCoverage datasets; shows the primary 'f=[format]' #}
+        {% if link['rel'] == 'http://www.opengis.net/def/rel/ogc/1.0/coverage' %}
+          <li>{{ link['href'].split('?')[1].split('=')[1] }} ({{ link['type'] }})</li>
         {% endif %}
       {% endfor %}
       </ul>
