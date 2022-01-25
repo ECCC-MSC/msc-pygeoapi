@@ -3,7 +3,7 @@
 # Authors: Louis-Philippe Rousseau-Lambert
 #          <louis-philippe.rousseaulambert@ec.gc.ca>
 #
-# Copyright (c) 2021 Louis-Philippe Rousseau-Lambert
+# Copyright (c) 2022 Louis-Philippe Rousseau-Lambert
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -220,6 +220,8 @@ class SPEIProvider(ClimateProvider):
             "variables": {var_name: var.attrs
                           for var_name, var in data.variables.items()}
         }
+
+        self.filename = self.data.split('/')[-1]
 
         LOGGER.debug('Serializing data in memory')
         if format_ == 'json':

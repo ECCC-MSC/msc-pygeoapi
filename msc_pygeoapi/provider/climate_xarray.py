@@ -3,7 +3,7 @@
 # Authors: Louis-Philippe Rousseau-Lambert
 #          <louis-philippe.rousseaulambert@ec.gc.ca>
 #
-# Copyright (c) 2021 Louis-Philippe Rousseau-Lambert
+# Copyright (c) 2022 Louis-Philippe Rousseau-Lambert
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -77,6 +77,7 @@ class ClimateProvider(XarrayProvider):
                 self.axes.append('P20Y-Avg')
 
             self.fields = self._coverage_properties['fields']
+
         except Exception as err:
             LOGGER.warning(err)
             raise ProviderConnectionError(err)
@@ -541,6 +542,9 @@ class ClimateProvider(XarrayProvider):
                     data.coords[self.time_field].values[-1])
             ]
             out_meta['time_steps'] = data.dims[self.time_field]
+
+        self.filename = self.data.split('/')[-1].replace(
+            '*', '-'.join(range_subset))
 
         LOGGER.debug('Serializing data in memory')
         if format_ == 'json':
