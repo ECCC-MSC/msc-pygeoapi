@@ -32,12 +32,6 @@
     <p>Items in this collection.</p>
   </section>
   <section id="items">
-    <div v-if="items.length === 0" class="alert alert-warning">
-      <p>No results. Please modify your search query or <button 
-        title="Clear column keyword search queries and reset to display the default results" 
-        class="btn btn-warning btn-sm" 
-        @click="clearSearch">reset</button> the table.</p>
-    </div>
     <div class="row">
       <div class="col-sm-12 col-md-12">
         <div class="row">
@@ -52,6 +46,12 @@
             <input id="bboxPermalinkCheck" type="checkbox" v-model="bboxPermalink" @change="getItemsSorted()">
             Only show items by map view
           </label>
+        </div>
+        <div v-if="items.length === 0" class="alert alert-warning">
+          <p>No results. Please modify your search query or <button 
+            title="Clear column keyword search queries and reset to display the default results" 
+            class="btn btn-warning btn-sm" 
+            @click="clearSearch">reset</button> the table.</p>
         </div>
         <div class="form-inline row" aria-controls="items-table">
           <div class="form-group col-xs-5">
