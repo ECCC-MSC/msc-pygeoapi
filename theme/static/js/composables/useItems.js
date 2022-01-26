@@ -88,6 +88,12 @@ export default function useItems() {
     }
     return isEmpty
   })
+  const setTableHeaders = (dataJson) => {
+    if (itemProps.value.length === 0 && dataJson.features.length > 0) { // initalize itemProps once from JSON data
+      // use first row for list of keys/properties
+      itemProps.value = Object.keys(dataJson.features[0].properties)
+    }
+  }
   const getItems = async (sortCol = '', sortDir = '', bbox = '') => {
     // Request URL
     let newRequestUrl = `${window.location.pathname}?f=json&limit=${limit.value}&startindex=${startindex.value}`  // relative to /items
@@ -124,14 +130,24 @@ export default function useItems() {
       requestUrl.value = newRequestUrl
       const resp = await axios.get(requestUrl.value)
       itemsJson.value = resp.data // original JSON data
-      if (itemProps.value.length === 0 && itemsJson.value.features.length > 0) { // initalize itemProps once from JSON data
-        // use first row for list of keys/properties
-        itemProps.value = Object.keys(items.value[0])
-      }
+      setTableHeaders(itemsJson.value)
       itemsLoading.value = false
     } catch (err) {
       console.error(err)
       itemsLoading.value = false
+    }
+  }
+  // Populate table headers by retrieving 1 valid result
+  const getTableHeaders = async () => {
+    // Request URL
+    let newRequestUrl = `${window.location.pathname}?f=json&limit=1`  // relative to /items
+
+    try {
+      const resp = await axios.get(newRequestUrl)
+      const data = resp.data
+      setTableHeaders(data)
+    } catch (err) {
+      console.error(err)
     }
   }
 
@@ -143,7 +159,7 @@ export default function useItems() {
 
   return {
     itemsJson, itemsTotal, items, itemProps, limit,
-    getItems, showingLimitText, itemsLoading,
+    getItems, getTableHeaders, showingLimitText, itemsLoading,
     nextPage, prevPage, currentPage, maxPages, calcStartIndex,
     queryCols, clearQueryCols, queryColsIsEmpty
   }
