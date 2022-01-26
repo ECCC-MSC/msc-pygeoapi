@@ -34,7 +34,11 @@ export default function useItems() {
     if (upper >= itemsTotal.value) {
       upper = itemsTotal.value
     }
-    let showText = `Showing ${parseInt(startindex.value) + 1} to ${upper} of ${itemsTotal.value}`
+    const firstPage = parseInt(startindex.value) + 1
+    let showText = `Showing ${firstPage} to ${upper} of ${itemsTotal.value}`
+    if (upper === 0) {
+      showText = 'Showing 0 results'
+    }
     return showText
   })
   const calcStartIndex = () => {
@@ -54,7 +58,11 @@ export default function useItems() {
     return calcStartIndex()
   })
   const maxPages = computed(() => {
-    return Math.ceil(itemsTotal.value / limit.value)
+    const max = Math.ceil(itemsTotal.value / limit.value)
+    if (max === 0) {
+      return 1
+    }
+    return max
   })
   const nextPage = () => {
     if ((currentPage.value * limit.value) < itemsTotal.value) {
@@ -116,7 +124,7 @@ export default function useItems() {
       requestUrl.value = newRequestUrl
       const resp = await axios.get(requestUrl.value)
       itemsJson.value = resp.data // original JSON data
-      if (itemProps.value.length === 0) { // initalize itemProps once from JSON data
+      if (itemProps.value.length === 0 && itemsJson.value.features.length > 0) { // initalize itemProps once from JSON data
         // use first row for list of keys/properties
         itemProps.value = Object.keys(items.value[0])
       }

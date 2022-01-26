@@ -32,7 +32,7 @@
     <p>Items in this collection.</p>
   </section>
   <section id="items">
-    {% if data['features'] %}
+
     <div class="row">
       <div class="col-sm-12 col-md-12">
         <div class="row">
@@ -166,16 +166,11 @@
         </nav>
       </div>
     </div>
-    {% else %}
-    <div class="row col-sm-12">
-        <p>No items</p>
-    </div>
-    {% endif %}
+
     </section>
 {% endblock %}
 
 {% block extrafoot %}
-{% if data['features'] %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
     <script>
       const ID_FIELD = '{{ data.get('id_field') }}'; // primary ID field (from Jinja2 template)
@@ -398,6 +393,7 @@
 
           // initial httpRequest to populate table and update JSON links
           onMounted(() => {
+            // const initNumJinjaData = '{{ data['features']|length }}';
             getItems(currentSort.value, currentSortDir.value, bbox.value)
             updateJsonLinks()
           })
@@ -422,5 +418,4 @@
       })
       app.mount('#items')
     </script>
-{% endif %}
 {% endblock %}
