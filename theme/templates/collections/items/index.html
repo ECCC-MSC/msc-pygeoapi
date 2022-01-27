@@ -32,7 +32,6 @@
     <p>Items in this collection.</p>
   </section>
   <section id="items">
-    {% if data['features'] %}
     <div class="row">
       <div class="col-sm-12 col-md-12">
         <div class="row">
@@ -47,6 +46,12 @@
             <input id="bboxPermalinkCheck" type="checkbox" v-model="bboxPermalink" @change="getItemsSorted()">
             Only show items by map view
           </label>
+        </div>
+        <div v-if="items.length === 0" class="alert alert-warning">
+          <p>No results. Please modify your search query or <button 
+            title="Clear column keyword search queries and reset to display the default results" 
+            class="btn btn-warning btn-sm" 
+            @click="clearSearch">reset</button> the table.</p>
         </div>
         <div class="form-inline row" aria-controls="items-table">
           <div class="form-group col-xs-5">
@@ -166,16 +171,11 @@
         </nav>
       </div>
     </div>
-    {% else %}
-    <div class="row col-sm-12">
-        <p>No items</p>
-    </div>
-    {% endif %}
+
     </section>
 {% endblock %}
 
 {% block extrafoot %}
-{% if data['features'] %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
     <script>
       const ID_FIELD = '{{ data.get('id_field') }}'; // primary ID field (from Jinja2 template)
@@ -192,7 +192,7 @@
           const noJs = ref(false) // progressive enhancement
 
           /* Items handling */
-          const { items, itemsJson, itemProps, getItems, itemsTotal, itemsLoading,
+          const { items, itemsJson, itemProps, getItems, getTableHeaders, itemsTotal, itemsLoading,
             currentPage, maxPages, prevPage, nextPage, limit, showingLimitText, calcStartIndex,
             queryCols, clearQueryCols, queryColsIsEmpty } = useItems()
           
@@ -393,6 +393,11 @@
           }
           // on page load permalink handling
           onBeforeMount(() => {
+            // populate table headers if 0 initial results from permalink
+            const initNumJinjaData = '{{ data['features']|length }}'
+            if (initNumJinjaData === '0') {
+              getTableHeaders()
+            }
             permalinkMount()
           })
 
@@ -422,5 +427,4 @@
       })
       app.mount('#items')
     </script>
-{% endif %}
 {% endblock %}
