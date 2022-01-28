@@ -86,7 +86,7 @@
       setup() {
         const noJs = ref(false) // progressive enhancement
         
-        const { childLinks, itemLinks } = useCatalog()
+        const { childLinks, itemLinks } = useCatalog(JSON_DATA)
 
         // table columns
         const tableFields = ref([
