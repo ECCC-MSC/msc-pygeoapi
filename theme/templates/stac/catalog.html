@@ -49,14 +49,20 @@
           </tr>
 
           {% for link in data['links'] %}
-          {% if link['rel'] in ['child', 'item'] %}
+          {# Child links - paths #}
+          {% if link['rel'] == 'child' and link['type'] == 'text/html' %}
           <tr v-if="noJs">
             <td data-label="name">
-              {% if link['title'] %}
-              <a title="{{ link['href'] }}" href="{{ link['href'] }}"><span>{{ link['title'] | get_path_basename }}</span></a>
-              {% else %}
               <a title="{{ link['href'] }}" href="{{ link['href'] }}"><span>{{ link['href'] | get_path_basename }}</span></a>
-              {% endif %}
+            </td>
+            <td data-label="created">{{ link['created'] }}</td>
+            <td data-label="size">-</td>
+          </tr>
+          {# Item links - files #}
+          {% elif link['rel'] == 'item' %}
+          <tr v-if="noJs">
+            <td data-label="name">
+              <a title="{{ link['href'] }}" href="{{ link['href'] }}"><span>{{ link['title'] | get_path_basename }}</span></a>
             </td>
             <td data-label="created">{{ link['created'] }}</td>
             {% if link['file:size'] %}
@@ -86,7 +92,7 @@
       setup() {
         const noJs = ref(false) // progressive enhancement
         
-        const { childLinks, itemLinks } = useCatalog()
+        const { childLinks, itemLinks } = useCatalog(JSON_DATA)
 
         // table columns
         const tableFields = ref([
