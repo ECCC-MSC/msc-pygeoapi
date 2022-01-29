@@ -3,7 +3,7 @@
 # Authors: Louis-Philippe Rousseau-Lambert
 #           <louis-philippe.rousseaulambert@ec.gc.ca>
 #
-# Copyright (c) 2021 Louis-Philippe Rousseau-Lambert
+# Copyright (c) 2022 Louis-Philippe Rousseau-Lambert
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -416,6 +416,13 @@ class CanGRDProvider(BaseProvider):
                 ]
 
             out_meta['units'] = _data.units
+
+            self.filename = self.data.split('/')[-1]
+            if 'trend' not in self.data and datetime_:
+                self.filename = self.filename.split('_')
+                self.filename[-1] = '{}.tif'.format(
+                    datetime_.replace('/', '-'))
+                self.filename = '_'.join(self.filename)
 
             # CovJSON output does not support multiple bands yet
             # Only the first timestep is returned
