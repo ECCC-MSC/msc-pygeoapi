@@ -74,9 +74,18 @@ class RDPAProvider(BaseProvider):
             self._coverage_properties = self._get_coverage_properties()
             self.axes = self._coverage_properties['axes']
             self.axes.append('time')
+
+            # Rasterio does not read the crs and transform function
+            # properly from the file, we have to set them manually
+            # The CRS is the same for both RDPA resolution
+            # the transform array is different for the 15 km and 10 km files
             self.crs = '+proj=stere +lat_0=90 +lat_ts=60 +lon_0=249 +x_0=0 +y_0=0 +R=6371229 +units=m +no_defs' # noqa
-            self.transform = (-4556441.403315245, 10000.0,
-                              0.0, 920682.1411659503, 0.0, -10000.0)
+            if '10km' in self.data:
+                self.transform = (-4556441.403315245, 10000.0,
+                                  0.0, 920682.1411659503, 0.0, -10000.0)
+            else:
+                self.transform = (-2618155.4458640157, 15000.0,
+                                  0.0, 7508.80818105489, 0.0, -15000.0)
             self._data._crs = self.crs
             self._data._transform = self.transform
             self.num_bands = self._coverage_properties['num_bands']
