@@ -342,9 +342,15 @@ class RDPAProvider(BaseProvider):
         if datetime_:
 
             if '/' not in datetime_:
-                period = datetime.strptime(datetime_,
-                                           '%Y-%m-%dT%HZ').strftime('%Y%m%d%H')
-                self.data = [v for v in self.file_list if period in v][0]
+                try:
+                    period = datetime.strptime(
+                        datetime_, '%Y-%m-%dT%HZ').strftime('%Y%m%d%H')
+                    self.data = [v for v in self.file_list if period in v][0]
+                except IndexError as err:
+                    msg = 'Datetime value invalid or out of time domain'
+                    LOGGER.error(err)
+                    raise ProviderQueryError(msg)
+
             else:
                 self.get_file_list(self.var, datetime_)
                 date_file_list = self.file_list
