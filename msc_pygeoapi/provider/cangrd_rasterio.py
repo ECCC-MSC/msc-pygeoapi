@@ -370,6 +370,11 @@ class CanGRDProvider(BaseProvider):
                                                     datetime_)
                 args['indexes'] = list(range(1, len(date_file_list) + 1))
 
+        if not os.path.isfile(self.data):
+            msg = 'No such file'
+            LOGGER.error(msg)
+            raise ProviderQueryError(msg)
+
         with rasterio.open(self.data) as _data:
             LOGGER.debug('Creating output coverage metadata')
             out_meta = _data.meta

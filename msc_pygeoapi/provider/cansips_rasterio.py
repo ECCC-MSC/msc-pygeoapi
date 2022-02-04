@@ -359,6 +359,11 @@ class CanSIPSProvider(BaseProvider):
         self.data = self.data.replace(
             'cansips_forecast_raw_latlon2.5x2.5_TMP_TGL_2m', var)
 
+        if not os.path.isfile(self.data):
+            msg = 'No such file'
+            LOGGER.error(msg)
+            raise ProviderQueryError(msg)
+
         with rasterio.open(self.data) as self._data:
             LOGGER.debug('Creating output coverage metadata')
 
