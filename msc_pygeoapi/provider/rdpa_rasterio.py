@@ -284,6 +284,8 @@ class RDPAProvider(BaseProvider):
 
             temp_geom_min = {"type": "Point", "coordinates": [minx, miny]}
             temp_geom_max = {"type": "Point", "coordinates": [maxx, maxy]}
+            temp_geom_minup = {"type": "Point", "coordinates": [minx, maxy]}
+            temp_geom_maxdown = {"type": "Point", "coordinates": [maxx, miny]}
 
             min_coord = rasterio.warp.transform_geom(crs_src, crs_dest,
                                                      temp_geom_min)
@@ -292,6 +294,14 @@ class RDPAProvider(BaseProvider):
             max_coord = rasterio.warp.transform_geom(crs_src, crs_dest,
                                                      temp_geom_max)
             maxx2, maxy2 = max_coord['coordinates']
+
+            upleft_coord = rasterio.warp.transform_geom(crs_src, crs_dest,
+                                                        temp_geom_minup)
+            minx2up, maxy2up = upleft_coord['coordinates']
+
+            downright_coord = rasterio.warp.transform_geom(crs_src, crs_dest,
+                                                           temp_geom_maxdown)
+            maxx2down, miny2down = downright_coord['coordinates']
 
             LOGGER.debug('Source coordinates: {}'.format(
                 [minx, miny, maxx, maxy]))
@@ -302,9 +312,9 @@ class RDPAProvider(BaseProvider):
                 'type': 'Polygon',
                 'coordinates': [[
                     [minx2, miny2],
-                    [minx2, maxy2],
+                    [minx2up, maxy2up],
                     [maxx2, maxy2],
-                    [maxx2, miny2],
+                    [maxx2down, miny2down],
                     [minx2, miny2],
                 ]]
             }]
