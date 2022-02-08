@@ -606,7 +606,7 @@ resources:
     climate-hourly:
         type: collection
         title: Hourly Climate Observations
-        description: "TODO"
+        description: "Archived hourly climate station observations from the Meteorological Service of Canada"
         keywords: [Climate, Climate archives, Climate change]
         crs:
             - CRS84
@@ -621,7 +621,7 @@ resources:
                 bbox: [-142, 42, -52, 84]
                 crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
             temporal:
-                begin: 1840-01-01T00:00:00Z #TODO
+                begin: 1953-01-01T00:00:00Z #TODO
                 end: null # or empty
         providers:
             - type: feature
