@@ -1,3 +1,9 @@
+msc-pygeoapi (0.10.1) bionic; urgency=medium
+
+  * fix postinst error
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Wed, 09 Feb 2022 17:03:05 +0000
+
 msc-pygeoapi (0.10.0) bionic; urgency=medium
 
   * align from 0.9 branch
