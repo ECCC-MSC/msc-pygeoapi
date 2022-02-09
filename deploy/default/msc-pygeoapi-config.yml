@@ -606,7 +606,7 @@ resources:
     climate-hourly:
         type: collection
         title: Hourly Climate Observations
-        description: "Archived hourly climate station observations from the Meteorological Service of Canada"
+        description: "Hourly climate observations are derived from the data source HLY01. These are stations that produce hourly meteorological observations, taken each hour of the day for the hours 00h-23h, for both daily (temperature, precipitation) and non-daily elements (station pressure, relative humidity, visibility). Only a subset of the total stations are shown due to size limitations. The stations were selected based on the following criteria: (1) Stations near cities with populations greater than 10,000, (2) Stations with long periods of record of at least 30 years of data, (3) Stations selected for the 1991-2020 WMO Normals, (4) Stations with RBCN designation not selected for 1991-2020 WMO Normals, and/or (5) Stations whose sum when joined with co-located/successor stations equates to a period of record of 30 years or greater."
         keywords: [Climate, Climate archives, Climate change]
         crs:
             - CRS84
