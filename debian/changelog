@@ -1,3 +1,19 @@
+msc-pygeoapi (0.10.0) bionic; urgency=medium
+
+  * align from 0.9 branch
+  * align to pygeoapi 0.12.0
+  * update bulletins retention time to 140 days
+  * add climate station hourly data
+  * change email contact
+  * safeguard ES index errors on queryables
+  * add OACov datasets: CMIP5, DCS, SPEI, CanGRD, RDPA, CanSIPS
+  * CAP alerts loader bug fixes
+  * fix off by one error in ES provider
+  * pin ES requirement
+  * HTML theming updates (permalinks, formats, user warnings, STAC links)
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Wed, 09 Feb 2022 13:23:47 +0000
+
 msc-pygeoapi (0.9.4) bionic; urgency=medium
 
   * fix imports for cleanups
