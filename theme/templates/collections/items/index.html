@@ -275,7 +275,7 @@
           /* Map setup */
           const itemsPath = '{{ data['items_path'] }}'
           const tileLayerUrl = '{{ config['server']['map']['url'] }}'
-          const tileLayerAttr = '{{ config['server']['map']['attribution'] }}'
+          const tileLayerAttr = '{{ config['server']['map']['attribution'] | safe }}'
           const bboxPermalink = ref(false)
           const { bbox } = useMap('items-map', itemsJson, itemsPath, tileLayerUrl, tileLayerAttr, bboxPermalink)
 
