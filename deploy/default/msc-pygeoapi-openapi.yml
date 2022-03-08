@@ -55,13 +55,13 @@ components:
         default: false
         type: boolean
       style: form
-    startindex:
-      description: The optional startindex parameter indicates the index within the
+    offset:
+      description: The optional offset parameter indicates the index within the
         result set from which the server shall begin presenting results in the response
         document.  The first element has an index of 0 (default).
       explode: false
       in: query
-      name: startindex
+      name: offset
       required: false
       schema:
         default: 0
@@ -308,7 +308,7 @@ paths:
         style: form
       - $ref: '#/components/parameters/skipGeometry'
       - $ref: https://raw.githubusercontent.com/opengeospatial/ogcapi-records/master/core/openapi/parameters/sortby.yaml
-      - $ref: '#/components/parameters/startindex'
+      - $ref: '#/components/parameters/offset'
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
       - explode: false
         in: query
@@ -650,7 +650,7 @@ paths:
         style: form
       - $ref: '#/components/parameters/skipGeometry'
       - $ref: https://raw.githubusercontent.com/opengeospatial/ogcapi-records/master/core/openapi/parameters/sortby.yaml
-      - $ref: '#/components/parameters/startindex'
+      - $ref: '#/components/parameters/offset'
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
       - explode: false
         in: query
@@ -993,7 +993,7 @@ paths:
         style: form
       - $ref: '#/components/parameters/skipGeometry'
       - $ref: https://raw.githubusercontent.com/opengeospatial/ogcapi-records/master/core/openapi/parameters/sortby.yaml
-      - $ref: '#/components/parameters/startindex'
+      - $ref: '#/components/parameters/offset'
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
       - explode: false
         in: query
@@ -1310,7 +1310,7 @@ paths:
         style: form
       - $ref: '#/components/parameters/skipGeometry'
       - $ref: https://raw.githubusercontent.com/opengeospatial/ogcapi-records/master/core/openapi/parameters/sortby.yaml
-      - $ref: '#/components/parameters/startindex'
+      - $ref: '#/components/parameters/offset'
       - explode: false
         in: query
         name: elevation__elevation
@@ -1527,7 +1527,7 @@ paths:
         style: form
       - $ref: '#/components/parameters/skipGeometry'
       - $ref: https://raw.githubusercontent.com/opengeospatial/ogcapi-records/master/core/openapi/parameters/sortby.yaml
-      - $ref: '#/components/parameters/startindex'
+      - $ref: '#/components/parameters/offset'
       - explode: false
         in: query
         name: elevation__elevation
@@ -1743,7 +1743,7 @@ paths:
         style: form
       - $ref: '#/components/parameters/skipGeometry'
       - $ref: https://raw.githubusercontent.com/opengeospatial/ogcapi-records/master/core/openapi/parameters/sortby.yaml
-      - $ref: '#/components/parameters/startindex'
+      - $ref: '#/components/parameters/offset'
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
       - explode: false
         in: query
@@ -1969,7 +1969,7 @@ paths:
         style: form
       - $ref: '#/components/parameters/skipGeometry'
       - $ref: https://raw.githubusercontent.com/opengeospatial/ogcapi-records/master/core/openapi/parameters/sortby.yaml
-      - $ref: '#/components/parameters/startindex'
+      - $ref: '#/components/parameters/offset'
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
       - explode: false
         in: query
@@ -2162,7 +2162,7 @@ paths:
         style: form
       - $ref: '#/components/parameters/skipGeometry'
       - $ref: https://raw.githubusercontent.com/opengeospatial/ogcapi-records/master/core/openapi/parameters/sortby.yaml
-      - $ref: '#/components/parameters/startindex'
+      - $ref: '#/components/parameters/offset'
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
       - explode: false
         in: query
@@ -2351,7 +2351,7 @@ paths:
         style: form
       - $ref: '#/components/parameters/skipGeometry'
       - $ref: https://raw.githubusercontent.com/opengeospatial/ogcapi-records/master/core/openapi/parameters/sortby.yaml
-      - $ref: '#/components/parameters/startindex'
+      - $ref: '#/components/parameters/offset'
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
       - explode: false
         in: query
@@ -2761,7 +2761,7 @@ paths:
         style: form
       - $ref: '#/components/parameters/skipGeometry'
       - $ref: https://raw.githubusercontent.com/opengeospatial/ogcapi-records/master/core/openapi/parameters/sortby.yaml
-      - $ref: '#/components/parameters/startindex'
+      - $ref: '#/components/parameters/offset'
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
       - explode: false
         in: query
@@ -3116,7 +3116,7 @@ paths:
         style: form
       - $ref: '#/components/parameters/skipGeometry'
       - $ref: https://raw.githubusercontent.com/opengeospatial/ogcapi-records/master/core/openapi/parameters/sortby.yaml
-      - $ref: '#/components/parameters/startindex'
+      - $ref: '#/components/parameters/offset'
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
       - explode: false
         in: query
@@ -3476,7 +3476,7 @@ paths:
         style: form
       - $ref: '#/components/parameters/skipGeometry'
       - $ref: https://raw.githubusercontent.com/opengeospatial/ogcapi-records/master/core/openapi/parameters/sortby.yaml
-      - $ref: '#/components/parameters/startindex'
+      - $ref: '#/components/parameters/offset'
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
       - explode: false
         in: query
@@ -3801,7 +3801,7 @@ paths:
         style: form
       - $ref: '#/components/parameters/skipGeometry'
       - $ref: https://raw.githubusercontent.com/opengeospatial/ogcapi-records/master/core/openapi/parameters/sortby.yaml
-      - $ref: '#/components/parameters/startindex'
+      - $ref: '#/components/parameters/offset'
       - explode: false
         in: query
         name: CLIMATE_IDENTIFIER
@@ -8298,7 +8298,7 @@ paths:
         style: form
       - $ref: '#/components/parameters/skipGeometry'
       - $ref: https://raw.githubusercontent.com/opengeospatial/ogcapi-records/master/core/openapi/parameters/sortby.yaml
-      - $ref: '#/components/parameters/startindex'
+      - $ref: '#/components/parameters/offset'
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
       - explode: false
         in: query
@@ -8517,7 +8517,7 @@ paths:
         style: form
       - $ref: '#/components/parameters/skipGeometry'
       - $ref: https://raw.githubusercontent.com/opengeospatial/ogcapi-records/master/core/openapi/parameters/sortby.yaml
-      - $ref: '#/components/parameters/startindex'
+      - $ref: '#/components/parameters/offset'
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
       - explode: false
         in: query
@@ -8723,7 +8723,7 @@ paths:
         style: form
       - $ref: '#/components/parameters/skipGeometry'
       - $ref: https://raw.githubusercontent.com/opengeospatial/ogcapi-records/master/core/openapi/parameters/sortby.yaml
-      - $ref: '#/components/parameters/startindex'
+      - $ref: '#/components/parameters/offset'
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
       - explode: false
         in: query
@@ -8904,7 +8904,7 @@ paths:
         style: form
       - $ref: '#/components/parameters/skipGeometry'
       - $ref: https://raw.githubusercontent.com/opengeospatial/ogcapi-records/master/core/openapi/parameters/sortby.yaml
-      - $ref: '#/components/parameters/startindex'
+      - $ref: '#/components/parameters/offset'
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
       - explode: false
         in: query
@@ -9064,7 +9064,7 @@ paths:
         style: form
       - $ref: '#/components/parameters/skipGeometry'
       - $ref: https://raw.githubusercontent.com/opengeospatial/ogcapi-records/master/core/openapi/parameters/sortby.yaml
-      - $ref: '#/components/parameters/startindex'
+      - $ref: '#/components/parameters/offset'
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
       - explode: false
         in: query
@@ -9256,7 +9256,7 @@ paths:
         style: form
       - $ref: '#/components/parameters/skipGeometry'
       - $ref: https://raw.githubusercontent.com/opengeospatial/ogcapi-records/master/core/openapi/parameters/sortby.yaml
-      - $ref: '#/components/parameters/startindex'
+      - $ref: '#/components/parameters/offset'
       - explode: false
         in: query
         name: CONTRIBUTOR_EN
@@ -9456,7 +9456,7 @@ paths:
         style: form
       - $ref: '#/components/parameters/skipGeometry'
       - $ref: https://raw.githubusercontent.com/opengeospatial/ogcapi-records/master/core/openapi/parameters/sortby.yaml
-      - $ref: '#/components/parameters/startindex'
+      - $ref: '#/components/parameters/offset'
       - explode: false
         in: query
         name: FIFTH_PRECIPITATION
@@ -9776,7 +9776,7 @@ paths:
         style: form
       - $ref: '#/components/parameters/skipGeometry'
       - $ref: https://raw.githubusercontent.com/opengeospatial/ogcapi-records/master/core/openapi/parameters/sortby.yaml
-      - $ref: '#/components/parameters/startindex'
+      - $ref: '#/components/parameters/offset'
       - explode: false
         in: query
         name: FIFTH_SNOWFALL
@@ -10089,7 +10089,7 @@ paths:
         style: form
       - $ref: '#/components/parameters/skipGeometry'
       - $ref: https://raw.githubusercontent.com/opengeospatial/ogcapi-records/master/core/openapi/parameters/sortby.yaml
-      - $ref: '#/components/parameters/startindex'
+      - $ref: '#/components/parameters/offset'
       - explode: false
         in: query
         name: CLIMATE_IDENTIFIER
@@ -10403,7 +10403,7 @@ paths:
         style: form
       - $ref: '#/components/parameters/skipGeometry'
       - $ref: https://raw.githubusercontent.com/opengeospatial/ogcapi-records/master/core/openapi/parameters/sortby.yaml
-      - $ref: '#/components/parameters/startindex'
+      - $ref: '#/components/parameters/offset'
       - explode: false
         in: query
         name: FIFTH_HIGH_MAX_TEMP
@@ -11682,7 +11682,7 @@ paths:
         style: form
       - $ref: '#/components/parameters/skipGeometry'
       - $ref: https://raw.githubusercontent.com/opengeospatial/ogcapi-records/master/core/openapi/parameters/sortby.yaml
-      - $ref: '#/components/parameters/startindex'
+      - $ref: '#/components/parameters/offset'
       - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
       - explode: false
         in: query

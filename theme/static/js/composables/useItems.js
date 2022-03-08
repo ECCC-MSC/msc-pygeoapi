@@ -30,18 +30,18 @@ export default function useItems() {
   const limit = ref(10) // default
   const currentPage = ref(1)
   const showingLimitText = computed(() => {
-    let upper = parseInt(startindex.value) + parseInt(limit.value)
+    let upper = parseInt(offset.value) + parseInt(limit.value)
     if (upper >= itemsTotal.value) {
       upper = itemsTotal.value
     }
-    const firstPage = parseInt(startindex.value) + 1
+    const firstPage = parseInt(offset.value) + 1
     let showText = `Showing ${firstPage} to ${upper} of ${itemsTotal.value}`
     if (upper === 0) {
       showText = 'Showing 0 results'
     }
     return showText
   })
-  const calcStartIndex = () => {
+  const calcOffset = () => {
     if (currentPage.value === 1) {
       return 0
     } else {
@@ -54,8 +54,8 @@ export default function useItems() {
       }
     }
   }
-  const startindex = computed(() => {
-    return calcStartIndex()
+  const offset = computed(() => {
+    return calcOffset()
   })
   const maxPages = computed(() => {
     const max = Math.ceil(itemsTotal.value / limit.value)
@@ -96,7 +96,7 @@ export default function useItems() {
   }
   const getItems = async (sortCol = '', sortDir = '', bbox = '') => {
     // Request URL
-    let newRequestUrl = `${window.location.pathname}?f=json&limit=${limit.value}&startindex=${startindex.value}`  // relative to /items
+    let newRequestUrl = `${window.location.pathname}?f=json&limit=${limit.value}&offset=${offset.value}`  // relative to /items
 
     // Query params
     let newQueryColValues = []
@@ -160,7 +160,7 @@ export default function useItems() {
   return {
     itemsJson, itemsTotal, items, itemProps, limit,
     getItems, getTableHeaders, showingLimitText, itemsLoading,
-    nextPage, prevPage, currentPage, maxPages, calcStartIndex,
+    nextPage, prevPage, currentPage, maxPages, calcOffset,
     queryCols, clearQueryCols, queryColsIsEmpty
   }
 }
