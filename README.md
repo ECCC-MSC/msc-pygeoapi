@@ -82,7 +82,7 @@ http://localhost/features/collections/hydrometric-daily-mean/items?STATION_NUMBE
 http://localhost/features/collections/hydrometric-daily-mean/items?STATION_NUMBER=02RH066&time=2011-01-01/2012-12-31&limit=100
 
 # filter by station number and time, limit and page results
-http://localhost/features/collections/hydrometric-daily-mean/items?STATION_NUMBER=02RH066&time=2011-01-01/2012-12-31&limit=100&startindex=100
+http://localhost/features/collections/hydrometric-daily-mean/items?STATION_NUMBER=02RH066&time=2011-01-01/2012-12-31&limit=100&offset=100
 
 # HTML respsonses
 # filter by active stations in Nunavut
