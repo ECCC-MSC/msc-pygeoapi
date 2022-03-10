@@ -2,8 +2,10 @@
 #
 # Authors: Louis-Philippe Rousseau-Lambert
 #           <louis-philippe.rousseaulambert@ec.gc.ca>
+           Tom Kralidis <tom.kralidis@ec.gc.ca>
 #
 # Copyright (c) 2022 Louis-Philippe Rousseau-Lambert
+# Copyright (c) 2022 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -188,7 +190,8 @@ class CanGRDProvider(BaseProvider):
             'field': []
         }
 
-        dtype, nodataval = self._data.dtypes, self._data.nodatavals
+        dtype = self._data.dtypes[0]
+        nodataval = self._data.nodatavals[0]
 
         var_dict = {'TMEAN': {'units': '[C]',
                               'name': 'Mean temperature [C]',
