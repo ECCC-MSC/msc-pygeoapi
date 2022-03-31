@@ -1,8 +1,8 @@
 # =================================================================
 #
 # Authors: Louis-Philippe Rousseau-Lambert
-#           <louis-philippe.rousseaulambert@ec.gc.ca>
-           Tom Kralidis <tom.kralidis@ec.gc.ca>
+#          <louis-philippe.rousseaulambert@ec.gc.ca>
+#          Tom Kralidis <tom.kralidis@ec.gc.ca>
 #
 # Copyright (c) 2022 Louis-Philippe Rousseau-Lambert
 # Copyright (c) 2022 Tom Kralidis
