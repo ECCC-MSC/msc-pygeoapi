@@ -4,7 +4,7 @@
 {% for link in data['links'] %}
 {% if link['rel'] == 'alternate' and link['type'] == 'application/geo+json' %}
 <li>
-  <a id="csv-format-url" href="{{ link['href']|replace('f=json', 'f=csv') }}">
+  <a id="csv-format-url" href="{{ link['href']|replace('f=json', 'f=csv') }}" class="btn btn-xs btn-default">
     <span class="hidden-xs">CSV</span>
     <abbr title="CSV" class="visible-xs h3 mrgn-tp-sm mrgn-bttm-0 text-uppercase">CSV</abbr>
   </a>
