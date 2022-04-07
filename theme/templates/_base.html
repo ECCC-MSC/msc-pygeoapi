@@ -50,7 +50,7 @@
               {% if link['rel'] == 'alternate' and link['type'] and link['type'] in ['application/json', 'application/geo+json'] %}
               {% set links_found.json = 1 %}
               <li>
-                <a id="json-format-url" href="{{ link['href'] }}">
+                <a id="json-format-url" href="{{ link['href'] }}" class="btn btn-xs btn-default">
                   <span class="hidden-xs">JSON</span>
                   <abbr title="JSON" class="visible-xs h3 mrgn-tp-sm mrgn-bttm-0 text-uppercase">JSON</abbr>
                 </a>
@@ -58,7 +58,7 @@
               {% elif link['rel'] == 'alternate' and link['type'] and link['type'] == 'application/ld+json' %}
               {% set links_found.jsonld = 1 %}
               <li>
-                <a id="jsonld-format-url" href="{{ link['href'] }}">
+                <a id="jsonld-format-url" href="{{ link['href'] }}" class="btn btn-xs btn-default">
                   <span class="hidden-xs">JSON-LD</span>
                   <abbr title="JSON-LD" class="visible-xs h3 mrgn-tp-sm mrgn-bttm-0 text-uppercase">JSON-LD</abbr>
                 </a>
@@ -68,7 +68,7 @@
 
               {% if links_found.json == 0 %}
               <li>
-                <a id="json-format-url" href="?f=json">
+                <a id="json-format-url" href="?f=json" class="btn btn-xs btn-default">
                   <span class="hidden-xs">JSON</span>
                   <abbr title="JSON" class="visible-xs h3 mrgn-tp-sm mrgn-bttm-0 text-uppercase">JSON</abbr>
                 </a>
@@ -76,7 +76,7 @@
               {% endif %}
               {% if links_found.jsonld == 0 %}
               <li>
-                <a id="jsonld-format-url" href="?f=jsonld">
+                <a id="jsonld-format-url" href="?f=jsonld" class="btn btn-xs btn-default">
                   <span class="hidden-xs">JSON-LD</span>
                   <abbr title="JSON-LD" class="visible-xs h3 mrgn-tp-sm mrgn-bttm-0 text-uppercase">JSON-LD</abbr>
                 </a>
