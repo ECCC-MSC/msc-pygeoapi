@@ -258,6 +258,8 @@ class RDPAProvider(BaseProvider):
         :returns: coverage data as dict of CoverageJSON or native format
         """
 
+        nbits = 16
+
         bands = range_subset
         LOGGER.debug('Bands: {}, subsets: {}'.format(bands, subsets))
 
@@ -430,7 +432,7 @@ class RDPAProvider(BaseProvider):
 
                     LOGGER.debug('Serializing data in memory')
                     with MemoryFile() as memfile:
-                        with memfile.open(**out_meta) as dest:
+                        with memfile.open(**out_meta, nbits=nbits) as dest:
                             for id, layer in enumerate(date_file_list,
                                                        start=1):
                                 with rasterio.open(layer) as src1:
@@ -462,7 +464,7 @@ class RDPAProvider(BaseProvider):
                     LOGGER.debug('Serializing data in memory')
                     out_meta.update(count=len(args['indexes']))
                     with MemoryFile() as memfile:
-                        with memfile.open(**out_meta) as dest:
+                        with memfile.open(**out_meta, nbits=nbits) as dest:
                             dest.write(out_image)
 
                         # return data in native format
