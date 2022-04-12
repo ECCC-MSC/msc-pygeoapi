@@ -266,6 +266,8 @@ class CanSIPSProvider(BaseProvider):
         :returns: coverage data as dict of CoverageJSON or native format
         """
 
+        nbits = 20
+
         if len(range_subset) > 1:
             err = 'Only one range-subset value is supported'
             LOGGER.error(err)
@@ -430,7 +432,7 @@ class CanSIPSProvider(BaseProvider):
                 LOGGER.debug('Serializing data in memory')
                 out_meta.update(count=len(args['indexes']))
                 with MemoryFile() as memfile:
-                    with memfile.open(**out_meta) as dest:
+                    with memfile.open(**out_meta, nbits=nbits) as dest:
                         dest.write(out_image)
 
                     # return data in native format
