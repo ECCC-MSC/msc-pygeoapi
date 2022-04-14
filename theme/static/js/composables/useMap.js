@@ -1,7 +1,7 @@
 import * as L from 'https://unpkg.com/leaflet@1.7.1/dist/leaflet-src.esm.js'
 import { ref, computed, watch, onMounted } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.7/vue.esm-browser.prod.js'
 
-export default function useMap(mapElemId, geoJsonData, itemsPath, tileLayerUrl, tileLayerAttr, bboxPermalink) {
+export default function useMap(mapElemId, geoJsonData, itemsPath, tileLayerUrl, tileLayerAttr, bboxPermalink, locale) {
   let map, layerItems
   const maxZoom = 15
   const bbox = ref('')
@@ -81,7 +81,7 @@ export default function useMap(mapElemId, geoJsonData, itemsPath, tileLayerUrl, 
     
     layerItems = new L.GeoJSON(geoJsonData.value, {
       onEachFeature: function (feature, layer) {
-        let url = itemsPath + '/' + feature.id + '?f=html'
+        let url = itemsPath + '/' + feature.id + `?lang=${locale}`
         let html = '<span><a href="' + url + '">' + feature.id + '</a></span>'
         layer.bindPopup(html)
       }
