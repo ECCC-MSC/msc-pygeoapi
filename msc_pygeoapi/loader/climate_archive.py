@@ -942,7 +942,7 @@ class ClimateArchiveLoader(BaseLoader):
                         (
                             f"select * from CCCS_PORTAL.PUBLIC_HOURLY_DATA "
                             f"where STN_ID={station} and "
-                            f"LOCAL_DATE > TO_TIMESTAMP('{date} 00:00:00', "
+                            f"LOCAL_DATE >= TO_TIMESTAMP('{date} 00:00:00', "
                             f"'YYYY-MM-DD HH24:MI:SS')"
                         )
                     )
