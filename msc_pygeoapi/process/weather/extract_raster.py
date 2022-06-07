@@ -606,5 +606,5 @@ try:
         def __repr__(self):
             return '<ExtractRasterProcessor> {}'.format(self.name)
 
-except (ImportError, RuntimeError):
-    pass
+except (ImportError, RuntimeError) as err:
+    LOGGER.warning('Import errors: {}'.format(err))
