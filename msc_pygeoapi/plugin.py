@@ -71,6 +71,10 @@ PLUGINS = {
         'aqhi_realtime': {
             'filename_pattern': 'air_quality/aqhi',
             'handler': 'msc_pygeoapi.loader.aqhi_realtime.AQHIRealtimeLoader'
+        },
+        'metnotes_realtime': {
+            'filename_pattern': 'metnotes',
+            'handler': 'msc_pygeoapi.loader.metnotes.MetNotesRealtimeLoader'
         }
     }
 }
