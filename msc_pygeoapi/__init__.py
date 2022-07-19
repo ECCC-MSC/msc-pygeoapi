@@ -31,14 +31,17 @@ import click
 
 from msc_pygeoapi.env import (
     MSC_PYGEOAPI_LOGGING_LOGLEVEL, MSC_PYGEOAPI_LOGGING_LOGFILE)
-from msc_pygeoapi.loader import data
+
+# import and setup logger prior to other imports in order to enable logging
+# during importing of data and process commands
 from msc_pygeoapi.log import setup_logger
-from msc_pygeoapi.process import process
+setup_logger(MSC_PYGEOAPI_LOGGING_LOGLEVEL, MSC_PYGEOAPI_LOGGING_LOGFILE)
+
+from msc_pygeoapi.loader import data  # noqa
+from msc_pygeoapi.process import process  # noqa
 
 
 __version__ = '0.10.3'
-
-setup_logger(MSC_PYGEOAPI_LOGGING_LOGLEVEL, MSC_PYGEOAPI_LOGGING_LOGFILE)
 
 
 @click.group()
