@@ -75,6 +75,10 @@ PLUGINS = {
         'metnotes_realtime': {
             'filename_pattern': 'metnotes',
             'handler': 'msc_pygeoapi.loader.metnotes.MetNotesRealtimeLoader'
+        },
+        'cumulative_effects_hs': {
+            'filename_pattern': 'model_raqdps-fw/cumulative_effects/json',
+            'handler': 'msc_pygeoapi.loader.cumulative_effects_hs.CumulativeEffectsHSLoader'  # noqa
         }
     }
 }
