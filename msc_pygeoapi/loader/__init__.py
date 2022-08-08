@@ -56,6 +56,7 @@ commands = (
     ('msc_pygeoapi.loader.aqhi_realtime', 'aqhi_realtime'),
     ('msc_pygeoapi.loader.ltce', 'ltce'),
     ('msc_pygeoapi.loader.climate_archive', 'climate_archive'),
+    ('msc_pygeoapi.loader.metnotes', 'metnotes')
 )
 
 for module, name in commands:
