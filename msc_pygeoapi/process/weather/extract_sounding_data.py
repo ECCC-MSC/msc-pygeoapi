@@ -416,6 +416,10 @@ def extract_sounding_data(
                     output['properties'][index][desc] = xarray.open_rasterio(
                         full_path
                     )[0, y, x].data.item()
+                    if index in ['CAPE', 'LFC', 'EL'] and output['properties'][index][desc] < 0:  # noqa
+                        output['properties'][index][desc] = '-'
+                    elif index == 'CIN' and output['properties'][index][desc] > 0:  # noqa
+                        output['properties'][index][desc] = '-'
                 else:
                     output['properties'][index][desc] = 'N/A'
 
