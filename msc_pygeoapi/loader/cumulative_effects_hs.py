@@ -31,6 +31,7 @@
 from datetime import datetime
 import json
 import logging
+import os
 from pathlib import Path
 
 import click
@@ -40,7 +41,7 @@ from msc_pygeoapi.connector.elasticsearch_ import ElasticsearchConnector
 from msc_pygeoapi.loader.base import BaseLoader
 from msc_pygeoapi.util import (
     check_es_indexes_to_delete,
-    configure_es_connection
+    configure_es_connection,
 )
 
 LOGGER = logging.getLogger(__name__)
@@ -59,6 +60,10 @@ MAPPINGS = {
                 'rep_date': {
                     'type': 'date',
                     'format': 'yyyy/MM/dd HH:mm:ss',
+                },
+                '_rep_date': {
+                    'type': 'date',
+                    'format': 'yyyy/M/d H:m:s.SSS',
                 },
                 'identifier': {
                     'type': 'integer',
@@ -89,6 +94,7 @@ class CumulativeEffectsHSLoader(BaseLoader):
         BaseLoader.__init__(self)
 
         self.filepath = None
+        self.datetime = None
         self.conn = ElasticsearchConnector(conn_config)
 
         SETTINGS['mappings'] = MAPPINGS
@@ -108,13 +114,20 @@ class CumulativeEffectsHSLoader(BaseLoader):
             data = json.load(f)['features']
 
         for feature in data:
-            rep_date = datetime.strptime(
+            self.datetime = datetime.strptime(
                 feature['properties']['rep_date'], '%Y/%m/%d %H:%M:%S'
             )
 
             # set ES index name for feature
-            es_index = '{}{}'.format(INDEX_BASENAME, rep_date.strftime('%Y'))
+            es_index = '{}{}'.format(
+                INDEX_BASENAME, self.datetime.strftime('%Y')
+            )
             feature['id'] = feature['properties']['identifier']
+
+            # add properties
+            feature['properties']['_rep_date'] = self.datetime.strftime(
+                '%Y/%m/%d %H:%M:%S.%f'
+            )[:-3]
 
             action = {
                 '_id': feature['properties']['identifier'],
@@ -157,23 +170,35 @@ def cumulative_effects_hs():
 @click.command()
 @click.pass_context
 @cli_options.OPTION_FILE()
+@cli_options.OPTION_DIRECTORY()
 @cli_options.OPTION_ELASTICSEARCH()
 @cli_options.OPTION_ES_USERNAME()
 @cli_options.OPTION_ES_PASSWORD()
 @cli_options.OPTION_ES_IGNORE_CERTS()
-def add(ctx, file_, es, username, password, ignore_certs):
+def add(ctx, file_, directory, es, username, password, ignore_certs):
     """add data to system"""
 
-    if file_ is None:
-        raise click.ClickException('Missing --file/-f')
+    if file_ is None and directory is None:
+        raise click.ClickException('Missing --file/-f or --dir/-d option')
 
     conn_config = configure_es_connection(es, username, password, ignore_certs)
 
-    loader = CumulativeEffectsHSLoader(conn_config)
-    result = loader.load_data(file_)
+    files_to_process = []
 
-    if not result:
-        click.echo('features not generated')
+    if file_ is not None:
+        files_to_process = [file_]
+    elif directory is not None:
+        for root, dirs, files in os.walk(directory):
+            for f in [f for f in files if f.endswith('.json')]:
+                files_to_process.append(os.path.join(root, f))
+        files_to_process.sort(key=os.path.getmtime)
+
+    for file_to_process in files_to_process:
+        loader = CumulativeEffectsHSLoader(conn_config)
+        result = loader.load_data(file_to_process)
+
+        if not result:
+            click.echo('features not generated')
 
 
 @click.command()
