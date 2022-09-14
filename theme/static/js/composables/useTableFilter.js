@@ -177,6 +177,8 @@ export default function useTableFilter(rows, keyColumns, defaultSortCol) {
         linksList += '<li><a href="' + element['href'] + '">' + element['title'] + '</a></li>'
       ) 
       return `${linksList}`
+    } else if (typeof row === 'object') {
+      return JSON.stringify(row[key], null, 2)
     } else {
       return row[key]
     }
