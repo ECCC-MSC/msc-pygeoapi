@@ -38,6 +38,7 @@ from msc_pygeoapi.log import setup_logger
 setup_logger(MSC_PYGEOAPI_LOGGING_LOGLEVEL, MSC_PYGEOAPI_LOGGING_LOGFILE)
 
 from msc_pygeoapi.loader import data  # noqa
+from msc_pygeoapi.loader import metadata  # noqa
 from msc_pygeoapi.process import process  # noqa
 
 
@@ -51,4 +52,5 @@ def cli():
 
 
 cli.add_command(data)
+cli.add_command(metadata)
 cli.add_command(process)

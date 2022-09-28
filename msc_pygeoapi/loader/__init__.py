@@ -34,11 +34,20 @@ import logging
 
 import click
 
+from msc_pygeoapi.loader.discovery_metadata import discovery_metadata
+
 LOGGER = logging.getLogger(__name__)
 
 
 @click.group()
 def data():
+    """Data publishing"""
+    pass
+
+
+@click.group()
+def metadata():
+    """Metadata publishing"""
     pass
 
 
@@ -65,7 +74,13 @@ for module, name in commands:
         mod = import_module(module)
         data.add_command(getattr(mod, name))
     except ImportError as err:
+        command_name = name.replace("_", "-")
         LOGGER.info(
-            f'msc-pygeoapi data {name.replace("_", "-")} command unavailable.'
+            'msc-pygeoapi data {} command unavailable.'.format(command_name)
         )
-        LOGGER.debug(f'Import error when loading {module}.{name}: {err}.')
+        module_name = '{}.{}'.format(module, name)
+        msg = 'Import error when loading {}: {}'.format(module_name, err)
+        LOGGER.debug(msg)
+
+
+metadata.add_command(discovery_metadata)

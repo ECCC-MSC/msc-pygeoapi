@@ -3,6 +3,7 @@ elasticsearch<8
 gdal
 lxml
 parse
+pygeometa
 pyproj
 python-slugify
 pyyaml

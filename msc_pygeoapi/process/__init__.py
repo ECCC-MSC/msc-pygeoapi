@@ -38,6 +38,7 @@ from msc_pygeoapi.process.weather import weather
 
 @click.group()
 def process():
+    """Processing workflow"""
     pass
 
 
