@@ -155,6 +155,17 @@ class ElasticsearchConnector(BaseConnector):
 
         return list(self.Elasticsearch.indices.get(pattern).keys())
 
+    def exists(self, index):
+        """
+        determines where an index exists
+
+        :param index: index name
+
+        :return: `bool` of result
+        """
+
+        return self.Elasticsearch.indices.exists(index)
+
     def delete(self, indexes):
         """
         delete ES index(es)
