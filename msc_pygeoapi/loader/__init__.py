@@ -3,7 +3,7 @@
 # Author: Tom Kralidis <tom.kralidis@canada.ca>
 #         Felix Laframboise <felix.laframboise@canada.ca>
 #
-# Copyright (c) 2019 Tom Kralidis
+# Copyright (c) 2022 Tom Kralidis
 # Copyright (c) 2021 Felix Laframboise
 #
 # Permission is hereby granted, free of charge, to any person

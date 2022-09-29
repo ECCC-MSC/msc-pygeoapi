@@ -70,7 +70,7 @@ class DiscoveryMetadataLoader(BaseLoader):
         self.conn = ElasticsearchConnector(conn_config)
         self.items = []
 
-        if not self.conn.indices.exists(INDEX_NAME):
+        if not self.conn.exists(INDEX_NAME):
             LOGGER.debug('Creating index {}'.format(INDEX_NAME))
             self.conn.create(INDEX_NAME, SETTINGS)
 
@@ -83,14 +83,23 @@ class DiscoveryMetadataLoader(BaseLoader):
         :returns: `bool` of status result
         """
 
-        identifier = json_dict['f']
+        identifier = json_dict['id']
 
         LOGGER.debug('Adding record {} to index {}'.format(identifier, INDEX_NAME))  # noqa
-        _ = self.conn.index(index=INDEX_NAME, id=identifier, body=json_dict)
+
+        package = {
+            '_id': identifier,
+            '_index': INDEX_NAME,
+            '_op_type': 'update',
+            'doc': json_dict,
+            'doc_as_upsert': True
+        }
+
+        self.conn.submit_elastic_package([package])
 
         return True
 
-    def generate_metadata(filepath):
+    def generate_metadata(self, filepath):
         """
         Generates discovery metadata based on MCF
 
@@ -100,11 +109,12 @@ class DiscoveryMetadataLoader(BaseLoader):
         """
 
         LOGGER.info('Processing MCF: {}'.format(filepath))
+        LOGGER.debug('HI')
 
         try:
             m = read_mcf(filepath)
         except Exception as err:
-            msg = 'ERROR {}'.format(err)
+            msg = 'ERROR: cannot read MCF: {}'.format(err)
             LOGGER.error(msg)
             raise
 
@@ -113,14 +123,14 @@ class DiscoveryMetadataLoader(BaseLoader):
         try:
             metadata = output_schema().write(m, stringify=False)
         except Exception as err:
-            msg = 'ERROR {}'.format(err)
+            msg = 'ERROR: cannot generate metadata: {}'.format(err)
             LOGGER.error(msg)
             raise
 
         return metadata
 
 
-@click.group()
+@click.group('discovery-metadata')
 def discovery_metadata():
     """Manages Discovery Metadata"""
     pass
@@ -147,6 +157,7 @@ def add(ctx, directory, es, username, password, ignore_certs):
     passed = 0
     failed = 0
 
+    click.echo('Processing discovery metadata in {}'.format(directory))
     for root, dirs, files in os.walk('{}/mcf'.format(directory)):
         for name in files:
             total += 1
@@ -155,18 +166,18 @@ def add(ctx, directory, es, username, password, ignore_certs):
                 continue
             mcf_file = ('{}/{}'.format(root, name))
             try:
+                click.echo('Processing MCF file {}'.format(mcf_file))
                 metadata = loader.generate_metadata(mcf_file)
                 _ = loader.load_data(metadata)
                 passed += 1
             except Exception as err:
                 failed += 1
-                msg = 'ERROR: {}'.format(err)
-                LOGGER.error(msg)
                 continue
 
-    LOGGER.debug('TOTAL: {}'.format(total))
-    LOGGER.debug('PASSED: {}'.format(passed))
-    LOGGER.debug('FAILED: {}'.format(failed))
+    click.echo('Results')
+    click.echo('Total: {}'.format(total))
+    click.echo('Passed: {}'.format(passed))
+    click.echo('Failed: {}'.format(failed))
 
 
 @click.command()
@@ -184,7 +195,7 @@ def delete_index(ctx, es, username, password, ignore_certs):
     conn_config = configure_es_connection(es, username, password, ignore_certs)
     conn = ElasticsearchConnector(conn_config)
 
-    if conn.indices.exists(INDEX_NAME):
+    if conn.exists(INDEX_NAME):
         click.echo('Deleting index {}'.format(INDEX_NAME))
         conn.delete(INDEX_NAME)
 
