@@ -183,7 +183,7 @@ class MetNotesRealtimeLoader(BaseLoader):
         fonction from base to load the data in ES
 
         :param filepath: filepath for parsing the current condition file
-        
+
         :returns: True/False
         """
 
@@ -202,23 +202,25 @@ class MetNotesRealtimeLoader(BaseLoader):
         else:
             for feature in data:
 
-                b_dt = datetime.strptime(feature['properties']['publication_datetime'],
-                                        '%Y-%m-%dT%H:%M:%S.%fZ')
+                b_dt = datetime.strptime(feature['properties']['publication_datetime'],  # noqa
+                                         '%Y-%m-%dT%H:%M:%S.%fZ')
                 b_dt2 = b_dt.strftime('%Y-%m-%d')
                 es_index = '{}{}'.format(INDEX_BASENAME, b_dt2)
 
-                id = f"{feature['id']}_{feature['properties']['publication_version']}"
+                id_ = '{}_{}'.format(
+                    feature['id'],
+                    feature['properties']['publication_version']
+                )
 
                 feature['properties']['id'] = feature['id']
                 feature['properties']['metnote_status'] = 'inactive'
                 feature['properties']['filename'] = self.filename
 
                 try:
-                    self.update_es_index(es_index, id, feature)
+                    self.update_es_index(es_index, id_, feature)
                 except Exception as err:
                     LOGGER.warning('Error indexing: {}'.format(err))
                     return False
-
 
         self.update_temporal_config()
         # update metnote status to active
@@ -259,8 +261,7 @@ class MetNotesRealtimeLoader(BaseLoader):
         updated_config = None
 
         latest_time = self.filename.split('_')[0]
-        latest_file_time = datetime.strptime(latest_time, 
-            DATETIME_FORMAT)
+        latest_file_time = datetime.strptime(latest_time, DATETIME_FORMAT)
 
         if self.config_file.exists():
             with self.config_file.open() as f:
@@ -308,14 +309,21 @@ class MetNotesRealtimeLoader(BaseLoader):
         returns: `bool` of update status
         """
 
-        query = {"script": {
-            "source": f"if(ctx._source.properties.filename == '{self.latest_file}')"
-                "{ctx._source.properties.metnote_status = 'active'}"
-                "else{ctx._source.properties.metnote_status = 'inactive'}",
-            "lang": "painless"
+        script_text = """
+            if (ctx._source.properties.filename == '{}' {{
+                ctx._source.properties.metnote_status = 'active'
             }}
+            else {{
+                tx._source.properties.metnote_status = 'inactive'
+            }}""".format(self.latest_file)
+
+        query = {
+            'script': script_text.strip(),
+            "lang": "painless"
+        }
+
         try:
-            self.conn.update_by_query(query, f'{INDEX_BASENAME}*')
+            self.conn.update_by_query(query, '{}*'.format(INDEX_BASENAME))
         except Exception as err:
             LOGGER.warning('{}: failed to update ES index'.format(err))
 
