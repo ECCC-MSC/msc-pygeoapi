@@ -6,5 +6,6 @@ build
 dist
 node_modules
 schemas.opengis.net
-*.env
+adb-msc-pygeoapi.env
 miniconda.sh
+dev.env
