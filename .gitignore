@@ -9,3 +9,4 @@ schemas.opengis.net
 adb-msc-pygeoapi.env
 miniconda.sh
 dev.env
+zarr-msc-pygeoapi.yml

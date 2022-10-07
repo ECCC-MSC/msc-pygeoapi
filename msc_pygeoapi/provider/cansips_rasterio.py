@@ -420,7 +420,7 @@ class CanSIPSProvider(BaseProvider):
             # Only the first timestep is returned
             if format_ == 'json':
 
-                if '/' in datetime_:
+                if datetime_ and '/' in datetime_:
                     err = 'Date range not yet supported for CovJSON output'
                     LOGGER.error(err)
                     raise ProviderQueryError(err)
@@ -431,6 +431,7 @@ class CanSIPSProvider(BaseProvider):
             else:
                 LOGGER.debug('Serializing data in memory')
                 out_meta.update(count=len(args['indexes']))
+                out_meta.update(DATA_ENCODING='IEEE_FLOATING_POINT')
                 with MemoryFile() as memfile:
                     with memfile.open(**out_meta, nbits=nbits) as dest:
                         dest.write(out_image)

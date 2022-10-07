@@ -279,7 +279,8 @@ class ElasticsearchConnector(BaseConnector):
         :return: `bool` of index update status
         """
 
-        self.Elasticsearch.update_by_query(body=query, index=name)
+        self.Elasticsearch.update_by_query(body=query, index=name,
+                                           refresh=True)
 
         return True
 

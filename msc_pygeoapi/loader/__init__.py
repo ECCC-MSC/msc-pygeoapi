@@ -29,29 +29,12 @@
 #
 # =================================================================
 
+from importlib import import_module
 import logging
 
 import click
 
 LOGGER = logging.getLogger(__name__)
-
-try:
-    from msc_pygeoapi.loader.bulletins_realtime import bulletins_realtime
-    from msc_pygeoapi.loader.citypageweather_realtime import citypageweather
-    from msc_pygeoapi.loader.hydat import hydat
-    from msc_pygeoapi.loader.ahccd import ahccd
-    from msc_pygeoapi.loader.hydrometric_realtime import hydrometric_realtime
-    from msc_pygeoapi.loader.hurricanes_realtime import hurricanes
-    from msc_pygeoapi.loader.forecast_polygons import forecast_polygons
-    from msc_pygeoapi.loader.marine_weather_realtime import marine_weather
-    from msc_pygeoapi.loader.cap_alerts_realtime import cap_alerts
-    from msc_pygeoapi.loader.swob_realtime import swob_realtime
-    from msc_pygeoapi.loader.aqhi_realtime import aqhi_realtime
-    from msc_pygeoapi.loader.ltce import ltce
-    from msc_pygeoapi.loader.climate_archive import climate_archive
-except ImportError as err:
-    LOGGER.info('loaders not imported')
-    LOGGER.debug(err)
 
 
 @click.group()
@@ -59,21 +42,30 @@ def data():
     pass
 
 
-# add load commands
-try:
-    data.add_command(bulletins_realtime)
-    data.add_command(citypageweather)
-    data.add_command(hydat)
-    data.add_command(hurricanes)
-    data.add_command(ahccd)
-    data.add_command(hydrometric_realtime)
-    data.add_command(forecast_polygons)
-    data.add_command(marine_weather)
-    data.add_command(cap_alerts)
-    data.add_command(swob_realtime)
-    data.add_command(aqhi_realtime)
-    data.add_command(ltce)
-    data.add_command(climate_archive)
-except NameError as err:
-    LOGGER.info('loaders not found')
-    LOGGER.debug(err)
+commands = (
+    ('msc_pygeoapi.loader.bulletins_realtime', 'bulletins_realtime'),
+    ('msc_pygeoapi.loader.citypageweather_realtime', 'citypageweather'),
+    ('msc_pygeoapi.loader.hydat', 'hydat'),
+    ('msc_pygeoapi.loader.ahccd', 'ahccd'),
+    ('msc_pygeoapi.loader.hydrometric_realtime', 'hydrometric_realtime'),
+    ('msc_pygeoapi.loader.hurricanes_realtime', 'hurricanes'),
+    ('msc_pygeoapi.loader.forecast_polygons', 'forecast_polygons'),
+    ('msc_pygeoapi.loader.marine_weather_realtime', 'marine_weather'),
+    ('msc_pygeoapi.loader.cap_alerts_realtime', 'cap_alerts'),
+    ('msc_pygeoapi.loader.swob_realtime', 'swob_realtime'),
+    ('msc_pygeoapi.loader.aqhi_realtime', 'aqhi_realtime'),
+    ('msc_pygeoapi.loader.ltce', 'ltce'),
+    ('msc_pygeoapi.loader.climate_archive', 'climate_archive'),
+    ('msc_pygeoapi.loader.metnotes', 'metnotes'),
+    ('msc_pygeoapi.loader.cumulative_effects_hs', 'cumulative_effects_hs')
+)
+
+for module, name in commands:
+    try:
+        mod = import_module(module)
+        data.add_command(getattr(mod, name))
+    except ImportError as err:
+        LOGGER.info(
+            f'msc-pygeoapi data {name.replace("_", "-")} command unavailable.'
+        )
+        LOGGER.debug(f'Import error when loading {module}.{name}: {err}.')

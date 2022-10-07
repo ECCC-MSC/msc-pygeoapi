@@ -30,6 +30,8 @@
 import click
 import logging
 
+from msc_pygeoapi.process.weather.extract_sounding_data import extract_sounding_data_execute  # noqa
+
 LOGGER = logging.getLogger(__name__)
 
 
@@ -51,6 +53,7 @@ def weather():
 
 
 weather.add_command(execute)
+weather.add_command(extract_sounding_data_execute)
 
 try:
     execute.add_command(extract_raster)
