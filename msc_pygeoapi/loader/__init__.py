@@ -74,7 +74,7 @@ for module, name in commands:
         mod = import_module(module)
         data.add_command(getattr(mod, name))
     except ImportError as err:
-        command_name = name.replace("_", "-")
+        command_name = name.replace('_', '-')
         LOGGER.info(
             'msc-pygeoapi data {} command unavailable.'.format(command_name)
         )
