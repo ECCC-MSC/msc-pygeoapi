@@ -105,11 +105,10 @@ class DiscoveryMetadataLoader(BaseLoader):
 
         :param filepath: path to MCF file on disk
 
-        :retgurns: `dict` of discovery metadata
+        :returns: `dict` of discovery metadata
         """
 
         LOGGER.info('Processing MCF: {}'.format(filepath))
-        LOGGER.debug('HI')
 
         try:
             m = read_mcf(filepath)
