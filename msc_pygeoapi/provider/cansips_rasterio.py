@@ -358,7 +358,7 @@ class CanSIPSProvider(BaseProvider):
             if 'dim_reference_time' in subsets:
                 year, month = subsets['dim_reference_time'][0].split('-')
             else:
-               year, month = self.get_latest_dim_reference_time() 
+                year, month = self.get_latest_dim_reference_time()
             num_months_1 = 1 + 12 * (self.member[0] - 1)
             num_months_2 = 12 + 12 * (self.member[0] - 1)
             bands = list(range(num_months_1, num_months_2 + 1))

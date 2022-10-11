@@ -2,10 +2,12 @@
 #
 # Author: Louis-Philippe Rousseau-Lambert
 #         <Louis-Philippe.RousseauLambert2@canada.ca>
-# Author: Tom Cooney <tom.cooney@canada.ca>
+#         Tom Cooney <tom.cooney@canada.ca>
+#         Tom Kralidis <tom.kralidis@ec.gc.ca>
 #
 # Copyright (c) 2019 Louis-Philippe Rousseau-Lambert
 # Copyright (c) 2021 Tom Cooney
+# Copyright (c) 2022 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -38,6 +40,7 @@ from msc_pygeoapi.process.weather import weather
 
 @click.group()
 def process():
+    """Processing workflow"""
     pass
 
 
