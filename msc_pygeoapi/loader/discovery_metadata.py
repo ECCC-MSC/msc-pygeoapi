@@ -170,7 +170,7 @@ def add(ctx, directory, es, username, password, ignore_certs):
                 metadata = loader.generate_metadata(mcf_file)
                 _ = loader.load_data(metadata)
                 passed += 1
-            except Exception as err:
+            except Exception:
                 failed += 1
                 continue
 
