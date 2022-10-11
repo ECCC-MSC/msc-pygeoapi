@@ -254,7 +254,7 @@ class CanSIPSProvider(BaseProvider):
 
         return rangetype
 
-    def query(self, range_subset=[1], subsets={'member': [1]}, bbox=[],
+    def query(self, range_subset=[1], subsets={}, bbox=[],
               datetime_=None, format_='json', **kwargs):
         """
         Extract data from collection collection
@@ -281,7 +281,11 @@ class CanSIPSProvider(BaseProvider):
             raise ProviderQueryError(err)
 
         self.get_file_list(var_list)
-        self.member = subsets['member']
+
+        try:
+            self.member = subsets['member']
+        except KeyError:
+            self.member = [1]
 
         args = {
             'indexes': None
@@ -339,20 +343,28 @@ class CanSIPSProvider(BaseProvider):
 
         bands = []
 
-        if 'dim_reference_time' in subsets:
-            year, month = subsets['dim_reference_time'][0].split('-')
-        else:
-            year, month = self.get_latest_dim_reference_time()
-
-        self.data = self.data.replace('2013', year)
-        self.data = self.data.replace('04', month)
-
         if datetime_:
+            if 'dim_reference_time' in subsets:
+                year, month = subsets['dim_reference_time'][0].split('-')
+            else:
+                year, month = datetime_.split('/')[0].split('-')
+                if month == '01':
+                    year = str(int(year) - 1)
+                    month = '12'
+                else:
+                    month = str(int(month) - 1).zfill(2)
             bands = self.get_band_datetime(datetime_, year, month)
         else:
+            if 'dim_reference_time' in subsets:
+                year, month = subsets['dim_reference_time'][0].split('-')
+            else:
+               year, month = self.get_latest_dim_reference_time() 
             num_months_1 = 1 + 12 * (self.member[0] - 1)
             num_months_2 = 12 + 12 * (self.member[0] - 1)
             bands = list(range(num_months_1, num_months_2 + 1))
+
+        self.data = self.data.replace('2013', year)
+        self.data = self.data.replace('04', month)
 
         LOGGER.debug('Selecting bands')
         args['indexes'] = bands
@@ -675,8 +687,8 @@ class CanSIPSProvider(BaseProvider):
         generate list of bands from dim_refenrece_time and datetime_
 
         :param datetime_: forecast time from the query
-        :param year: year from dim_refenrence_time
-        :param month: month from dim_refenrence_time
+        :param year: year from dim_reference_time
+        :param month: month from dim_reference_time
 
         :returns: list of bands
         """
