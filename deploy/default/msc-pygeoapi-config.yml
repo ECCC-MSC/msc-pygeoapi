@@ -2911,8 +2911,8 @@ resources:
               hreflang: en-CA
             - type: text/html
               rel: canonical
-              title: Niveau d'eau et débit - Environnement Canada
-              href: Données ouvertes du Service météorologique du Canada
+              title: Données ouvertes du Service météorologique du Canada
+              href: https://eccc-msc.github.io/open-data/msc-data/readme_fr
               hreflang: fr-CA
         extents:
             spatial:
