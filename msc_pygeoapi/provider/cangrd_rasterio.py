@@ -497,10 +497,10 @@ class CanGRDProvider(BaseProvider):
         LOGGER.debug('Creating CoverageJSON domain')
 
         # in the file we have http://www.opengis.net/def/crs/OGC/1.3//3995
-        # which is not valid, but we can update it to 
+        # which is not valid, but we can update it to
         # http://www.opengis.net/def/crs/EPSG/0/3995
         self._coverage_properties['bbox_crs'] = \
-                'http://www.opengis.net/def/crs/EPSG/0/3995'
+            'http://www.opengis.net/def/crs/EPSG/0/3995'
 
         if shapes:
             coordinates = shapes[0]['coordinates'][0]
@@ -508,8 +508,7 @@ class CanGRDProvider(BaseProvider):
             maxy = coordinates[0][1]
             maxx = coordinates[2][0]
             miny = coordinates[2][1]
-            
-        else:    
+        else:
             minx, miny, maxx, maxy = metadata['bbox']
 
         cj = {
