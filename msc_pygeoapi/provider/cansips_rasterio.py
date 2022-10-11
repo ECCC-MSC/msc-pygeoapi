@@ -493,7 +493,9 @@ class CanSIPSProvider(BaseProvider):
 
             parameter = {
                 'type': 'Parameter',
-                'description': pm['description'],
+                'description': {
+                    'en': pm['description']
+                },
                 'unit': {
                     'symbol': pm['unit_label']
                 },
