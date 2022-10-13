@@ -2896,6 +2896,34 @@ resources:
                   name: GRIB
                   mimetype: application/x-grib2
 
+    discovery-metadata:
+        type: collection
+        title: MSC discovery metadata
+        description: MSC dataset metadata inventory
+        keywords: [discovery, metadata, open data]
+        crs:
+            - CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title: Meteorological Service of Canada open data
+              href: https://eccc-msc.github.io/open-data/msc-data/readme_en
+              hreflang: en-CA
+            - type: text/html
+              rel: canonical
+              title: Données ouvertes du Service météorologique du Canada
+              href: https://eccc-msc.github.io/open-data/msc-data/readme_fr
+              hreflang: fr-CA
+        extents:
+            spatial:
+                bbox: [-142, 42, -52, 84]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        providers:
+            - type: record
+              name: ElasticsearchCatalogue
+              data: http://localhost:9200/discovery-metadata
+              id_field: identifier
+
     raster-drill:
         type: process
         processor:

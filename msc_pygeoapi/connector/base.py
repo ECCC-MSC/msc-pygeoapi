@@ -50,9 +50,26 @@ class BaseConnector:
         Create connection to connector
         """
 
-    def create(self):
+        raise NotImplementedError()
+
+    def exists(self, resource):
+        """
+        Determine whether a resource exists
+
+        :param resource: resource name
+
+        :returns: `bool`
+        """
+
+        raise NotImplementedError()
+
+    def create(self, resource):
         """
         Create a connector resource
+
+        :param resource: resource name
+
+        :returns: `bool` of creation result
         """
 
         raise NotImplementedError()
@@ -64,9 +81,13 @@ class BaseConnector:
 
         raise NotImplementedError()
 
-    def delete(self):
+    def delete(self, resources):
         """
         Delete connector resource(s)
+
+        :param resources: `list` of resource names
+
+        :returns: `bool` of deletion result
         """
 
         raise NotImplementedError()
