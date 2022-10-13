@@ -323,7 +323,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                 "type": "Coverage",
                 "domain:": self.get_coverage_domainset(),
                 "range": self.get_coverage_rangetype(),
-                "properties" : self._coverage_properties,
+                "properties" : self._coverage_properties
                 #TODO: add data (The literal data in the variable)             
             }
             return dict_to_return
