@@ -442,7 +442,7 @@ class CanGRDProvider(BaseProvider):
                 else:
                     LOGGER.debug('Creating output in CoverageJSON')
                     out_meta['bands'] = args['indexes']
-                    return self.gen_covjson(out_meta, out_image)
+                    return self.gen_covjson(out_meta, shapes, out_image)
             else:
                 if date_file_list:
                     LOGGER.debug('Serializing data in memory')
@@ -485,16 +485,31 @@ class CanGRDProvider(BaseProvider):
                         return memfile.read()
 
     # TODO: remove once pyproj is updated on bionic
-    def gen_covjson(self, metadata, data):
+    def gen_covjson(self, metadata, shapes, data):
         """
         Generate coverage as CoverageJSON representation
         :param metadata: coverage metadata
+        :param shapes: bbox in the data projection
         :param data: rasterio DatasetReader object
         :returns: dict of CoverageJSON representation
         """
 
         LOGGER.debug('Creating CoverageJSON domain')
-        minx, miny, maxx, maxy = metadata['bbox']
+
+        # in the file we have http://www.opengis.net/def/crs/OGC/1.3//3995
+        # which is not valid, but we can update it to
+        # http://www.opengis.net/def/crs/EPSG/0/3995
+        self._coverage_properties['bbox_crs'] = \
+            'http://www.opengis.net/def/crs/EPSG/0/3995'
+
+        if shapes:
+            coordinates = shapes[0]['coordinates'][0]
+            minx = coordinates[0][0]
+            maxy = coordinates[0][1]
+            maxx = coordinates[2][0]
+            miny = coordinates[2][1]
+        else:
+            minx, miny, maxx, maxy = metadata['bbox']
 
         cj = {
             'type': 'Coverage',
@@ -537,14 +552,16 @@ class CanGRDProvider(BaseProvider):
 
             parameter = {
                 'type': 'Parameter',
-                'description': pm['description'],
+                'description': {
+                    'en': str(pm['description'])
+                },
                 'unit': {
-                    'symbol': pm['unit_label']
+                    'symbol': str(pm['unit_label'])
                 },
                 'observedProperty': {
-                    'id': pm['observed_property_id'],
+                    'id': str(pm['observed_property_id']),
                     'label': {
-                        'en': pm['observed_property_name']
+                        'en': str(pm['observed_property_name'])
                     }
                 }
             }

@@ -155,6 +155,17 @@ class ElasticsearchConnector(BaseConnector):
 
         return list(self.Elasticsearch.indices.get(pattern).keys())
 
+    def exists(self, index):
+        """
+        determines where an index exists
+
+        :param index: index name
+
+        :return: `bool` of result
+        """
+
+        return self.Elasticsearch.indices.exists(index)
+
     def delete(self, indexes):
         """
         delete ES index(es)
@@ -209,14 +220,16 @@ class ElasticsearchConnector(BaseConnector):
 
         return True
 
-    def submit_elastic_package(self, package, request_size=10000):
+    def submit_elastic_package(
+        self, package, request_size=10000, refresh=False
+    ):
         """
         helper function to send an update request to Elasticsearch and
         log the status of the request. Returns True if the upload succeeded.
 
         :param package: Iterable of bulk API update actions.
         :param request_size: Number of documents to upload per request.
-
+        :param refresh: indicates whether to refresh the index
         :returns: `bool` of whether the operation was successful.
         """
 
@@ -232,6 +245,7 @@ class ElasticsearchConnector(BaseConnector):
                 chunk_size=request_size,
                 request_timeout=MSC_PYGEOAPI_ES_TIMEOUT,
                 raise_on_error=False,
+                refresh=refresh
             ):
                 if not ok:
                     errors.append(response)
