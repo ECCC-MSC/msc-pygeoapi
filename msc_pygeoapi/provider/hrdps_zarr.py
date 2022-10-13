@@ -30,9 +30,11 @@
 import json
 from glob import glob
 import logging
+from symbol import parameters
 import xarray
 import zarr
 import dask
+import io
 from pygeoapi.provider.base import (BaseProvider,
                                     ProviderConnectionError,
                                     ProviderNoDataError,
@@ -151,13 +153,18 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         parameter = {
             'array_dimensons': None,
             'coordinates': None,
-            'grid_mapping': None
+            'grid_mapping': None,
+            'long_name': None
+
             }
 
         if var_name in self._coverage_properties['variables']:
             parameter['array_dimensons'] = self._data[var_name].dims
             parameter['coordinates'] = self._data[var_name].coords # list of coordinate names
-            parameter
+            parameter['grid_mapping'] = self._data[var_name].attrs['grid_mapping'] # name of grid mapping variable
+            parameter['units'] = self._data[var_name].attrs['units']
+            parameter['long_name'] = self._data[var_name].attrs['long_name']
+            parameter['id'] = self._data[var_name].attrs['nomvar']
 
         return parameter
 
@@ -189,15 +196,6 @@ class HRDPSWEonGZarrProvider(BaseProvider):
 
         :returns: `dict` of metadata construct (format
                   determined by provider/standard)
-        """
-
-        raise NotImplementedError()
-
-    def query(self):
-        """
-        query the provider
-
-        :returns: dict of 0..n GeoJSON features or coverage data
         """
 
         raise NotImplementedError()
@@ -287,9 +285,51 @@ class HRDPSWEonGZarrProvider(BaseProvider):
 
         :returns: CIS JSON object of rangetype metadata
         """
+        #at 0 becuase we are only dealing with one variable (thats the way the data is structured, 1 zarr file per variable)
+        #TODO: make this more general (for multiple variables, run a for loop)
+        var_name = self._coverage_properties['variables'][0]
+        parameter_metadata = self._get_parameter_metadata(var_name)
+        
         rangetype = {
-            }
+            'type': 'RangeType',
+            'field': [
+                {
+                    'id': parameter_metadata['id'],
+                    'name': parameter_metadata['long_name'],
+                    'definition': parameter_metadata['units']
+                }
+            ]
+        }
+
         return rangetype
+
+
+
+    def query(self, bbox=None, datetime_=None, properties=None, format_= "json"):
+        """
+        query the provider
+
+        :returns: dict of 0..n GeoJSON features or coverage data
+        """
+        var_name = self._coverage_properties['variables'][0]
+        #for SINGLE varibale query
+        if format_ == "zarr":
+            return  json.dumps(self._data.to_zarr(encoding= dict))
+            
+
+        if format_ == "json":
+            dict_to_return = {
+
+                "type": "Coverage",
+                "domain:": self.get_coverage_domainset(),
+                "range": self.get_coverage_rangetype(),
+                "properties" : self._coverage_properties,
+                #TODO: add data (The literal data in the variable)             
+            }
+            return dict_to_return
+
+        raise NotImplementedError()
+
         
 
     def _load_and_prepare_item(self, item, identifier=None,
