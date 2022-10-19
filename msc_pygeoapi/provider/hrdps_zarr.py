@@ -30,11 +30,15 @@
 import json
 from glob import glob
 import logging
-from symbol import parameters
+from operator import le
+import tempfile
+import numpy
 import xarray
 import zarr
 import dask
-import io
+import pandas
+import os
+import zipfile
 from pygeoapi.provider.base import (BaseProvider,
                                     ProviderConnectionError,
                                     ProviderNoDataError,
@@ -197,6 +201,13 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         :returns: `dict` of metadata construct (format
                   determined by provider/standard)
         """
+        the_metadata = {
+            'name': self.name,
+            'type': self.type,
+            'coverage properties': self._coverage_properties
+        }
+
+        return the_metadata
 
         raise NotImplementedError()
 
@@ -250,11 +261,12 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         Provide coverage domainset
 
         :returns: CIS JSON object of domainset metadata
+        'CIS JSON': https://docs.opengeospatial.org/is/09-146r6/09-146r6.html#46
         """
         domainset = {
             'type': 'DomainSet',
             'generalGrid': {
-                'type': 'GeneralGridCoverage',
+                'type': 'GeneralGridCoverageType',
                 'srsName': self._coverage_properties['extent']['coordinate_reference_system'],
                 'axisLabels': self.axes,#self.axes
                 'axis': [
@@ -310,23 +322,78 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         query the provider
 
         :returns: dict of 0..n GeoJSON features or coverage data
+        :param bbox: bounding box [minx,miny,maxx,maxy]
+        :param datetime: temporal (datestamp or extent)
+        :param format_: data format of output
         """
         var_name = self._coverage_properties['variables'][0]
-        #for SINGLE varibale query
-        if format_ == "zarr":
-            return  json.dumps(self._data.to_zarr(encoding= dict))
-            
-
-        if format_ == "json":
+        var_metadata = self._get_parameter_metadata(var_name)
+        if datetime_ is not None:
+            #for SINGLE varibale query
+            bbox = [self._coverage_properties['extent']['minx'],self._coverage_properties['extent']['miny'],self._coverage_properties['extent']['maxx'],self._coverage_properties['extent']['maxy']]
+            if '/' not in datetime_:
+                query_data = self._data[var_name].sel(lat=slice(bbox[1],bbox[3]), lon=slice(bbox[0],bbox[2]), time=datetime_)
+            else:
+                start_date = datetime_.split('/')[0]
+                end_date = datetime_.split('/')[1]
+                query_data = self._data[var_name].sel(lat=slice(bbox[1],bbox[3]), lon=slice(bbox[0],bbox[2]), time=slice(start_date,end_date))
+            the_data = query_data.values
             dict_to_return = {
-
-                "type": "Coverage",
-                "domain:": self.get_coverage_domainset(),
-                "range": self.get_coverage_rangetype(),
-                "properties" : self._coverage_properties
-                #TODO: add data (The literal data in the variable)             
+                'meta': var_metadata,
+                'data': the_data.tolist()
             }
-            return dict_to_return
+        one_small_ds = self._data[var_name].isel(lat=0, lon=0, time=0, level = 0)
+        if format_ == "zarr":
+    
+            #the_file = self._data[var_name].to_dataset().to_zarr('test.zarr', mode='w')
+            #the_file = self._data[var_name].to_dataset()
+            #file_path = os.path.dirname("test.zarr")
+            new_dataset = self._data[var_name].to_dataset()
+            return _get_zarr_data(new_dataset)
+
+        the_2_data = self._data[var_name].values
+        data_len = len(the_2_data)
+        lst_to_return = []
+        for i in range(data_len):
+            lst_to_return.append(the_2_data[0].tolist())
+            the_2_data = numpy.delete(the_2_data, 0)
+        #return  json.dumps(self._data.to_zarr(encoding= dict_to_return))
+        
+        """the_date = pandas.to_datetime(str(self._data[var_name]['time'].max().values)).strftime('%Y-%m-%dT%H:%M:%S:%SZ')
+        data_len = len(self._data[var_name])
+        data_ls = []
+        for i in range(data_len):
+            the_data = self._data[var_name].values[i-1]
+            data_ls.append(the_data.tolist())"""
+        """the_values = []
+        len_of_values = len(self._data[var_name])
+        quater = int(len_of_values/4)
+        del len_of_values
+        q_count = 1
+        while q_count <= 4:
+            if q_count == 1:
+                quater_values = self._data[var_name].values[0:quater+1]
+                the_values.append(quater_values.tolist())
+                del quater_values
+
+            else:
+                quater_values = self._data[var_name].values[prev_quater:quater+1]
+                the_values.append(quater_values.tolist())
+                del quater_values
+            prev_quater = quater
+            quater = quater + quater
+            q_count = q_count + 1"""
+        
+        dict_to_return = {
+
+            "type": "Coverage",
+            "domain": self.get_coverage_domainset(),
+            "range": self.get_coverage_rangetype(),
+            "properties" : self._coverage_properties,
+            "data values": lst_to_return
+        }
+        return dict_to_return
+
 
         raise NotImplementedError()
 
@@ -451,3 +518,54 @@ class ProviderVersionError(ProviderGenericError):
 class ProviderInvalidDataError(ProviderGenericError):
     """provider invalid data error"""
     pass
+
+class NumpyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, numpy.ndarray):
+            return obj.tolist()
+        return json.JSONEncoder.default(self, obj)
+
+
+
+
+def _zip_dir(path, ziph, cwd):
+    """
+    source: xarray_.py
+        Convenience function to zip directory with sub directories
+        (based on source: https://stackoverflow.com/questions/1855095/)
+        :param path: str directory to zip
+        :param ziph: zipfile file
+        :param cwd: current working directory
+
+        """
+    for root, dirs, files in os.walk(path):
+        for file in files:
+
+            if len(dirs) < 1:
+                new_root = '/'.join(root.split('/')[:-1])
+                new_path = os.path.join(root.split('/')[-1], file)
+            else:
+                new_root = root
+                new_path = file
+
+            os.chdir(new_root)
+            ziph.write(new_path)
+            os.chdir(cwd)
+
+
+def _get_zarr_data(data):
+    """
+     source: xarray_.py
+       Returns bytes to read from Zarr directory zip
+       :param data: Xarray dataset of coverage data
+
+       :returns: byte array of zip data
+       """
+
+    tmp_dir = tempfile.TemporaryDirectory().name
+    data.to_zarr('{}zarr.zarr'.format(tmp_dir), mode='w')
+    with zipfile.ZipFile('{}zarr.zarr.zip'.format(tmp_dir),
+                         'w', zipfile.ZIP_DEFLATED) as zipf:
+        _zip_dir('{}zarr.zarr'.format(tmp_dir), zipf, os.getcwd())
+    zip_file = open('{}zarr.zarr.zip'.format(tmp_dir), 'rb')
+    return zip_file.read()
