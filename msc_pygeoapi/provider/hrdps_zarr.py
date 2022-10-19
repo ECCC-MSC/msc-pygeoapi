@@ -562,7 +562,7 @@ def _get_zarr_data(data):
        :returns: byte array of zip data
        """
 
-    tmp_dir = tempfile.TemporaryDirectory().name
+    tmp_dir = tempfile.TemporaryDirectory(dir='/ADANtmp')
     data.to_zarr('{}zarr.zarr'.format(tmp_dir), mode='w')
     with zipfile.ZipFile('{}zarr.zarr.zip'.format(tmp_dir),
                          'w', zipfile.ZIP_DEFLATED) as zipf:
