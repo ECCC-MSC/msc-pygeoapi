@@ -346,16 +346,9 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         one_small_ds = self._data[var_name].isel(lat=0, lon=0, time=0, level = 0)
         if format_ == "zarr":
             new_dataset = self._data[var_name].to_dataset()
-            bytes_data =  _get_zarr_data(new_dataset)
-            try:
-                files = glob.glob('/users/dor/afsw/adb/ADANtmp/*')
-                for f in files:
-                    try:
-                       shutil.rmtree(f)
-                    except:
-                        os.remove(f)
-            finally:
-                return bytes_data
+            return _get_zarr_data(new_dataset)
+   
+         
 
         data_vals = nummpyarray_to_json(self._data[var_name].values)
         dict_to_return = {
@@ -494,16 +487,6 @@ class ProviderInvalidDataError(ProviderGenericError):
     pass
 
 
-def _zip_dir(file_name, root_dir):
-    """
-        Convenience function to zip directory with sub directories
-        (based on source: https://stackoverflow.com/questions/1855095/)
-        :param path: str directory to zip
-        :param cwd: current working directory
-
-        """
-    shutil.make_archive(file_name, 'zip', root_dir)
-
 
 def _get_zarr_data(data):
     """
@@ -515,10 +498,10 @@ def _get_zarr_data(data):
 
     #tmp_dir = tempfile.TemporaryDirectory(dir='/users/dor/afsw/adb/ADANtmp')
     with tempfile.TemporaryDirectory(dir='/users/dor/afsw/adb/ADANtmp') as tmp_dir:
-        data.to_zarr(f'{tmp_dir}.zarr', mode='w')
-        _zip_dir(f'{tmp_dir}', root_dir = f'{tmp_dir}.zarr')
-        tmp_dir = open(f'{tmp_dir}.zip', 'rb')
-        return tmp_dir.read()
+        data.to_zarr(f'{tmp_dir}/final.zarr', mode='w')
+        #_zip_dir(f'{tmp_dir}', root_dir = f'{tmp_dir}.zarr')
+        shutil.make_archive(f'{tmp_dir}/finally', 'zip', f'{tmp_dir}/final.zarr')
+        return open(f'{tmp_dir}/finally.zip', 'rb').read()
 
 def nummpyarray_to_json(data_array):
     """
