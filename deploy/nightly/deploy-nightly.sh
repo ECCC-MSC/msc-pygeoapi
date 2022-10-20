@@ -3,7 +3,7 @@
 #
 # Author: Tom Kralidis <tom.kralidis@ec.gc.ca>
 #
-# Copyright (c) 2021 Tom Kralidis
+# Copyright (c) 2022 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -65,7 +65,7 @@ git clone $MSC_PYGEOAPI_GITREPO
 git clone $PYGEOAPI_GITREPO
 cd pygeoapi
 pip3 install -r requirements.txt
-pip3 install flask_cors elasticsearch
+pip3 install flask_cors elasticsearch elasticsearch-dsl
 python3 setup.py install
 cd ../msc-pygeoapi
 python3 setup.py install
