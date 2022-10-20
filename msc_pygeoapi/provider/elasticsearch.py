@@ -259,7 +259,8 @@ class ElasticsearchProvider(BaseProvider):
 
                 sp = sort['property']
 
-                if self.fields[sp]['type'] == 'string':
+                if (self.fields[sp]['type'] == 'string' and
+                        self.fields[sp].get('format') != 'date'):
                     LOGGER.debug('setting ES .raw on property')
                     sort_property = '{}.raw'.format(self.mask_prop(sp))
                 else:
@@ -505,7 +506,8 @@ class ElasticsearchCatalogueProvider(ElasticsearchProvider):
     def get_fields(self):
         fields = super().get_fields()
         for i in self._excludes():
-            del fields[i]
+            if i in fields:
+                del fields[i]
 
         fields['q'] = {'type': 'string'}
 
@@ -513,7 +515,8 @@ class ElasticsearchCatalogueProvider(ElasticsearchProvider):
 
     def query(self, offset=0, limit=10, resulttype='results',
               bbox=[], datetime_=None, properties=[], sortby=[],
-              select_properties=[], skip_geometry=False, q=None, **kwargs):
+              select_properties=[], skip_geometry=False, q=None,
+              filterq=None, **kwargs):
 
         records = super().query(
             offset=offset, limit=limit,
