@@ -65,7 +65,7 @@ git clone $MSC_PYGEOAPI_GITREPO
 git clone $PYGEOAPI_GITREPO
 cd pygeoapi
 pip3 install -r requirements.txt
-pip3 install flask_cors elasticsearch elasticsearch-dsl
+pip3 install flask_cors elasticsearch
 python3 setup.py install
 cd ../msc-pygeoapi
 python3 setup.py install
