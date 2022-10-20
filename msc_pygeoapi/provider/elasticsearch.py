@@ -506,7 +506,8 @@ class ElasticsearchCatalogueProvider(ElasticsearchProvider):
     def get_fields(self):
         fields = super().get_fields()
         for i in self._excludes():
-            del fields[i]
+            if i in fields:
+                del fields[i]
 
         fields['q'] = {'type': 'string'}
 
@@ -514,7 +515,8 @@ class ElasticsearchCatalogueProvider(ElasticsearchProvider):
 
     def query(self, offset=0, limit=10, resulttype='results',
               bbox=[], datetime_=None, properties=[], sortby=[],
-              select_properties=[], skip_geometry=False, q=None, **kwargs):
+              select_properties=[], skip_geometry=False, q=None,
+              filterq=None, **kwargs):
 
         records = super().query(
             offset=offset, limit=limit,
