@@ -31,6 +31,7 @@ import json
 from glob import glob
 import logging
 from operator import le
+import shutil
 import tempfile
 import numpy
 import xarray
@@ -317,7 +318,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
 
 
 
-    def query(self, bbox=None, datetime_=None, properties=None, format_= "json"):
+    def query(self, bbox=None, datetime_=None, format_= "json"):
         """
         query the provider
 
@@ -344,53 +345,23 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             }
         one_small_ds = self._data[var_name].isel(lat=0, lon=0, time=0, level = 0)
         if format_ == "zarr":
-    
-            #the_file = self._data[var_name].to_dataset().to_zarr('test.zarr', mode='w')
-            #the_file = self._data[var_name].to_dataset()
-            #file_path = os.path.dirname("test.zarr")
             new_dataset = self._data[var_name].to_dataset()
-            return _get_zarr_data(new_dataset)
+            bytes_data =  _get_zarr_data(new_dataset)
+            try:
+                files = glob.glob('/users/dor/afsw/adb/ADANtmp/*')
+                for f in files:
+                    os.remove(f)
+            finally:
+                return bytes_data
 
-        the_2_data = self._data[var_name].values
-        data_len = len(the_2_data)
-        lst_to_return = []
-        for i in range(data_len):
-            lst_to_return.append(the_2_data[0].tolist())
-            the_2_data = numpy.delete(the_2_data, 0)
-        #return  json.dumps(self._data.to_zarr(encoding= dict_to_return))
-        
-        """the_date = pandas.to_datetime(str(self._data[var_name]['time'].max().values)).strftime('%Y-%m-%dT%H:%M:%S:%SZ')
-        data_len = len(self._data[var_name])
-        data_ls = []
-        for i in range(data_len):
-            the_data = self._data[var_name].values[i-1]
-            data_ls.append(the_data.tolist())"""
-        """the_values = []
-        len_of_values = len(self._data[var_name])
-        quater = int(len_of_values/4)
-        del len_of_values
-        q_count = 1
-        while q_count <= 4:
-            if q_count == 1:
-                quater_values = self._data[var_name].values[0:quater+1]
-                the_values.append(quater_values.tolist())
-                del quater_values
-
-            else:
-                quater_values = self._data[var_name].values[prev_quater:quater+1]
-                the_values.append(quater_values.tolist())
-                del quater_values
-            prev_quater = quater
-            quater = quater + quater
-            q_count = q_count + 1"""
-        
+        data_vals = nummpyarray_to_json(self._data[var_name].values)
         dict_to_return = {
 
             "type": "Coverage",
             "domain": self.get_coverage_domainset(),
             "range": self.get_coverage_rangetype(),
             "properties" : self._coverage_properties,
-            "data values": lst_to_return
+            "data values": data_vals
         }
         return dict_to_return
 
@@ -519,14 +490,6 @@ class ProviderInvalidDataError(ProviderGenericError):
     """provider invalid data error"""
     pass
 
-class NumpyEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, numpy.ndarray):
-            return obj.tolist()
-        return json.JSONEncoder.default(self, obj)
-
-
-
 
 def _zip_dir(path, ziph, cwd):
     """
@@ -562,10 +525,24 @@ def _get_zarr_data(data):
        :returns: byte array of zip data
        """
 
-    tmp_dir = tempfile.TemporaryDirectory(dir='/ADANtmp')
-    data.to_zarr('{}zarr.zarr'.format(tmp_dir), mode='w')
-    with zipfile.ZipFile('{}zarr.zarr.zip'.format(tmp_dir),
-                         'w', zipfile.ZIP_DEFLATED) as zipf:
-        _zip_dir('{}zarr.zarr'.format(tmp_dir), zipf, os.getcwd())
-    zip_file = open('{}zarr.zarr.zip'.format(tmp_dir), 'rb')
-    return zip_file.read()
+    #tmp_dir = tempfile.TemporaryDirectory(dir='/users/dor/afsw/adb/ADANtmp')
+    with tempfile.TemporaryDirectory(dir='/users/dor/afsw/adb/ADANtmp') as tmp_dir:
+        data.to_zarr(f'{tmp_dir}.zarr', mode='w')
+        with zipfile.ZipFile(f'{tmp_dir}.zarr.zip','w', zipfile.ZIP_DEFLATED) as zipf:
+            _zip_dir(f'{tmp_dir}.zarr', zipf, os.getcwd())
+            tmp_dir = open(f'{tmp_dir}.zarr.zip', 'rb')
+            return tmp_dir.read()
+
+def nummpyarray_to_json(data_array):
+    """
+    Converts numpy array to list (which is json serializable)
+    :param data: numpy array
+    :returns: list
+    """
+
+    data_len = len(data_array)
+    lst_to_return = []
+    for i in range(data_len):
+        lst_to_return.append(data_array[0].tolist())
+        data_array = numpy.delete(data_array, 0)
+    return lst_to_return
