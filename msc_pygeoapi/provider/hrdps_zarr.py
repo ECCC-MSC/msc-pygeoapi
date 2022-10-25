@@ -330,7 +330,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         """
         var_name = self._coverage_properties['variables'][0]
         var_metadata = self._get_parameter_metadata(var_name)
-        var_coords = self.axes
+        var_dims = self._coverage_properties['dimensions']
         var_time = self._data[var_name]["time"].values
 
         query_return = {}
@@ -340,19 +340,26 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         else:
 
             if subsets != {}:
-                slice_coords = {}
-                for coord, value in subsets.items():
-                    if coord in var_coords:
-                        slice_coords[coord] = value
+                for dim, value in subsets.items():
+                    if dim in var_dims:
+                        if ":" in value:
+                            start = float(value.split(":")[0])
+                            end = float(value.split(":")[1])
+                            query_return[dim] = slice(start, end)
+                        else:
+                            query_return[dim] = value
                     else:
-                        raise Exception('Invalid dimension name')
-                query_return["coordinates"] = slice_coords
+                        msg = f"Invalid Dimension name (Dimension {dim} not found)"
+                        LOGGER.error(msg)
+                        raise Exception(msg)
                 #data_vals = _nummpyarray_to_json(self._data[var_name].sel(**slice_coords).values)
 
 
             if bbox != []:
                 if bbox[0] < self._coverage_properties['extent']['minx'] or bbox[1] < self._coverage_properties['extent']['miny'] or bbox[2] > self._coverage_properties['extent']['maxx'] or bbox[3] > self._coverage_properties['extent']['maxy']:
-                    raise Exception('Invalid bounding box')
+                    msg = "Invalid bounding box (Vlaues must fit within the coverage extent)"
+                    LOGGER.error(msg)
+                    raise Exception(msg)
                 else:
                     query_return["lat"] = slice(bbox[1], bbox[3])
                     query_return["lon"] = slice(bbox[0], bbox[2])
