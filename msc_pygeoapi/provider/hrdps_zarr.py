@@ -1,8 +1,8 @@
 # =================================================================
 #
-# Authors: Tom Kralidis <tomkralidis@gmail.com>
+# Authors: Adan Butt <Adan.Butt@ec.gc.ca>
 #
-# Copyright (c) 2022 Tom Kralidis
+# Copyright (c) 2022 Adan Butt
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -318,7 +318,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
 
 
 
-    def query(self, bbox=None, datetime_=None, format_= "json"):
+    def query(self, bbox=[], datetime_=None, subsets = {}, format_= "json"):
         """
         query the provider
 
@@ -326,38 +326,63 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         :param bbox: bounding box [minx,miny,maxx,maxy]
         :param datetime: temporal (datestamp or extent)
         :param format_: data format of output
+        #TODO: add 'application/zip' for mimetype under format in the config file
         """
         var_name = self._coverage_properties['variables'][0]
         var_metadata = self._get_parameter_metadata(var_name)
-        if datetime_ is not None:
-            #for SINGLE varibale query
-            bbox = [self._coverage_properties['extent']['minx'],self._coverage_properties['extent']['miny'],self._coverage_properties['extent']['maxx'],self._coverage_properties['extent']['maxy']]
-            if '/' not in datetime_:
-                query_data = self._data[var_name].sel(lat=slice(bbox[1],bbox[3]), lon=slice(bbox[0],bbox[2]), time=datetime_)
-            else:
-                start_date = datetime_.split('/')[0]
-                end_date = datetime_.split('/')[1]
-                query_data = self._data[var_name].sel(lat=slice(bbox[1],bbox[3]), lon=slice(bbox[0],bbox[2]), time=slice(start_date,end_date))
-            the_data = query_data.values
-            dict_to_return = {
-                'meta': var_metadata,
-                'data': the_data.tolist()
-            }
-        one_small_ds = self._data[var_name].isel(lat=0, lon=0, time=0, level = 0)
-        if format_ == "zarr":
-            new_dataset = self._data[var_name].to_dataset()
-            return _get_zarr_data(new_dataset)
-   
-         
+        var_coords = self.axes
+        var_time = self._data[var_name]["time"].values
 
-        data_vals = nummpyarray_to_json(self._data[var_name].values)
+        query_return = {}
+        if subsets == {} and bbox == [] and datetime_ == None:
+            data_vals = self._data[var_name]
+
+        else:
+
+            if subsets != {}:
+                slice_coords = {}
+                for coord, value in subsets.items():
+                    if coord in var_coords:
+                        slice_coords[coord] = value
+                    else:
+                        raise Exception('Invalid dimension name')
+                query_return["coordinates"] = slice_coords
+                #data_vals = _nummpyarray_to_json(self._data[var_name].sel(**slice_coords).values)
+
+
+            if bbox != []:
+                if bbox[0] < self._coverage_properties['extent']['minx'] or bbox[1] < self._coverage_properties['extent']['miny'] or bbox[2] > self._coverage_properties['extent']['maxx'] or bbox[3] > self._coverage_properties['extent']['maxy']:
+                    raise Exception('Invalid bounding box')
+                else:
+                    query_return["lat"] = slice(bbox[1], bbox[3])
+                    query_return["lon"] = slice(bbox[0], bbox[2])
+                #data_vals = self._data[var_name].sel(**query_return)
+            if datetime_ is not None:
+            
+                if '/' not in datetime_: #single date
+                    query_return["time"] = datetime_
+                    #data_vals = self._data[var_name].sel(**query_return)
+                else:
+                    start_date = datetime_.split('/')[0]
+                    end_date = datetime_.split('/')[1]
+                    query_return["time"] = slice(start_date, end_date)
+            one_small_ds = self._data[var_name].isel(lat=0, lon=0, time=slice(0,1), level = 0)
+    
+            data_vals = self._data[var_name].sel(**query_return)
+
+        if format_ == "zarr":
+            #new_dataset = self._data[var_name].to_dataset()
+            new_dataset = data_vals.to_dataset()
+            return _get_zarr_data(new_dataset)
+
+        
         dict_to_return = {
 
             "type": "Coverage",
             "domain": self.get_coverage_domainset(),
             "range": self.get_coverage_rangetype(),
             "properties" : self._coverage_properties,
-            "data values": data_vals
+            "data values":  _nummpyarray_to_json(data_vals.values)
         }
         return dict_to_return
 
@@ -488,6 +513,7 @@ class ProviderInvalidDataError(ProviderGenericError):
 
 
 
+
 def _get_zarr_data(data):
     """
        Returns bytes to read from Zarr directory zip
@@ -501,9 +527,10 @@ def _get_zarr_data(data):
         data.to_zarr(f'{tmp_dir}/final.zarr', mode='w')
         #_zip_dir(f'{tmp_dir}', root_dir = f'{tmp_dir}.zarr')
         shutil.make_archive(f'{tmp_dir}/finally', 'zip', f'{tmp_dir}/final.zarr')
+        #TODO: _CRS missing becuase that needs to be added to the .zattrs file for variables
         return open(f'{tmp_dir}/finally.zip', 'rb').read()
 
-def nummpyarray_to_json(data_array):
+def _nummpyarray_to_json(data_array):
     """
     Converts numpy array to list (which is json serializable)
     :param data: numpy array
