@@ -31,6 +31,7 @@ import json
 from glob import glob
 import logging
 from operator import le
+from re import M
 import shutil
 import tempfile
 import numpy
@@ -74,7 +75,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             self._coverage_properties = self._get_coverage_properties()
 
             # for coverage providers
-            self.axes = self._coverage_properties['axis']
+            self.axes = self._coverage_properties['dimensions']
             self.crs = self._coverage_properties['crs']
             #self.num_bands = None #TODO Am I setting the num_bands as the number of variables?
 
@@ -139,8 +140,8 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                 'height': int(self._data.lat.size)
                 },
             'resolution': {
-                'x': float(abs((self._data.lon[1] - self._data.lon[0]).values)),
-                'y': float(abs((self._data.lat[1] - self._data.lat[0]).values))
+                'x': float(abs(self._data.lon[1] - self._data.lon[0])),
+                'y': float(abs(self._data.lat[1] - self._data.lat[0]))
                 },
             'variables': all_variables,
             'dimensions': all_dimensions
@@ -202,11 +203,11 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         :returns: `dict` of metadata construct (format
                   determined by provider/standard)
         """
-        the_metadata = {
+        '''the_metadata = {
             'name': self.name,
             'type': self.type,
             'coverage properties': self._coverage_properties
-        }
+        }'''
 
         return the_metadata
 
@@ -297,6 +298,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         Provide coverage rangetype
 
         :returns: CIS JSON object of rangetype metadata
+        'CIS JSON': https://docs.opengeospatial.org/is/09-146r6/09-146r6.html#46
         """
         #at 0 becuase we are only dealing with one variable (thats the way the data is structured, 1 zarr file per variable)
         #TODO: make this more general (for multiple variables, run a for loop)
@@ -327,6 +329,8 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         :param datetime: temporal (datestamp or extent)
         :param format_: data format of output
         #TODO: add 'application/zip' for mimetype under format in the config file
+        #NOTE:  do we want to add if query will use 'method' 'nearest' when not given a range to slice (given points instead)
+        #NOTE: If 'lat' and 'lon' in 'subsets' and 'bbox' exists, then 'bbox' values will be used
         """
         var_name = self._coverage_properties['variables'][0]
         var_metadata = self._get_parameter_metadata(var_name)
@@ -334,6 +338,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         var_time = self._data[var_name]["time"].values
 
         query_return = {}
+        #return LOGGER.error(type(subsets["level"][1]))
         if subsets == {} and bbox == [] and datetime_ == None:
             data_vals = self._data[var_name]
 
@@ -342,12 +347,14 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             if subsets != {}:
                 for dim, value in subsets.items():
                     if dim in var_dims:
-                        if ":" in value:
-                            start = float(value.split(":")[0])
-                            end = float(value.split(":")[1])
-                            query_return[dim] = slice(start, end)
+                        if len(value) == 2:
+                            query_return[dim] = slice(value[0], value[1])
+                        #elif len(value) == 1:
+                            #query_return[dim] = value[0]
                         else:
-                            query_return[dim] = value
+                            msg = "Invalid subset value, values must be well-defined range"
+                            LOGGER.error(msg)
+                            raise Exception(msg)
                     else:
                         msg = f"Invalid Dimension name (Dimension {dim} not found)"
                         LOGGER.error(msg)
@@ -374,7 +381,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                     end_date = datetime_.split('/')[1]
                     query_return["time"] = slice(start_date, end_date)
             one_small_ds = self._data[var_name].isel(lat=0, lon=0, time=slice(0,1), level = 0)
-    
+
             data_vals = self._data[var_name].sel(**query_return)
 
         if format_ == "zarr":
@@ -523,13 +530,14 @@ class ProviderInvalidDataError(ProviderGenericError):
 
 def _get_zarr_data(data):
     """
+    Helper function to convert a xarray dataset to zip of zarr
        Returns bytes to read from Zarr directory zip
        :param data: Xarray dataset of coverage data
 
        :returns: byte array of zip data
        """
 
-    #tmp_dir = tempfile.TemporaryDirectory(dir='/users/dor/afsw/adb/ADANtmp')
+    #TODO: set the temp directory path
     with tempfile.TemporaryDirectory(dir='/users/dor/afsw/adb/ADANtmp') as tmp_dir:
         data.to_zarr(f'{tmp_dir}/final.zarr', mode='w')
         #_zip_dir(f'{tmp_dir}', root_dir = f'{tmp_dir}.zarr')
@@ -539,6 +547,7 @@ def _get_zarr_data(data):
 
 def _nummpyarray_to_json(data_array):
     """
+    Helper function to convert numpy array to json
     Converts numpy array to list (which is json serializable)
     :param data: numpy array
     :returns: list
