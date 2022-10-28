@@ -37,6 +37,8 @@ export MSC_PYGEOAPI_OGC_API_URL_BASEPATH=/
 export MSC_PYGEOAPI_TEMPLATES=/data/web/msc-pygeoapi-nightly/latest/msc-pygeoapi/theme/templates
 export MSC_PYGEOAPI_STATIC=/data/web/msc-pygeoapi-nightly/latest/msc-pygeoapi/theme/static
 export MSC_PYGEOAPI_OGC_SCHEMAS_LOCATION=/data/web/msc-pygeoapi-nightly/latest/schemas.opengis.net
+export GEOMET_DDI_BASEPATH=/data/geomet/feeds/ddi
+export GEOMET_SCIENCE_BASEPATH=/data/geomet/feeds/local/SCIENCE
 
 # you should be okay from here
 
