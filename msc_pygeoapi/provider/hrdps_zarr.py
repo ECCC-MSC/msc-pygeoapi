@@ -30,8 +30,6 @@
 import json
 from glob import glob
 import logging
-from operator import le
-from re import M
 import shutil
 import tempfile
 import numpy
@@ -209,7 +207,6 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             'coverage properties': self._coverage_properties
         }'''
 
-        return the_metadata
 
         raise NotImplementedError()
 
@@ -329,8 +326,9 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         :param datetime: temporal (datestamp or extent)
         :param format_: data format of output
         #TODO: add 'application/zip' for mimetype under format in the config file
-        #NOTE:  do we want to add if query will use 'method' 'nearest' when not given a range to slice (given points instead)
+        #NOTE: do we want to add if query will use 'method' 'nearest' when not given a range to slice (given points instead)
         #NOTE: If 'lat' and 'lon' in 'subsets' and 'bbox' exists, then 'bbox' values will be used
+        #NOTE: format_ = zarr, will return a zip file containg zarr not a zarr itself
         """
         var_name = self._coverage_properties['variables'][0]
         var_metadata = self._get_parameter_metadata(var_name)
@@ -338,7 +336,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         var_time = self._data[var_name]["time"].values
 
         query_return = {}
-        #return LOGGER.error(type(subsets["level"][1]))
+        #return LOGGER.error(type(datetime_), datetime_)
         if subsets == {} and bbox == [] and datetime_ == None:
             data_vals = self._data[var_name]
 
@@ -347,7 +345,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             if subsets != {}:
                 for dim, value in subsets.items():
                     if dim in var_dims:
-                        if len(value) == 2:
+                        if len(value) == 2 and (value[0] is int or float) and (value[1] is int or float):
                             query_return[dim] = slice(value[0], value[1])
                         #elif len(value) == 1:
                             #query_return[dim] = value[0]
@@ -355,7 +353,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                             msg = "Invalid subset value, values must be well-defined range"
                             LOGGER.error(msg)
                             raise Exception(msg)
-                    else:
+                    else: #redundant check (done in api.py)
                         msg = f"Invalid Dimension name (Dimension {dim} not found)"
                         LOGGER.error(msg)
                         raise Exception(msg)
@@ -383,7 +381,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             one_small_ds = self._data[var_name].isel(lat=0, lon=0, time=slice(0,1), level = 0)
 
             data_vals = self._data[var_name].sel(**query_return)
-
+        #return LOGGER.error(data_vals.values)
         if format_ == "zarr":
             #new_dataset = self._data[var_name].to_dataset()
             new_dataset = data_vals.to_dataset()
@@ -552,9 +550,13 @@ def _nummpyarray_to_json(data_array):
     :param data: numpy array
     :returns: list
     """
+    
 
     data_len = len(data_array)
     lst_to_return = []
+    #return LOGGER.error(data_array,data_len, type(data_len))
+    if 0 in data_array.shape:
+        return lst_to_return
     for i in range(data_len):
         lst_to_return.append(data_array[0].tolist())
         data_array = numpy.delete(data_array, 0)
