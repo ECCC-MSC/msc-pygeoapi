@@ -1,3 +1,9 @@
+msc-pygeoapi (0.10.4) focal; urgency=medium
+
+  * release ES dependency to allow for ES 8 server
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Wed, 02 Nov 2022 22:12:35 +0000
+
 msc-pygeoapi (0.10.3) bionic; urgency=medium
 
   * moving version logic to build stage
