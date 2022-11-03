@@ -327,8 +327,10 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         :param format_: data format of output
         #TODO: add 'application/zip' for mimetype under format in the config file
         #NOTE: do we want to add if query will use 'method' 'nearest' when not given a range to slice (given points instead)
-        #NOTE: If 'lat' and 'lon' in 'subsets' and 'bbox' exists, then 'bbox' values will be used
+        #NOTE: If 'lat' and 'lon' in 'subsets' and 'bbox' exists, throws ERROR
         #NOTE: format_ = zarr, will return a zip file containg zarr not a zarr itself
+        #TODO: antimeridian bbox
+        #TODO: What is the deafult limit of dataset (set it to a quater of the dataset along each dimension)
         """
         var_name = self._coverage_properties['variables'][0]
         var_metadata = self._get_parameter_metadata(var_name)
@@ -338,7 +340,11 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         query_return = {}
         #return LOGGER.error(type(datetime_), datetime_)
         if subsets == {} and bbox == [] and datetime_ == None:
-            data_vals = self._data[var_name]
+            for dim in var_dims:
+                #get quater of the dataset along each dimension
+                query_return[dim] = len(self._data[var_name][dim].values)/4
+            data_vals = self._data[var_name].isel(**query_return)
+
 
         else:
 
@@ -362,7 +368,11 @@ class HRDPSWEonGZarrProvider(BaseProvider):
 
             if bbox != []:
                 if bbox[0] < self._coverage_properties['extent']['minx'] or bbox[1] < self._coverage_properties['extent']['miny'] or bbox[2] > self._coverage_properties['extent']['maxx'] or bbox[3] > self._coverage_properties['extent']['maxy']:
-                    msg = "Invalid bounding box (Vlaues must fit within the coverage extent)"
+                    msg = "Invalid bounding box (Values must fit within the coverage extent)"
+                    LOGGER.error(msg)
+                    raise Exception(msg)
+                elif "lat" in query_return or "lon" in query_return:
+                    msg = "Invalid subset (Cannot subset by both 'lat' and 'lon' and 'bbox')"
                     LOGGER.error(msg)
                     raise Exception(msg)
                 else:
