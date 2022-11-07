@@ -340,10 +340,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         query_return = {}
         #return LOGGER.error(type(datetime_), datetime_)
         if subsets == {} and bbox == [] and datetime_ == None:
-            for dim in var_dims:
-                #get quater of the dataset along each dimension
-                query_return[dim] = len(self._data[var_name][dim].values)/4
-            data_vals = self._data[var_name].isel(**query_return)
+            data_vals = self._data[var_name].isel(time = 0)
 
 
         else:
