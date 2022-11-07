@@ -330,7 +330,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         #NOTE: If 'lat' and 'lon' in 'subsets' and 'bbox' exists, throws ERROR
         #NOTE: format_ = zarr, will return a zip file containg zarr not a zarr itself
         #TODO: antimeridian bbox
-        #TODO: What is the deafult limit of dataset (set it to a quater of the dataset along each dimension)
+        #TODO: What is the deafult limit of dataset (set it to a first 25 values of the dataset along each dimension)
         """
         var_name = self._coverage_properties['variables'][0]
         var_metadata = self._get_parameter_metadata(var_name)
@@ -340,7 +340,9 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         query_return = {}
         #return LOGGER.error(type(datetime_), datetime_)
         if subsets == {} and bbox == [] and datetime_ == None:
-            data_vals = self._data[var_name].isel(time = 0)
+            for dim in var_dims:
+                query_return[dim] = 25
+            data_vals = self._data[var_name].head(**query_return)
 
 
         else:
@@ -557,13 +559,12 @@ def _nummpyarray_to_json(data_array):
     :param data: numpy array
     :returns: list
     """
-    
 
-    data_len = len(data_array)
     lst_to_return = []
-    #return LOGGER.error(data_array,data_len, type(data_len))
+    #checks to make sure values exist in the array
     if 0 in data_array.shape:
         return lst_to_return
+    data_len = len(data_array)
     for i in range(data_len):
         lst_to_return.append(data_array[0].tolist())
         data_array = numpy.delete(data_array, 0)
