@@ -396,7 +396,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             new_dataset = data_vals.to_dataset()
             return _get_zarr_data(new_dataset)
 
-        
+
         dict_to_return = {
 
             "type": "Coverage",
@@ -569,3 +569,21 @@ def _nummpyarray_to_json(data_array):
         lst_to_return.append(data_array[0].tolist())
         data_array = numpy.delete(data_array, 0)
     return lst_to_return
+
+
+def _gennumpy(data_array):
+    """
+    Helper function to convert numpy array to json
+    Converts numpy array to list (which is json serializable)
+    :param data: numpy array
+    :returns: generator
+    """
+
+    #checks to make sure values exist in the array
+    if 0 in data_array.shape:
+        return []
+    data_len = len(data_array)
+    for i in range(data_len):
+        yield (data_array[0].tolist())
+        data_array = numpy.delete(data_array, 0)
+    
