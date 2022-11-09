@@ -52,6 +52,8 @@ os.environ['MSC_PYGEOAPI_OGC_API_URL_BASEPATH'] = '/'
 os.environ['MSC_PYGEOAPI_TEMPLATES'] = '/opt/msc-pygeoapi/theme/templates'
 os.environ['MSC_PYGEOAPI_STATIC'] = '/opt/msc-pygeoapi/theme/static'
 os.environ['MSC_PYGEOAPI_OGC_SCHEMAS_LOCATION'] = '/opt/msc-pygeoapi/schemas.opengis.net'
+os.environ['GEOMET_DDI_BASEPATH'] = '/data/geomet/feeds/ddi'
+os.environ['GEOMET_SCIENCE_BASEPATH'] = '/data/geomet/feeds/local/SCIENCE'
 
 
 from pygeoapi.flask_app import APP as application

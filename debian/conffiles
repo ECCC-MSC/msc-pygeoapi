@@ -6,3 +6,4 @@
 /opt/msc-pygeoapi/etc/sarracenia/marine_weather.conf
 /opt/msc-pygeoapi/etc/sarracenia/swob-realtime.conf
 /opt/msc-pygeoapi/etc/sarracenia/aqhi-realtime.conf
+/opt/msc-pygeoapi/etc/sarracenia/metnotes.conf
