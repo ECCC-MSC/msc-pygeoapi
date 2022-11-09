@@ -330,7 +330,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         #NOTE: If 'lat' and 'lon' in 'subsets' and 'bbox' exists, throws ERROR
         #NOTE: format_ = zarr, will return a zip file containg zarr not a zarr itself
         #TODO: antimeridian bbox
-        #TODO: What is the deafult limit of dataset (set it to a first 25 values of the dataset along each dimension)
+        #TODO: What is the deafult limit of dataset (set it to a first 10 values of the dataset along each dimension)
         """
         var_name = self._coverage_properties['variables'][0]
         var_metadata = self._get_parameter_metadata(var_name)
@@ -341,7 +341,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         #return LOGGER.error(type(datetime_), datetime_)
         if subsets == {} and bbox == [] and datetime_ == None:
             for dim in var_dims:
-                query_return[dim] = 25
+                query_return[dim] = 10
             data_vals = self._data[var_name].head(**query_return)
 
 
