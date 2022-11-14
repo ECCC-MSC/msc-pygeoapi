@@ -263,14 +263,14 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         'CIS JSON': https://docs.opengeospatial.org/is/09-146r6/09-146r6.html#46
         """
         domainset = {
-            'type': 'DomainSet',
+            'type': 'DomainSetType',
             'generalGrid': {
                 'type': 'GeneralGridCoverageType',
                 'srsName': self._coverage_properties['extent']['coordinate_reference_system'],
                 'axisLabels': self.axes,#self.axes
                 'axis': [
-                    {"lowerBound": self._coverage_properties['extent']['minx'], "upperBound": self._coverage_properties['extent']['maxx'], "resolution": self._coverage_properties['resolution']['x'] }, #for extent and resolution
-                    {"lowerBound": self._coverage_properties['extent']['miny'], "upperBound": self._coverage_properties['extent']['maxy'], "resolution": self._coverage_properties['resolution']['x'] }
+                    {"type":"IndexAxisType","axisLabel":'x',"lowerBound": self._coverage_properties['extent']['minx'], "upperBound": self._coverage_properties['extent']['maxx'], "resolution": self._coverage_properties['resolution']['x'] }, #for extent and resolution
+                    {"type":"IndexAxisType","axisLabel": 'y',"lowerBound": self._coverage_properties['extent']['miny'], "upperBound": self._coverage_properties['extent']['maxy'], "resolution": self._coverage_properties['resolution']['x'] }
                 ],
                 'gridLimits': {
                     'type': 'GridLimits',
@@ -303,12 +303,16 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         parameter_metadata = self._get_parameter_metadata(var_name)
         
         rangetype = {
-            'type': 'RangeType',
+            'type': 'DataRecordType',
             'field': [
                 {
                     'id': parameter_metadata['id'],
                     'name': parameter_metadata['long_name'],
-                    'definition': parameter_metadata['units']
+                    #'definition': parameter_metadata['units']
+                    'uom': {
+                        'type': 'UnitReference',
+                        'code': parameter_metadata['units']
+                    }
                 }
             ]
         }
