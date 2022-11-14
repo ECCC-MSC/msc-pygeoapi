@@ -347,7 +347,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             for dim in var_dims:
                 query_return[dim] = 10
             data_vals = self._data[var_name].head(**query_return)
-
+            #data_vals = self._data[var_name]
 
         else:
 
@@ -400,6 +400,11 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             new_dataset = data_vals.to_dataset()
             return _get_zarr_data(new_dataset)
 
+        '''lst_of_dataJSON = []
+        for i in _gennumpy(data_vals.values):
+            lst_of_dataJSON.append(i)'''
+            
+
 
         dict_to_return = {
 
@@ -408,6 +413,8 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             "range": self.get_coverage_rangetype(),
             "properties" : self._coverage_properties,
             "data values":  _nummpyarray_to_json(data_vals.values)
+            #"data values":  lst_of_dataJSON
+            #"data values" : data_vals.values.tolist()
         }
         return dict_to_return
 
