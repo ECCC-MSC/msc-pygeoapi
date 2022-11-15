@@ -34,6 +34,7 @@ import shutil
 import tempfile
 import numpy
 import xarray
+import sys
 import zarr
 import dask
 import pandas
@@ -45,6 +46,8 @@ from pygeoapi.provider.base import (BaseProvider,
                                     ProviderQueryError)
 
 LOGGER = logging.getLogger(__name__)
+DEFAULT_LIMIT = 10
+MAX_ZARR_GB_SIZE = 1
 
 class HRDPSWEonGZarrProvider(BaseProvider):
     """ Zarr Provider """
@@ -345,7 +348,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         #return LOGGER.error(type(datetime_), datetime_)
         if subsets == {} and bbox == [] and datetime_ == None:
             for dim in var_dims:
-                query_return[dim] = 10
+                query_return[dim] = DEFAULT_LIMIT
             data_vals = self._data[var_name].head(**query_return)
             #data_vals = self._data[var_name]
 
@@ -393,16 +396,25 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                     query_return["time"] = slice(start_date, end_date)
             one_small_ds = self._data[var_name].isel(lat=0, lon=0, time=slice(0,1), level = 0)
 
+            #is a xarray data-array
             data_vals = self._data[var_name].sel(**query_return)
-        #return LOGGER.error(data_vals.values)
+        #return LOGGER.error("the type",type(data_vals))
+
         if format_ == "zarr":
             #new_dataset = self._data[var_name].to_dataset()
             new_dataset = data_vals.to_dataset()
-            return _get_zarr_data(new_dataset)
+            data_size = sys.getsizeof(new_dataset)
+            MB_data_size = data_size / 1048576
+            if MB_data_size > MAX_ZARR_GB_SIZE:
+                msg = "Data size too large to return as zarr"
+                LOGGER.error(msg)
+                raise Exception(msg)
+            else:
+                return _get_zarr_data(new_dataset)
 
-        '''lst_of_dataJSON = []
+        lst_of_dataJSON = []
         for i in _gennumpy(data_vals.values):
-            lst_of_dataJSON.append(i)'''
+            lst_of_dataJSON.append(i)
             
 
 
@@ -412,9 +424,10 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             "domain": self.get_coverage_domainset(),
             "range": self.get_coverage_rangetype(),
             "properties" : self._coverage_properties,
-            "data values":  _nummpyarray_to_json(data_vals.values)
-            #"data values":  lst_of_dataJSON
+            #"data values":  _nummpyarray_to_json(data_vals.values)
+            "data values":  lst_of_dataJSON
             #"data values" : data_vals.values.tolist()
+            #"data values": data_vals.to_dict()['data']
         }
         return dict_to_return
 
