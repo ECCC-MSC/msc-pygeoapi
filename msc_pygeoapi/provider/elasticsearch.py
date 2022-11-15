@@ -432,7 +432,10 @@ class ElasticsearchProvider(BaseProvider):
         else:
             LOGGER.debug('Looks like true GeoJSON document')
             feature_ = doc['_source']
-            id_ = doc['_source']['properties'][self.id_field]
+            try:
+                id_ = doc['_source'][self.id_field]
+            except KeyError:
+                id_ = doc['_source']['properties'][self.id_field]
             feature_['id'] = id_
             feature_['geometry'] = doc['_source'].get('geometry')
 
@@ -531,3 +534,24 @@ class ElasticsearchCatalogueProvider(ElasticsearchProvider):
 
     def __repr__(self):
         return '<ElasticsearchCatalogueProvider> {}'.format(self.data)
+
+
+class ElasticsearchCatalogueWMOWIS2GDCProvider(ElasticsearchCatalogueProvider):
+    """Elasticsearch Provider for WMO WIS2 Global Discovery Catalogue"""
+
+    def __init__(self, provider_def):
+        super().__init__(provider_def)
+
+    def mask_prop(self, property_name):
+        """
+        generate property name based on ES backend setup
+
+        :param property_name: property name
+
+        :returns: masked property name
+        """
+
+        return property_name
+
+    def __repr__(self):
+        return '<ElasticsearchCatalogueWMOWIS2GDCProvider> {}'.format(self.data)  # noqa
