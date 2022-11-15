@@ -140,7 +140,7 @@ info:
     url: https://eccc-msc.github.io/open-data/licence/readme_en/
   termsOfService: https://www.canada.ca/en/transparency/terms.html
   title: MSC GeoMet - GeoMet-OGC-API
-  version: 0.9.0
+  version: 0.12.0
   x-keywords:
   - Weather
   - Meteorology
@@ -2718,8 +2718,6 @@ paths:
             - CLIMATE_IDENTIFIER
             - DEW_POINT_TEMP
             - DEW_POINT_TEMP_FLAG
-            - DRY_BULB_TEMP
-            - DRY_BULB_TEMP_FLAG
             - HUMIDEX
             - HUMIDEX_FLAG
             - ID
@@ -2735,7 +2733,6 @@ paths:
             - PROVINCE_CODE
             - RELATIVE_HUMIDITY
             - RELATIVE_HUMIDITY_FLAG
-            - REL_HUMIDITY_FLAG
             - STATION_NAME
             - STATION_PRESSURE
             - STATION_PRESSURE_FLAG
@@ -11028,9 +11025,6 @@ paths:
             - altmetr_setng
             - altmetr_setng-qa
             - altmetr_setng-uom
-            - avg_air_temp_pst10mts
-            - avg_air_temp_pst10mts-qa
-            - avg_air_temp_pst10mts-uom
             - avg_air_temp_pst1hr
             - avg_air_temp_pst1hr-data_flag-code_src
             - avg_air_temp_pst1hr-data_flag-uom
@@ -11043,9 +11037,6 @@ paths:
             - avg_air_temp_pst1hr_2-uom
             - avg_air_temp_pst1hr_3
             - avg_air_temp_pst1hr_3-uom
-            - avg_batry_volt_pst10mts
-            - avg_batry_volt_pst10mts-qa
-            - avg_batry_volt_pst10mts-uom
             - avg_cum_pcpn_gag_wt_fltrd_pst5mts
             - avg_cum_pcpn_gag_wt_fltrd_pst5mts-qa
             - avg_cum_pcpn_gag_wt_fltrd_pst5mts-uom
@@ -11071,26 +11062,12 @@ paths:
             - avg_globl_solr_radn_pst1mt-data_flag-uom
             - avg_globl_solr_radn_pst1mt-data_flag-value
             - avg_globl_solr_radn_pst1mt-uom
-            - avg_max_wave_hgt_pst20mts
-            - avg_max_wave_hgt_pst20mts-qa
-            - avg_max_wave_hgt_pst20mts-uom
-            - avg_max_wave_pd_pst20mts
-            - avg_max_wave_pd_pst20mts-qa
-            - avg_max_wave_pd_pst20mts-uom
-            - avg_mslp_pst10mts
-            - avg_mslp_pst10mts-data_flag-code_src
-            - avg_mslp_pst10mts-data_flag-uom
-            - avg_mslp_pst10mts-data_flag-value
-            - avg_mslp_pst10mts-uom
             - avg_rel_hum_pst1hr
             - avg_rel_hum_pst1hr-data_flag-code_src
             - avg_rel_hum_pst1hr-data_flag-uom
             - avg_rel_hum_pst1hr-data_flag-value
             - avg_rel_hum_pst1hr-qa
             - avg_rel_hum_pst1hr-uom
-            - avg_sea_sfc_temp_pst10mts
-            - avg_sea_sfc_temp_pst10mts-qa
-            - avg_sea_sfc_temp_pst10mts-uom
             - avg_snw_dpth_pst5mts
             - avg_snw_dpth_pst5mts-qa
             - avg_snw_dpth_pst5mts-uom
@@ -11100,29 +11077,11 @@ paths:
             - avg_snw_dpth_pst5mts_2-uom
             - avg_snw_dpth_pst5mts_3
             - avg_snw_dpth_pst5mts_3-uom
-            - avg_solr_panl_crnt_pst10mts
-            - avg_solr_panl_crnt_pst10mts-qa
-            - avg_solr_panl_crnt_pst10mts-uom
-            - avg_stn_pres_pst10mts
-            - avg_stn_pres_pst10mts-qa
-            - avg_stn_pres_pst10mts-uom
-            - avg_stn_pres_pst10mts_1
-            - avg_stn_pres_pst10mts_1-qa
-            - avg_stn_pres_pst10mts_1-uom
-            - avg_stn_pres_pst10mts_2
-            - avg_stn_pres_pst10mts_2-qa
-            - avg_stn_pres_pst10mts_2-uom
             - avg_uvb_indx_pst1hr
             - avg_uvb_indx_pst1hr-qa
             - avg_vis_pst10mts
             - avg_vis_pst10mts-qa
             - avg_vis_pst10mts-uom
-            - avg_wave_hgt_pst20mts
-            - avg_wave_hgt_pst20mts-qa
-            - avg_wave_hgt_pst20mts-uom
-            - avg_wave_pd_pst20mts
-            - avg_wave_pd_pst20mts-qa
-            - avg_wave_pd_pst20mts-uom
             - avg_wnd_dir_10m_pst10mts
             - avg_wnd_dir_10m_pst10mts-data_flag-code_src
             - avg_wnd_dir_10m_pst10mts-data_flag-uom
@@ -11159,12 +11118,6 @@ paths:
             - avg_wnd_dir_pst10mts
             - avg_wnd_dir_pst10mts-qa
             - avg_wnd_dir_pst10mts-uom
-            - avg_wnd_dir_pst10mts_1
-            - avg_wnd_dir_pst10mts_1-qa
-            - avg_wnd_dir_pst10mts_1-uom
-            - avg_wnd_dir_pst10mts_2
-            - avg_wnd_dir_pst10mts_2-qa
-            - avg_wnd_dir_pst10mts_2-uom
             - avg_wnd_spd_10m_pst10mts
             - avg_wnd_spd_10m_pst10mts-data_flag-code_src
             - avg_wnd_spd_10m_pst10mts-data_flag-uom
@@ -11210,18 +11163,15 @@ paths:
             - avg_wnd_spd_pst10mts
             - avg_wnd_spd_pst10mts-qa
             - avg_wnd_spd_pst10mts-uom
-            - avg_wnd_spd_pst10mts_1
-            - avg_wnd_spd_pst10mts_1-qa
-            - avg_wnd_spd_pst10mts_1-uom
-            - avg_wnd_spd_pst10mts_2
-            - avg_wnd_spd_pst10mts_2-qa
-            - avg_wnd_spd_pst10mts_2-uom
-            - avg_wtr_lvl_snsr_volt_pst10mts
-            - avg_wtr_lvl_snsr_volt_pst10mts-qa
-            - avg_wtr_lvl_snsr_volt_pst10mts-uom
             - batry_volt
-            - batry_volt-qa
             - batry_volt-uom
+            - batry_volt_1
+            - batry_volt_1-qa
+            - batry_volt_1-uom
+            - batry_volt_1hr_ago
+            - batry_volt_1hr_ago-uom
+            - batry_volt_2hrs_ago
+            - batry_volt_2hrs_ago-uom
             - cld_amt_code
             - cld_amt_code-qa
             - cld_amt_code-uom
@@ -11237,9 +11187,6 @@ paths:
             - cld_amt_code_4
             - cld_amt_code_4-qa
             - cld_amt_code_4-uom
-            - cld_amt_code_5
-            - cld_amt_code_5-qa
-            - cld_amt_code_5-uom
             - cld_bas_hgt_1
             - cld_bas_hgt_1-qa
             - cld_bas_hgt_1-uom
@@ -11252,9 +11199,6 @@ paths:
             - cld_bas_hgt_4
             - cld_bas_hgt_4-qa
             - cld_bas_hgt_4-uom
-            - cld_bas_hgt_5
-            - cld_bas_hgt_5-qa
-            - cld_bas_hgt_5-uom
             - cld_lyr_amt_rptg_mtd-uom
             - cld_lyr_amt_rptg_mtd-value
             - cld_typ_1
@@ -11266,22 +11210,19 @@ paths:
             - cld_typ_3
             - cld_typ_3-qa
             - cld_typ_3-uom
-            - cld_typ_4
-            - cld_typ_4-qa
-            - cld_typ_4-uom
-            - cld_typ_5
-            - cld_typ_5-qa
-            - cld_typ_5-uom
             - clim_id-uom
             - clim_id-value
             - cor-uom
             - cor-value
-            - crnt_buoy_lat
-            - crnt_buoy_lat-qa
-            - crnt_buoy_lat-uom
-            - crnt_buoy_long
-            - crnt_buoy_long-qa
-            - crnt_buoy_long-uom
+            - cum_pcpn_amt
+            - cum_pcpn_amt-qa
+            - cum_pcpn_amt-uom
+            - cum_pcpn_amt_1hr_ago
+            - cum_pcpn_amt_1hr_ago-qa
+            - cum_pcpn_amt_1hr_ago-uom
+            - cum_pcpn_amt_2hrs_ago
+            - cum_pcpn_amt_2hrs_ago-qa
+            - cum_pcpn_amt_2hrs_ago-uom
             - data_attrib_not-uom
             - data_attrib_not-value
             - data_avail
@@ -11348,15 +11289,6 @@ paths:
             - max_air_temp_pst6hrs-data_flag-value
             - max_air_temp_pst6hrs-qa
             - max_air_temp_pst6hrs-uom
-            - max_avg_wnd_spd_pst10mts
-            - max_avg_wnd_spd_pst10mts-qa
-            - max_avg_wnd_spd_pst10mts-uom
-            - max_avg_wnd_spd_pst10mts_1
-            - max_avg_wnd_spd_pst10mts_1-qa
-            - max_avg_wnd_spd_pst10mts_1-uom
-            - max_avg_wnd_spd_pst10mts_2
-            - max_avg_wnd_spd_pst10mts_2-qa
-            - max_avg_wnd_spd_pst10mts_2-uom
             - max_batry_volt_pst1hr
             - max_batry_volt_pst1hr-data_flag-code_src
             - max_batry_volt_pst1hr-data_flag-uom
@@ -11425,6 +11357,9 @@ paths:
             - max_wnd_spd_10m_pst1mt
             - max_wnd_spd_10m_pst1mt-qa
             - max_wnd_spd_10m_pst1mt-uom
+            - max_wnd_spd_pst1hr
+            - max_wnd_spd_pst1hr-qa
+            - max_wnd_spd_pst1hr-uom
             - max_wnd_spd_pst1hr_tm
             - max_wnd_spd_pst1hr_tm-data_flag-code_src
             - max_wnd_spd_pst1hr_tm-data_flag-uom
@@ -11496,6 +11431,11 @@ paths:
             - pcpn_amt_pst10mts-data_flag-uom
             - pcpn_amt_pst10mts-data_flag-value
             - pcpn_amt_pst10mts-uom
+            - pcpn_amt_pst12hrs
+            - pcpn_amt_pst12hrs-data_flag-code_src
+            - pcpn_amt_pst12hrs-data_flag-uom
+            - pcpn_amt_pst12hrs-data_flag-value
+            - pcpn_amt_pst12hrs-uom
             - pcpn_amt_pst1hr
             - pcpn_amt_pst1hr-data_flag-code_src
             - pcpn_amt_pst1hr-data_flag-uom
@@ -11514,6 +11454,9 @@ paths:
             - pcpn_amt_pst3hrs-data_flag-value
             - pcpn_amt_pst3hrs-qa
             - pcpn_amt_pst3hrs-uom
+            - pcpn_amt_pst5mts
+            - pcpn_amt_pst5mts-qa
+            - pcpn_amt_pst5mts-uom
             - pcpn_amt_pst6hrs
             - pcpn_amt_pst6hrs-data_flag-code_src
             - pcpn_amt_pst6hrs-data_flag-uom
@@ -11525,23 +11468,16 @@ paths:
             - pcpn_amt_snc_top_of_hr-data_flag-uom
             - pcpn_amt_snc_top_of_hr-data_flag-value
             - pcpn_amt_snc_top_of_hr-uom
+            - pcpn_msrmnt_mtd-uom
+            - pcpn_msrmnt_mtd-value
+            - pcpn_snc_last_reset
+            - pcpn_snc_last_reset-qa
+            - pcpn_snc_last_reset-uom
             - pcpn_snc_last_syno_hr
             - pcpn_snc_last_syno_hr-data_flag-code_src
             - pcpn_snc_last_syno_hr-data_flag-uom
             - pcpn_snc_last_syno_hr-data_flag-value
             - pcpn_snc_last_syno_hr-uom
-            - pk_wave_hgt_pst20mts
-            - pk_wave_hgt_pst20mts-qa
-            - pk_wave_hgt_pst20mts-uom
-            - pk_wave_hgt_pst35mts_10mts_ago
-            - pk_wave_hgt_pst35mts_10mts_ago-qa
-            - pk_wave_hgt_pst35mts_10mts_ago-uom
-            - pk_wave_pd_pst20mts
-            - pk_wave_pd_pst20mts-qa
-            - pk_wave_pd_pst20mts-uom
-            - pk_wave_pd_pst35mts_10mts_ago
-            - pk_wave_pd_pst35mts_10mts_ago-qa
-            - pk_wave_pd_pst35mts_10mts_ago-uom
             - pk_wnd_rmk
             - pk_wnd_rmk-data_flag-code_src
             - pk_wnd_rmk-data_flag-uom
@@ -11559,16 +11495,29 @@ paths:
             - pres_tend_char_pst3hrs-qa
             - pres_tend_char_pst3hrs-uom
             - processed_date_tm
+            - prov-uom
+            - prov-value
             - prsnt_wx_1
             - prsnt_wx_1-qa
             - prsnt_wx_1-uom
             - prsnt_wx_2
             - prsnt_wx_2-qa
             - prsnt_wx_2-uom
+            - prsnt_wx_3
+            - prsnt_wx_3-qa
+            - prsnt_wx_3-uom
+            - refltd_shrtwv_radn
+            - refltd_shrtwv_radn-qa
+            - refltd_shrtwv_radn-uom
             - rel_hum
             - rel_hum-qa
             - rel_hum-uom
             - rmk
+            - rnfl_amt_pst12hrs
+            - rnfl_amt_pst12hrs-data_flag-code_src
+            - rnfl_amt_pst12hrs-data_flag-uom
+            - rnfl_amt_pst12hrs-data_flag-value
+            - rnfl_amt_pst12hrs-uom
             - rnfl_amt_pst1hr
             - rnfl_amt_pst1hr-data_flag-code_src
             - rnfl_amt_pst1hr-data_flag-uom
@@ -11578,31 +11527,62 @@ paths:
             - rnfl_amt_pst1mt
             - rnfl_amt_pst1mt-qa
             - rnfl_amt_pst1mt-uom
+            - rnfl_amt_pst24hrs
+            - rnfl_amt_pst24hrs-data_flag-code_src
+            - rnfl_amt_pst24hrs-data_flag-uom
+            - rnfl_amt_pst24hrs-data_flag-value
+            - rnfl_amt_pst24hrs-uom
+            - rnfl_amt_pst3hrs
+            - rnfl_amt_pst3hrs-data_flag-code_src
+            - rnfl_amt_pst3hrs-data_flag-uom
+            - rnfl_amt_pst3hrs-data_flag-value
+            - rnfl_amt_pst3hrs-uom
+            - rnfl_amt_pst6hrs
+            - rnfl_amt_pst6hrs-data_flag-code_src
+            - rnfl_amt_pst6hrs-data_flag-uom
+            - rnfl_amt_pst6hrs-data_flag-value
+            - rnfl_amt_pst6hrs-uom
             - rnfl_snc_last_syno_hr-qa
             - rnfl_snc_last_syno_hr-uom
             - rpt_typ-uom
             - rpt_typ-value
-            - sig_wave_hgt_pst20mts
-            - sig_wave_hgt_pst20mts-qa
-            - sig_wave_hgt_pst20mts-uom
-            - sig_wave_hgt_pst35mts_10mts_ago
-            - sig_wave_hgt_pst35mts_10mts_ago-qa
-            - sig_wave_hgt_pst35mts_10mts_ago-uom
-            - sig_wave_pd_pst20mts
-            - sig_wave_pd_pst20mts-qa
-            - sig_wave_pd_pst20mts-uom
+            - rptg_freq-uom
+            - rptg_freq-value
+            - sfc_temp
+            - sfc_temp-qa
+            - sfc_temp-uom
             - snw_dpth
-            - snw_dpth-data_flag-code_src
-            - snw_dpth-data_flag-uom
-            - snw_dpth-data_flag-value
             - snw_dpth-qa
             - snw_dpth-uom
             - snw_dpth_1
             - snw_dpth_1-uom
+            - snw_dpth_1hr_ago
+            - snw_dpth_1hr_ago-qa
+            - snw_dpth_1hr_ago-uom
             - snw_dpth_2
             - snw_dpth_2-uom
+            - snw_dpth_2hrs_ago
+            - snw_dpth_2hrs_ago-qa
+            - snw_dpth_2hrs_ago-uom
             - snw_dpth_3
             - snw_dpth_3-uom
+            - snw_dpth_qlty
+            - snw_dpth_qlty-qa
+            - snw_dpth_wtr_equiv
+            - snw_dpth_wtr_equiv-qa
+            - snw_dpth_wtr_equiv-uom
+            - snw_dpth_wtr_equiv_1hr_ago
+            - snw_dpth_wtr_equiv_1hr_ago-qa
+            - snw_dpth_wtr_equiv_1hr_ago-uom
+            - snw_dpth_wtr_equiv_2hrs_ago
+            - snw_dpth_wtr_equiv_2hrs_ago-qa
+            - snw_dpth_wtr_equiv_2hrs_ago-uom
+            - solr_volt
+            - solr_volt-uom
+            - solr_volt_1hr_ago
+            - solr_volt_1hr_ago-uom
+            - solr_volt_2hrs_ago
+            - solr_volt_2hrs_ago-uom
             - stn_id-uom
             - stn_id-value
             - stn_nam-uom
@@ -11617,8 +11597,6 @@ paths:
             - tot_cld_amt
             - tot_cld_amt-qa
             - tot_cld_amt-uom
-            - tot_cld_amt_code-qa
-            - tot_cld_amt_code-uom
             - tot_globl_solr_radn_pst1hr
             - tot_globl_solr_radn_pst1hr-data_flag-code_src
             - tot_globl_solr_radn_pst1hr-data_flag-uom
@@ -11628,6 +11606,14 @@ paths:
             - tot_globl_solr_radn_pst1mt
             - tot_globl_solr_radn_pst1mt-qa
             - tot_globl_solr_radn_pst1mt-uom
+            - trans_batry_volt
+            - trans_batry_volt-uom
+            - trans_batry_volt_1hr_ago
+            - trans_batry_volt_1hr_ago-uom
+            - trans_batry_volt_2hrs_ago
+            - trans_batry_volt_2hrs_ago-uom
+            - trans_date_tm-uom
+            - trans_date_tm-value
             - url
             - vert_vis
             - vert_vis-qa
@@ -11635,6 +11621,8 @@ paths:
             - vis
             - vis-qa
             - vis-uom
+            - weighng_gag_stat
+            - weighng_gag_stat-qa
             - wetblb_temp
             - wetblb_temp-data_flag-code_src
             - wetblb_temp-data_flag-uom
@@ -11671,12 +11659,14 @@ paths:
             - wnd_dir_10m_pst1mt_max_spd
             - wnd_dir_10m_pst1mt_max_spd-qa
             - wnd_dir_10m_pst1mt_max_spd-uom
-            - wnd_gst_char
-            - wnd_gst_char-qa
-            - wnd_gst_char-uom
-            - wnd_snsr_vert_disp
-            - wnd_snsr_vert_disp-qa
+            - wnd_dir_pst1hr_max_spd
+            - wnd_dir_pst1hr_max_spd-qa
+            - wnd_dir_pst1hr_max_spd-uom
+            - wnd_run_pst1hr
+            - wnd_run_pst1hr-qa
+            - wnd_run_pst1hr-uom
             - wnd_snsr_vert_disp-uom
+            - wnd_snsr_vert_disp-value
             type: string
           type: array
         style: form
@@ -11889,27 +11879,6 @@ paths:
         style: form
       - explode: false
         in: query
-        name: avg_air_temp_pst10mts
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: avg_air_temp_pst10mts-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: avg_air_temp_pst10mts-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
         name: avg_air_temp_pst1hr
         required: false
         schema:
@@ -11983,32 +11952,11 @@ paths:
         name: avg_air_temp_pst1hr_3
         required: false
         schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: avg_air_temp_pst1hr_3-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: avg_batry_volt_pst10mts
-        required: false
-        schema:
           type: float
         style: form
       - explode: false
         in: query
-        name: avg_batry_volt_pst10mts-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: avg_batry_volt_pst10mts-uom
+        name: avg_air_temp_pst1hr_3-uom
         required: false
         schema:
           type: string
@@ -12158,7 +12106,7 @@ paths:
         name: avg_globl_solr_radn_pst1mt
         required: false
         schema:
-          type: long
+          type: float
         style: form
       - explode: false
         in: query
@@ -12184,83 +12132,6 @@ paths:
       - explode: false
         in: query
         name: avg_globl_solr_radn_pst1mt-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: avg_max_wave_hgt_pst20mts
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: avg_max_wave_hgt_pst20mts-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: avg_max_wave_hgt_pst20mts-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: avg_max_wave_pd_pst20mts
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: avg_max_wave_pd_pst20mts-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: avg_max_wave_pd_pst20mts-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: avg_mslp_pst10mts
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: avg_mslp_pst10mts-data_flag-code_src
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: avg_mslp_pst10mts-data_flag-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: avg_mslp_pst10mts-data_flag-value
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: avg_mslp_pst10mts-uom
         required: false
         schema:
           type: string
@@ -12303,27 +12174,6 @@ paths:
       - explode: false
         in: query
         name: avg_rel_hum_pst1hr-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: avg_sea_sfc_temp_pst10mts
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: avg_sea_sfc_temp_pst10mts-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: avg_sea_sfc_temp_pst10mts-uom
         required: false
         schema:
           type: string
@@ -12393,90 +12243,6 @@ paths:
         style: form
       - explode: false
         in: query
-        name: avg_solr_panl_crnt_pst10mts
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: avg_solr_panl_crnt_pst10mts-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: avg_solr_panl_crnt_pst10mts-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: avg_stn_pres_pst10mts
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: avg_stn_pres_pst10mts-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: avg_stn_pres_pst10mts-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: avg_stn_pres_pst10mts_1
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: avg_stn_pres_pst10mts_1-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: avg_stn_pres_pst10mts_1-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: avg_stn_pres_pst10mts_2
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: avg_stn_pres_pst10mts_2-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: avg_stn_pres_pst10mts_2-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
         name: avg_uvb_indx_pst1hr
         required: false
         schema:
@@ -12506,48 +12272,6 @@ paths:
       - explode: false
         in: query
         name: avg_vis_pst10mts-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: avg_wave_hgt_pst20mts
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: avg_wave_hgt_pst20mts-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: avg_wave_hgt_pst20mts-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: avg_wave_pd_pst20mts
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: avg_wave_pd_pst20mts-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: avg_wave_pd_pst20mts-uom
         required: false
         schema:
           type: string
@@ -12800,48 +12524,6 @@ paths:
       - explode: false
         in: query
         name: avg_wnd_dir_pst10mts-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: avg_wnd_dir_pst10mts_1
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: avg_wnd_dir_pst10mts_1-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: avg_wnd_dir_pst10mts_1-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: avg_wnd_dir_pst10mts_2
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: avg_wnd_dir_pst10mts_2-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: avg_wnd_dir_pst10mts_2-uom
         required: false
         schema:
           type: string
@@ -13163,69 +12845,6 @@ paths:
         style: form
       - explode: false
         in: query
-        name: avg_wnd_spd_pst10mts_1
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: avg_wnd_spd_pst10mts_1-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: avg_wnd_spd_pst10mts_1-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: avg_wnd_spd_pst10mts_2
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: avg_wnd_spd_pst10mts_2-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: avg_wnd_spd_pst10mts_2-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: avg_wtr_lvl_snsr_volt_pst10mts
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: avg_wtr_lvl_snsr_volt_pst10mts-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: avg_wtr_lvl_snsr_volt_pst10mts-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
         name: batry_volt
         required: false
         schema:
@@ -13233,14 +12852,56 @@ paths:
         style: form
       - explode: false
         in: query
-        name: batry_volt-qa
+        name: batry_volt-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: batry_volt_1
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: batry_volt_1-qa
         required: false
         schema:
           type: long
         style: form
       - explode: false
         in: query
-        name: batry_volt-uom
+        name: batry_volt_1-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: batry_volt_1hr_ago
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: batry_volt_1hr_ago-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: batry_volt_2hrs_ago
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: batry_volt_2hrs_ago-uom
         required: false
         schema:
           type: string
@@ -13352,27 +13013,6 @@ paths:
         style: form
       - explode: false
         in: query
-        name: cld_amt_code_5
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: cld_amt_code_5-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: cld_amt_code_5-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
         name: cld_bas_hgt_1
         required: false
         schema:
@@ -13457,27 +13097,6 @@ paths:
         style: form
       - explode: false
         in: query
-        name: cld_bas_hgt_5
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: cld_bas_hgt_5-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: cld_bas_hgt_5-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
         name: cld_lyr_amt_rptg_mtd-uom
         required: false
         schema:
@@ -13555,48 +13174,6 @@ paths:
         style: form
       - explode: false
         in: query
-        name: cld_typ_4
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: cld_typ_4-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: cld_typ_4-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: cld_typ_5
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: cld_typ_5-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: cld_typ_5-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
         name: clim_id-uom
         required: false
         schema:
@@ -13625,42 +13202,63 @@ paths:
         style: form
       - explode: false
         in: query
-        name: crnt_buoy_lat
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: crnt_buoy_lat-qa
+        name: cum_pcpn_amt
         required: false
         schema:
           type: long
         style: form
       - explode: false
         in: query
-        name: crnt_buoy_lat-uom
+        name: cum_pcpn_amt-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: cum_pcpn_amt-uom
         required: false
         schema:
           type: string
         style: form
       - explode: false
         in: query
-        name: crnt_buoy_long
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: crnt_buoy_long-qa
+        name: cum_pcpn_amt_1hr_ago
         required: false
         schema:
           type: long
         style: form
       - explode: false
         in: query
-        name: crnt_buoy_long-uom
+        name: cum_pcpn_amt_1hr_ago-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: cum_pcpn_amt_1hr_ago-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: cum_pcpn_amt_2hrs_ago
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: cum_pcpn_amt_2hrs_ago-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: cum_pcpn_amt_2hrs_ago-uom
         required: false
         schema:
           type: string
@@ -13838,7 +13436,7 @@ paths:
         name: hdr_fwd_pwr
         required: false
         schema:
-          type: long
+          type: float
         style: form
       - explode: false
         in: query
@@ -13880,7 +13478,7 @@ paths:
         name: hdr_refltd_pwr
         required: false
         schema:
-          type: long
+          type: float
         style: form
       - explode: false
         in: query
@@ -13901,7 +13499,7 @@ paths:
         name: hdr_suply_volt
         required: false
         schema:
-          type: long
+          type: float
         style: form
       - explode: false
         in: query
@@ -14123,69 +13721,6 @@ paths:
       - explode: false
         in: query
         name: max_air_temp_pst6hrs-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: max_avg_wnd_spd_pst10mts
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: max_avg_wnd_spd_pst10mts-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: max_avg_wnd_spd_pst10mts-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: max_avg_wnd_spd_pst10mts_1
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: max_avg_wnd_spd_pst10mts_1-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: max_avg_wnd_spd_pst10mts_1-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: max_avg_wnd_spd_pst10mts_2
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: max_avg_wnd_spd_pst10mts_2-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: max_avg_wnd_spd_pst10mts_2-uom
         required: false
         schema:
           type: string
@@ -14668,6 +14203,27 @@ paths:
         style: form
       - explode: false
         in: query
+        name: max_wnd_spd_pst1hr
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: max_wnd_spd_pst1hr-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: max_wnd_spd_pst1hr-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
         name: max_wnd_spd_pst1hr_tm
         required: false
         schema:
@@ -14797,7 +14353,7 @@ paths:
         name: min_air_temp_pst1hr_2
         required: false
         schema:
-          type: long
+          type: float
         style: form
       - explode: false
         in: query
@@ -15133,7 +14689,7 @@ paths:
         name: pcpn_amt_pst10mts
         required: false
         schema:
-          type: long
+          type: float
         style: form
       - explode: false
         in: query
@@ -15165,10 +14721,45 @@ paths:
         style: form
       - explode: false
         in: query
-        name: pcpn_amt_pst1hr
+        name: pcpn_amt_pst12hrs
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: pcpn_amt_pst12hrs-data_flag-code_src
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: pcpn_amt_pst12hrs-data_flag-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: pcpn_amt_pst12hrs-data_flag-value
         required: false
         schema:
           type: long
+        style: form
+      - explode: false
+        in: query
+        name: pcpn_amt_pst12hrs-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: pcpn_amt_pst1hr
+        required: false
+        schema:
+          type: float
         style: form
       - explode: false
         in: query
@@ -15291,10 +14882,31 @@ paths:
         style: form
       - explode: false
         in: query
+        name: pcpn_amt_pst5mts
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: pcpn_amt_pst5mts-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: pcpn_amt_pst5mts-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
         name: pcpn_amt_pst6hrs
         required: false
         schema:
-          type: float
+          type: long
         style: form
       - explode: false
         in: query
@@ -15368,6 +14980,41 @@ paths:
         style: form
       - explode: false
         in: query
+        name: pcpn_msrmnt_mtd-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: pcpn_msrmnt_mtd-value
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: pcpn_snc_last_reset
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: pcpn_snc_last_reset-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: pcpn_snc_last_reset-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
         name: pcpn_snc_last_syno_hr
         required: false
         schema:
@@ -15397,90 +15044,6 @@ paths:
       - explode: false
         in: query
         name: pcpn_snc_last_syno_hr-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: pk_wave_hgt_pst20mts
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: pk_wave_hgt_pst20mts-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: pk_wave_hgt_pst20mts-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: pk_wave_hgt_pst35mts_10mts_ago
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: pk_wave_hgt_pst35mts_10mts_ago-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: pk_wave_hgt_pst35mts_10mts_ago-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: pk_wave_pd_pst20mts
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: pk_wave_pd_pst20mts-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: pk_wave_pd_pst20mts-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: pk_wave_pd_pst35mts_10mts_ago
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: pk_wave_pd_pst35mts_10mts_ago-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: pk_wave_pd_pst35mts_10mts_ago-uom
         required: false
         schema:
           type: string
@@ -15606,6 +15169,20 @@ paths:
         style: form
       - explode: false
         in: query
+        name: prov-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: prov-value
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
         name: prsnt_wx_1
         required: false
         schema:
@@ -15648,6 +15225,48 @@ paths:
         style: form
       - explode: false
         in: query
+        name: prsnt_wx_3
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: prsnt_wx_3-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: prsnt_wx_3-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: refltd_shrtwv_radn
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: refltd_shrtwv_radn-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: refltd_shrtwv_radn-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
         name: rel_hum
         required: false
         schema:
@@ -15670,6 +15289,41 @@ paths:
       - explode: false
         in: query
         name: rmk
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: rnfl_amt_pst12hrs
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: rnfl_amt_pst12hrs-data_flag-code_src
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: rnfl_amt_pst12hrs-data_flag-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: rnfl_amt_pst12hrs-data_flag-value
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: rnfl_amt_pst12hrs-uom
         required: false
         schema:
           type: string
@@ -15739,6 +15393,111 @@ paths:
         style: form
       - explode: false
         in: query
+        name: rnfl_amt_pst24hrs
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: rnfl_amt_pst24hrs-data_flag-code_src
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: rnfl_amt_pst24hrs-data_flag-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: rnfl_amt_pst24hrs-data_flag-value
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: rnfl_amt_pst24hrs-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: rnfl_amt_pst3hrs
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: rnfl_amt_pst3hrs-data_flag-code_src
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: rnfl_amt_pst3hrs-data_flag-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: rnfl_amt_pst3hrs-data_flag-value
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: rnfl_amt_pst3hrs-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: rnfl_amt_pst6hrs
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: rnfl_amt_pst6hrs-data_flag-code_src
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: rnfl_amt_pst6hrs-data_flag-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: rnfl_amt_pst6hrs-data_flag-value
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: rnfl_amt_pst6hrs-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
         name: rnfl_snc_last_syno_hr-qa
         required: false
         schema:
@@ -15767,63 +15526,35 @@ paths:
         style: form
       - explode: false
         in: query
-        name: sig_wave_hgt_pst20mts
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: sig_wave_hgt_pst20mts-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: sig_wave_hgt_pst20mts-uom
+        name: rptg_freq-uom
         required: false
         schema:
           type: string
         style: form
       - explode: false
         in: query
-        name: sig_wave_hgt_pst35mts_10mts_ago
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: sig_wave_hgt_pst35mts_10mts_ago-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: sig_wave_hgt_pst35mts_10mts_ago-uom
+        name: rptg_freq-value
         required: false
         schema:
           type: string
         style: form
       - explode: false
         in: query
-        name: sig_wave_pd_pst20mts
+        name: sfc_temp
         required: false
         schema:
           type: float
         style: form
       - explode: false
         in: query
-        name: sig_wave_pd_pst20mts-qa
+        name: sfc_temp-qa
         required: false
         schema:
           type: long
         style: form
       - explode: false
         in: query
-        name: sig_wave_pd_pst20mts-uom
+        name: sfc_temp-uom
         required: false
         schema:
           type: string
@@ -15831,27 +15562,6 @@ paths:
       - explode: false
         in: query
         name: snw_dpth
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: snw_dpth-data_flag-code_src
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: snw_dpth-data_flag-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: snw_dpth-data_flag-value
         required: false
         schema:
           type: long
@@ -15886,6 +15596,27 @@ paths:
         style: form
       - explode: false
         in: query
+        name: snw_dpth_1hr_ago
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: snw_dpth_1hr_ago-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: snw_dpth_1hr_ago-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
         name: snw_dpth_2
         required: false
         schema:
@@ -15900,6 +15631,27 @@ paths:
         style: form
       - explode: false
         in: query
+        name: snw_dpth_2hrs_ago
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: snw_dpth_2hrs_ago-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: snw_dpth_2hrs_ago-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
         name: snw_dpth_3
         required: false
         schema:
@@ -15908,6 +15660,125 @@ paths:
       - explode: false
         in: query
         name: snw_dpth_3-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: snw_dpth_qlty
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: snw_dpth_qlty-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: snw_dpth_wtr_equiv
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: snw_dpth_wtr_equiv-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: snw_dpth_wtr_equiv-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: snw_dpth_wtr_equiv_1hr_ago
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: snw_dpth_wtr_equiv_1hr_ago-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: snw_dpth_wtr_equiv_1hr_ago-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: snw_dpth_wtr_equiv_2hrs_ago
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: snw_dpth_wtr_equiv_2hrs_ago-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: snw_dpth_wtr_equiv_2hrs_ago-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: solr_volt
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: solr_volt-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: solr_volt_1hr_ago
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: solr_volt_1hr_ago-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: solr_volt_2hrs_ago
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: solr_volt_2hrs_ago-uom
         required: false
         schema:
           type: string
@@ -16012,24 +15883,10 @@ paths:
         style: form
       - explode: false
         in: query
-        name: tot_cld_amt_code-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: tot_cld_amt_code-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
         name: tot_globl_solr_radn_pst1hr
         required: false
         schema:
-          type: float
+          type: long
         style: form
       - explode: false
         in: query
@@ -16089,6 +15946,62 @@ paths:
         style: form
       - explode: false
         in: query
+        name: trans_batry_volt
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: trans_batry_volt-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: trans_batry_volt_1hr_ago
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: trans_batry_volt_1hr_ago-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: trans_batry_volt_2hrs_ago
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: trans_batry_volt_2hrs_ago-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: trans_date_tm-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: trans_date_tm-value
+        required: false
+        schema:
+          type: date
+        style: form
+      - explode: false
+        in: query
         name: url
         required: false
         schema:
@@ -16135,6 +16048,20 @@ paths:
         required: false
         schema:
           type: string
+        style: form
+      - explode: false
+        in: query
+        name: weighng_gag_stat
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: weighng_gag_stat-qa
+        required: false
+        schema:
+          type: long
         style: form
       - explode: false
         in: query
@@ -16390,42 +16317,56 @@ paths:
         style: form
       - explode: false
         in: query
-        name: wnd_gst_char
+        name: wnd_dir_pst1hr_max_spd
         required: false
         schema:
           type: long
         style: form
       - explode: false
         in: query
-        name: wnd_gst_char-qa
+        name: wnd_dir_pst1hr_max_spd-qa
         required: false
         schema:
           type: long
         style: form
       - explode: false
         in: query
-        name: wnd_gst_char-uom
+        name: wnd_dir_pst1hr_max_spd-uom
         required: false
         schema:
           type: string
         style: form
       - explode: false
         in: query
-        name: wnd_snsr_vert_disp
+        name: wnd_run_pst1hr
         required: false
         schema:
           type: long
         style: form
       - explode: false
         in: query
-        name: wnd_snsr_vert_disp-qa
+        name: wnd_run_pst1hr-qa
         required: false
         schema:
           type: long
+        style: form
+      - explode: false
+        in: query
+        name: wnd_run_pst1hr-uom
+        required: false
+        schema:
+          type: string
         style: form
       - explode: false
         in: query
         name: wnd_snsr_vert_disp-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: wnd_snsr_vert_disp-value
         required: false
         schema:
           type: string
