@@ -1,3 +1,9 @@
+msc-pygeoapi (0.10.5) bionic; urgency=medium
+
+  * add WMO WIS2 discovery metadata collection
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Tue, 15 Nov 2022 19:14:36 +0000
+
 msc-pygeoapi (0.10.4) focal; urgency=medium
 
   * release ES dependency to allow for ES 8 server
