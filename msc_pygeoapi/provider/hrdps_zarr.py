@@ -308,7 +308,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                 {
                     'id': parameter_metadata['id'],
                     'name': parameter_metadata['long_name'],
-                    #'definition': parameter_metadata['units']
+                    'definition': parameter_metadata['units'],
                     'uom': {
                         'type': 'UnitReference',
                         'code': parameter_metadata['units']
