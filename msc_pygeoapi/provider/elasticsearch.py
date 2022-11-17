@@ -525,3 +525,13 @@ class ElasticsearchCatalogueWMOWIS2GDCProvider(ElasticsearchCatalogueProvider):
 
     def __repr__(self):
         return '<ElasticsearchCatalogueWMOWIS2GDCProvider> {}'.format(self.data)  # noqa
+
+
+class ElasticsearchWMOWIS2BrokerMessagesProvider(ElasticsearchCatalogueWMOWIS2GDCProvider):  # noqa
+    """Elasticsearch Provider for WMO WIS2 Notification Messages"""
+
+    def __init__(self, provider_def):
+        super().__init__(provider_def)
+
+    def __repr__(self):
+        return '<ElasticsearchWMOWIS2BrokerMessagesProvider> {}'.format(self.data)  # noqa
