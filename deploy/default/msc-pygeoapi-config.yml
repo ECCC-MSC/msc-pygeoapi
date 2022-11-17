@@ -2947,6 +2947,28 @@ resources:
               data: http://localhost:9200/wis2-discovery-metadata
               id_field: id
 
+    wis2-notification-messages:
+        type: collection
+        title: WMO WIS2 notification messages (experimental)
+        description: WMO WIS2 notification messages (experimental)
+        keywords: [wmo, wis2, notification, messages]
+        crs:
+            - CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title: WMO Information System
+              href: https://community.wmo.int/activity-areas/wis
+              hreflang: en-US
+        extents:
+            spatial:
+                bbox: [-180, -90, 180, 90]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        providers:
+            - type: feature
+              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchWMOWIS2BrokerMessagesProvider
+              data: http://localhost:9200/wis2-notification-messages*
+              id_field: id
 
     raster-drill:
         type: process
