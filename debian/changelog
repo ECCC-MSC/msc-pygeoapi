@@ -1,3 +1,9 @@
+msc-pygeoapi (0.10.6) bionic; urgency=medium
+
+  * add WMO WIS2 notifications collection
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Thu, 17 Nov 2022 19:10:27 +0000
+
 msc-pygeoapi (0.10.5) bionic; urgency=medium
 
   * add WMO WIS2 discovery metadata collection
