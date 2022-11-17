@@ -11008,18 +11008,11 @@ paths:
             - air_temp_1hr_ago_1
             - air_temp_1hr_ago_1-qa
             - air_temp_1hr_ago_1-uom
-            - air_temp_1hr_ago_2
-            - air_temp_1hr_ago_2-qa
-            - air_temp_1hr_ago_2-uom
             - air_temp_2
-            - air_temp_2-qa
             - air_temp_2-uom
             - air_temp_2hrs_ago_1
             - air_temp_2hrs_ago_1-qa
             - air_temp_2hrs_ago_1-uom
-            - air_temp_2hrs_ago_2
-            - air_temp_2hrs_ago_2-qa
-            - air_temp_2hrs_ago_2-uom
             - air_temp_3
             - air_temp_3-uom
             - altmetr_setng
@@ -11210,6 +11203,9 @@ paths:
             - cld_typ_3
             - cld_typ_3-qa
             - cld_typ_3-uom
+            - cld_typ_4
+            - cld_typ_4-qa
+            - cld_typ_4-uom
             - clim_id-uom
             - clim_id-value
             - cor-uom
@@ -11503,9 +11499,6 @@ paths:
             - prsnt_wx_2
             - prsnt_wx_2-qa
             - prsnt_wx_2-uom
-            - prsnt_wx_3
-            - prsnt_wx_3-qa
-            - prsnt_wx_3-uom
             - refltd_shrtwv_radn
             - refltd_shrtwv_radn-qa
             - refltd_shrtwv_radn-uom
@@ -11542,6 +11535,7 @@ paths:
             - rnfl_amt_pst6hrs-data_flag-uom
             - rnfl_amt_pst6hrs-data_flag-value
             - rnfl_amt_pst6hrs-uom
+            - rnfl_snc_last_syno_hr
             - rnfl_snc_last_syno_hr-qa
             - rnfl_snc_last_syno_hr-uom
             - rpt_typ-uom
@@ -11552,6 +11546,9 @@ paths:
             - sfc_temp-qa
             - sfc_temp-uom
             - snw_dpth
+            - snw_dpth-data_flag-code_src
+            - snw_dpth-data_flag-uom
+            - snw_dpth-data_flag-value
             - snw_dpth-qa
             - snw_dpth-uom
             - snw_dpth_1
@@ -11667,6 +11664,8 @@ paths:
             - wnd_run_pst1hr-uom
             - wnd_snsr_vert_disp-uom
             - wnd_snsr_vert_disp-value
+            - wtr_temp
+            - wtr_temp-uom
             type: string
           type: array
         style: form
@@ -11760,38 +11759,10 @@ paths:
         style: form
       - explode: false
         in: query
-        name: air_temp_1hr_ago_2
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: air_temp_1hr_ago_2-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: air_temp_1hr_ago_2-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
         name: air_temp_2
         required: false
         schema:
           type: float
-        style: form
-      - explode: false
-        in: query
-        name: air_temp_2-qa
-        required: false
-        schema:
-          type: long
         style: form
       - explode: false
         in: query
@@ -11817,27 +11788,6 @@ paths:
       - explode: false
         in: query
         name: air_temp_2hrs_ago_1-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: air_temp_2hrs_ago_2
-        required: false
-        schema:
-          type: float
-        style: form
-      - explode: false
-        in: query
-        name: air_temp_2hrs_ago_2-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: air_temp_2hrs_ago_2-uom
         required: false
         schema:
           type: string
@@ -13174,6 +13124,27 @@ paths:
         style: form
       - explode: false
         in: query
+        name: cld_typ_4
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: cld_typ_4-qa
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: cld_typ_4-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
         name: clim_id-uom
         required: false
         schema:
@@ -13478,7 +13449,7 @@ paths:
         name: hdr_refltd_pwr
         required: false
         schema:
-          type: float
+          type: long
         style: form
       - explode: false
         in: query
@@ -13499,7 +13470,7 @@ paths:
         name: hdr_suply_volt
         required: false
         schema:
-          type: float
+          type: long
         style: form
       - explode: false
         in: query
@@ -14997,7 +14968,7 @@ paths:
         name: pcpn_snc_last_reset
         required: false
         schema:
-          type: float
+          type: long
         style: form
       - explode: false
         in: query
@@ -15219,27 +15190,6 @@ paths:
       - explode: false
         in: query
         name: prsnt_wx_2-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: prsnt_wx_3
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: prsnt_wx_3-qa
-        required: false
-        schema:
-          type: long
-        style: form
-      - explode: false
-        in: query
-        name: prsnt_wx_3-uom
         required: false
         schema:
           type: string
@@ -15498,6 +15448,13 @@ paths:
         style: form
       - explode: false
         in: query
+        name: rnfl_snc_last_syno_hr
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
         name: rnfl_snc_last_syno_hr-qa
         required: false
         schema:
@@ -15562,6 +15519,27 @@ paths:
       - explode: false
         in: query
         name: snw_dpth
+        required: false
+        schema:
+          type: long
+        style: form
+      - explode: false
+        in: query
+        name: snw_dpth-data_flag-code_src
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: snw_dpth-data_flag-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: snw_dpth-data_flag-value
         required: false
         schema:
           type: long
@@ -15886,7 +15864,7 @@ paths:
         name: tot_globl_solr_radn_pst1hr
         required: false
         schema:
-          type: long
+          type: float
         style: form
       - explode: false
         in: query
@@ -16367,6 +16345,20 @@ paths:
       - explode: false
         in: query
         name: wnd_snsr_vert_disp-value
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: wtr_temp
+        required: false
+        schema:
+          type: float
+        style: form
+      - explode: false
+        in: query
+        name: wtr_temp-uom
         required: false
         schema:
           type: string
@@ -17226,6 +17218,284 @@ paths:
         at 15 km coverage range type
       tags:
       - weather:rdpa:15km:6f
+  /collections/wis2-discovery-metadata:
+    get:
+      description: WMO WIS2 discovery metadata (experimental)
+      operationId: describeWis2-discovery-metadataCollection
+      parameters:
+      - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
+      responses:
+        '200':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
+        '400':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        '404':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        '500':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get WMO WIS2 discovery metadata (experimental) metadata
+      tags:
+      - wis2-discovery-metadata
+  /collections/wis2-discovery-metadata/items:
+    get:
+      description: WMO WIS2 discovery metadata (experimental)
+      operationId: getWis2-discovery-metadataFeatures
+      parameters:
+      - *id001
+      - *id002
+      - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
+      - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
+      - description: The properties that should be included for each feature. The
+          parameter value is a comma-separated list of property names.
+        explode: false
+        in: query
+        name: properties
+        required: false
+        schema:
+          items:
+            enum:
+            - description
+            - formats
+            - language
+            - recordUpdated
+            - rights
+            - title
+            - type
+            - q
+            type: string
+          type: array
+        style: form
+      - $ref: '#/components/parameters/skipGeometry'
+      - $ref: https://raw.githubusercontent.com/opengeospatial/ogcapi-records/master/core/openapi/parameters/sortby.yaml
+      - $ref: '#/components/parameters/startindex'
+      - $ref: https://raw.githubusercontent.com/opengeospatial/ogcapi-records/master/core/openapi/parameters/q.yaml
+      - explode: false
+        in: query
+        name: description
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: formats
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: language
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: recordUpdated
+        required: false
+        schema:
+          type: date
+        style: form
+      - explode: false
+        in: query
+        name: rights
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: title
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: type
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        '200':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
+        '400':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        '404':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        '500':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get WMO WIS2 discovery metadata (experimental) items
+      tags:
+      - wis2-discovery-metadata
+  /collections/wis2-discovery-metadata/items/{featureId}:
+    get:
+      description: WMO WIS2 discovery metadata (experimental)
+      operationId: getWis2-discovery-metadataFeature
+      parameters:
+      - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
+      - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
+      responses:
+        '200':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
+        '400':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        '404':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        '500':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get WMO WIS2 discovery metadata (experimental) item by id
+      tags:
+      - wis2-discovery-metadata
+  /collections/wis2-discovery-metadata/queryables:
+    get:
+      description: WMO WIS2 discovery metadata (experimental)
+      operationId: getWis2-discovery-metadataQueryables
+      parameters:
+      - *id001
+      - *id002
+      responses:
+        '200':
+          $ref: '#/components/responses/Queryables'
+        '400':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        '404':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        '500':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get WMO WIS2 discovery metadata (experimental) queryables
+      tags:
+      - wis2-discovery-metadata
+  /collections/wis2-notification-messages:
+    get:
+      description: WMO WIS2 notification messages (experimental)
+      operationId: describeWis2-notification-messagesCollection
+      parameters:
+      - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
+      responses:
+        '200':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
+        '400':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        '404':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        '500':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get WMO WIS2 notification messages (experimental) metadata
+      tags:
+      - wis2-notification-messages
+  /collections/wis2-notification-messages/items:
+    get:
+      description: WMO WIS2 notification messages (experimental)
+      operationId: getWis2-notification-messagesFeatures
+      parameters:
+      - *id001
+      - *id002
+      - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/bbox
+      - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
+      - description: The properties that should be included for each feature. The
+          parameter value is a comma-separated list of property names.
+        explode: false
+        in: query
+        name: properties
+        required: false
+        schema:
+          items:
+            enum:
+            - data_id
+            - datetime
+            - pubtime
+            - q
+            type: string
+          type: array
+        style: form
+      - $ref: '#/components/parameters/skipGeometry'
+      - $ref: https://raw.githubusercontent.com/opengeospatial/ogcapi-records/master/core/openapi/parameters/sortby.yaml
+      - $ref: '#/components/parameters/startindex'
+      - explode: false
+        in: query
+        name: data_id
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: datetime
+        required: false
+        schema:
+          type: date
+        style: form
+      - explode: false
+        in: query
+        name: pubtime
+        required: false
+        schema:
+          type: date
+        style: form
+      - explode: false
+        in: query
+        name: q
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        '200':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
+        '400':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        '404':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        '500':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get WMO WIS2 notification messages (experimental) items
+      tags:
+      - wis2-notification-messages
+  /collections/wis2-notification-messages/items/{featureId}:
+    get:
+      description: WMO WIS2 notification messages (experimental)
+      operationId: getWis2-notification-messagesFeature
+      parameters:
+      - $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
+      - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
+      responses:
+        '200':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
+        '400':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        '404':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        '500':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get WMO WIS2 notification messages (experimental) item by id
+      tags:
+      - wis2-notification-messages
+  /collections/wis2-notification-messages/queryables:
+    get:
+      description: WMO WIS2 notification messages (experimental)
+      operationId: getWis2-notification-messagesQueryables
+      parameters:
+      - *id001
+      - *id002
+      responses:
+        '200':
+          $ref: '#/components/responses/Queryables'
+        '400':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        '404':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        '500':
+          $ref: https://api.wxod-dev.cmc.ec.gc.ca/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get WMO WIS2 notification messages (experimental) queryables
+      tags:
+      - wis2-notification-messages
   /conformance:
     get:
       description: API conformance definition
@@ -17963,6 +18233,10 @@ tags:
     of 2.5 degrees and for a few selected vertical levels. Predictions and corresponding
     hindcast are made available monthly.
   name: weather:cansips:250km:forecast:members
+- description: WMO WIS2 discovery metadata (experimental)
+  name: wis2-discovery-metadata
+- description: WMO WIS2 notification messages (experimental)
+  name: wis2-notification-messages
 - description: Raster Drill process
   name: raster-drill
 
