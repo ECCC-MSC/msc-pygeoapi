@@ -26,7 +26,7 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 #
 # =================================================================
-
+import time
 import json
 from glob import glob
 import logging
@@ -46,8 +46,8 @@ from pygeoapi.provider.base import (BaseProvider,
                                     ProviderQueryError)
 
 LOGGER = logging.getLogger(__name__)
-DEFAULT_LIMIT = 10
-MAX_ZARR_GB_SIZE = 1
+DEFAULT_LIMIT_JSON = 10
+MAX_GB_SIZE_ZARR = 1
 
 class HRDPSWEonGZarrProvider(BaseProvider):
     """ Zarr Provider """
@@ -340,15 +340,13 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         #TODO: What is the deafult limit of dataset (set it to a first 10 values of the dataset along each dimension)
         """
         var_name = self._coverage_properties['variables'][0]
-        var_metadata = self._get_parameter_metadata(var_name)
         var_dims = self._coverage_properties['dimensions']
-        var_time = self._data[var_name]["time"].values
 
         query_return = {}
         #return LOGGER.error(type(datetime_), datetime_)
         if subsets == {} and bbox == [] and datetime_ == None:
             for dim in var_dims:
-                query_return[dim] = DEFAULT_LIMIT
+                query_return[dim] = DEFAULT_LIMIT_JSON
             data_vals = self._data[var_name].head(**query_return)
             #data_vals = self._data[var_name]
 
@@ -404,9 +402,12 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             #new_dataset = self._data[var_name].to_dataset()
             new_dataset = data_vals.to_dataset()
             data_size = sys.getsizeof(new_dataset)
-            MB_data_size = data_size / 1048576
-            if MB_data_size > MAX_ZARR_GB_SIZE:
-                msg = "Data size too large to return as zarr"
+            GB_data_size = (data_size/1048576)/1024
+            predicted_TMP_folder_size_GB = GB_data_size*17551549.0462
+            #LOGGER.error(f"The size of the data is: {predicted_TMP_folder_size_GB} and the size of the data is: {GB_data_size}")
+    
+            if predicted_TMP_folder_size_GB > MAX_GB_SIZE_ZARR:
+                msg = f"Data size too large to return as zarr"
                 LOGGER.error(msg)
                 raise Exception(msg)
             else:
