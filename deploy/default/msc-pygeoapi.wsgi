@@ -47,7 +47,7 @@ import os
 
 os.environ['PYGEOAPI_CONFIG'] = '/opt/msc-pygeoapi/conf/msc-pygeoapi-config.yml'
 os.environ['PYGEOAPI_OPENAPI'] = '/opt/msc-pygeoapi/conf/msc-pygeoapi-openapi.yml'
-os.environ['MSC_PYGEOAPI_OGC_ES_URL'] = 'http://localhost:9200'
+os.environ['MSC_PYGEOAPI_ES_URL'] = 'http://localhost:9200'
 os.environ['MSC_PYGEOAPI_OGC_API_URL'] = 'https://api.wxod-dev.cmc.ec.gc.ca/'
 os.environ['MSC_PYGEOAPI_OGC_API_URL_BASEPATH'] = '/'
 os.environ['MSC_PYGEOAPI_TEMPLATES'] = '/opt/msc-pygeoapi/theme/templates'
