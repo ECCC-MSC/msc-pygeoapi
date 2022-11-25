@@ -1209,7 +1209,7 @@ resources:
         providers:
             - type: stac
               name: FileSystem
-              data: /data/geomet/feeds/ddi
+              data: /data/geomet/feeds/hpfx
               file_types:
                   - .cap
                   - .grib2
@@ -1323,7 +1323,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/cmip5/netcdf/scenarios/RCP2.6/annual/anomaly/CMIP5_rcp2.6_annual_anom_latlon1x1_*_pctl50_P1Y.nc
+              data: /data/geomet/feeds/hpfx/climate/cmip5/netcdf/scenarios/RCP2.6/annual/anomaly/CMIP5_rcp2.6_annual_anom_latlon1x1_*_pctl50_P1Y.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -1363,7 +1363,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/cmip5/netcdf/scenarios/RCP2.6/seasonal/DJF/anomaly/CMIP5_rcp2.6_DJF_anom_latlon1x1_*_pctl50_P1Y.nc
+              data: /data/geomet/feeds/hpfx/climate/cmip5/netcdf/scenarios/RCP2.6/seasonal/DJF/anomaly/CMIP5_rcp2.6_DJF_anom_latlon1x1_*_pctl50_P1Y.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -1403,7 +1403,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/cmip5/netcdf/scenarios/RCP2.6/monthly_ens/anomaly/CMIP5_rcp2.6_monthly_anom_latlon1x1_*_pctl50_P1M.nc
+              data: /data/geomet/feeds/hpfx/climate/cmip5/netcdf/scenarios/RCP2.6/monthly_ens/anomaly/CMIP5_rcp2.6_monthly_anom_latlon1x1_*_pctl50_P1M.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -1443,7 +1443,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/cmip5/netcdf/scenarios/RCP2.6/annual/absolute/CMIP5_rcp2.6_annual_abs_latlon1x1_*_pctl50_P1Y.nc
+              data: /data/geomet/feeds/hpfx/climate/cmip5/netcdf/scenarios/RCP2.6/annual/absolute/CMIP5_rcp2.6_annual_abs_latlon1x1_*_pctl50_P1Y.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -1483,7 +1483,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/cmip5/netcdf/scenarios/RCP2.6/seasonal/DJF/absolute/CMIP5_rcp2.6_DJF_abs_latlon1x1_*_pctl50_P1Y.nc
+              data: /data/geomet/feeds/hpfx/climate/cmip5/netcdf/scenarios/RCP2.6/seasonal/DJF/absolute/CMIP5_rcp2.6_DJF_abs_latlon1x1_*_pctl50_P1Y.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -1523,7 +1523,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/cmip5/netcdf/scenarios/RCP2.6/monthly_ens/absolute/CMIP5_rcp2.6_monthly_abs_latlon1x1_*_pctl50_P1M.nc
+              data: /data/geomet/feeds/hpfx/climate/cmip5/netcdf/scenarios/RCP2.6/monthly_ens/absolute/CMIP5_rcp2.6_monthly_abs_latlon1x1_*_pctl50_P1M.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -1563,7 +1563,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/cmip5/netcdf/scenarios/RCP2.6/annual/avg_20years/CMIP5_rcp2.6_annual_2021-2040_latlon1x1_*_pctl50_P1Y.nc
+              data: /data/geomet/feeds/hpfx/climate/cmip5/netcdf/scenarios/RCP2.6/annual/avg_20years/CMIP5_rcp2.6_annual_2021-2040_latlon1x1_*_pctl50_P1Y.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -1603,7 +1603,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/cmip5/netcdf/scenarios/RCP2.6/seasonal/DJF/avg_20years/CMIP5_rcp2.6_DJF_2021-2040_latlon1x1_*_pctl50_P1Y.nc
+              data: /data/geomet/feeds/hpfx/climate/cmip5/netcdf/scenarios/RCP2.6/seasonal/DJF/avg_20years/CMIP5_rcp2.6_DJF_2021-2040_latlon1x1_*_pctl50_P1Y.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -1643,7 +1643,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/cmip5/netcdf/historical/annual/absolute/CMIP5_hist_annual_abs_latlon1x1_*_pctl50_P1Y.nc
+              data: /data/geomet/feeds/hpfx/climate/cmip5/netcdf/historical/annual/absolute/CMIP5_hist_annual_abs_latlon1x1_*_pctl50_P1Y.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -1683,7 +1683,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/cmip5/netcdf/historical/annual/anomaly/CMIP5_hist_annual_anom_latlon1x1_*_pctl50_P1Y.nc
+              data: /data/geomet/feeds/hpfx/climate/cmip5/netcdf/historical/annual/anomaly/CMIP5_hist_annual_anom_latlon1x1_*_pctl50_P1Y.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -1723,7 +1723,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/cmip5/netcdf/historical/seasonal/DJF/absolute/CMIP5_hist_DJF_abs_latlon1x1_*_pctl50_P1Y.nc
+              data: /data/geomet/feeds/hpfx/climate/cmip5/netcdf/historical/seasonal/DJF/absolute/CMIP5_hist_DJF_abs_latlon1x1_*_pctl50_P1Y.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -1763,7 +1763,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/cmip5/netcdf/historical/seasonal/DJF/anomaly/CMIP5_hist_DJF_anom_latlon1x1_*_pctl50_P1Y.nc
+              data: /data/geomet/feeds/hpfx/climate/cmip5/netcdf/historical/seasonal/DJF/anomaly/CMIP5_hist_DJF_anom_latlon1x1_*_pctl50_P1Y.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -1803,7 +1803,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/cmip5/netcdf/historical/monthly_ens/absolute/CMIP5_hist_monthly_abs_latlon1x1_*_pctl50_P1M.nc
+              data: /data/geomet/feeds/hpfx/climate/cmip5/netcdf/historical/monthly_ens/absolute/CMIP5_hist_monthly_abs_latlon1x1_*_pctl50_P1M.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -1843,7 +1843,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/cmip5/netcdf/historical/monthly_ens/anomaly/CMIP5_hist_monthly_anom_latlon1x1_*_pctl50_P1M.nc
+              data: /data/geomet/feeds/hpfx/climate/cmip5/netcdf/historical/monthly_ens/anomaly/CMIP5_hist_monthly_anom_latlon1x1_*_pctl50_P1M.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -1875,7 +1875,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/dcs/netcdf/scenarios/RCP2.6/annual/anomaly/DCS_rcp2.6_annual_anom_latlon0.086x0.086_*_pctl50_P1Y.nc
+              data: /data/geomet/feeds/hpfx/climate/dcs/netcdf/scenarios/RCP2.6/annual/anomaly/DCS_rcp2.6_annual_anom_latlon0.086x0.086_*_pctl50_P1Y.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -1907,7 +1907,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/dcs/netcdf/scenarios/RCP2.6/seasonal/DJF/anomaly/DCS_rcp2.6_DJF_anom_latlon0.086x0.086_*_pctl50_P1Y.nc
+              data: /data/geomet/feeds/hpfx/climate/dcs/netcdf/scenarios/RCP2.6/seasonal/DJF/anomaly/DCS_rcp2.6_DJF_anom_latlon0.086x0.086_*_pctl50_P1Y.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -1939,7 +1939,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/dcs/netcdf/scenarios/RCP2.6/annual/absolute/DCS_rcp2.6_annual_abs_latlon0.086x0.086_*_pctl50_P1Y.nc
+              data: /data/geomet/feeds/hpfx/climate/dcs/netcdf/scenarios/RCP2.6/annual/absolute/DCS_rcp2.6_annual_abs_latlon0.086x0.086_*_pctl50_P1Y.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -1971,7 +1971,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/dcs/netcdf/scenarios/RCP2.6/seasonal/DJF/absolute/DCS_rcp2.6_DJF_abs_latlon0.086x0.086_*_pctl50_P1Y.nc
+              data: /data/geomet/feeds/hpfx/climate/dcs/netcdf/scenarios/RCP2.6/seasonal/DJF/absolute/DCS_rcp2.6_DJF_abs_latlon0.086x0.086_*_pctl50_P1Y.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -2003,7 +2003,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/dcs/netcdf/scenarios/RCP2.6/monthly_ens/absolute/DCS_rcp2.6_monthly_abs_latlon0.086x0.086_*_pctl50_P1M.nc
+              data: /data/geomet/feeds/hpfx/climate/dcs/netcdf/scenarios/RCP2.6/monthly_ens/absolute/DCS_rcp2.6_monthly_abs_latlon0.086x0.086_*_pctl50_P1M.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -2035,7 +2035,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/dcs/netcdf/scenarios/RCP2.6/annual/avg_20years/DCS_rcp2.6_annual_2021-2040_latlon0.086x0.086_*_pctl50_P1Y.nc
+              data: /data/geomet/feeds/hpfx/climate/dcs/netcdf/scenarios/RCP2.6/annual/avg_20years/DCS_rcp2.6_annual_2021-2040_latlon0.086x0.086_*_pctl50_P1Y.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -2067,7 +2067,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/dcs/netcdf/scenarios/RCP2.6/seasonal/DJF/avg_20years/DCS_rcp2.6_DJF_2021-2040_latlon0.086x0.086_*_pctl50_P1Y.nc
+              data: /data/geomet/feeds/hpfx/climate/dcs/netcdf/scenarios/RCP2.6/seasonal/DJF/avg_20years/DCS_rcp2.6_DJF_2021-2040_latlon0.086x0.086_*_pctl50_P1Y.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -2099,7 +2099,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/dcs/netcdf/historical/annual/absolute/DCS_hist_annual_abs_latlon0.086x0.086_*_pctl50_P1Y.nc
+              data: /data/geomet/feeds/hpfx/climate/dcs/netcdf/historical/annual/absolute/DCS_hist_annual_abs_latlon0.086x0.086_*_pctl50_P1Y.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -2131,7 +2131,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/dcs/netcdf/historical/annual/anomaly/DCS_hist_annual_anom_latlon0.086x0.086_*_pctl50_P1Y.nc
+              data: /data/geomet/feeds/hpfx/climate/dcs/netcdf/historical/annual/anomaly/DCS_hist_annual_anom_latlon0.086x0.086_*_pctl50_P1Y.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -2163,7 +2163,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/dcs/netcdf/historical/seasonal/DJF/absolute/DCS_hist_DJF_abs_latlon0.086x0.086_*_pctl50_P1Y.nc
+              data: /data/geomet/feeds/hpfx/climate/dcs/netcdf/historical/seasonal/DJF/absolute/DCS_hist_DJF_abs_latlon0.086x0.086_*_pctl50_P1Y.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -2195,7 +2195,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/dcs/netcdf/historical/seasonal/DJF/anomaly/DCS_hist_DJF_anom_latlon0.086x0.086_*_pctl50_P1Y.nc
+              data: /data/geomet/feeds/hpfx/climate/dcs/netcdf/historical/seasonal/DJF/anomaly/DCS_hist_DJF_anom_latlon0.086x0.086_*_pctl50_P1Y.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -2227,7 +2227,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/dcs/netcdf/historical/monthly_ens/absolute/DCS_hist_monthly_abs_latlon0.086x0.086_*_pctl50_P1M.nc
+              data: /data/geomet/feeds/hpfx/climate/dcs/netcdf/historical/monthly_ens/absolute/DCS_hist_monthly_abs_latlon0.086x0.086_*_pctl50_P1M.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -2268,7 +2268,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/indices/netcdf/historical/INDICES_hist_1951-2005_latlon_0.086x0.086_*_pctl50.nc
+              data: /data/geomet/feeds/hpfx/climate/indices/netcdf/historical/INDICES_hist_1951-2005_latlon_0.086x0.086_*_pctl50.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -2309,7 +2309,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.climate_xarray.ClimateProvider
-              data: /data/geomet/feeds/dd.ops/climate/indices/netcdf/scenarios/RCP2.6/INDICES_rcp2.6_2006-2100_latlon_0.086x0.086_*_pctl50.nc
+              data: /data/geomet/feeds/hpfx/climate/indices/netcdf/scenarios/RCP2.6/INDICES_rcp2.6_2006-2100_latlon_0.086x0.086_*_pctl50.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -2342,7 +2342,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.spei_xarray.SPEIProvider
-              data: /data/geomet/feeds/dd.ops/climate/spei/netcdf/historical/SPEI-1/CMIP5_hist_SPEI-1_1900-2005_latlon1x1_SPEI_pctl50.nc
+              data: /data/geomet/feeds/hpfx/climate/spei/netcdf/historical/SPEI-1/CMIP5_hist_SPEI-1_1900-2005_latlon1x1_SPEI_pctl50.nc
               x_field: longitude
               y_field: latitude
               time_field: time
@@ -2375,7 +2375,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.spei_xarray.SPEIProvider
-              data: /data/geomet/feeds/dd.ops/climate/spei/netcdf/historical/SPEI-3/CMIP5_hist_SPEI-3_1900-2005_latlon1x1_SPEI_pctl50.nc
+              data: /data/geomet/feeds/hpfx/climate/spei/netcdf/historical/SPEI-3/CMIP5_hist_SPEI-3_1900-2005_latlon1x1_SPEI_pctl50.nc
               x_field: longitude
               y_field: latitude
               time_field: time
@@ -2408,7 +2408,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.spei_xarray.SPEIProvider
-              data: /data/geomet/feeds/dd.ops/climate/spei/netcdf/historical/SPEI-12/CMIP5_hist_SPEI-12_1900-2005_latlon1x1_SPEI_pctl50.nc
+              data: /data/geomet/feeds/hpfx/climate/spei/netcdf/historical/SPEI-12/CMIP5_hist_SPEI-12_1900-2005_latlon1x1_SPEI_pctl50.nc
               x_field: longitude
               y_field: latitude
               time_field: time
@@ -2441,7 +2441,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.spei_xarray.SPEIProvider
-              data: /data/geomet/feeds/dd.ops/climate/spei/netcdf/scenarios/RCP2.6/SPEI-1/CMIP5_rcp2.6_SPEI-1_2006-2100_latlon1x1_SPEI_pctl50.nc
+              data: /data/geomet/feeds/hpfx/climate/spei/netcdf/scenarios/RCP2.6/SPEI-1/CMIP5_rcp2.6_SPEI-1_2006-2100_latlon1x1_SPEI_pctl50.nc
               x_field: longitude
               y_field: latitude
               time_field: time
@@ -2474,7 +2474,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.spei_xarray.SPEIProvider
-              data: /data/geomet/feeds/dd.ops/climate/spei/netcdf/scenarios/RCP2.6/SPEI-3/CMIP5_rcp2.6_SPEI-3_2006-2100_latlon1x1_SPEI_pctl50.nc
+              data: /data/geomet/feeds/hpfx/climate/spei/netcdf/scenarios/RCP2.6/SPEI-3/CMIP5_rcp2.6_SPEI-3_2006-2100_latlon1x1_SPEI_pctl50.nc
               x_field: longitude
               y_field: latitude
               time_field: time
@@ -2507,7 +2507,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.spei_xarray.SPEIProvider
-              data: /data/geomet/feeds/dd.ops/climate/spei/netcdf/scenarios/RCP2.6/SPEI-12/CMIP5_rcp2.6_SPEI-12_2006-2100_latlon1x1_SPEI_pctl50.nc
+              data: /data/geomet/feeds/hpfx/climate/spei/netcdf/scenarios/RCP2.6/SPEI-12/CMIP5_rcp2.6_SPEI-12_2006-2100_latlon1x1_SPEI_pctl50.nc
               x_field: longitude
               y_field: latitude
               time_field: time
@@ -2544,7 +2544,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.cangrd_rasterio.CanGRDProvider
-              data: /data/geomet/feeds/dd.ops/climate/cangrd/geotiff/historical/annual/trend/CANGRD_hist_annual_trend_ps50km_TMEAN_1948-2018.tif
+              data: /data/geomet/feeds/hpfx/climate/cangrd/geotiff/historical/annual/trend/CANGRD_hist_annual_trend_ps50km_TMEAN_1948-2018.tif
               format:
                   name: GTiff
                   mimetype: image/tiff
@@ -2578,7 +2578,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.cangrd_rasterio.CanGRDProvider
-              data: /data/geomet/feeds/dd.ops/climate/cangrd/geotiff/historical/annual/anomaly/CANGRD_hist_annual_anom_ps50km_TMEAN_2018.tif
+              data: /data/geomet/feeds/hpfx/climate/cangrd/geotiff/historical/annual/anomaly/CANGRD_hist_annual_anom_ps50km_TMEAN_2018.tif
               format:
                   name: GTiff
                   mimetype: image/tiff
@@ -2612,7 +2612,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.cangrd_rasterio.CanGRDProvider
-              data: /data/geomet/feeds/dd.ops/climate/cangrd/geotiff/historical/monthly_ens/anomaly/CANGRD_hist_monthly_anom_ps50km_TMEAN_2018-12.tif
+              data: /data/geomet/feeds/hpfx/climate/cangrd/geotiff/historical/monthly_ens/anomaly/CANGRD_hist_monthly_anom_ps50km_TMEAN_2018-12.tif
               format:
                   name: GTiff
                   mimetype: image/tiff
@@ -2646,7 +2646,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.cangrd_rasterio.CanGRDProvider
-              data: /data/geomet/feeds/dd.ops/climate/cangrd/geotiff/historical/seasonal/DJF/trend/CANGRD_hist_DJF_trend_ps50km_TMEAN_1948-2018.tif
+              data: /data/geomet/feeds/hpfx/climate/cangrd/geotiff/historical/seasonal/DJF/trend/CANGRD_hist_DJF_trend_ps50km_TMEAN_1948-2018.tif
               format:
                   name: GTiff
                   mimetype: image/tiff
@@ -2680,7 +2680,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.cangrd_rasterio.CanGRDProvider
-              data: /data/geomet/feeds/dd.ops/climate/cangrd/geotiff/historical/seasonal/DJF/anomaly/CANGRD_hist_DJF_anom_ps50km_TMEAN_2018.tif
+              data: /data/geomet/feeds/hpfx/climate/cangrd/geotiff/historical/seasonal/DJF/anomaly/CANGRD_hist_DJF_anom_ps50km_TMEAN_2018.tif
               format:
                   name: GTiff
                   mimetype: image/tiff
@@ -2708,7 +2708,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.rdpa_rasterio.RDPAProvider
-              data: /data-san/geomet/feeds/local/RDPA/forecast/15km/2012/10/CMC_RDPA_APCP-024-0700cutoff_SFC_0_ps15km_2012100212_000.grib2
+              data: /data-san/geomet/local/rdpa-archives/forecast/15km/2012/10/CMC_RDPA_APCP-024-0700cutoff_SFC_0_ps15km_2012100212_000.grib2
               options:
                   DATA_ENCODING: COMPLEX_PACKING
               format:
@@ -2738,7 +2738,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.rdpa_rasterio.RDPAProvider
-              data: /data-san/geomet/feeds/local/RDPA/forecast/15km/2012/10/CMC_RDPA_APCP-006-0700cutoff_SFC_0_ps15km_2012100300_000.grib2
+              data: /data-san/geomet/local/rdpa-archives/forecast/15km/2012/10/CMC_RDPA_APCP-006-0700cutoff_SFC_0_ps15km_2012100300_000.grib2
               options:
                   DATA_ENCODING: COMPLEX_PACKING
               format:
@@ -2768,7 +2768,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.rdpa_rasterio.RDPAProvider
-              data: /data-san/geomet/feeds/local/RDPA/forecast/10km/2012/10/CMC_RDPA_APCP-024-0700cutoff_SFC_0_ps10km_2012100312_000.grib2
+              data: /data-san/geomet/local/rdpa-archives/forecast/10km/2012/10/CMC_RDPA_APCP-024-0700cutoff_SFC_0_ps10km_2012100312_000.grib2
               options:
                   DATA_ENCODING: COMPLEX_PACKING
               format:
@@ -2798,7 +2798,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.rdpa_rasterio.RDPAProvider
-              data: /data-san/geomet/feeds/local/RDPA/forecast/10km/2012/10/CMC_RDPA_APCP-006-0700cutoff_SFC_0_ps10km_2012100306_000.grib2
+              data: /data-san/geomet/local/rdpa-archives/forecast/10km/2012/10/CMC_RDPA_APCP-006-0700cutoff_SFC_0_ps10km_2012100306_000.grib2
               options:
                   DATA_ENCODING: COMPLEX_PACKING
               format:
@@ -2828,7 +2828,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.rdpa_rasterio.RDPAProvider
-              data: /data/geomet/feeds/ddi/analysis/precip/rdpa/grib2/polar_stereographic/24/CMC_RDPA_APCP-024-0100cutoff_SFC_0_ps10km_*_000.grib2
+              data: /data/geomet/feeds/hpfx/analysis/precip/rdpa/grib2/polar_stereographic/24/CMC_RDPA_APCP-024-0100cutoff_SFC_0_ps10km_*_000.grib2
               options:
                   DATA_ENCODING: COMPLEX_PACKING
               format:
@@ -2858,7 +2858,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.rdpa_rasterio.RDPAProvider
-              data: /data-san/geomet/feeds/ddi/analysis/precip/rdpa/grib2/polar_stereographic/06/CMC_RDPA_APCP-006-0100cutoff_SFC_0_ps10km_*_000.grib2
+              data: /data-san/geomet/feeds/hpfx/analysis/precip/rdpa/grib2/polar_stereographic/06/CMC_RDPA_APCP-006-0100cutoff_SFC_0_ps10km_*_000.grib2
               options:
                   DATA_ENCODING: COMPLEX_PACKING
               format:
@@ -2889,7 +2889,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.cansips_rasterio.CanSIPSProvider
-              data: /data-san/geomet/feeds/ddi/ensemble/cansips/grib2/forecast/raw/2013/04/cansips_forecast_raw_latlon2.5x2.5_*_2013-04_allmembers.grib2
+              data: /data-san/geomet/feeds/hpfx/ensemble/cansips/grib2/forecast/raw/2013/04/cansips_forecast_raw_latlon2.5x2.5_*_2013-04_allmembers.grib2
               options:
                   DATA_ENCODING: COMPLEX_PACKING
               format:
