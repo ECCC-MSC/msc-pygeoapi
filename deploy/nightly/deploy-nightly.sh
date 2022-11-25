@@ -61,7 +61,7 @@ rm -fr latest
 echo "Generating nightly build for $TIMESTAMP"
 python3.6 -m venv --system-site-packages $NIGHTLYDIR && cd $NIGHTLYDIR
 source bin/activate
-git clone $MSC_PYGEOAPI_GITREPO
+git clone $MSC_PYGEOAPI_GITREPO -b 0.10
 git clone $PYGEOAPI_GITREPO
 cd pygeoapi
 pip3 install -r requirements.txt
