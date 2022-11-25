@@ -250,11 +250,11 @@ def extract_sounding_data(
     """
 
     from msc_pygeoapi.env import (
-        GEOMET_DDI_BASEPATH,
+        GEOMET_HPFX_BASEPATH,
         GEOMET_SCIENCE_BASEPATH
     )
 
-    data_basepath = GEOMET_DDI_BASEPATH
+    data_basepath = GEOMET_HPFX_BASEPATH
 
     date = datetime.datetime.strptime(model_run, DATE_FORMAT)
     run_hour = f'{date.hour:02}'
