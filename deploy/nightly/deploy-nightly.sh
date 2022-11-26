@@ -33,12 +33,13 @@ PYGEOAPI_GITREPO=https://github.com/geopython/pygeoapi.git
 MSC_PYGEOAPI_GITREPO=https://github.com/ECCC-MSC/msc-pygeoapi.git
 DAYSTOKEEP=7
 export MSC_PYGEOAPI_OGC_API_URL=https://geomet-dev-03-nightly.cmc.ec.gc.ca/msc-pygeoapi/nightly/latest/
+export MSC_PYGEOAPI_ES_URL=http://localhost:9200
 export MSC_PYGEOAPI_OGC_API_URL_BASEPATH=/
 export MSC_PYGEOAPI_TEMPLATES=/data/web/msc-pygeoapi-nightly/latest/msc-pygeoapi/theme/templates
 export MSC_PYGEOAPI_STATIC=/data/web/msc-pygeoapi-nightly/latest/msc-pygeoapi/theme/static
 export MSC_PYGEOAPI_OGC_SCHEMAS_LOCATION=/data/web/msc-pygeoapi-nightly/latest/schemas.opengis.net
-export GEOMET_DDI_BASEPATH=/data/geomet/feeds/ddi
-export GEOMET_SCIENCE_BASEPATH=/data/geomet/feeds/local/SCIENCE
+export GEOMET_HPFX_BASEPATH=/data/geomet/feeds/hpfx
+export GEOMET_SCIENCE_BASEPATH=/data/geomet/feeds/cmoi-science
 
 # you should be okay from here
 

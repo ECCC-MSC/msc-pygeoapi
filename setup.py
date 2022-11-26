@@ -151,7 +151,7 @@ setup(
         'pygeoapi'
     ]),
     author='Tom Kralidis',
-    author_email='tom.kralidis@canada.ca',
+    author_email='tom.kralidis@ec.gc.ca',
     maintainer='Tom Kralidis',
     maintainer_email='tom.kralidis@canada.ca',
     url='https://github.com/ECCC-MSC/msc-pygeoapi',

@@ -47,13 +47,14 @@ import os
 
 os.environ['PYGEOAPI_CONFIG'] = '/opt/msc-pygeoapi/conf/msc-pygeoapi-config.yml'
 os.environ['PYGEOAPI_OPENAPI'] = '/opt/msc-pygeoapi/conf/msc-pygeoapi-openapi.yml'
+os.environ['MSC_PYGEOAPI_ES_URL'] = 'http://localhost:9200'
 os.environ['MSC_PYGEOAPI_OGC_API_URL'] = 'https://api.wxod-dev.cmc.ec.gc.ca/'
 os.environ['MSC_PYGEOAPI_OGC_API_URL_BASEPATH'] = '/'
 os.environ['MSC_PYGEOAPI_TEMPLATES'] = '/opt/msc-pygeoapi/theme/templates'
 os.environ['MSC_PYGEOAPI_STATIC'] = '/opt/msc-pygeoapi/theme/static'
 os.environ['MSC_PYGEOAPI_OGC_SCHEMAS_LOCATION'] = '/opt/msc-pygeoapi/schemas.opengis.net'
-os.environ['GEOMET_DDI_BASEPATH'] = '/data/geomet/feeds/ddi'
-os.environ['GEOMET_SCIENCE_BASEPATH'] = '/data/geomet/feeds/local/SCIENCE'
+os.environ['GEOMET_HPFX_BASEPATH'] = '/data/geomet/feeds/hpfx'
+os.environ['GEOMET_SCIENCE_BASEPATH'] = '/data/geomet/feeds/cmoi-science'
 
 
 from pygeoapi.flask_app import APP as application

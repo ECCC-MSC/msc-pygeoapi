@@ -1,4 +1,4 @@
-click<8
+click
 elasticsearch<8
 gdal
 lxml
@@ -11,4 +11,4 @@ rasterio
 requests
 sqlalchemy
 unicodecsv
-xarray==0.10.2
+xarray
