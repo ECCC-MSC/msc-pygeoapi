@@ -27,6 +27,7 @@
 #
 # =================================================================
 import time
+import math
 import json
 from glob import glob
 import logging
@@ -47,7 +48,7 @@ from pygeoapi.provider.base import (BaseProvider,
 
 LOGGER = logging.getLogger(__name__)
 DEFAULT_LIMIT_JSON = 10
-MAX_GB_SIZE_ZARR = 1
+MAX_MB_SIZE_ZARR = 100
 
 class HRDPSWEonGZarrProvider(BaseProvider):
     """ Zarr Provider """
@@ -392,30 +393,23 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                     start_date = datetime_.split('/')[0]
                     end_date = datetime_.split('/')[1]
                     query_return["time"] = slice(start_date, end_date)
-            one_small_ds = self._data[var_name].isel(lat=0, lon=0, time=slice(0,1), level = 0)
+            #one_small_ds = self._data[var_name].isel(lat=0, lon=0, time=slice(0,1), level = 0)
 
             #is a xarray data-array
             data_vals = self._data[var_name].sel(**query_return)
         #return LOGGER.error("the type",type(data_vals))
 
         if format_ == "zarr":
-            #new_dataset = self._data[var_name].to_dataset()
             new_dataset = data_vals.to_dataset()
-            data_size = sys.getsizeof(new_dataset)
-            GB_data_size = (data_size/1048576)/1024
-            predicted_TMP_folder_size_GB = GB_data_size*17551549.0462
-            #LOGGER.error(f"The size of the data is: {predicted_TMP_folder_size_GB} and the size of the data is: {GB_data_size}")
-    
-            if predicted_TMP_folder_size_GB > MAX_GB_SIZE_ZARR:
-                msg = f"Data size too large to return as zarr"
+            data_size = new_dataset.nbytes
+            MB_data_size = data_size*(2**(-20))
+            msg = f"Data size too large to return as zarr"
+            if MAX_MB_SIZE_ZARR > MB_data_size:
                 LOGGER.error(msg)
                 raise Exception(msg)
+
             else:
                 return _get_zarr_data(new_dataset)
-
-        lst_of_dataJSON = []
-        for i in _gennumpy(data_vals.values):
-            lst_of_dataJSON.append(i)
             
 
 
@@ -426,8 +420,8 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             "range": self.get_coverage_rangetype(),
             "properties" : self._coverage_properties,
             #"data values":  _nummpyarray_to_json(data_vals.values)
-            "data values":  lst_of_dataJSON
-            #"data values" : data_vals.values.tolist()
+            "data values":  [i for i in _gennumpy(data_vals.values)]
+            #"data values" : data_vals.data.tolist()
             #"data values": data_vals.to_dict()['data']
         }
         return dict_to_return
@@ -572,9 +566,9 @@ def _get_zarr_data(data):
     #TODO: set the temp directory path
     with tempfile.TemporaryDirectory(dir='/users/dor/afsw/adb/ADANtmp') as tmp_dir:
         data.to_zarr(f'{tmp_dir}/final.zarr', mode='w')
-        #_zip_dir(f'{tmp_dir}', root_dir = f'{tmp_dir}.zarr')
         shutil.make_archive(f'{tmp_dir}/finally', 'zip', f'{tmp_dir}/final.zarr')
         #TODO: _CRS missing becuase that needs to be added to the .zattrs file for variables
+        time.sleep(500)
         return open(f'{tmp_dir}/finally.zip', 'rb').read()
 
 def _nummpyarray_to_json(data_array):
@@ -591,7 +585,9 @@ def _nummpyarray_to_json(data_array):
         return lst_to_return
     data_len = len(data_array)
     for i in range(data_len):
-        lst_to_return.append(data_array[0].tolist())
+        d = data_array[0].tolist()
+        lst_to_return.append(d)
+        del d
         data_array = numpy.delete(data_array, 0)
     return lst_to_return
 
@@ -607,8 +603,26 @@ def _gennumpy(data_array):
     #checks to make sure values exist in the array
     if 0 in data_array.shape:
         return []
+
+    for i in range(len(data_array)):
+        d = data_array[0].tolist()
+        yield d
+        del d
+        data_array = numpy.delete(data_array, 0,0)
+
+def _gen_json(data_array):
+    """
+    Helper function to convert numpy array to json
+    Converts numpy array to list (which is json serializable)
+    :param data: numpy array
+    :returns: generator
+    """
+
+    #checks to make sure values exist in the array
+    if 0 in data_array.shape:
+        return []
     data_len = len(data_array)
     for i in range(data_len):
-        yield (data_array[0].tolist())
-        data_array = numpy.delete(data_array, 0)
+        yield [i for i in data_array[0]]
+        data_array = numpy.delete(data_array, 0,0)
     
