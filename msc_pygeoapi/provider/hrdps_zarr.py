@@ -412,7 +412,6 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                 return _get_zarr_data(new_dataset)
             
 
-
         dict_to_return = {
 
             "type": "Coverage",
@@ -420,7 +419,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             "range": self.get_coverage_rangetype(),
             "properties" : self._coverage_properties,
             #"data values":  _nummpyarray_to_json(data_vals.values)
-            "data values":  [i for i in _gennumpy(data_vals.values)]
+            "data values":  [i for i in _gennumpy(data_vals.data)]
             #"data values" : data_vals.data.tolist()
             #"data values": data_vals.to_dict()['data']
         }
@@ -594,35 +593,21 @@ def _nummpyarray_to_json(data_array):
 
 def _gennumpy(data_array):
     """
-    Helper function to convert numpy array to json
+    Helper function to convert dask array to json
     Converts numpy array to list (which is json serializable)
-    :param data: numpy array
+    :param data: dask array
     :returns: generator
     """
 
+    #LOGGER.error("The TYPE1:", type(data_array))
+    
     #checks to make sure values exist in the array
     if 0 in data_array.shape:
         return []
 
     for i in range(len(data_array)):
-        d = data_array[0].tolist()
+        d = data_array[i].compute().tolist()
+        #LOGGER.error("The TYPE2:", type(d))
         yield d
         del d
-        data_array = numpy.delete(data_array, 0,0)
 
-def _gen_json(data_array):
-    """
-    Helper function to convert numpy array to json
-    Converts numpy array to list (which is json serializable)
-    :param data: numpy array
-    :returns: generator
-    """
-
-    #checks to make sure values exist in the array
-    if 0 in data_array.shape:
-        return []
-    data_len = len(data_array)
-    for i in range(data_len):
-        yield [i for i in data_array[0]]
-        data_array = numpy.delete(data_array, 0,0)
-    
