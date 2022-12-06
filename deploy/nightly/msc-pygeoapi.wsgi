@@ -48,13 +48,14 @@ import sys
 
 os.environ['PYGEOAPI_CONFIG'] = '/data/web/msc-pygeoapi-nightly/latest/msc-pygeoapi/deploy/nightly/msc-pygeoapi-config.yml'
 os.environ['PYGEOAPI_OPENAPI'] = '/data/web/msc-pygeoapi-nightly/latest/msc-pygeoapi/deploy/nightly/msc-pygeoapi-openapi.yml'
+os.environ['MSC_PYGEOAPI_ES_URL'] = 'http://localhost:9200'
 os.environ['MSC_PYGEOAPI_OGC_API_URL'] = 'https://geomet-dev-03-nightly.cmc.ec.gc.ca/msc-pygeoapi/nightly/latest/'
 os.environ['MSC_PYGEOAPI_OGC_API_URL_BASEPATH'] = '/'
 os.environ['MSC_PYGEOAPI_TEMPLATES'] = '/data/web/msc-pygeoapi-nightly/latest/msc-pygeoapi/theme/templates'
 os.environ['MSC_PYGEOAPI_STATIC'] = '/data/web/msc-pygeoapi-nightly/latest/msc-pygeoapi/theme/static'
 os.environ['MSC_PYGEOAPI_OGC_SCHEMAS_LOCATION'] = '/data/web/msc-pygeoapi-nightly/latest/schemas.opengis.net'
-os.environ['GEOMET_DDI_BASEPATH'] = '/data/geomet/feeds/ddi'
-os.environ['GEOMET_SCIENCE_BASEPATH'] = '/data/geomet/feeds/local/SCIENCE'
+os.environ['GEOMET_HPFX_BASEPATH'] = '/data/geomet/feeds/hpfx'
+os.environ['GEOMET_SCIENCE_BASEPATH'] = '/data/geomet/feeds/cmoi-science'
 
 sys.path.insert(0, '/data/web/msc-pygeoapi-nightly/latest/lib/python3.6/site-packages')
 

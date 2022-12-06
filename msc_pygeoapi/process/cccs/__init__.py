@@ -37,7 +37,7 @@ from msc_pygeoapi.process.cccs.raster_drill import raster_drill_execute
 LOGGER = logging.getLogger(__name__)
 
 GEOMET_CLIMATE_CONFIG = '/opt/geomet-climate/geomet-climate.yml'
-GEOMET_CLIMATE_BASEPATH = '/data/geomet/feeds/dd.ops/climate'
+GEOMET_CLIMATE_BASEPATH = '/data/geomet/feeds/dd/climate'
 GEOMET_CLIMATE_BASEPATH_VRT = '/opt/geomet-climate/vrt'
 try:
     GEOMET_CLIMATE_EPSG = '{}/{}'.format(
