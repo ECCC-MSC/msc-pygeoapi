@@ -48,7 +48,7 @@ from pygeoapi.provider.base import (BaseProvider,
 
 LOGGER = logging.getLogger(__name__)
 DEFAULT_LIMIT_JSON = 10
-MAX_MB_SIZE_ZARR = 100
+MAX_MB_SIZE_ZARR = 100000000
 
 class HRDPSWEonGZarrProvider(BaseProvider):
     """ Zarr Provider """
@@ -128,7 +128,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
 
         properties = {
             #have to convert values to float and int to serilize into json
-            'crs': self._data.attrs["_CRS"],
+            'crs': self._data.attrs["CRS"],
             'axis': all_axis,
             'extent': {
                 'minx': float(self._data.lon.min().values),
@@ -349,6 +349,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             for dim in var_dims:
                 query_return[dim] = DEFAULT_LIMIT_JSON
             data_vals = self._data[var_name].head(**query_return)
+            #data_vals = self._data[var_name].head(lat = 95, lon = 92, time = 1)
             #data_vals = self._data[var_name]
 
         else:
@@ -397,14 +398,15 @@ class HRDPSWEonGZarrProvider(BaseProvider):
 
             #is a xarray data-array
             data_vals = self._data[var_name].sel(**query_return)
-        #return LOGGER.error("the type",type(data_vals))
+        LOGGER.error("the type data_vals",type(data_vals))
 
         if format_ == "zarr":
             new_dataset = data_vals.to_dataset()
+            new_dataset.attrs['CRS'] = self.crs
             data_size = new_dataset.nbytes
             MB_data_size = data_size*(2**(-20))
             msg = f"Data size too large to return as zarr"
-            if MAX_MB_SIZE_ZARR > MB_data_size:
+            if MAX_MB_SIZE_ZARR < MB_data_size:
                 LOGGER.error(msg)
                 raise Exception(msg)
 
@@ -419,7 +421,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             "range": self.get_coverage_rangetype(),
             "properties" : self._coverage_properties,
             #"data values":  _nummpyarray_to_json(data_vals.values)
-            "data values":  [i for i in _gennumpy(data_vals.data)]
+            "data values":  [i for i in _gennumpy(data_vals.data)] #write to disk
             #"data values" : data_vals.data.tolist()
             #"data values": data_vals.to_dict()['data']
         }
@@ -567,7 +569,7 @@ def _get_zarr_data(data):
         data.to_zarr(f'{tmp_dir}/final.zarr', mode='w')
         shutil.make_archive(f'{tmp_dir}/finally', 'zip', f'{tmp_dir}/final.zarr')
         #TODO: _CRS missing becuase that needs to be added to the .zattrs file for variables
-        time.sleep(500)
+        #time.sleep(500)
         return open(f'{tmp_dir}/finally.zip', 'rb').read()
 
 def _nummpyarray_to_json(data_array):
@@ -594,20 +596,22 @@ def _nummpyarray_to_json(data_array):
 def _gennumpy(data_array):
     """
     Helper function to convert dask array to json
-    Converts numpy array to list (which is json serializable)
+    Converts dask array to list (which is json serializable)
     :param data: dask array
     :returns: generator
     """
 
-    #LOGGER.error("The TYPE1:", type(data_array))
-    
+    LOGGER.error("The TYPE1 in _gennumpy:", type(data_array)) #this is a dask array
+
+    LOGGER.error("The TYPE2 compute:", type(data_array[0].compute())) #this is a numpy array
+
+    LOGGER.error(f"The TYPE3 tolist: {type(data_array[0].compute().tolist())}") #this is a list
     #checks to make sure values exist in the array
     if 0 in data_array.shape:
         return []
 
     for i in range(len(data_array)):
         d = data_array[i].compute().tolist()
-        #LOGGER.error("The TYPE2:", type(d))
         yield d
         del d
 
