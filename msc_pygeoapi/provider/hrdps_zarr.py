@@ -47,7 +47,7 @@ from pygeoapi.provider.base import (BaseProvider,
                                     ProviderQueryError)
 
 LOGGER = logging.getLogger(__name__)
-DEFAULT_LIMIT_JSON = 10
+DEFAULT_LIMIT_JSON = 100
 MAX_MB_SIZE_ZARR = 100000000
 
 class HRDPSWEonGZarrProvider(BaseProvider):
@@ -569,17 +569,11 @@ def _nummpyarray_to_json(data_array):
     :returns: list
     """
 
-    lst_to_return = []
     #checks to make sure values exist in the array
     if 0 in data_array.shape:
-        return lst_to_return
-    data_len = len(data_array)
-    for i in range(data_len):
-        d = data_array[0].tolist()
-        lst_to_return.append(d)
-        del d
-        data_array = numpy.delete(data_array, 0)
-    return lst_to_return
+        return []
+
+    return data_array.flatten().compute().tolist()
 
 
 def _gennumpy(data_array):
@@ -594,11 +588,12 @@ def _gennumpy(data_array):
     #checks to make sure values exist in the array
     if 0 in data_array.shape:
         return []
+    
+    data_array = data_array.flatten().compute()
 
-    for i in range(len(data_array)):
-        d = data_array[i].compute().tolist()
-        yield d
-        del d
+    d = data_array.tolist()
+    yield d
+    del d
 
 
 
@@ -672,7 +667,7 @@ def gen_covjson(self, the_data):
                                                 'dataType': 'float',
                                                 'axisNames': self._coverage_properties['axis'],
                                                 'shape': the_data.shape,
-                                                'values': [i for i in _gennumpy(the_data.data)]}
+                                                'values': _nummpyarray_to_json(the_data.data)}
     }
 
     cov_json['ranges'] = the_range
