@@ -398,7 +398,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
 
             #is a xarray data-array
             data_vals = self._data[var_name].sel(**query_return)
-        LOGGER.error("the type data_vals",type(data_vals))
+        #LOGGER.error("the type data_vals",type(data_vals))
 
         if format_ == "zarr":
             new_dataset = data_vals.to_dataset()
@@ -414,18 +414,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                 return _get_zarr_data(new_dataset)
             
 
-        dict_to_return = {
-
-            "type": "Coverage",
-            "domain": self.get_coverage_domainset(),
-            "range": self.get_coverage_rangetype(),
-            "properties" : self._coverage_properties,
-            #"data values":  _nummpyarray_to_json(data_vals.values)
-            "data values":  [i for i in _gennumpy(data_vals.data)] #write to disk
-            #"data values" : data_vals.data.tolist()
-            #"data values": data_vals.to_dict()['data']
-        }
-        return dict_to_return
+        return gen_covjson(self,the_data=data_vals)
 
 
         raise NotImplementedError()
@@ -601,11 +590,7 @@ def _gennumpy(data_array):
     :returns: generator
     """
 
-    LOGGER.error("The TYPE1 in _gennumpy:", type(data_array)) #this is a dask array
 
-    LOGGER.error("The TYPE2 compute:", type(data_array[0].compute())) #this is a numpy array
-
-    LOGGER.error(f"The TYPE3 tolist: {type(data_array[0].compute().tolist())}") #this is a list
     #checks to make sure values exist in the array
     if 0 in data_array.shape:
         return []
@@ -615,3 +600,82 @@ def _gennumpy(data_array):
         yield d
         del d
 
+
+
+
+
+def gen_covjson(self, the_data):
+    """
+    Generate coverage as CoverageJSON representation
+    :param data_vals: xarray dataArray
+    :returns: dict of CoverageJSON representation
+    """
+
+    LOGGER.debug('Creating CoverageJSON domain')
+    props = self._coverage_properties
+    var_name = self._coverage_properties['variables'][0]
+    parameter_metadata = self._get_parameter_metadata(var_name)
+
+    minx, miny, maxx, maxy=props['extent']['minx'],props['extent']['miny'], props['extent']['maxx'], props['extent']['maxy']
+
+    cov_json = {
+        'type': 'Coverage',
+        'domain': {
+            'type': 'Domain',
+            'domainType': 'Grid',
+            'axes': {
+                'x': {
+                    'start': minx,
+                    'stop': maxx,
+                    'num': props['size']['width']
+                },
+                'y': {
+                    'start': maxy,
+                    'stop': miny,
+                    'num': props['size']['height']
+                }
+            },
+            'referencing': [{
+                'coordinates': ['x', 'y'],
+                'system': {
+                    'type': 'GeographicCRS',
+                    'id': props['extent']['coordinate_reference_system']
+                }
+            }]
+        }
+    }
+
+
+    parameter = {
+        f"{parameter_metadata['long_name']}": {
+        'type': 'Parameter',
+        'description': {
+            'en': parameter_metadata['long_name']
+        },
+        'unit': {
+            'symbol': parameter_metadata['units']
+        },
+        'observedProperty': {
+            'id': parameter_metadata['id'],
+            'label': {
+                'en': parameter_metadata['long_name']
+            }
+        }
+    }}
+
+        
+    cov_json['parameters'] = parameter
+
+    the_range = {
+        f"{parameter_metadata['long_name']}": {
+                                                'type': 'NdArray',
+                                                'dataType': 'float',
+                                                'axisNames': self._coverage_properties['axis'],
+                                                'shape':[the_data.shape],
+                                                'values': [i for i in _gennumpy(the_data.data)]}
+    }
+
+    cov_json['ranges'] = the_range
+
+
+    return cov_json
