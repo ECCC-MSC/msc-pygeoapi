@@ -671,7 +671,7 @@ def gen_covjson(self, the_data):
                                                 'type': 'NdArray',
                                                 'dataType': 'float',
                                                 'axisNames': self._coverage_properties['axis'],
-                                                'shape':[the_data.shape],
+                                                'shape': the_data.shape,
                                                 'values': [i for i in _gennumpy(the_data.data)]}
     }
 
