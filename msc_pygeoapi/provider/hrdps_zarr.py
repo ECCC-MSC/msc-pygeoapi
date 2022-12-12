@@ -47,8 +47,8 @@ from pygeoapi.provider.base import (BaseProvider,
                                     ProviderQueryError)
 
 LOGGER = logging.getLogger(__name__)
-DEFAULT_LIMIT_JSON = 100
-MAX_MB_SIZE_ZARR = 100000000
+DEFAULT_LIMIT_JSON = 10
+MAX_MB_SIZE_ZARR = 0
 
 class HRDPSWEonGZarrProvider(BaseProvider):
     """ Zarr Provider """
@@ -557,15 +557,13 @@ def _get_zarr_data(data):
     with tempfile.TemporaryDirectory(dir='/users/dor/afsw/adb/ADANtmp') as tmp_dir:
         data.to_zarr(f'{tmp_dir}/final.zarr', mode='w')
         shutil.make_archive(f'{tmp_dir}/finally', 'zip', f'{tmp_dir}/final.zarr')
-        #TODO: _CRS missing becuase that needs to be added to the .zattrs file for variables
-        #time.sleep(500)
         return open(f'{tmp_dir}/finally.zip', 'rb').read()
 
-def _nummpyarray_to_json(data_array):
+def _daskarray_to_json(data_array):
     """
-    Helper function to convert numpy array to json
-    Converts numpy array to list (which is json serializable)
-    :param data: numpy array
+    Helper function to convert dask array to json
+    Converts dask array to list (which is json serializable)
+    :param data: dask array
     :returns: list
     """
 
@@ -573,7 +571,17 @@ def _nummpyarray_to_json(data_array):
     if 0 in data_array.shape:
         return []
 
-    return data_array.flatten().compute().tolist()
+
+    return data_array.flatten().compute().tolist() 
+
+    numpy_arr = data_array.flatten().compute()
+
+    numpy_arr2 = numpy.round(numpy_arr,decimals=2, out=None)
+    del numpy_arr
+    
+    LOGGER.error("numpy", numpy_arr)
+    #LOGGER.error("numpyclist", numpy_arr.tolist())
+    return numpy_arr2.tolist()
 
 
 def _gennumpy(data_array):
@@ -589,11 +597,12 @@ def _gennumpy(data_array):
     if 0 in data_array.shape:
         return []
     
-    data_array = data_array.flatten().compute()
+    #data_array = data_array.flatten().compute()
 
-    d = data_array.tolist()
-    yield d
-    del d
+    LOGGER.error("data_array", data_array.flatten().compute().round(2)[3])
+    for i in data_array.flatten().compute().round(2, out = None):
+        LOGGER.error("i", i)
+        yield float(i)
 
 
 
@@ -667,7 +676,7 @@ def gen_covjson(self, the_data):
                                                 'dataType': 'float',
                                                 'axisNames': self._coverage_properties['axis'],
                                                 'shape': the_data.shape,
-                                                'values': _nummpyarray_to_json(the_data.data)}
+                                                'values': _daskarray_to_json(the_data.data)}
     }
 
     cov_json['ranges'] = the_range
