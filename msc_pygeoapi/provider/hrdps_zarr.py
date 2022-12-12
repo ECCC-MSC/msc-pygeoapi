@@ -414,7 +414,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                 return _get_zarr_data(new_dataset)
             
 
-        return gen_covjson(self,the_data=data_vals)
+        return _gen_covjson(self,the_data=data_vals)
 
 
         raise NotImplementedError()
@@ -608,7 +608,7 @@ def _gennumpy(data_array):
 
 
 
-def gen_covjson(self, the_data):
+def _gen_covjson(self, the_data):
     """
     Generate coverage as CoverageJSON representation
     :param data_vals: xarray dataArray
