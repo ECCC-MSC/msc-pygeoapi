@@ -27,7 +27,7 @@
 #
 # =================================================================
 import time
-import math
+#import psutil
 import json
 from glob import glob
 import logging
@@ -35,12 +35,10 @@ import shutil
 import tempfile
 import numpy
 import xarray
-import sys
 import zarr
-import dask
-import pandas
 import os
-import zipfile
+
+
 from pygeoapi.provider.base import (BaseProvider,
                                     ProviderConnectionError,
                                     ProviderNoDataError,
@@ -48,7 +46,7 @@ from pygeoapi.provider.base import (BaseProvider,
 
 LOGGER = logging.getLogger(__name__)
 DEFAULT_LIMIT_JSON = 10
-MAX_MB_SIZE_ZARR = 0
+MAX_MB_SIZE_ZARR = 1000
 
 class HRDPSWEonGZarrProvider(BaseProvider):
     """ Zarr Provider """
@@ -73,7 +71,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             #self._data = xarray.open_mfdataset(self.data, engine='zarr')
             self._data = xarray.open_zarr(self.data)
 
-            LOGGER.info(self._data)
+            #LOGGER.info(self._data)
             self._coverage_properties = self._get_coverage_properties()
 
             # for coverage providers
@@ -349,6 +347,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             for dim in var_dims:
                 query_return[dim] = DEFAULT_LIMIT_JSON
             data_vals = self._data[var_name].head(**query_return)
+            LOGGER.info("THE INFO:",data_vals.nbytes, data_vals.shape)
             #data_vals = self._data[var_name].head(lat = 95, lon = 92, time = 1)
             #data_vals = self._data[var_name]
 
@@ -403,18 +402,48 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         if format_ == "zarr":
             new_dataset = data_vals.to_dataset()
             new_dataset.attrs['CRS'] = self.crs
-            data_size = new_dataset.nbytes
+            '''data_size = new_dataset.nbytes
             MB_data_size = data_size*(2**(-20))
             msg = f"Data size too large to return as zarr"
             if MAX_MB_SIZE_ZARR < MB_data_size:
                 LOGGER.error(msg)
-                raise Exception(msg)
+                raise Exception(msg)'''
 
+            #else:
+            return _get_zarr_data_stream(new_dataset)
+
+        the_dims = data_vals.dims
+        dim_dic_max = {}
+        dim_dic_min = {}
+        new_data_vals = {}
+        for dim in the_dims:
+            if dim == "time":
+                pass
             else:
-                return _get_zarr_data(new_dataset)
-            
+                dim_dic_max[dim] = str(data_vals[dim].max(skipna=True).values)
+                dim_dic_min[dim] = str(data_vals[dim].min(skipna=True).values)
+        
+        for dim2 in the_dims:
+            if dim2 == "time":
+                pass
 
-        return _gen_covjson(self,the_data=data_vals)
+            elif (dim_dic_max[dim2][0] == '0') or (dim_dic_min[dim2][0] == '0'):
+                pass
+            else:
+                new_data_vals[dim2].data = _round_dim(data_dim = data_vals[dim2].data)
+        
+
+
+        return LOGGER.info(new_data_vals)
+        data_vals.update(new_data_vals)
+
+        return LOGGER.info("THE DIMS:",the_dims, dim_dic_max, dim_dic_min, '\n', data_vals)
+        
+        if 0 in data_vals.shape:
+            return _gen_covjson(self,the_data=data_vals)
+        else:
+            #size_ds = data_vals.nbytes
+            return _gen_covjson(self,the_data=data_vals)
 
 
         raise NotImplementedError()
@@ -540,6 +569,37 @@ class ProviderVersionError(ProviderGenericError):
 class ProviderInvalidDataError(ProviderGenericError):
     """provider invalid data error"""
     pass
+class ProviderDataSizeError(ProviderGenericError):
+    """provider data size error"""
+    pass
+
+
+
+def _get_zarr_data_stream(data):
+    """
+    Helper function to convert a xarray dataset to zarr bytes
+       Returns bytes to read from Zarr directory zip
+       :param data: Xarray dataset of coverage data
+
+       :returns: byte array of zip data 
+        """
+    #max_size= psutil.virtual_memory()
+
+    mem_bytes = os.sysconf('SC_PAGE_SIZE') * os.sysconf('SC_PHYS_PAGES')
+    #zbuffer = io.BytesIO()
+    
+    #f2 = tempfile.SpooledTemporaryFile(max_size= mem_bytes*mem_bytes, mode= 'w+b' , dir = zbuffer)
+    
+    #f2.close()
+
+    #z_file = data.to_zarr(zarr.MemoryStore(), mode='w')
+    with tempfile.SpooledTemporaryFile(max_size= int((mem_bytes*mem_bytes)+1), suffix= 'zip') as f:
+        with tempfile.NamedTemporaryFile() as f2:
+            data.to_zarr(zarr.ZipStore(f2.name), mode='w')
+            return f2.read()
+        
+        #data.to_zarr(zarr.ZipStore('./new.zip'), mode='w')
+        #return open('new.zip', 'rb').read()
 
 
 
@@ -574,14 +634,10 @@ def _daskarray_to_json(data_array):
 
     return data_array.flatten().compute().tolist() 
 
-    numpy_arr = data_array.flatten().compute()
-
-    numpy_arr2 = numpy.round(numpy_arr,decimals=2, out=None)
-    del numpy_arr
-    
-    LOGGER.error("numpy", numpy_arr)
-    #LOGGER.error("numpyclist", numpy_arr.tolist())
-    return numpy_arr2.tolist()
+    d = data_array.flatten().compute()
+    d2 = numpy.zeros(d.shape)
+    numpy.round(a=d,decimals=2,out=d2)
+    return d2.tolist()
 
 
 def _gennumpy(data_array):
@@ -605,6 +661,16 @@ def _gennumpy(data_array):
         yield float(i)
 
 
+def _round_dim(data_dim):
+    """
+    Helper function to round a dimension
+    :param data: dimension
+    :returns: rounded dimension
+    """
+    #d = data_array.flatten().compute()
+    d2 = xarray.zeros_like(other = data_dim)
+    xarray.round(a=data_dim,decimals=2,out=d2)
+    return d2
 
 
 
