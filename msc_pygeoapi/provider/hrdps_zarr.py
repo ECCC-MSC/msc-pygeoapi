@@ -414,17 +414,14 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             return _get_zarr_data_stream(new_dataset)
 
 
-        _round_data(data_vals)
-
-        #LOGGER.info("THE INFO:",data_vals)
 
         #LOGGER.info("THE INFO:",data_vals.data)
         
         '''if 0 in data_vals.shape:
             return _gen_covjson(self,the_data=data_vals)
-        else:'''
-            #size_ds = data_vals.nbytes
-        return _gen_covjson(self,the_data=data_vals)
+        else:
+            #size_ds = data_vals.nbytes'''
+        return _gen_covjson(self,the_data=data_vals, rounded=True)
 
 
         raise NotImplementedError()
@@ -616,9 +613,9 @@ def _daskarray_to_json(data_array):
     #checks to make sure values exist in the array
     if 0 in data_array.shape:
         return []
-    LOGGER.info("NOWWW", data_array.flatten().compute())
+    LOGGER.info("NOWWW", data_array.compute().tolist())
 
-    return data_array.flatten().compute().tolist() #calling .tolist() converts back to unronded values
+    return list(data_array.flatten().compute()) #calling .tolist() converts back to unronded values
 
     d = data_array.flatten().compute()
     d2 = numpy.zeros(d.shape)
@@ -653,21 +650,30 @@ def _round_data(the_data):
     :param the_data: xarray dataarray
     :returns: rounded dataarray
     """
-    LOGGER.info("OLD DATA BEFORE ROUND:", the_data.values[:1])
+    #LOGGER.info("OLD DATA BEFORE ROUND:", the_data.values[:1])
     #the_data.data = the_data.data.round(decimals = 2)
-    LOGGER.info("NEW DATA AFTER ROUND:", the_data.values[:1])
+    #LOGGER.info("NEW DATA AFTER ROUND:", the_data.values[:1])
     #the_data.data = da.map_blocks(lambda x: numpy.floor(numpy.around(x,decimals = 2)*100)/100, the_data.data, dtype=the_data.data.dtype)
     #the_data.data = da.map_blocks(lambda x: numpy.trunc(x*100)/100, the_data.data, dtype=the_data.data.dtype)
-    the_data.data = the_data.data.round(decimals = 2)
+    #the_data.data = the_data.data.round(decimals = 2)
+    r_data = the_data.data.round(decimals = 2)
+    #LOGGER.info("NEW LIST:", list(r_data.flatten().compute()))
+    LOGGER.info("OLD DATA BEFORE ROUND:", r_data.compute())
+    LOGGER.info("NEW DATA AFTER ROUND:", r_data.compute().tolist())
+    return r_data
 
 
 
-def _gen_covjson(self, the_data):
+def _gen_covjson(self, the_data, rounded = False):
     """
     Generate coverage as CoverageJSON representation
     :param data_vals: xarray dataArray
     :returns: dict of CoverageJSON representation
     """
+    
+
+    val_da = xarray.DataArray(the_data.data).astype('float64')
+    LOGGER.info("DATA TYPE:", type(val_da), val_da)
 
     LOGGER.debug('Creating CoverageJSON domain')
     props = self._coverage_properties
@@ -729,9 +735,15 @@ def _gen_covjson(self, the_data):
                                                 'type': 'NdArray',
                                                 'dataType': 'float',
                                                 'axisNames': self._coverage_properties['axis'],
-                                                'shape': the_data.shape,
-                                                'values': _daskarray_to_json(the_data.data)}
+                                                'shape': the_data.shape
+                                                #'values': _daskarray_to_json(the_data.data)
+                                                }
     }
+
+    if rounded == True:
+        the_range['values'] = val_da.data.flatten().round(decimals = 2).compute().tolist()
+    else:
+        the_range['values'] = val_da.data.flatten().compute().tolist()
 
     cov_json['ranges'] = the_range
 
