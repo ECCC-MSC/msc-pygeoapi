@@ -46,8 +46,8 @@ from pygeoapi.provider.base import (BaseProvider,
                                     ProviderQueryError)
 
 LOGGER = logging.getLogger(__name__)
-DEFAULT_LIMIT_JSON = 10
-MAX_MB_SIZE_ZARR = 1000
+DEFAULT_LIMIT_JSON = 5
+MAX_DASK_BYTES = 155000
 
 class HRDPSWEonGZarrProvider(BaseProvider):
     """ Zarr Provider """
@@ -403,14 +403,6 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         if format_ == "zarr":
             new_dataset = data_vals.to_dataset()
             new_dataset.attrs['CRS'] = self.crs
-            '''data_size = new_dataset.nbytes
-            MB_data_size = data_size*(2**(-20))
-            msg = f"Data size too large to return as zarr"
-            if MAX_MB_SIZE_ZARR < MB_data_size:
-                LOGGER.error(msg)
-                raise Exception(msg)'''
-
-            #else:
             return _get_zarr_data_stream(new_dataset)
 
 
@@ -421,10 +413,18 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             return _gen_covjson(self,the_data=data_vals)
         else:
             #size_ds = data_vals.nbytes'''
-        return _gen_covjson(self,the_data=data_vals, rounded=True)
 
+        if data_vals.data.nbytes > MAX_DASK_BYTES:
+            raise ProviderDataSizeError("Data size exceeds maximum allowed size")
 
-        raise NotImplementedError()
+        to_round = True
+        da_max = str(abs(float(data_vals.max())))
+        da_min = str(abs(float(data_vals.min())))
+
+        if (da_max[0] == '0') or (da_min[0] == '0'):
+            to_round = False
+
+        return _gen_covjson(self,the_data=data_vals, rounded=to_round)
 
         
 
@@ -673,7 +673,11 @@ def _gen_covjson(self, the_data, rounded = False):
     
 
     val_da = xarray.DataArray(the_data.data).astype('float64')
-    LOGGER.info("DATA TYPE:", type(val_da), val_da)
+
+    #NOTE: There is no differnce in nbytes between roudning and not rounding
+    #LOGGER.info("DATA TYPE:", val_da.nbytes)
+    #LOGGER.info("BYTES WIT ROUD:",  (val_da.data.flatten().round(decimals = 2).compute()).nbytes)
+    #LOGGER.info("BYTES nr:",  (val_da.data.flatten().compute()).nbytes)
 
     LOGGER.debug('Creating CoverageJSON domain')
     props = self._coverage_properties
