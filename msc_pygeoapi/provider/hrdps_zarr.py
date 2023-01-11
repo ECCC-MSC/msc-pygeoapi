@@ -37,6 +37,7 @@ import numpy
 import xarray
 import zarr
 import os
+from dask import array as da
 
 
 from pygeoapi.provider.base import (BaseProvider,
@@ -397,7 +398,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
 
             #is a xarray data-array
             data_vals = self._data[var_name].sel(**query_return)
-        #LOGGER.error("the type data_vals",type(data_vals))
+            #LOGGER.info("the type data_vals",type(data_vals))
 
         if format_ == "zarr":
             new_dataset = data_vals.to_dataset()
@@ -412,38 +413,18 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             #else:
             return _get_zarr_data_stream(new_dataset)
 
-        the_dims = data_vals.dims
-        dim_dic_max = {}
-        dim_dic_min = {}
-        new_data_vals = {}
-        for dim in the_dims:
-            if dim == "time":
-                pass
-            else:
-                dim_dic_max[dim] = str(data_vals[dim].max(skipna=True).values)
-                dim_dic_min[dim] = str(data_vals[dim].min(skipna=True).values)
+
+        _round_data(data_vals)
+
+        #LOGGER.info("THE INFO:",data_vals)
+
+        #LOGGER.info("THE INFO:",data_vals.data)
         
-        for dim2 in the_dims:
-            if dim2 == "time":
-                pass
-
-            elif (dim_dic_max[dim2][0] == '0') or (dim_dic_min[dim2][0] == '0'):
-                pass
-            else:
-                new_data_vals[dim2].data = _round_dim(data_dim = data_vals[dim2].data)
-        
-
-
-        return LOGGER.info(new_data_vals)
-        data_vals.update(new_data_vals)
-
-        return LOGGER.info("THE DIMS:",the_dims, dim_dic_max, dim_dic_min, '\n', data_vals)
-        
-        if 0 in data_vals.shape:
+        '''if 0 in data_vals.shape:
             return _gen_covjson(self,the_data=data_vals)
-        else:
+        else:'''
             #size_ds = data_vals.nbytes
-            return _gen_covjson(self,the_data=data_vals)
+        return _gen_covjson(self,the_data=data_vals)
 
 
         raise NotImplementedError()
@@ -593,10 +574,15 @@ def _get_zarr_data_stream(data):
     #f2.close()
 
     #z_file = data.to_zarr(zarr.MemoryStore(), mode='w')
-    with tempfile.SpooledTemporaryFile(max_size= int((mem_bytes*mem_bytes)+1), suffix= 'zip') as f:
-        with tempfile.NamedTemporaryFile() as f2:
-            data.to_zarr(zarr.ZipStore(f2.name), mode='w')
-            return f2.read()
+    try:
+        with tempfile.SpooledTemporaryFile(max_size= int((mem_bytes*mem_bytes)+1), suffix= 'zip') as f:
+            with tempfile.NamedTemporaryFile() as f2:
+                data.to_zarr(zarr.ZipStore(f2.name), mode='w')
+                return f2.read()
+    except:
+        f2.close()
+        f.close()
+        raise ProviderDataSizeError('Data size is too large to be processed')
         
         #data.to_zarr(zarr.ZipStore('./new.zip'), mode='w')
         #return open('new.zip', 'rb').read()
@@ -630,9 +616,9 @@ def _daskarray_to_json(data_array):
     #checks to make sure values exist in the array
     if 0 in data_array.shape:
         return []
+    LOGGER.info("NOWWW", data_array.flatten().compute())
 
-
-    return data_array.flatten().compute().tolist() 
+    return data_array.flatten().compute().tolist() #calling .tolist() converts back to unronded values
 
     d = data_array.flatten().compute()
     d2 = numpy.zeros(d.shape)
@@ -661,16 +647,18 @@ def _gennumpy(data_array):
         yield float(i)
 
 
-def _round_dim(data_dim):
+def _round_data(the_data):
     """
     Helper function to round a dimension
-    :param data: dimension
-    :returns: rounded dimension
+    :param the_data: xarray dataarray
+    :returns: rounded dataarray
     """
-    #d = data_array.flatten().compute()
-    d2 = xarray.zeros_like(other = data_dim)
-    xarray.round(a=data_dim,decimals=2,out=d2)
-    return d2
+    LOGGER.info("OLD DATA BEFORE ROUND:", the_data.values[:1])
+    #the_data.data = the_data.data.round(decimals = 2)
+    LOGGER.info("NEW DATA AFTER ROUND:", the_data.values[:1])
+    #the_data.data = da.map_blocks(lambda x: numpy.floor(numpy.around(x,decimals = 2)*100)/100, the_data.data, dtype=the_data.data.dtype)
+    #the_data.data = da.map_blocks(lambda x: numpy.trunc(x*100)/100, the_data.data, dtype=the_data.data.dtype)
+    the_data.data = the_data.data.round(decimals = 2)
 
 
 
