@@ -66,19 +66,14 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             
             self.name = provider_def['name']
             self.type = provider_def['type']
-            #self.data = glob(f"{provider_def['data']}/*.zarr")
-            #self.data= glob(f'{provider_def["data"]}/*.zarr')
             self.data = provider_def['data']
-            #self._data = xarray.open_mfdataset(self.data, engine='zarr')
             self._data = xarray.open_zarr(self.data)
 
-            #LOGGER.info(self._data)
             self._coverage_properties = self._get_coverage_properties()
 
             # for coverage providers
             self.axes = self._coverage_properties['dimensions']
             self.crs = self._coverage_properties['crs']
-            #self.num_bands = None #TODO Am I setting the num_bands as the number of variables?
 
         except KeyError:
             raise RuntimeError('name/type/data are required')
@@ -134,7 +129,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                 'miny': float(self._data.lat.min().values),
                 'maxx': float(self._data.lon.max().values),
                 'maxy': float(self._data.lat.max().values),
-                'coordinate_reference_system': "http://www.opengis.net/def/crs/ECCC-MSC/-/ob_tran-longlat-weong"  #TODO: Is this the right link?  
+                'coordinate_reference_system': "http://www.opengis.net/def/crs/ECCC-MSC/-/ob_tran-longlat-weong"
                 },
             'size': {
                 'width': int(self._data.lon.size),
@@ -270,7 +265,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             'generalGrid': {
                 'type': 'GeneralGridCoverageType',
                 'srsName': self._coverage_properties['extent']['coordinate_reference_system'],
-                'axisLabels': self.axes,#self.axes
+                'axisLabels': self.axes,
                 'axis': [
                     {"type":"IndexAxisType","axisLabel":'x',"lowerBound": self._coverage_properties['extent']['minx'], "upperBound": self._coverage_properties['extent']['maxx'], "resolution": self._coverage_properties['resolution']['x'] }, #for extent and resolution
                     {"type":"IndexAxisType","axisLabel": 'y',"lowerBound": self._coverage_properties['extent']['miny'], "upperBound": self._coverage_properties['extent']['maxy'], "resolution": self._coverage_properties['resolution']['x'] }
@@ -301,7 +296,6 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         'CIS JSON': https://docs.opengeospatial.org/is/09-146r6/09-146r6.html#46
         """
         #at 0 becuase we are only dealing with one variable (thats the way the data is structured, 1 zarr file per variable)
-        #TODO: make this more general (for multiple variables, run a for loop)
         var_name = self._coverage_properties['variables'][0]
         parameter_metadata = self._get_parameter_metadata(var_name)
         
@@ -332,24 +326,17 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         :param bbox: bounding box [minx,miny,maxx,maxy]
         :param datetime: temporal (datestamp or extent)
         :param format_: data format of output
-        #TODO: add 'application/zip' for mimetype under format in the config file
-        #NOTE: do we want to add if query will use 'method' 'nearest' when not given a range to slice (given points instead)
-        #NOTE: If 'lat' and 'lon' in 'subsets' and 'bbox' exists, throws ERROR
-        #NOTE: format_ = zarr, will return a zip file containg zarr not a zarr itself
         #TODO: antimeridian bbox
-        #TODO: What is the deafult limit of dataset (set it to a first 10 values of the dataset along each dimension)
         """
         var_name = self._coverage_properties['variables'][0]
         var_dims = self._coverage_properties['dimensions']
 
         query_return = {}
-        #return LOGGER.error(type(datetime_), datetime_)
         if subsets == {} and bbox == [] and datetime_ == None:
             for dim in var_dims:
                 query_return[dim] = DEFAULT_LIMIT_JSON
             data_vals = self._data[var_name].head(**query_return)
-            LOGGER.info("THE INFO:",data_vals.nbytes, data_vals.shape)
-            #data_vals = self._data[var_name].head(lat = 95, lon = 92, time = 1)
+            #LOGGER.info("THE INFO:",data_vals.nbytes, data_vals.shape)
             #data_vals = self._data[var_name]
 
         else:
@@ -359,8 +346,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                     if dim in var_dims:
                         if len(value) == 2 and (value[0] is int or float) and (value[1] is int or float):
                             query_return[dim] = slice(value[0], value[1])
-                        #elif len(value) == 1:
-                            #query_return[dim] = value[0]
+
                         else:
                             msg = "Invalid subset value, values must be well-defined range"
                             LOGGER.error(msg)
@@ -369,7 +355,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                         msg = f"Invalid Dimension name (Dimension {dim} not found)"
                         LOGGER.error(msg)
                         raise Exception(msg)
-                #data_vals = _nummpyarray_to_json(self._data[var_name].sel(**slice_coords).values)
+                
 
 
             if bbox != []:
@@ -384,21 +370,21 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                 else:
                     query_return["lat"] = slice(bbox[1], bbox[3])
                     query_return["lon"] = slice(bbox[0], bbox[2])
-                #data_vals = self._data[var_name].sel(**query_return)
+                
             if datetime_ is not None:
             
                 if '/' not in datetime_: #single date
                     query_return["time"] = datetime_
-                    #data_vals = self._data[var_name].sel(**query_return)
+                    
                 else:
                     start_date = datetime_.split('/')[0]
                     end_date = datetime_.split('/')[1]
                     query_return["time"] = slice(start_date, end_date)
-            #one_small_ds = self._data[var_name].isel(lat=0, lon=0, time=slice(0,1), level = 0)
+            
 
             #is a xarray data-array
             data_vals = self._data[var_name].sel(**query_return)
-            #LOGGER.info("the type data_vals",type(data_vals))
+            
 
         if format_ == "zarr":
             new_dataset = data_vals.to_dataset()
@@ -406,13 +392,6 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             return _get_zarr_data_stream(new_dataset)
 
 
-
-        #LOGGER.info("THE INFO:",data_vals.data)
-        
-        '''if 0 in data_vals.shape:
-            return _gen_covjson(self,the_data=data_vals)
-        else:
-            #size_ds = data_vals.nbytes'''
 
         if data_vals.data.nbytes > MAX_DASK_BYTES:
             raise ProviderDataSizeError("Data size exceeds maximum allowed size")
@@ -561,16 +540,9 @@ def _get_zarr_data_stream(data):
 
        :returns: byte array of zip data 
         """
-    #max_size= psutil.virtual_memory()
 
     mem_bytes = os.sysconf('SC_PAGE_SIZE') * os.sysconf('SC_PHYS_PAGES')
-    #zbuffer = io.BytesIO()
-    
-    #f2 = tempfile.SpooledTemporaryFile(max_size= mem_bytes*mem_bytes, mode= 'w+b' , dir = zbuffer)
-    
-    #f2.close()
 
-    #z_file = data.to_zarr(zarr.MemoryStore(), mode='w')
     try:
         with tempfile.SpooledTemporaryFile(max_size= int((mem_bytes*mem_bytes)+1), suffix= 'zip') as f:
             with tempfile.NamedTemporaryFile() as f2:
@@ -581,86 +553,11 @@ def _get_zarr_data_stream(data):
         f.close()
         raise ProviderDataSizeError('Data size is too large to be processed')
         
-        #data.to_zarr(zarr.ZipStore('./new.zip'), mode='w')
-        #return open('new.zip', 'rb').read()
+ 
 
 
 
 
-def _get_zarr_data(data):
-    """
-    Helper function to convert a xarray dataset to zip of zarr
-       Returns bytes to read from Zarr directory zip
-       :param data: Xarray dataset of coverage data
-
-       :returns: byte array of zip data
-       """
-
-    #TODO: set the temp directory path
-    with tempfile.TemporaryDirectory(dir='/users/dor/afsw/adb/ADANtmp') as tmp_dir:
-        data.to_zarr(f'{tmp_dir}/final.zarr', mode='w')
-        shutil.make_archive(f'{tmp_dir}/finally', 'zip', f'{tmp_dir}/final.zarr')
-        return open(f'{tmp_dir}/finally.zip', 'rb').read()
-
-def _daskarray_to_json(data_array):
-    """
-    Helper function to convert dask array to json
-    Converts dask array to list (which is json serializable)
-    :param data: dask array
-    :returns: list
-    """
-
-    #checks to make sure values exist in the array
-    if 0 in data_array.shape:
-        return []
-    LOGGER.info("NOWWW", data_array.compute().tolist())
-
-    return list(data_array.flatten().compute()) #calling .tolist() converts back to unronded values
-
-    d = data_array.flatten().compute()
-    d2 = numpy.zeros(d.shape)
-    numpy.round(a=d,decimals=2,out=d2)
-    return d2.tolist()
-
-
-def _gennumpy(data_array):
-    """
-    Helper function to convert dask array to json
-    Converts dask array to list (which is json serializable)
-    :param data: dask array
-    :returns: generator
-    """
-
-
-    #checks to make sure values exist in the array
-    if 0 in data_array.shape:
-        return []
-    
-    #data_array = data_array.flatten().compute()
-
-    LOGGER.error("data_array", data_array.flatten().compute().round(2)[3])
-    for i in data_array.flatten().compute().round(2, out = None):
-        LOGGER.error("i", i)
-        yield float(i)
-
-
-def _round_data(the_data):
-    """
-    Helper function to round a dimension
-    :param the_data: xarray dataarray
-    :returns: rounded dataarray
-    """
-    #LOGGER.info("OLD DATA BEFORE ROUND:", the_data.values[:1])
-    #the_data.data = the_data.data.round(decimals = 2)
-    #LOGGER.info("NEW DATA AFTER ROUND:", the_data.values[:1])
-    #the_data.data = da.map_blocks(lambda x: numpy.floor(numpy.around(x,decimals = 2)*100)/100, the_data.data, dtype=the_data.data.dtype)
-    #the_data.data = da.map_blocks(lambda x: numpy.trunc(x*100)/100, the_data.data, dtype=the_data.data.dtype)
-    #the_data.data = the_data.data.round(decimals = 2)
-    r_data = the_data.data.round(decimals = 2)
-    #LOGGER.info("NEW LIST:", list(r_data.flatten().compute()))
-    LOGGER.info("OLD DATA BEFORE ROUND:", r_data.compute())
-    LOGGER.info("NEW DATA AFTER ROUND:", r_data.compute().tolist())
-    return r_data
 
 
 
@@ -675,9 +572,6 @@ def _gen_covjson(self, the_data, rounded = False):
     val_da = xarray.DataArray(the_data.data).astype('float64')
 
     #NOTE: There is no differnce in nbytes between roudning and not rounding
-    #LOGGER.info("DATA TYPE:", val_da.nbytes)
-    #LOGGER.info("BYTES WIT ROUD:",  (val_da.data.flatten().round(decimals = 2).compute()).nbytes)
-    #LOGGER.info("BYTES nr:",  (val_da.data.flatten().compute()).nbytes)
 
     LOGGER.debug('Creating CoverageJSON domain')
     props = self._coverage_properties
@@ -740,7 +634,6 @@ def _gen_covjson(self, the_data, rounded = False):
                                                 'dataType': 'float',
                                                 'axisNames': self._coverage_properties['axis'],
                                                 'shape': the_data.shape
-                                                #'values': _daskarray_to_json(the_data.data)
                                                 }
     }
 
