@@ -26,24 +26,16 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 #
 # =================================================================
-import time
-#import psutil
 import json
 from glob import glob
 import logging
-import shutil
 import tempfile
-import numpy
 import xarray
 import zarr
 import os
-from dask import array as da
 
 
-from pygeoapi.provider.base import (BaseProvider,
-                                    ProviderConnectionError,
-                                    ProviderNoDataError,
-                                    ProviderQueryError)
+from pygeoapi.provider.base import (BaseProvider)
 
 LOGGER = logging.getLogger(__name__)
 DEFAULT_LIMIT_JSON = 5
@@ -395,7 +387,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         d_max = float(data_vals.max())
         d_min = float(data_vals.min())
 
-        if (str(d_max)[0].isnumeric()) and (str(d_min)[0].isnumeric()):
+        if ((str(d_max)[0].isnumeric()) and (str(d_min)[0].isnumeric())) or ((str(d_max)[0] == '-') and (str(d_min)[0] == '-')):
             da_max = str(abs(d_max))
             da_min = str(abs(d_min))
 
