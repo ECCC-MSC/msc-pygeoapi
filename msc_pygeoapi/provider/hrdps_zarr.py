@@ -537,12 +537,10 @@ class ProviderDataSizeError(ProviderGenericError):
 
 def _get_zarr_data_stream(data):
     """
-    Helper function to convert a xarray dataset to zarr bytes
-       Returns bytes to read from Zarr directory zip
-       :param data: Xarray dataset of coverage data
-
-       :returns: byte array of zip data 
-        """
+    Function to convert a xarray dataset to zip file in memory
+    :param data: Xarray dataset of coverage data
+    :returns: bytes of zip (zarr) data 
+    """
 
     mem_bytes = os.sysconf('SC_PAGE_SIZE') * os.sysconf('SC_PHYS_PAGES')
 
@@ -569,8 +567,8 @@ def _get_zarr_data_stream(data):
 
 def _gen_covjson(self, the_data):
     """
-    Generate coverage as CoverageJSON representation
-    :param data_vals: xarray dataArray
+    Function to Generate coverage as CoverageJSON representation
+    :param the_data: xarray dataArray from query
     :returns: dict of CoverageJSON representation
     """
     
