@@ -326,9 +326,17 @@ class HRDPSWEonGZarrProvider(BaseProvider):
 
         query_return = {}
         if subsets == {} and bbox == [] and datetime_ == None:
-            for dim in var_dims:
-                query_return[dim] = DEFAULT_LIMIT_JSON
-            data_vals = self._data[var_name].head(**query_return)
+            for i in reversed(range(1,DEFAULT_LIMIT_JSON+1)):
+                for dim in var_dims:
+                    query_return[dim] = i
+                data_vals = self._data[var_name].head(**query_return)
+                if format_ == "zarr":
+                    new_dataset = data_vals.to_dataset()
+                    new_dataset.attrs['CRS'] = self.crs
+                    return _get_zarr_data_stream(new_dataset)
+                elif data_vals.data.nbytes < MAX_DASK_BYTES:
+                    return _gen_covjson(self, the_data=data_vals)
+            
             #LOGGER.info("THE INFO:",data_vals.nbytes, data_vals.shape)
             #data_vals = self._data[var_name]
 
@@ -375,8 +383,8 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                     query_return["time"] = slice(start_date, end_date)
             
 
-            #is a xarray data-array
-            data_vals = self._data[var_name].sel(**query_return)
+        #is a xarray data-array
+        data_vals = self._data[var_name].sel(**query_return)
             
 
         if format_ == "zarr":
@@ -384,19 +392,18 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             new_dataset.attrs['CRS'] = self.crs
             return _get_zarr_data_stream(new_dataset)
 
-        d_max = float(data_vals.max())
-        d_min = float(data_vals.min())
+        if 0 not in data_vals.shape:
+            d_max = float(data_vals.max())
+            d_min = float(data_vals.min())
 
-        if ((str(d_max)[0].isnumeric()) and (str(d_min)[0].isnumeric())) or ((str(d_max)[0] == '-') and (str(d_min)[0] == '-')):
-            da_max = str(abs(d_max))
-            da_min = str(abs(d_min))
+            if ((str(d_max)[0].isnumeric()) and (str(d_min)[0].isnumeric())) or ((str(d_max)[0] == '-') and (str(d_min)[0] == '-')):
+                da_max = str(abs(d_max))
+                da_min = str(abs(d_min))
 
-            if (da_max[0] != '0') or (da_min[0] != '0'):
-                LOGGER.info("Max, MIn:",da_max, da_min)
-                if float(da_max) <= 65504: #NOTE: float16 can only represent numbers up to 65504 (+/-), useful info: `numpy.finfo(numpy.float16).max`
-                    data_vals = data_vals.astype('float16') #NOTE: float16 only has 3 decimal places of precision, but it saves a lot of memory (uses half as much as float32)
-                    global MAX_DASK_BYTES
-                    MAX_DASK_BYTES = MAX_DASK_BYTES*2
+                if (da_max[0] != '0') or (da_min[0] != '0'):
+                    LOGGER.info("Max, MIn:",da_max, da_min)
+                    if float(da_max) <= 65504: #NOTE: float16 can only represent numbers up to 65504 (+/-), useful info: `numpy.finfo(numpy.float16).max`
+                        data_vals = self._data[var_name].astype('float16').sel(**query_return) #NOTE: float16 only has 3 decimal places of precision, but it saves a lot of memory (uses half as much as float32)
 
         if data_vals.data.nbytes > MAX_DASK_BYTES:
             raise ProviderDataSizeError("Data size exceeds maximum allowed size")
@@ -532,7 +539,7 @@ class ProviderDataSizeError(ProviderGenericError):
 
 def _get_zarr_data_stream(data):
     """
-    Function to convert a xarray dataset to zip file in memory
+    Helper function to convert a xarray dataset to zip file in memory
     :param data: Xarray dataset of coverage data
     :returns: bytes of zip (zarr) data 
     """
@@ -562,7 +569,7 @@ def _get_zarr_data_stream(data):
 
 def _gen_covjson(self, the_data):
     """
-    Function to Generate coverage as CoverageJSON representation
+    Helper function to Generate coverage as CoverageJSON representation
     :param the_data: xarray dataArray from query
     :returns: dict of CoverageJSON representation
     """
@@ -629,10 +636,14 @@ def _gen_covjson(self, the_data):
                                                 'type': 'NdArray',
                                                 'dataType': str(the_data.dtype),
                                                 'axisNames': self._coverage_properties['axis'],
-                                                'shape': the_data.shape,
-                                                'values': the_data.data.flatten().compute().tolist()
+                                                'shape': the_data.shape
                                                 }
     }
+
+    if 0 in the_data.shape:
+        the_range[f"{parameter_metadata['long_name']}"]['values'] = []
+    else:
+        the_range[f"{parameter_metadata['long_name']}"]['values'] = the_data.data.flatten().compute().tolist() 
 
     cov_json['ranges'] = the_range
 
