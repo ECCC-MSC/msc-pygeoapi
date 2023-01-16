@@ -46,8 +46,8 @@ from pygeoapi.provider.base import (BaseProvider,
                                     ProviderQueryError)
 
 LOGGER = logging.getLogger(__name__)
-DEFAULT_LIMIT_JSON = 10
-MAX_DASK_BYTES = 310000
+DEFAULT_LIMIT_JSON = 5
+MAX_DASK_BYTES = 175000
 
 class HRDPSWEonGZarrProvider(BaseProvider):
     """ Zarr Provider """
@@ -295,6 +295,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         :returns: CIS JSON object of rangetype metadata
         'CIS JSON': https://docs.opengeospatial.org/is/09-146r6/09-146r6.html#46
         """
+        global MAX_DASK_BYTES
         #at 0 becuase we are only dealing with one variable (thats the way the data is structured, 1 zarr file per variable)
         var_name = self._coverage_properties['variables'][0]
         parameter_metadata = self._get_parameter_metadata(var_name)
@@ -391,20 +392,22 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             new_dataset.attrs['CRS'] = self.crs
             return _get_zarr_data_stream(new_dataset)
 
+        d_max = float(data_vals.max())
+        d_min = float(data_vals.min())
+
+        if (str(d_max)[0].isnumeric()) and (str(d_min)[0].isnumeric()):
+            da_max = str(abs(d_max))
+            da_min = str(abs(d_min))
+
+            if (da_max[0] != '0') or (da_min[0] != '0'):
+                LOGGER.info("Max, MIn:",da_max, da_min)
+                if float(da_max) <= 65504: #NOTE: float16 can only represent numbers up to 65504 (+/-), useful info: `numpy.finfo(numpy.float16).max`
+                    data_vals = data_vals.astype('float16') #NOTE: float16 only has 3 decimal places of precision, but it saves a lot of memory (uses half as much as float32)
+                    global MAX_DASK_BYTES
+                    MAX_DASK_BYTES = MAX_DASK_BYTES*2
 
         if data_vals.data.nbytes > MAX_DASK_BYTES:
             raise ProviderDataSizeError("Data size exceeds maximum allowed size")
-
-        save_mem = True
-        da_max = str(abs(float(data_vals.max())))
-        da_min = str(abs(float(data_vals.min())))
-
-        if (da_max[0] == '0') or (da_min[0] == '0'):
-            save_mem = False
-
-        if save_mem:
-            if float(da_max) <= 65504: #NOTE: float16 can only represent numbers up to 65504 (+/-), useful info: `numpy.finfo(numpy.float16).max`
-                data_vals = data_vals.astype('float16') #NOTE: float16 only has 3 decimal places of precision, but it saves a lot of memory
 
         return _gen_covjson(self,the_data=data_vals)
 
