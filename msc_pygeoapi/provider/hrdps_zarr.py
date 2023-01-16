@@ -552,8 +552,11 @@ def _get_zarr_data_stream(data):
                 data.to_zarr(zarr.ZipStore(f2.name), mode='w')
                 return f2.read()
     except:
-        f2.close()
-        f.close()
+        try:
+            f2.close()
+            f.close()
+        except:
+            pass
         raise ProviderDataSizeError('Data size is too large to be processed')
         
  
