@@ -401,7 +401,6 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                 da_min = str(abs(d_min))
 
                 if (da_max[0] != '0') or (da_min[0] != '0'):
-                    LOGGER.info("Max, MIn:",da_max, da_min)
                     if float(da_max) <= 65504: #NOTE: float16 can only represent numbers up to 65504 (+/-), useful info: `numpy.finfo(numpy.float16).max`
                         data_vals = self._data[var_name].astype('float16').sel(**query_return) #NOTE: float16 only has 3 decimal places of precision, but it saves a lot of memory (uses half as much as float32)
 
