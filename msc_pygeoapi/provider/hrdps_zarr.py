@@ -46,8 +46,8 @@ from pygeoapi.provider.base import (BaseProvider,
                                     ProviderQueryError)
 
 LOGGER = logging.getLogger(__name__)
-DEFAULT_LIMIT_JSON = 5
-MAX_DASK_BYTES = 155000
+DEFAULT_LIMIT_JSON = 10
+MAX_DASK_BYTES = 310000
 
 class HRDPSWEonGZarrProvider(BaseProvider):
     """ Zarr Provider """
@@ -392,18 +392,21 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             return _get_zarr_data_stream(new_dataset)
 
 
-
         if data_vals.data.nbytes > MAX_DASK_BYTES:
             raise ProviderDataSizeError("Data size exceeds maximum allowed size")
 
-        to_round = True
+        save_mem = True
         da_max = str(abs(float(data_vals.max())))
         da_min = str(abs(float(data_vals.min())))
 
         if (da_max[0] == '0') or (da_min[0] == '0'):
-            to_round = False
+            save_mem = False
 
-        return _gen_covjson(self,the_data=data_vals, rounded=to_round)
+        if save_mem:
+            if float(da_max) <= 65504: #NOTE: float16 can only represent numbers up to 65504 (+/-), useful info: `numpy.finfo(numpy.float16).max`
+                data_vals = data_vals.astype('float16') #NOTE: float16 only has 3 decimal places of precision, but it saves a lot of memory
+
+        return _gen_covjson(self,the_data=data_vals)
 
         
 
@@ -561,7 +564,7 @@ def _get_zarr_data_stream(data):
 
 
 
-def _gen_covjson(self, the_data, rounded = False):
+def _gen_covjson(self, the_data):
     """
     Generate coverage as CoverageJSON representation
     :param data_vals: xarray dataArray
@@ -569,9 +572,6 @@ def _gen_covjson(self, the_data, rounded = False):
     """
     
 
-    val_da = xarray.DataArray(the_data.data).astype('float64')
-
-    #NOTE: There is no differnce in nbytes between roudning and not rounding
 
     LOGGER.debug('Creating CoverageJSON domain')
     props = self._coverage_properties
@@ -631,16 +631,12 @@ def _gen_covjson(self, the_data, rounded = False):
     the_range = {
         f"{parameter_metadata['long_name']}": {
                                                 'type': 'NdArray',
-                                                'dataType': 'float',
+                                                'dataType': str(the_data.dtype),
                                                 'axisNames': self._coverage_properties['axis'],
-                                                'shape': the_data.shape
+                                                'shape': the_data.shape,
+                                                'values': the_data.data.flatten().compute().tolist()
                                                 }
     }
-
-    if rounded == True:
-        the_range['values'] = val_da.data.flatten().round(decimals = 2).compute().tolist()
-    else:
-        the_range['values'] = val_da.data.flatten().compute().tolist()
 
     cov_json['ranges'] = the_range
 
