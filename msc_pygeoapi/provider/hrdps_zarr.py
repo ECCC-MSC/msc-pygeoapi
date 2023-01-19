@@ -545,7 +545,7 @@ def _get_zarr_data_stream(data):
     :returns: bytes of zip (zarr) data 
     """
 
-    mem_bytes = os.sysconf('SC_PAGE_SIZE') * os.sysconf('SC_PHYS_PAGES')
+    mem_bytes = (os.sysconf('SC_PAGE_SIZE') * os.sysconf('SC_PHYS_PAGES')) * 0.75
 
     try:
         with tempfile.SpooledTemporaryFile(max_size= int((mem_bytes*mem_bytes)+1), suffix= 'zip') as f:
