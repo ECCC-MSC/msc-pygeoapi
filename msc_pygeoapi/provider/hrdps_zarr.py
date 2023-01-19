@@ -34,6 +34,8 @@ import xarray
 import zarr
 import os
 import numpy
+import sys
+
 
 
 from pygeoapi.provider.base import (BaseProvider)
@@ -324,7 +326,6 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         """
         var_name = self._coverage_properties['variables'][0]
         var_dims = self._coverage_properties['dimensions']
-
         query_return = {}
         if subsets == {} and bbox == [] and datetime_ == None:
             for i in reversed(range(1,DEFAULT_LIMIT_JSON+1)):
@@ -577,6 +578,7 @@ def _gen_covjson(self, the_data):
 
 
     LOGGER.debug('Creating CoverageJSON domain')
+    numpy.set_printoptions(threshold=sys.maxsize)
     props = self._coverage_properties
     var_name = self._coverage_properties['variables'][0]
     parameter_metadata = self._get_parameter_metadata(var_name)
@@ -643,7 +645,7 @@ def _gen_covjson(self, the_data):
     if 0 in the_data.shape:
         the_range[f"{parameter_metadata['long_name']}"]['values'] = []
     else:
-        the_range[f"{parameter_metadata['long_name']}"]['values'] = numpy.array2string(the_data.data.flatten().compute(), separator= ',').replace(' ', '').replace('\n', '') #the_data.data.flatten().compute().tolist() 
+        the_range[f"{parameter_metadata['long_name']}"]['values'] =  numpy.array2string(the_data.data.flatten().compute(), separator= ',').replace(' ', '').replace('\n', '') #the_data.data.flatten().compute().tolist() 
 
     cov_json['ranges'] = the_range
 
