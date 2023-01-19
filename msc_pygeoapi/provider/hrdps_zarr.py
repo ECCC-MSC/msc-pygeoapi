@@ -35,7 +35,7 @@ import zarr
 import os
 import numpy
 import sys
-
+import ast
 
 
 from pygeoapi.provider.base import (BaseProvider)
@@ -645,7 +645,7 @@ def _gen_covjson(self, the_data):
     if 0 in the_data.shape:
         the_range[f"{parameter_metadata['long_name']}"]['values'] = []
     else:
-        the_range[f"{parameter_metadata['long_name']}"]['values'] =  numpy.array2string(the_data.data.flatten().compute(), separator= ',').replace(' ', '').replace('\n', '') #the_data.data.flatten().compute().tolist() 
+        the_range[f"{parameter_metadata['long_name']}"]['values'] = the_data.data.flatten().compute().tolist() 
 
     cov_json['ranges'] = the_range
 
