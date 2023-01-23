@@ -108,9 +108,7 @@ class MSCDMSCoreAPIProvider(BaseProvider):
 
         try:
             url = f'{self.data}/templateSearch'
-            sa = self.session.get(url, params=params)
-            LOGGER.debug(f'URL: {sa.url}')
-            sa = sa.json()
+            sa = self.session.get(url, params=params).json()
         except json.JSONDecodeError as e:
             raise ProviderQueryError(
                 f'Could not decode JSON from query response: {e}'
@@ -218,7 +216,6 @@ class MSCDMSCoreAPIProvider(BaseProvider):
             LOGGER.debug('processing sortby')
             sort_by_values = []
             for sort in sortby:
-                print("SORT", sort)
                 LOGGER.debug('processing sort object: {}'.format(sort))
                 sort_property = f'{sort["order"]}properties.{sort["property"]}'
                 sort_by_values.append(sort_property)
@@ -228,7 +225,7 @@ class MSCDMSCoreAPIProvider(BaseProvider):
         if bbox:
             LOGGER.debug('processing bbox')
             params['locationField'] = 'geometry'
-            params['bbox'] = ','.join(str(b for b in bbox))
+            params['bbox'] = ','.join(str(b) for b in bbox)
 
         try:
             LOGGER.debug(f'querying DMS Core API with: {params}')
