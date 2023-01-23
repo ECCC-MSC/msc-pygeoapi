@@ -1,8 +1,10 @@
 # =================================================================
 #
 # Authors: Etienne Pelletier <etienne.pelletier@ec.gc.ca>
+#          Tom Kralidis <tom.kralidis@ec.gc.ca>
 #
 # Copyright (c) 2023 Etienne Pelletier
+# Copyright (c) 2023 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -26,15 +28,18 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 #
 # =================================================================
-'''
+
+"""
 # sample msc-pygeoapi provider configuration for DMS Core API
 providers:
     - type: feature
     default: true
     name: msc_pygeoapi.provider.msc_dms.MSCDMSCoreAPIProvider
     data: http://localhost/dms-api/dms_data+msc+observation+atmospheric+surface_weather+ca-1.1-ascii # noqa
-    id_field: identifier
-'''
+    id_field: id
+    time_field: obs_date_tm
+"""
+
 from collections import OrderedDict
 import json
 import logging
@@ -76,10 +81,10 @@ class MSCDMSCoreAPIProvider(BaseProvider):
         self.parsed_url = parse.urlparse(self.data)
         self.path, self.alias = self.parsed_url.path.rsplit('/', 1)
         self.dms_host = (
-            f'{self.parsed_url.scheme}://{self.parsed_url.netloc}{self.path}'
+            f'{self.parsed_url.scheme}://{self.parsed_url.netloc}'
         )
 
-        if not self.session.get(self.dms_host).status_code == 200:
+        if not self.session.head(self.dms_host).status_code == 200:
             msg = f'Cannot connect to DMS Core API via {self.dms_host}'
             LOGGER.error(msg)
             raise ProviderConnectionError(msg)
@@ -96,18 +101,21 @@ class MSCDMSCoreAPIProvider(BaseProvider):
 
         fields_ = {}
 
+        params = {
+            'datetimeType': f'properties.{self.time_field}',
+            'size': 1
+        }
+
         try:
-            sa = self.session.get(
-                f'{self.dms_host}/search/v2.0/{self.alias}/templateSearch',  # noqa
-                params={'size': 1}
-            ).json()
+            url = f'{self.data}/templateSearch'
+            sa = self.session.get(url, params=params).json()
         except json.JSONDecodeError as e:
             raise ProviderQueryError(
                 f'Could not decode JSON from query response: {e}'
             )
 
         try:
-            properties = sa['hits']['hits'][0]['_source']
+            properties = sa['hits']['hits'][0]['_source']['properties']
         except IndexError:
             LOGGER.debug(
                 'No items in DMS Core alias. Could not retrieve fields.'
@@ -115,6 +123,8 @@ class MSCDMSCoreAPIProvider(BaseProvider):
             return fields_
 
         for k, v in properties.items():
+            if k == 'geometry':
+                continue
             if isinstance(v, str):
                 type_ = 'string'
             elif isinstance(v, int):
@@ -136,7 +146,7 @@ class MSCDMSCoreAPIProvider(BaseProvider):
         offset=0,
         limit=10,
         resulttype='results',
-        # bbox=[],
+        bbox=[],
         datetime_=None,
         properties=[],
         sortby=[],
@@ -146,7 +156,7 @@ class MSCDMSCoreAPIProvider(BaseProvider):
         **kwargs,
     ):
         """
-        query DMS index
+        query DMS API
 
         :param offset: starting record to return (default 0)
         :param limit: number of records to return (default 10)
@@ -169,9 +179,10 @@ class MSCDMSCoreAPIProvider(BaseProvider):
             limit = 0
 
         params = {
+            'datetimeType': f'properties.{self.time_field}',
             'trackTotalHits': True,
             'startIndex': offset,
-            'size': limit,
+            'size': limit
         }
 
         feature_collection = {'type': 'FeatureCollection', 'features': []}
@@ -198,7 +209,7 @@ class MSCDMSCoreAPIProvider(BaseProvider):
         if properties:
             LOGGER.debug('processing properties')
             params['query'] = ' AND '.join(
-                ['{}:"{}"'.format(*p) for p in properties]
+                ['properties.{}:"{}"'.format(*p) for p in properties]
             )
 
         if sortby:
@@ -206,16 +217,20 @@ class MSCDMSCoreAPIProvider(BaseProvider):
             sort_by_values = []
             for sort in sortby:
                 LOGGER.debug('processing sort object: {}'.format(sort))
-                sort_by_values.append(f'{sort["order"]}{sort["property"]}')
+                sort_property = f'{sort["order"]}properties.{sort["property"]}'
+                sort_by_values.append(sort_property)
 
             params['sortFields'] = ','.join(sort_by_values)
 
+        if bbox:
+            LOGGER.debug('processing bbox')
+            params['locationField'] = 'geometry'
+            params['bbox'] = ','.join(str(b) for b in bbox)
+
         try:
-            LOGGER.debug('querying DMS Core API')
-            results = self.session.get(
-                f'{self.dms_host}/search/v2.0/{self.alias}/templateSearch',  # noqa
-                params=params
-            ).json()
+            LOGGER.debug(f'querying DMS Core API with: {params}')
+            url = f'{self.dms_host}/search/v2.0/{self.alias}/templateSearch'
+            results = self.session.get(url, params=params).json()
             results['hits']['total'] = results['hits']['total']['value']
         except Exception as e:
             raise e
@@ -242,11 +257,15 @@ class MSCDMSCoreAPIProvider(BaseProvider):
 
         LOGGER.debug('Fetching identifier {}'.format(identifier))
 
+        url = f'{self.dms_host}/search/v2.0/{self.alias}/templateSearch'
+
+        params = {
+            'datetimeType': f'properties.{self.time_field}',
+            'query': f'properties.{self.id_field}="{identifier}"'
+        }
+
         try:
-            result = self.session.get(
-                f'{self.dms_host}/search/v2.0/{self.alias}/templateSearch',  # noqa
-                params={'query': f'_id:"{identifier}"'}
-            ).json()
+            result = self.session.get(url, params=params).json()
         except json.JSONDecodeError as e:
             raise ProviderQueryError(
                 f'Could not decode JSON from query response: {e}'
@@ -272,47 +291,28 @@ class MSCDMSCoreAPIProvider(BaseProvider):
         feature_ = {}
         feature_thinned = {}
 
-        if 'properties' not in doc['_source']:
-            LOGGER.debug('Looks like a GDAL ES 7 document')
-            id_ = doc['_id']
-            if 'type' not in doc['_source']:
-                feature_['id'] = id_
-                feature_['type'] = 'Feature'
-            feature_['geometry'] = doc['_source'].get('location')
-            feature_['properties'] = {}
-            for key, value in doc['_source'].items():
-                if key == 'location':
-                    continue
-                feature_['properties'][key] = value
-        else:
-            LOGGER.debug('Looks like true GeoJSON document')
-            feature_ = doc['_source']
-            id_ = doc['_source']['properties'][self.id_field]
-            feature_['id'] = id_
-            feature_['geometry'] = doc['_source'].get('location')
+        feature_ = doc['_source']
+        feature_.pop('indexDateTime')
 
         if self.properties or self.select_properties:
             LOGGER.debug('Filtering properties')
             all_properties = self.get_properties()
 
             feature_thinned = {
-                'id': id_,
-                'type': feature_['type'],
-                'geometry': doc['_source'].get('location'),
+                'id': doc['_source']['id'],
+                'type': doc['_source']['type'],
+                'geometry': doc['_source']['geometry'],
                 'properties': OrderedDict(),
             }
             for p in all_properties:
                 try:
                     feature_thinned['properties'][p] = feature_['properties'][
                         p
-                    ]  # noqa
+                    ]
                 except KeyError as err:
                     LOGGER.error(err)
                     raise ProviderQueryError()
 
-        feature_['geometry']['type'] = feature_['geometry'][
-            'type'
-        ].capitalize()
         if feature_thinned:
             return feature_thinned
         else:
