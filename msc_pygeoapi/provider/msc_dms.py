@@ -1,8 +1,10 @@
 # =================================================================
 #
 # Authors: Etienne Pelletier <etienne.pelletier@ec.gc.ca>
+#          Tom Kralidis <tom.kralidis@ec.gc.ca>
 #
 # Copyright (c) 2023 Etienne Pelletier
+# Copyright (c) 2023 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -34,7 +36,8 @@ providers:
     default: true
     name: msc_pygeoapi.provider.msc_dms.MSCDMSCoreAPIProvider
     data: http://localhost/dms-api/dms_data+msc+observation+atmospheric+surface_weather+ca-1.1-ascii # noqa
-    id_field: identifier
+    id_field: id
+    time_field: obs_date_tm
 """
 
 from collections import OrderedDict
