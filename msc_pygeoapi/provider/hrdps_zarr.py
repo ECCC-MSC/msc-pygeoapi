@@ -35,13 +35,12 @@ import os
 import numpy
 import sys
 
-
-
 from pygeoapi.provider.base import (BaseProvider)
 
 LOGGER = logging.getLogger(__name__)
 DEFAULT_LIMIT_JSON = 5
 MAX_DASK_BYTES = 225000
+
 
 class HRDPSWEonGZarrProvider(BaseProvider):
     """ Zarr Provider """
@@ -86,19 +85,14 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         self.fields = {}
         self.filename = None
 
-
-
-
-
-
     def _get_coverage_properties(self):
         """
         Helper function to normalize coverage properties
 
         :returns: `dict` of coverage properties
         """
-        #Dynammically getting all of the axis names
-        all_axis =[]
+        # Dynammically getting all of the axis names
+        all_axis = []
         for coord in self._data.coords:
             try:
                 some_coord = self._data[coord].attrs["axis"]
@@ -116,7 +110,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             all_dimensions.append(dim)
 
         properties = {
-            #have to convert values to float and int to serilize into json
+            # have to convert values to float and int to serilize into json
             'crs': self._data.attrs["CRS"],
             'axis': all_axis,
             'extent': {
@@ -140,19 +134,17 @@ class HRDPSWEonGZarrProvider(BaseProvider):
 
         return properties
 
-
-    def _get_parameter_metadata(self,var_name):
+    def _get_parameter_metadata(self, var_name):
         """
         Helper function to derive parameter name and units
         :param var_name: representation of variable name
         :returns: dict of parameter metadata
         """
         parameter = {
-            'array_dimensons': None, 
-            'coordinates': None, 
-            'grid_mapping': None, 
+            'array_dimensons': None,
+            'coordinates': None,
+            'grid_mapping': None,
             'long_name': None
-
             }
 
         if var_name in self._coverage_properties['variables']:
@@ -263,7 +255,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                 'axisLabels': self.axes,
                 'axis': [
                     {"type": "IndexAxisType", "axisLabel": 'x', "lowerBound": self._coverage_properties['extent']['minx'], "upperBound": self._coverage_properties['extent']['maxx'], "resolution": self._coverage_properties['resolution']['x']},  # for extent and resolution
-                    {"type": "IndexAxisType" ,"axisLabel": 'y', "lowerBound": self._coverage_properties['extent']['miny'], "upperBound": self._coverage_properties['extent']['maxy'], "resolution": self._coverage_properties['resolution']['x']}
+                    {"type": "IndexAxisType", "axisLabel": 'y', "lowerBound": self._coverage_properties['extent']['miny'], "upperBound": self._coverage_properties['extent']['maxy'], "resolution": self._coverage_properties['resolution']['x']}
                 ],
                 'gridLimits': {
                     'type': 'GridLimits',
@@ -275,13 +267,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                 }
             }
 
-
-
         return domainset
-
-
-
-
 
     def get_coverage_rangetype(self):
         """
@@ -312,8 +298,6 @@ class HRDPSWEonGZarrProvider(BaseProvider):
 
         return rangetype
 
-
-
     def query(self, bbox=[], datetime_=None, subsets={}, format_="json"):
         """
         query the provider
@@ -338,12 +322,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                     return _get_zarr_data_stream(new_dataset)
                 elif data_vals.data.nbytes < MAX_DASK_BYTES:
                     return _gen_covjson(self, the_data=data_vals)
-
-            # LOGGER.info("THE INFO:",data_vals.nbytes, data_vals.shape)
-            # data_vals = self._data[var_name]
-
         else:
-
             if subsets != {}:
                 for dim, value in subsets.items():
                     if dim in var_dims:
@@ -354,12 +333,10 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                             msg = "Invalid subset value, values must be well-defined range"
                             LOGGER.error(msg)
                             raise Exception(msg)
-                    else: # redundant check (done in api.py)
+                    else:  # redundant check (done in api.py)
                         msg = f"Invalid Dimension name (Dimension {dim} not found)"
                         LOGGER.error(msg)
                         raise Exception(msg)
-
-
 
             if bbox != []:
                 if bbox[0] < self._coverage_properties['extent']['minx'] or bbox[1] < self._coverage_properties['extent']['miny'] or bbox[2] > self._coverage_properties['extent']['maxx'] or bbox[3] > self._coverage_properties['extent']['maxy']:
@@ -376,7 +353,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
 
             if datetime_ is not None:
 
-                if '/' not in datetime_: # single date
+                if '/' not in datetime_:  # single date
                     query_return["time"] = datetime_
 
                 else:
@@ -410,8 +387,6 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             raise ProviderDataSizeError("Data size exceeds maximum allowed size")
 
         return _gen_covjson(self, the_data=data_vals)
-
-
 
     def _load_and_prepare_item(self, item, identifier=None,
                                raise_if_exists=True):
@@ -532,11 +507,11 @@ class ProviderVersionError(ProviderGenericError):
 class ProviderInvalidDataError(ProviderGenericError):
     """provider invalid data error"""
     pass
+
+
 class ProviderDataSizeError(ProviderGenericError):
     """provider data size error"""
     pass
-
-
 
 def _get_zarr_data_stream(data):
     """
@@ -560,22 +535,12 @@ def _get_zarr_data_stream(data):
             pass
         raise ProviderDataSizeError('Data size is too large to be processed')
 
-
-
-
-
-
-
-
-
 def _gen_covjson(self, the_data):
     """
     Helper function to Generate coverage as CoverageJSON representation
     :param the_data: xarray dataArray from query
     :returns: dict of CoverageJSON representation
     """
-
-
 
     LOGGER.debug('Creating CoverageJSON domain')
     numpy.set_printoptions(threshold=sys.maxsize)
@@ -612,24 +577,23 @@ def _gen_covjson(self, the_data):
         }
     }
 
-
     parameter = {
         f"{parameter_metadata['long_name']}": {
-        'type': 'Parameter',
-        'description': {
-            'en': parameter_metadata['long_name']
-        },
-        'unit': {
-            'symbol': parameter_metadata['units']
-        },
-        'observedProperty': {
-            'id': parameter_metadata['id'],
-            'label': {
+            'type': 'Parameter',
+            'description': {
                 'en': parameter_metadata['long_name']
+            },
+            'unit': {
+                'symbol': parameter_metadata['units']
+            },
+            'observedProperty': {
+                'id': parameter_metadata['id'],
+                'label': {
+                    'en': parameter_metadata['long_name']
+                }
             }
         }
-    }}
-
+    }
 
     cov_json['parameters'] = parameter
 
