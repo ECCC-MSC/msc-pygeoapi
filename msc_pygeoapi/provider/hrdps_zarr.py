@@ -27,7 +27,6 @@
 #
 # =================================================================
 import json
-from glob import glob
 import logging
 import tempfile
 import xarray
@@ -35,7 +34,7 @@ import zarr
 import os
 import numpy
 import sys
-import ast
+
 
 
 from pygeoapi.provider.base import (BaseProvider)
@@ -46,6 +45,7 @@ MAX_DASK_BYTES = 225000
 
 class HRDPSWEonGZarrProvider(BaseProvider):
     """ Zarr Provider """
+
 
     def __init__(self, provider_def):
         """
@@ -58,7 +58,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         super().__init__(provider_def)
 
         try:
-            
+
             self.name = provider_def['name']
             self.type = provider_def['type']
             self.data = provider_def['data']
@@ -148,17 +148,17 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         :returns: dict of parameter metadata
         """
         parameter = {
-            'array_dimensons': None,
-            'coordinates': None,
-            'grid_mapping': None,
+            'array_dimensons': None, 
+            'coordinates': None, 
+            'grid_mapping': None, 
             'long_name': None
 
             }
 
         if var_name in self._coverage_properties['variables']:
             parameter['array_dimensons'] = self._data[var_name].dims
-            parameter['coordinates'] = self._data[var_name].coords # list of coordinate names
-            parameter['grid_mapping'] = self._data[var_name].attrs['grid_mapping'] # name of grid mapping variable
+            parameter['coordinates'] = self._data[var_name].coords  # list of coordinate names
+            parameter['grid_mapping'] = self._data[var_name].attrs['grid_mapping']  # name of grid mapping variable
             parameter['units'] = self._data[var_name].attrs['units']
             parameter['long_name'] = self._data[var_name].attrs['long_name']
             parameter['id'] = self._data[var_name].attrs['nomvar']
@@ -262,26 +262,26 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                 'srsName': self._coverage_properties['extent']['coordinate_reference_system'],
                 'axisLabels': self.axes,
                 'axis': [
-                    {"type":"IndexAxisType","axisLabel":'x',"lowerBound": self._coverage_properties['extent']['minx'], "upperBound": self._coverage_properties['extent']['maxx'], "resolution": self._coverage_properties['resolution']['x'] }, #for extent and resolution
-                    {"type":"IndexAxisType","axisLabel": 'y',"lowerBound": self._coverage_properties['extent']['miny'], "upperBound": self._coverage_properties['extent']['maxy'], "resolution": self._coverage_properties['resolution']['x'] }
+                    {"type": "IndexAxisType", "axisLabel": 'x', "lowerBound": self._coverage_properties['extent']['minx'], "upperBound": self._coverage_properties['extent']['maxx'], "resolution": self._coverage_properties['resolution']['x']},  # for extent and resolution
+                    {"type": "IndexAxisType" ,"axisLabel": 'y', "lowerBound": self._coverage_properties['extent']['miny'], "upperBound": self._coverage_properties['extent']['maxy'], "resolution": self._coverage_properties['resolution']['x']}
                 ],
                 'gridLimits': {
                     'type': 'GridLimits',
                     'axis': [
-                        {"upperBound": self._coverage_properties['size']['width']}, #for width and height
+                        {"upperBound": self._coverage_properties['size']['width']},  # for width and height
                         {"upperBound": self._coverage_properties['size']['height']}],
                     }
 
                 }
             }
-            
-        
+
+
 
         return domainset
 
-        
 
-        
+
+
 
     def get_coverage_rangetype(self):
         """
@@ -291,10 +291,10 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         'CIS JSON': https://docs.opengeospatial.org/is/09-146r6/09-146r6.html#46
         """
         global MAX_DASK_BYTES
-        #at 0 becuase we are only dealing with one variable (thats the way the data is structured, 1 zarr file per variable)
+        # at 0 becuase we are only dealing with one variable (thats the way the data is structured, 1 zarr file per variable)
         var_name = self._coverage_properties['variables'][0]
         parameter_metadata = self._get_parameter_metadata(var_name)
-        
+
         rangetype = {
             'type': 'DataRecordType',
             'field': [
@@ -314,7 +314,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
 
 
 
-    def query(self, bbox=[], datetime_=None, subsets = {}, format_= "json"):
+    def query(self, bbox=[], datetime_=None, subsets={}, format_="json"):
         """
         query the provider
 
@@ -327,8 +327,8 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         var_name = self._coverage_properties['variables'][0]
         var_dims = self._coverage_properties['dimensions']
         query_return = {}
-        if subsets == {} and bbox == [] and datetime_ == None:
-            for i in reversed(range(1,DEFAULT_LIMIT_JSON+1)):
+        if subsets == {} and bbox == [] and datetime_ is None:
+            for i in reversed(range(1, DEFAULT_LIMIT_JSON+1)):
                 for dim in var_dims:
                     query_return[dim] = i
                 data_vals = self._data[var_name].head(**query_return)
@@ -338,9 +338,9 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                     return _get_zarr_data_stream(new_dataset)
                 elif data_vals.data.nbytes < MAX_DASK_BYTES:
                     return _gen_covjson(self, the_data=data_vals)
-            
-            #LOGGER.info("THE INFO:",data_vals.nbytes, data_vals.shape)
-            #data_vals = self._data[var_name]
+
+            # LOGGER.info("THE INFO:",data_vals.nbytes, data_vals.shape)
+            # data_vals = self._data[var_name]
 
         else:
 
@@ -354,11 +354,11 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                             msg = "Invalid subset value, values must be well-defined range"
                             LOGGER.error(msg)
                             raise Exception(msg)
-                    else: #redundant check (done in api.py)
+                    else: # redundant check (done in api.py)
                         msg = f"Invalid Dimension name (Dimension {dim} not found)"
                         LOGGER.error(msg)
                         raise Exception(msg)
-                
+
 
 
             if bbox != []:
@@ -373,19 +373,19 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                 else:
                     query_return["lat"] = slice(bbox[1], bbox[3])
                     query_return["lon"] = slice(bbox[0], bbox[2])
-                
+
             if datetime_ is not None:
-            
-                if '/' not in datetime_: #single date
+
+                if '/' not in datetime_: # single date
                     query_return["time"] = datetime_
-                    
+
                 else:
                     start_date = datetime_.split('/')[0]
                     end_date = datetime_.split('/')[1]
                     query_return["time"] = slice(start_date, end_date)
-            
 
-        #is a xarray data-array
+
+        # is a xarray data-array
         data_vals = self._data[var_name].sel(**query_return)
             
 
@@ -403,15 +403,15 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                 da_min = str(abs(d_min))
 
                 if (da_max[0] != '0') or (da_min[0] != '0'):
-                    if float(da_max) <= 65504: #NOTE: float16 can only represent numbers up to 65504 (+/-), useful info: `numpy.finfo(numpy.float16).max`
-                        data_vals = self._data[var_name].astype('float16').sel(**query_return) #NOTE: float16 only has 3 decimal places of precision, but it saves a lot of memory (uses half as much as float32)
+                    if float(da_max) <= 65504:  # NOTE: float16 can only represent numbers up to 65504 (+/-), useful info: `numpy.finfo(numpy.float16).max`
+                        data_vals = self._data[var_name].astype('float16').sel(**query_return)  # NOTE: float16 only has 3 decimal places of precision, but it saves a lot of memory (uses half as much as float32)
 
         if data_vals.data.nbytes > MAX_DASK_BYTES:
             raise ProviderDataSizeError("Data size exceeds maximum allowed size")
 
-        return _gen_covjson(self,the_data=data_vals)
+        return _gen_covjson(self, the_data=data_vals)
 
-        
+
 
     def _load_and_prepare_item(self, item, identifier=None,
                                raise_if_exists=True):
@@ -542,13 +542,13 @@ def _get_zarr_data_stream(data):
     """
     Helper function to convert a xarray dataset to zip file in memory
     :param data: Xarray dataset of coverage data
-    :returns: bytes of zip (zarr) data 
+    :returns: bytes of zip (zarr) data
     """
 
     mem_bytes = (os.sysconf('SC_PAGE_SIZE') * os.sysconf('SC_PHYS_PAGES')) * 0.75
 
     try:
-        with tempfile.SpooledTemporaryFile(max_size= int((mem_bytes*mem_bytes)+1), suffix= 'zip') as f:
+        with tempfile.SpooledTemporaryFile(max_size=int((mem_bytes*mem_bytes)+1), suffix='zip') as f:
             with tempfile.NamedTemporaryFile() as f2:
                 data.to_zarr(zarr.ZipStore(f2.name), mode='w')
                 return f2.read()
@@ -559,8 +559,8 @@ def _get_zarr_data_stream(data):
         except:
             pass
         raise ProviderDataSizeError('Data size is too large to be processed')
-        
- 
+
+
 
 
 
@@ -574,7 +574,7 @@ def _gen_covjson(self, the_data):
     :param the_data: xarray dataArray from query
     :returns: dict of CoverageJSON representation
     """
-    
+
 
 
     LOGGER.debug('Creating CoverageJSON domain')
@@ -583,7 +583,7 @@ def _gen_covjson(self, the_data):
     var_name = self._coverage_properties['variables'][0]
     parameter_metadata = self._get_parameter_metadata(var_name)
 
-    minx, miny, maxx, maxy=props['extent']['minx'],props['extent']['miny'], props['extent']['maxx'], props['extent']['maxy']
+    minx, miny, maxx, maxy = props['extent']['minx'], props['extent']['miny'], props['extent']['maxx'], props['extent']['maxy']
 
     cov_json = {
         'type': 'Coverage',
@@ -630,7 +630,7 @@ def _gen_covjson(self, the_data):
         }
     }}
 
-        
+
     cov_json['parameters'] = parameter
 
     the_range = {
@@ -645,9 +645,8 @@ def _gen_covjson(self, the_data):
     if 0 in the_data.shape:
         the_range[f"{parameter_metadata['long_name']}"]['values'] = []
     else:
-        the_range[f"{parameter_metadata['long_name']}"]['values'] = the_data.data.flatten().compute().tolist() 
+        the_range[f"{parameter_metadata['long_name']}"]['values'] = the_data.data.flatten().compute().tolist()
 
     cov_json['ranges'] = the_range
-
 
     return cov_json
