@@ -42,7 +42,7 @@ from pygeoapi.provider.base import (BaseProvider)
 
 LOGGER = logging.getLogger(__name__)
 DEFAULT_LIMIT_JSON = 5
-MAX_DASK_BYTES = 175000
+MAX_DASK_BYTES = 225000
 
 class HRDPSWEonGZarrProvider(BaseProvider):
     """ Zarr Provider """
