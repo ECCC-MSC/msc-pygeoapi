@@ -174,38 +174,33 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         'CIS JSON':https://docs.opengeospatial.org/is/09-146r6/09-146r6.html#46
         """
         a = _gen_domain_axis(self, data=self._data)
+        sr = self._coverage_properties['extent']['coordinate_reference_system']
+        w = self._coverage_properties['size']['width']
+        h = self._coverage_properties['size']['height']
 
         domainset = {
             'type': 'DomainSetType',
             'generalGrid': {
                 'type': 'GeneralGridCoverageType',
-                'srsName': (
-                    self._coverage_properties['extent']['coordinate_reference_system']
-                    ),
+                'srsName': sr,
                 'axisLabels': a[1],
                 'axis': a[0],
                 'gridLimits': {
                     'type': 'GridLimitsType',
-                    'srsName': (
-                        self._coverage_properties['extent']['coordinate_reference_system']
-                            ),
+                    'srsName': sr,
                     'axisLabels': ['i', 'j'],
                     'axis': [
                                 {
                                     "type": 'IndexAxisType',
                                     "axisLabel": 'i',
                                     "lowerBound": 0,
-                                    "upperBound": (
-                                        self._coverage_properties['size']['width']
-                                        )
+                                    "upperBound": w
                                 },
                                 {
                                     "type": 'IndexAxisType',
                                     "axisLabel": 'j',
                                     "lowerBound": 0,
-                                    "upperBound": (
-                                        self._coverage_properties['size']['height']
-                                        )
+                                    "upperBound": h
                                 }
                             ],
                     }
