@@ -342,8 +342,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             if (
                 (str(d_max)[0].isnumeric()) and
                 (str(d_min)[0].isnumeric())) or ((str(d_max)[0] == '-') and
-                                                 (str(d_min)[0] == '-')
-            ):
+                                                (str(d_min)[0] == '-')):
                 da_max = str(abs(d_max))
                 da_min = str(abs(d_min))
 
