@@ -165,7 +165,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         :returns: CIS JSON object of domainset metadata
         'CIS JSON': https://docs.opengeospatial.org/is/09-146r6/09-146r6.html#46
         """
-        a = _gen_domain_axis(data = self._data)
+        a = _gen_domain_axis(self, data = self._data)
 
         domainset = {
             'type': 'DomainSetType',
@@ -407,11 +407,12 @@ def _get_zarr_data_stream(data):
             pass
         raise ProviderInvalidQueryError('Data size is too large to be processed')
 
-def _gen_domain_axis(data):
+def _gen_domain_axis(self, data):
     """
     Helper function to generate domain axis
     :returns: list of dict of domain axis
     """
+    var_name = self._coverage_properties['variables'][0]
 
     # Dynammically getting all of the axis names
     all_axis = []
@@ -457,12 +458,17 @@ def _gen_domain_axis(data):
             })
 
         else:
+            try:
+                uom = self._data[var_name][dim].attrs['units']
+            except:
+                uom = 'n/a'
             aa.append(
                 {
                     'type': 'RegularAxisType',
                     'axisLabel': a,
                     'lowerBound': float(data[dim].min().values),
                     'upperBound': float(data[dim].max().values),
+                    'uomLabel': uom,
                     'resolution': float(abs(data[dim].values[1] - data[dim].values[0]))
                 })
 
