@@ -203,7 +203,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             'type': 'DataRecordType',
             'field': [
                 {
-                    'id': parameter_metadata['id'],
+                    'id': parameter_metadata['id'][0],
                     'type': 'QuantityType',
                     'name': parameter_metadata['long_name'],
                     'encodingInfo': {
@@ -511,6 +511,11 @@ def _gen_covjson(self, the_data):
                     'start': float(the_data.lat.min().values),
                     'stop': float(the_data.lat.max().values),
                     'num': int(the_data.lat.size)
+                },
+                't': {
+                    'start': str(the_data.time.min().values),
+                    'stop': str(the_data.time.max().values),
+                    'num': int(the_data.time.size)
                 }
             },
             'referencing': [{
