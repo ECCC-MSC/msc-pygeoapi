@@ -448,13 +448,16 @@ def _gen_domain_axis(self, data):
 
     for a, dim in zip(all_axis, all_dims):
         if a == 'T':
+            res = ''.join(c for c in str(data[dim].values[1] - data[dim].values[0]) if c.isdigit())
+            uom = ''.join(c for c in str(data[dim].values[1] - data[dim].values[0]) if not c.isdigit())
             aa.append(
             {
                 'type': 'RegularAxisType',
                 'axisLabel': a,
                 'lowerBound': str(data[dim].min().values),
                 'upperBound': str(data[dim].max().values),
-                'resolution': str(data[dim].values[1] - data[dim].values[0])
+                'uomLabel': uom.strip(),
+                'resolution': float(res)
             })
 
         else:
