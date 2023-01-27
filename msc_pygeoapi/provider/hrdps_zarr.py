@@ -277,11 +277,10 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                     if dim in var_dims:
                         if (
                             len(value) == 2 and
-                            isinstance(value[0], (int, float))
-                            and
-                            isinstance(value[1], (int, float))):
-                            query_return[dim] = slice(value[0], value[1]
-                            )
+                            isinstance(value[0], (int, float)) and
+                            isinstance(value[1], (int, float))
+                        ):
+                            query_return[dim] = slice(value[0], value[1])
 
                         else:
                             msg = 'values must be well-defined range'
@@ -445,7 +444,7 @@ def _get_zarr_data_stream(data):
     try:
         with tempfile.SpooledTemporaryFile(
             max_size=int((mem_bytes*mem_bytes)+1), suffix='zip'
-            ) as f:
+        ) as f:
             with tempfile.NamedTemporaryFile() as f2:
                 data.to_zarr(zarr.ZipStore(f2.name), mode='w')
                 return f2.read()
