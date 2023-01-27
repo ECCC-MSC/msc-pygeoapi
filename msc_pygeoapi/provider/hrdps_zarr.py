@@ -36,7 +36,11 @@ import os
 import numpy
 import sys
 
-from pygeoapi.provider.base import BaseProvider, ProviderItemNotFoundError, ProviderInvalidQueryError
+from pygeoapi.provider.base import (
+    BaseProvider,
+    ProviderItemNotFoundError,
+    ProviderInvalidQueryError
+)
 
 LOGGER = logging.getLogger(__name__)
 DEFAULT_LIMIT_JSON = 5
@@ -98,7 +102,8 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                 if some_coord not in all_axis:
                     all_axis.append(some_coord)
             except AttributeError:
-                LOGGER.warning(f'{coord} does not have an axis attribute but is a coordinate.')
+                msg = f'{coord} has no axis attribute but is a coordinate.'
+                LOGGER.warning(msg)
                 pass
 
         all_variables = []
@@ -118,7 +123,8 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                 'miny': float(self._data.lat.min().values),
                 'maxx': float(self._data.lon.max().values),
                 'maxy': float(self._data.lat.max().values),
-                'coordinate_reference_system': "http://www.opengis.net/def/crs/ECCC-MSC/-/ob_tran-longlat-weong"
+                'coordinate_reference_system': 
+                "http://www.opengis.net/def/crs/ECCC-MSC/-/ob_tran-longlat-weong"
                 },
             'size': {
                 'width': int(self._data.lon.size),
@@ -149,8 +155,8 @@ class HRDPSWEonGZarrProvider(BaseProvider):
 
         if var_name in self._coverage_properties['variables']:
             parameter['array_dimensons'] = self._data[var_name].dims
-            parameter['coordinates'] = self._data[var_name].coords  # list of coordinate names
-            parameter['grid_mapping'] = self._data[var_name].attrs['grid_mapping']  # name of grid mapping variable
+            parameter['coordinates'] = self._data[var_name].coords
+            parameter['grid_mapping'] = self._data[var_name].attrs['grid_mapping']
             parameter['units'] = self._data[var_name].attrs['units']
             parameter['long_name'] = self._data[var_name].attrs['long_name']
             parameter['id'] = self._data[var_name].attrs['nomvar'],
@@ -179,8 +185,17 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                     'srsName': self._coverage_properties['extent']['coordinate_reference_system'],
                     'axisLabels': ['i', 'j'],
                     'axis': [
-                        {"type": 'IndexAxisType', "axisLabel": 'i', "lowerBound": 0, "upperBound": self._coverage_properties['size']['width']},  # for width and height
-                        {"type": 'IndexAxisType', "axisLabel": 'j', "lowerBound": 0, "upperBound": self._coverage_properties['size']['height']}],
+                            {"type": 'IndexAxisType',
+                            "axisLabel": 'i',
+                            "lowerBound": 0,
+                            "upperBound": self._coverage_properties['size']['width']
+                            },
+                            {"type": 'IndexAxisType',
+                            "axisLabel": 'j',
+                            "lowerBound": 0,
+                            "upperBound": self._coverage_properties['size']['height']
+                            }
+                            ],
                     }
 
                 }
@@ -193,9 +208,9 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         Provide coverage rangetype
 
         :returns: CIS JSON object of rangetype metadata
-        'CIS JSON': https://docs.opengeospatial.org/is/09-146r6/09-146r6.html#46
+        'CIS JSON':https://docs.opengeospatial.org/is/09-146r6/09-146r6.html#46
         """
-        # at 0 becuase we are only dealing with one variable (thats the way the data is structured, 1 zarr file per variable)
+        # at 0, we are dealing with one variable (1 zarr file per variable)
         var_name = self._coverage_properties['variables'][0]
         parameter_metadata = self._get_parameter_metadata(var_name)
 
@@ -248,15 +263,18 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             if subsets:
                 for dim, value in subsets.items():
                     if dim in var_dims:
-                        if len(value) == 2 and isinstance(value[0], (int, float)) and isinstance(value[1], (int, float)):
+                        if (len(value) == 2 and 
+                            isinstance(value[0], (int, float)) 
+                            and 
+                            isinstance(value[1], (int, float))):
                             query_return[dim] = slice(value[0], value[1])
 
                         else:
-                            msg = 'Invalid subset value, values must be well-defined range'
+                            msg = 'values must be well-defined range'
                             LOGGER.error(msg)
                             raise ProviderInvalidQueryError(msg)
                     else:  # redundant check (done in api.py)
-                        msg = f'Invalid Dimension name (Dimension {dim} not found)'
+                        msg = f'Invalid Dimension (Dimension {dim} not found)'
                         LOGGER.error(msg)
                         raise ProviderInvalidQueryError(msg)
 
@@ -265,11 +283,11 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                         bbox[1] < self._coverage_properties['extent']['miny'],
                         bbox[2] > self._coverage_properties['extent']['maxx'],
                         bbox[3] > self._coverage_properties['extent']['maxy']]):
-                    msg = 'Invalid bounding box (Values must fit within the coverage extent)'
+                    msg = 'Invalid bounding box (Values must fit coverage extent)'
                     LOGGER.error(msg)
                     raise ProviderInvalidQueryError(msg)
                 elif 'lat' in query_return or 'lon' in query_return:
-                    msg = 'Invalid subset (Cannot subset by both "lat" and "lon" and "bbox")'
+                    msg = 'Invalid subset (Cannot subset by both "lat", "lon" and "bbox")'
                     LOGGER.error(msg)
                     raise ProviderInvalidQueryError(msg)
                 else:
@@ -303,13 +321,18 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             d_max = float(data_vals.max())
             d_min = float(data_vals.min())
 
-            if ((str(d_max)[0].isnumeric()) and (str(d_min)[0].isnumeric())) or ((str(d_max)[0] == '-') and (str(d_min)[0] == '-')):
+            if ((str(d_max)[0].isnumeric()) and 
+            (str(d_min)[0].isnumeric())) or ((str(d_max)[0] == '-') and 
+            (str(d_min)[0] == '-')):
                 da_max = str(abs(d_max))
                 da_min = str(abs(d_min))
 
+# NOTE: float16 can only represent numbers up to 65504 (+/-), useful info: `numpy.finfo(numpy.float16).max`
+# NOTE: float16 only has 3 decimal places of precision, but it saves a lot of memory (uses half as much as float32)
                 if (da_max[0] != '0') or (da_min[0] != '0'):
-                    if float(da_max) <= 65504:  # NOTE: float16 can only represent numbers up to 65504 (+/-), useful info: `numpy.finfo(numpy.float16).max`
-                        data_vals = self._data[var_name].astype('float16').sel(**query_return)  # NOTE: float16 only has 3 decimal places of precision, but it saves a lot of memory (uses half as much as float32)
+                    if float(da_max) <= 65504:
+                        data_vals = self._data[var_name].astype('float16').sel(**query_return)  
+
 
         if data_vals.data.nbytes > MAX_DASK_BYTES:
             raise ProviderInvalidQueryError('Data size exceeds maximum allowed size')
@@ -397,13 +420,16 @@ def _get_zarr_data_stream(data):
     mem_bytes = (os.sysconf('SC_PAGE_SIZE') * os.sysconf('SC_PHYS_PAGES')) * 0.75
 
     try:
-        with tempfile.SpooledTemporaryFile(max_size=int((mem_bytes*mem_bytes)+1), suffix='zip') as f:
+        with tempfile.SpooledTemporaryFile(
+            max_size=int((mem_bytes*mem_bytes)+1), suffix='zip') as f:
             with tempfile.NamedTemporaryFile() as f2:
                 data.to_zarr(zarr.ZipStore(f2.name), mode='w')
                 return f2.read()
-            LOGGER.info(f'This line exists to satisfy flake8 tests, there is no need to use {f}')
+            LOGGER.info(f'satisfy flake8 tests, there is no need to use {f}')
     except Exception:
-        raise ProviderInvalidQueryError('Data size is too large to be processed')
+        raise ProviderInvalidQueryError(
+            'Data size is too large to be processed'
+        )
 
 
 def _gen_domain_axis(self, data):
@@ -421,10 +447,10 @@ def _gen_domain_axis(self, data):
             if some_coord not in all_axis:
                 all_axis.append(some_coord)
         except AttributeError:
-            LOGGER.warning(f'{coord} does not have an axis attribute but is a coordinate.')
+            LOGGER.warning(f'{coord} has no axis attribute but a coordinate.')
             pass
-
-    j, k = all_axis.index('X'), all_axis.index(all_axis[0])  # Makes sure axis are in the correct order
+    # Makes sure axis are in the correct order
+    j, k = all_axis.index('X'), all_axis.index(all_axis[0]) 
     all_axis[j], all_axis[k] = all_axis[k], all_axis[j]
 
     j, k = all_axis.index('Y'), all_axis.index(all_axis[1])
@@ -548,7 +574,9 @@ def _gen_covjson(self, the_data):
     }
 
     if 0 in the_data.shape:
-        raise ProviderInvalidQueryError('No data found for the given query. Make sure you are passing in correct (exact) parameters.')
+        raise ProviderInvalidQueryError(
+            'No data found. Pass in correct (exact) parameters.'
+        )
 
     else:
         the_range[parameter_metadata['id'][0]]['values'] = the_data.data.flatten().compute().tolist()
