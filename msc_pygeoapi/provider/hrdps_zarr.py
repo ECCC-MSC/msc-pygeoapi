@@ -206,7 +206,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                     'id': parameter_metadata['id'],
                     'type': 'QuantityType',
                     'name': parameter_metadata['long_name'],
-                    'encodinfInfo': {
+                    'encodingInfo': {
                         'dataType': str(parameter_metadata['data_type'])
                     },
                     'definition': parameter_metadata['units'],
