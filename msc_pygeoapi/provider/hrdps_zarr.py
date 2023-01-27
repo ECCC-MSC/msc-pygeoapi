@@ -524,7 +524,7 @@ def _gen_covjson(self, the_data):
     }
 
     parameter = {
-        f"{parameter_metadata['long_name']}": {
+        parameter_metadata['id'][0]: {
             'type': 'Parameter',
             'description': {
                 'en': parameter_metadata['long_name']
@@ -533,7 +533,7 @@ def _gen_covjson(self, the_data):
                 'symbol': parameter_metadata['units']
             },
             'observedProperty': {
-                'id': parameter_metadata['id'],
+                'id': parameter_metadata['id'][0],
                 'label': {
                     'en': parameter_metadata['long_name']
                 }
@@ -544,8 +544,8 @@ def _gen_covjson(self, the_data):
     cov_json['parameters'] = parameter
 
     the_range = {
-        f"{parameter_metadata['long_name']}": {
-                                                'type': str(type(the_data.data)),
+        parameter_metadata['id'][0]: {
+                                                'type': 'NdArray',
                                                 'dataType': str(the_data.dtype),
                                                 'axisNames': the_data.dims,
                                                 'shape': the_data.shape
@@ -556,8 +556,10 @@ def _gen_covjson(self, the_data):
         raise ProviderInvalidQueryError('No data found for the given query. Make sure you are passing in correct (exact) parameters.')
 
     else:
-        the_range[f"{parameter_metadata['long_name']}"]['values'] = the_data.data.flatten().compute().tolist()
+        the_range[parameter_metadata['id'][0]]['values'] = the_data.data.flatten().compute().tolist()
 
     cov_json['ranges'] = the_range
+
+    LOGGER.info(cov_json)
 
     return cov_json
