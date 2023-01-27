@@ -6,7 +6,3 @@ build
 dist
 node_modules
 schemas.opengis.net
-adb-msc-pygeoapi.env
-miniconda.sh
-dev.env
-zarr-msc-pygeoapi-config.yml
