@@ -125,7 +125,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                 'maxy': float(self._data.lat.max().values),
                 'coordinate_reference_system':
                 ("http://www.opengis.net/def/crs/ECCC-MSC" +
-                "/-/ob_tran-longlat-weong")
+                    "/-/ob_tran-longlat-weong")
                 },
             'size': {
                 'width': int(self._data.lon.size),
@@ -191,18 +191,20 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                             ),
                     'axisLabels': ['i', 'j'],
                     'axis': [
-                            {"type": 'IndexAxisType',
-                            "axisLabel": 'i',
-                            "lowerBound": 0,
-                            "upperBound": (
-                                self._coverage_properties['size']['width'])
-                            },
-                            {"type": 'IndexAxisType',
-                            "axisLabel": 'j',
-                            "lowerBound": 0,
-                            "upperBound": (
-                                self._coverage_properties['size']['height'])
-                            }
+                                {"type": 'IndexAxisType',
+                                "axisLabel": 'i',
+                                "lowerBound": 0,
+                                "upperBound": (
+                                    self._coverage_properties['size']['width']
+                                    )
+                                },
+                                {"type": 'IndexAxisType',
+                                "axisLabel": 'j',
+                                "lowerBound": 0,
+                                "upperBound": (
+                                    self._coverage_properties['size']['height']
+                                    )
+                                }
                             ],
                     }
 
@@ -271,11 +273,13 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             if subsets:
                 for dim, value in subsets.items():
                     if dim in var_dims:
-                        if (len(value) == 2 and 
-                            isinstance(value[0], (int, float)) 
-                            and 
+                        if (
+                            len(value) == 2 and
+                            isinstance(value[0], (int, float))
+                            and
                             isinstance(value[1], (int, float))):
-                            query_return[dim] = slice(value[0], value[1])
+                            query_return[dim] = slice(value[0], value[1]
+                            )
 
                         else:
                             msg = 'values must be well-defined range'
@@ -287,7 +291,8 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                         raise ProviderInvalidQueryError(msg)
 
             if bbox:
-                if any([bbox[0] < self._coverage_properties['extent']['minx'],
+                if any(
+                        [bbox[0] < self._coverage_properties['extent']['minx'],
                         bbox[1] < self._coverage_properties['extent']['miny'],
                         bbox[2] > self._coverage_properties['extent']['maxx'],
                         bbox[3] > self._coverage_properties['extent']['maxy']]
@@ -296,7 +301,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                     LOGGER.error(msg)
                     raise ProviderInvalidQueryError(msg)
                 elif 'lat' in query_return or 'lon' in query_return:
-                    msg = ('Invalid subset' + 
+                    msg = ('Invalid subset' +
                     '(Cannot subset by both "lat", "lon" and "bbox")')
                     LOGGER.error(msg)
                     raise ProviderInvalidQueryError(msg)
@@ -331,19 +336,20 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             d_max = float(data_vals.max())
             d_min = float(data_vals.min())
 
-            if ((str(d_max)[0].isnumeric()) and 
-            (str(d_min)[0].isnumeric())) or ((str(d_max)[0] == '-') and 
-            (str(d_min)[0] == '-')):
+            if (
+                (str(d_max)[0].isnumeric()) and
+                (str(d_min)[0].isnumeric())) or ((str(d_max)[0] == '-') and
+                (str(d_min)[0] == '-')
+            ):
                 da_max = str(abs(d_max))
                 da_min = str(abs(d_min))
 
 # NOTE: float16 can only represent numbers up to 65504 (+/-)
-# NOTE: float16 only has 3 decimal places of precision, but saves memory 
+# NOTE: float16 only has 3 decimal places of precision, but saves memory
                 if (da_max[0] != '0') or (da_min[0] != '0'):
                     if float(da_max) <= 65504:
                         data_vals = self._data[var_name].astype('float16')
-                        data_vals = data_vals.sel(**query_return)  
-
+                        data_vals = data_vals.sel(**query_return)
 
         if data_vals.data.nbytes > MAX_DASK_BYTES:
             raise ProviderInvalidQueryError('Data size exceeds' +
@@ -429,8 +435,9 @@ def _get_zarr_data_stream(data):
     :returns: bytes of zip (zarr) data
     """
 
-    mem_bytes = ((os.sysconf('SC_PAGE_SIZE') * os.sysconf('SC_PHYS_PAGES'))
-                * 0.75)
+    mem_bytes = (
+        (os.sysconf('SC_PAGE_SIZE') * os.sysconf('SC_PHYS_PAGES'))* 0.75
+        )
 
     try:
         with tempfile.SpooledTemporaryFile(
@@ -463,7 +470,7 @@ def _gen_domain_axis(self, data):
             LOGGER.warning(f'{coord} has no axis attribute but a coordinate.')
             pass
     # Makes sure axis are in the correct order
-    j, k = all_axis.index('X'), all_axis.index(all_axis[0]) 
+    j, k = all_axis.index('X'), all_axis.index(all_axis[0])
     all_axis[j], all_axis[k] = all_axis[k], all_axis[j]
 
     j, k = all_axis.index('Y'), all_axis.index(all_axis[1])
