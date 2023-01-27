@@ -46,7 +46,6 @@ MAX_DASK_BYTES = 225000
 class HRDPSWEonGZarrProvider(BaseProvider):
     """MSC WEonG Zarr provider"""
 
-
     def __init__(self, provider_def):
         """
         Initialize object
@@ -387,6 +386,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
     def __repr__(self):
         return '<BaseProvider> {}'.format(self.type)
 
+
 def _get_zarr_data_stream(data):
     """
     Helper function to convert a xarray dataset to zip file in memory
@@ -403,6 +403,7 @@ def _get_zarr_data_stream(data):
                 return f2.read()
     except Exception:
         raise ProviderInvalidQueryError('Data size is too large to be processed')
+
 
 def _gen_domain_axis(self, data):
     """
@@ -468,9 +469,8 @@ def _gen_domain_axis(self, data):
                     'uomLabel': uom,
                     'resolution': float(abs(data[dim].values[1] - data[dim].values[0]))
                 })
-
-
     return aa, all_dims
+
 
 def _gen_covjson(self, the_data):
     """
