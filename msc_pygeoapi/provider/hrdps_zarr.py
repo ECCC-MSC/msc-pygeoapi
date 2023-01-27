@@ -191,19 +191,21 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                             ),
                     'axisLabels': ['i', 'j'],
                     'axis': [
-                                {"type": 'IndexAxisType',
-                                "axisLabel": 'i',
-                                "lowerBound": 0,
-                                "upperBound": (
-                                    self._coverage_properties['size']['width']
-                                    )
+                                {
+                                    "type": 'IndexAxisType',
+                                    "axisLabel": 'i',
+                                    "lowerBound": 0,
+                                    "upperBound": (
+                                        self._coverage_properties['size']['width']
+                                        )
                                 },
-                                {"type": 'IndexAxisType',
-                                "axisLabel": 'j',
-                                "lowerBound": 0,
-                                "upperBound": (
-                                    self._coverage_properties['size']['height']
-                                    )
+                                {
+                                    "type": 'IndexAxisType',
+                                    "axisLabel": 'j',
+                                    "lowerBound": 0,
+                                    "upperBound": (
+                                        self._coverage_properties['size']['height']
+                                        )
                                 }
                             ],
                     }
@@ -296,7 +298,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                         bbox[1] < self._coverage_properties['extent']['miny'],
                         bbox[2] > self._coverage_properties['extent']['maxx'],
                         bbox[3] > self._coverage_properties['extent']['maxy']]
-                    ):
+                ):
                     msg = 'Invalid bbox (Values must fit coverage extent)'
                     LOGGER.error(msg)
                     raise ProviderInvalidQueryError(msg)
@@ -352,8 +354,9 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                         data_vals = data_vals.sel(**query_return)
 
         if data_vals.data.nbytes > MAX_DASK_BYTES:
-            raise ProviderInvalidQueryError('Data size exceeds' +
-            'maximum allowed size')
+            raise ProviderInvalidQueryError(
+                'Data size exceeds maximum allowed size'
+                )
 
         return _gen_covjson(self, the_data=data_vals)
 
@@ -436,12 +439,13 @@ def _get_zarr_data_stream(data):
     """
 
     mem_bytes = (
-        (os.sysconf('SC_PAGE_SIZE') * os.sysconf('SC_PHYS_PAGES'))* 0.75
+        (os.sysconf('SC_PAGE_SIZE') * os.sysconf('SC_PHYS_PAGES')) * 0.75
         )
 
     try:
         with tempfile.SpooledTemporaryFile(
-            max_size=int((mem_bytes*mem_bytes)+1), suffix='zip') as f:
+            max_size=int((mem_bytes*mem_bytes)+1), suffix='zip'
+            ) as f:
             with tempfile.NamedTemporaryFile() as f2:
                 data.to_zarr(zarr.ZipStore(f2.name), mode='w')
                 return f2.read()
