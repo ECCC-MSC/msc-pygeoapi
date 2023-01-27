@@ -262,11 +262,10 @@ class HRDPSWEonGZarrProvider(BaseProvider):
 
             if bbox:
                 if any(
-                    [bbox[0] < self._coverage_properties['extent']['minx'],
-                    bbox[1] < self._coverage_properties['extent']['miny'],
-                    bbox[2] > self._coverage_properties['extent']['maxx'],
-                    bbox[3] > self._coverage_properties['extent']['maxy']]
-                    ):
+                        [bbox[0] < self._coverage_properties['extent']['minx'],
+                        bbox[1] < self._coverage_properties['extent']['miny'],
+                        bbox[2] > self._coverage_properties['extent']['maxx'],
+                        bbox[3] > self._coverage_properties['extent']['maxy']]):
                     msg = 'Invalid bounding box (Values must fit within the coverage extent)'
                     LOGGER.error(msg)
                     raise ProviderInvalidQueryError(msg)
