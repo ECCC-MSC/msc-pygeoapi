@@ -35,7 +35,7 @@ import os
 import numpy
 import sys
 
-from pygeoapi.provider.base import (BaseProvider)
+from pygeoapi.provider.base import BaseProvider, ProviderItemNotFoundError, ProviderInvalidQueryError
 
 LOGGER = logging.getLogger(__name__)
 DEFAULT_LIMIT_JSON = 5
@@ -153,92 +153,10 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             parameter['grid_mapping'] = self._data[var_name].attrs['grid_mapping']  # name of grid mapping variable
             parameter['units'] = self._data[var_name].attrs['units']
             parameter['long_name'] = self._data[var_name].attrs['long_name']
-            parameter['id'] = self._data[var_name].attrs['nomvar']
+            parameter['id'] = self._data[var_name].attrs['nomvar'],
+            parameter['data_type'] = self._data[var_name].dtype
 
         return parameter
-
-    def get_fields(self):
-        """
-        Get provider field information (names, types)
-
-        :returns: dict of fields
-        """
-
-        raise NotImplementedError()
-
-    def get_data_path(self, baseurl, urlpath, dirpath):
-        """
-        Gets directory listing or file description or raw file dump
-
-        :param baseurl: base URL of endpoint
-        :param urlpath: base path of URL
-        :param dirpath: directory basepath (equivalent of URL)
-
-        :returns: `dict` of file listing or `dict` of GeoJSON item or raw file
-        """
-
-        raise NotImplementedError()
-
-    def get_metadata(self):
-        """
-        Provide data/file metadata
-
-        :returns: `dict` of metadata construct (format
-                  determined by provider/standard)
-        """
-        '''the_metadata = {
-            'name': self.name,
-            'type': self.type,
-            'coverage properties': self._coverage_properties
-        }'''
-
-
-        raise NotImplementedError()
-
-    def get(self, identifier):
-        """
-        query the provider by id
-
-        :param identifier: feature id
-
-        :returns: dict of single GeoJSON feature
-        """
-
-        raise NotImplementedError()
-
-    def create(self, item):
-        """
-        Create a new item
-
-        :param item: `dict` of new item
-
-        :returns: identifier of created item
-        """
-
-        raise NotImplementedError()
-
-    def update(self, identifier, item):
-        """
-        Updates an existing item
-
-        :param identifier: feature id
-        :param item: `dict` of partial or full item
-
-        :returns: `bool` of update result
-        """
-
-        raise NotImplementedError()
-
-    def delete(self, identifier):
-        """
-        Deletes an existing item
-
-        :param identifier: item id
-
-        :returns: `bool` of deletion result
-        """
-
-        raise NotImplementedError()
 
     def get_coverage_domainset(self):
         """
@@ -247,21 +165,22 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         :returns: CIS JSON object of domainset metadata
         'CIS JSON': https://docs.opengeospatial.org/is/09-146r6/09-146r6.html#46
         """
+        a = _gen_domain_axis(data = self._data)
+
         domainset = {
             'type': 'DomainSetType',
             'generalGrid': {
                 'type': 'GeneralGridCoverageType',
                 'srsName': self._coverage_properties['extent']['coordinate_reference_system'],
-                'axisLabels': self.axes,
-                'axis': [
-                    {"type": "IndexAxisType", "axisLabel": 'x', "lowerBound": self._coverage_properties['extent']['minx'], "upperBound": self._coverage_properties['extent']['maxx'], "resolution": self._coverage_properties['resolution']['x']},  # for extent and resolution
-                    {"type": "IndexAxisType", "axisLabel": 'y', "lowerBound": self._coverage_properties['extent']['miny'], "upperBound": self._coverage_properties['extent']['maxy'], "resolution": self._coverage_properties['resolution']['x']}
-                ],
+                'axisLabels': a[1],
+                'axis': a[0],
                 'gridLimits': {
-                    'type': 'GridLimits',
+                    'type': 'GridLimitsType',
+                    'srsName': self._coverage_properties['extent']['coordinate_reference_system'],
+                    'axisLabels': ['i', 'j'],
                     'axis': [
-                        {"upperBound": self._coverage_properties['size']['width']},  # for width and height
-                        {"upperBound": self._coverage_properties['size']['height']}],
+                        {"type": 'IndexAxisType', "axisLabel": 'i', "lowerBound": 0, "upperBound": self._coverage_properties['size']['width']},  # for width and height
+                        {"type": 'IndexAxisType', "axisLabel": 'j', "lowerBound": 0, "upperBound": self._coverage_properties['size']['height']}],
                     }
 
                 }
@@ -276,7 +195,6 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         :returns: CIS JSON object of rangetype metadata
         'CIS JSON': https://docs.opengeospatial.org/is/09-146r6/09-146r6.html#46
         """
-        global MAX_DASK_BYTES
         # at 0 becuase we are only dealing with one variable (thats the way the data is structured, 1 zarr file per variable)
         var_name = self._coverage_properties['variables'][0]
         parameter_metadata = self._get_parameter_metadata(var_name)
@@ -286,10 +204,14 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             'field': [
                 {
                     'id': parameter_metadata['id'],
+                    'type': 'QuantityType',
                     'name': parameter_metadata['long_name'],
+                    'encodinfInfo': {
+                        'dataType': str(parameter_metadata['data_type'])
+                    },
                     'definition': parameter_metadata['units'],
                     'uom': {
-                        'type': 'UnitReference',
+                        'type': 'UnitReferenceType',
                         'code': parameter_metadata['units']
                     }
                 }
@@ -323,7 +245,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                 elif data_vals.data.nbytes < MAX_DASK_BYTES:
                     return _gen_covjson(self, the_data=data_vals)
         else:
-            if subsets != {}:
+            if subsets:
                 for dim, value in subsets.items():
                     if dim in var_dims:
                         if len(value) == 2 and (value[0] is int or float) and (value[1] is int or float):
@@ -332,26 +254,26 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                         else:
                             msg = "Invalid subset value, values must be well-defined range"
                             LOGGER.error(msg)
-                            raise Exception(msg)
+                            raise ProviderInvalidQueryError(msg)
                     else:  # redundant check (done in api.py)
                         msg = f"Invalid Dimension name (Dimension {dim} not found)"
                         LOGGER.error(msg)
-                        raise Exception(msg)
+                        raise ProviderInvalidQueryError(msg)
 
-            if bbox != []:
+            if bbox:
                 if bbox[0] < self._coverage_properties['extent']['minx'] or bbox[1] < self._coverage_properties['extent']['miny'] or bbox[2] > self._coverage_properties['extent']['maxx'] or bbox[3] > self._coverage_properties['extent']['maxy']:
                     msg = "Invalid bounding box (Values must fit within the coverage extent)"
                     LOGGER.error(msg)
-                    raise Exception(msg)
+                    raise ProviderInvalidQueryError(msg)
                 elif "lat" in query_return or "lon" in query_return:
                     msg = "Invalid subset (Cannot subset by both 'lat' and 'lon' and 'bbox')"
                     LOGGER.error(msg)
-                    raise Exception(msg)
+                    raise ProviderInvalidQueryError(msg)
                 else:
                     query_return["lat"] = slice(bbox[1], bbox[3])
                     query_return["lon"] = slice(bbox[0], bbox[2])
 
-            if datetime_ is not None:
+            if datetime_:
 
                 if '/' not in datetime_:  # single date
                     query_return["time"] = datetime_
@@ -361,9 +283,14 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                     end_date = datetime_.split('/')[1]
                     query_return["time"] = slice(start_date, end_date)
 
+        try:
+            # is a xarray data-array
+            data_vals = self._data[var_name].sel(**query_return)
 
-        # is a xarray data-array
-        data_vals = self._data[var_name].sel(**query_return)
+        except Exception as e:
+            msg = f"Invalid query (Error: {e})"
+            LOGGER.error(msg)
+            raise ProviderInvalidQueryError(msg)
             
 
         if format_ == "zarr":
@@ -384,7 +311,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                         data_vals = self._data[var_name].astype('float16').sel(**query_return)  # NOTE: float16 only has 3 decimal places of precision, but it saves a lot of memory (uses half as much as float32)
 
         if data_vals.data.nbytes > MAX_DASK_BYTES:
-            raise ProviderDataSizeError("Data size exceeds maximum allowed size")
+            raise ProviderInvalidQueryError("Data size exceeds maximum allowed size")
 
         return _gen_covjson(self, the_data=data_vals)
 
@@ -417,7 +344,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             msg = 'Invalid JSON data'
 
         if msg is not None:
-            raise ProviderInvalidDataError(msg)
+            raise ProviderInvalidQueryError(msg)
 
         LOGGER.debug('Detecting identifier')
         if identifier is not None:
@@ -435,12 +362,12 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         if identifier2 is None:
             msg = 'Missing identifier (id or properties.identifier)'
             LOGGER.error(msg)
-            raise ProviderInvalidDataError(msg)
+            raise ProviderInvalidQueryError(msg)
 
         if 'geometry' not in json_data or 'properties' not in json_data:
             msg = 'Missing core GeoJSON geometry or properties'
             LOGGER.error(msg)
-            raise ProviderInvalidDataError(msg)
+            raise ProviderInvalidQueryError(msg)
 
         if raise_if_exists:
             LOGGER.debug('Querying database whether item exists')
@@ -449,7 +376,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
 
                 msg = 'record already exists'
                 LOGGER.error(msg)
-                raise ProviderInvalidDataError(msg)
+                raise ProviderInvalidQueryError(msg)
             except ProviderItemNotFoundError:
                 LOGGER.debug('record does not exist')
 
@@ -457,61 +384,6 @@ class HRDPSWEonGZarrProvider(BaseProvider):
 
     def __repr__(self):
         return '<BaseProvider> {}'.format(self.type)
-
-
-class ProviderGenericError(Exception):
-    """provider generic error"""
-    pass
-
-
-class ProviderConnectionError(ProviderGenericError):
-    """provider connection error"""
-    pass
-
-
-class ProviderTypeError(ProviderGenericError):
-    """provider type error"""
-    pass
-
-
-class ProviderInvalidQueryError(ProviderGenericError):
-    """provider invalid query error"""
-    pass
-
-
-class ProviderQueryError(ProviderGenericError):
-    """provider query error"""
-    pass
-
-
-class ProviderItemNotFoundError(ProviderGenericError):
-    """provider item not found query error"""
-    pass
-
-
-class ProviderNoDataError(ProviderGenericError):
-    """provider no data error"""
-    pass
-
-
-class ProviderNotFoundError(ProviderGenericError):
-    """provider not found error"""
-    pass
-
-
-class ProviderVersionError(ProviderGenericError):
-    """provider incorrect version error"""
-    pass
-
-
-class ProviderInvalidDataError(ProviderGenericError):
-    """provider invalid data error"""
-    pass
-
-
-class ProviderDataSizeError(ProviderGenericError):
-    """provider data size error"""
-    pass
 
 def _get_zarr_data_stream(data):
     """
@@ -533,7 +405,74 @@ def _get_zarr_data_stream(data):
             f.close()
         except:
             pass
-        raise ProviderDataSizeError('Data size is too large to be processed')
+        raise ProviderInvalidQueryError('Data size is too large to be processed')
+
+def _gen_domain_axis(data):
+    """
+    Helper function to generate domain axis
+    :returns: list of dict of domain axis
+    """
+
+    # Dynammically getting all of the axis names
+    all_axis = []
+    for coord in data.coords:
+        try:
+            some_coord = data[coord].attrs["axis"]
+            if some_coord not in all_axis:
+                all_axis.append(some_coord)
+        except AttributeError:
+            pass
+
+    j, k = all_axis.index('X'), all_axis.index(all_axis[0])  # Makes sure axis are in the correct order
+    all_axis[j], all_axis[k] = all_axis[k], all_axis[j]
+
+    j, k = all_axis.index('Y'), all_axis.index(all_axis[1])
+    all_axis[j], all_axis[k] = all_axis[k], all_axis[j]
+
+
+
+
+    all_dims = []
+    for dim in data.dims:
+        all_dims.append(dim)
+
+    j, k = all_dims.index('lon'), all_dims.index(all_dims[0])
+    all_dims[j], all_dims[k] = all_dims[k], all_dims[j]
+
+    j, k = all_dims.index('lat'), all_dims.index(all_dims[1])
+    all_dims[j], all_dims[k] = all_dims[k], all_dims[j]
+
+
+    aa = []
+
+    for a, dim in zip(all_axis, all_dims):
+        if a == 'T':
+            aa.append(
+            {
+                'type': 'RegularAxisType',
+                'axisLabel': a,
+                'lowerBound': str(data[dim].min().values),
+                'upperBound': str(data[dim].max().values),
+                'resolution': str(data[dim].values[1] - data[dim].values[0])
+            })
+
+        else:
+            aa.append(
+                {
+                    'type': 'RegularAxisType',
+                    'axisLabel': a,
+                    'lowerBound': float(data[dim].min().values),
+                    'upperBound': float(data[dim].max().values),
+                    'resolution': float(abs(data[dim].values[1] - data[dim].values[0]))
+                })
+
+
+    return aa, all_dims
+
+
+
+
+
 
 def _gen_covjson(self, the_data):
     """
@@ -548,23 +487,21 @@ def _gen_covjson(self, the_data):
     var_name = self._coverage_properties['variables'][0]
     parameter_metadata = self._get_parameter_metadata(var_name)
 
-    minx, miny, maxx, maxy = props['extent']['minx'], props['extent']['miny'], props['extent']['maxx'], props['extent']['maxy']
-
     cov_json = {
-        'type': 'Coverage',
+        'type': 'CoverageType',
         'domain': {
-            'type': 'Domain',
+            'type': 'DomainType',
             'domainType': 'Grid',
             'axes': {
                 'x': {
-                    'start': minx,
-                    'stop': maxx,
-                    'num': props['size']['width']
+                    'start': float(the_data.lon.min().values),
+                    'stop': float(the_data.lon.max().values),
+                    'num': int(the_data.lon.size)
                 },
                 'y': {
-                    'start': maxy,
-                    'stop': miny,
-                    'num': props['size']['height']
+                    'start': float(the_data.lat.min().values),
+                    'stop': float(the_data.lat.max().values),
+                    'num': int(the_data.lat.size)
                 }
             },
             'referencing': [{
@@ -599,15 +536,16 @@ def _gen_covjson(self, the_data):
 
     the_range = {
         f"{parameter_metadata['long_name']}": {
-                                                'type': 'NdArray',
+                                                'type': str(type(the_data.data)),
                                                 'dataType': str(the_data.dtype),
-                                                'axisNames': self._coverage_properties['axis'],
+                                                'axisNames': the_data.dims,
                                                 'shape': the_data.shape
                                                 }
     }
 
     if 0 in the_data.shape:
-        the_range[f"{parameter_metadata['long_name']}"]['values'] = []
+        raise ProviderInvalidQueryError('No data found for the given query. Make sure you are passing in correct (exact) parameters.')
+
     else:
         the_range[f"{parameter_metadata['long_name']}"]['values'] = the_data.data.flatten().compute().tolist()
 
