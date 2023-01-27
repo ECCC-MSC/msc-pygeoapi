@@ -261,8 +261,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                         raise ProviderInvalidQueryError(msg)
 
             if bbox:
-                if any(
-                        [bbox[0] < self._coverage_properties['extent']['minx'],
+                if any([bbox[0] < self._coverage_properties['extent']['minx'],
                         bbox[1] < self._coverage_properties['extent']['miny'],
                         bbox[2] > self._coverage_properties['extent']['maxx'],
                         bbox[3] > self._coverage_properties['extent']['maxy']]):
