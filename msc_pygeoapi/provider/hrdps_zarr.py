@@ -2,7 +2,7 @@
 #
 # Authors: Adan Butt <Adan.Butt@ec.gc.ca>
 #
-# Copyright (c) 2022 Adan Butt
+# Copyright (c) 2023 Adan Butt
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -26,6 +26,7 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 #
 # =================================================================
+
 import json
 import logging
 import tempfile
@@ -43,7 +44,7 @@ MAX_DASK_BYTES = 225000
 
 
 class HRDPSWEonGZarrProvider(BaseProvider):
-    """ Zarr Provider """
+    """MSC WEonG Zarr provider"""
 
 
     def __init__(self, provider_def):
@@ -68,16 +69,15 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             # for coverage providers
             self.axes = self._coverage_properties['dimensions']
             self.crs = self._coverage_properties['crs']
-
         except KeyError:
             raise RuntimeError('name/type/data are required')
 
         self.editable = provider_def.get('editable', False)
-        self.options = provider_def.get('options', None)
-        self.id_field = provider_def.get('id_field', None)
-        self.uri_field = provider_def.get('uri_field', None)
-        self.x_field = provider_def.get('x_field', None)
-        self.y_field = provider_def.get('y_field', None)
+        self.options = provider_def.get('options')
+        self.id_field = provider_def.get('id_field')
+        self.uri_field = provider_def.get('uri_field')
+        self.x_field = provider_def.get('x_field')
+        self.y_field = provider_def.get('y_field')
         self.time_field = provider_def.get('time_field')
         self.title_field = provider_def.get('title_field')
         self.properties = provider_def.get('properties', [])
@@ -99,6 +99,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                 if some_coord not in all_axis:
                     all_axis.append(some_coord)
             except AttributeError:
+                LOGGER.warning(f"{coord} does not have an axis attribute but is a coordinate.")
                 pass
 
         all_variables = []
@@ -111,7 +112,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
 
         properties = {
             # have to convert values to float and int to serilize into json
-            'crs': self._data.attrs["CRS"],
+            'crs': self._data.attrs['CRS'],
             'axis': all_axis,
             'extent': {
                 'minx': float(self._data.lon.min().values),
@@ -233,12 +234,12 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         var_name = self._coverage_properties['variables'][0]
         var_dims = self._coverage_properties['dimensions']
         query_return = {}
-        if subsets == {} and bbox == [] and datetime_ is None:
+        if not subsets and not bbox and datetime_ is None:
             for i in reversed(range(1, DEFAULT_LIMIT_JSON+1)):
                 for dim in var_dims:
                     query_return[dim] = i
                 data_vals = self._data[var_name].head(**query_return)
-                if format_ == "zarr":
+                if format_ == 'zarr':
                     new_dataset = data_vals.to_dataset()
                     new_dataset.attrs['CRS'] = self.crs
                     return _get_zarr_data_stream(new_dataset)
@@ -248,52 +249,54 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             if subsets:
                 for dim, value in subsets.items():
                     if dim in var_dims:
-                        if len(value) == 2 and (value[0] is int or float) and (value[1] is int or float):
+                        if len(value) == 2 and isinstance(value[0], (int,float)) and isinstance(value[1], (int, float)):
                             query_return[dim] = slice(value[0], value[1])
 
                         else:
-                            msg = "Invalid subset value, values must be well-defined range"
+                            msg = 'Invalid subset value, values must be well-defined range'
                             LOGGER.error(msg)
                             raise ProviderInvalidQueryError(msg)
                     else:  # redundant check (done in api.py)
-                        msg = f"Invalid Dimension name (Dimension {dim} not found)"
+                        msg = f'Invalid Dimension name (Dimension {dim} not found)'
                         LOGGER.error(msg)
                         raise ProviderInvalidQueryError(msg)
 
             if bbox:
-                if bbox[0] < self._coverage_properties['extent']['minx'] or bbox[1] < self._coverage_properties['extent']['miny'] or bbox[2] > self._coverage_properties['extent']['maxx'] or bbox[3] > self._coverage_properties['extent']['maxy']:
-                    msg = "Invalid bounding box (Values must fit within the coverage extent)"
+                if any([bbox[0] < self._coverage_properties['extent']['minx'],
+                bbox[1] < self._coverage_properties['extent']['miny'],
+                bbox[2] > self._coverage_properties['extent']['maxx'],
+                bbox[3] > self._coverage_properties['extent']['maxy']]):
+                    msg = 'Invalid bounding box (Values must fit within the coverage extent)'
                     LOGGER.error(msg)
                     raise ProviderInvalidQueryError(msg)
-                elif "lat" in query_return or "lon" in query_return:
-                    msg = "Invalid subset (Cannot subset by both 'lat' and 'lon' and 'bbox')"
+                elif 'lat' in query_return or 'lon' in query_return:
+                    msg = 'Invalid subset (Cannot subset by both "lat" and "lon" and "bbox")'
                     LOGGER.error(msg)
                     raise ProviderInvalidQueryError(msg)
                 else:
-                    query_return["lat"] = slice(bbox[1], bbox[3])
-                    query_return["lon"] = slice(bbox[0], bbox[2])
+                    query_return['lat'] = slice(bbox[1], bbox[3])
+                    query_return['lon'] = slice(bbox[0], bbox[2])
 
             if datetime_:
-
                 if '/' not in datetime_:  # single date
-                    query_return["time"] = datetime_
+                    query_return['time'] = datetime_
 
                 else:
                     start_date = datetime_.split('/')[0]
                     end_date = datetime_.split('/')[1]
-                    query_return["time"] = slice(start_date, end_date)
+                    query_return['time'] = slice(start_date, end_date)
 
         try:
             # is a xarray data-array
             data_vals = self._data[var_name].sel(**query_return)
 
         except Exception as e:
-            msg = f"Invalid query (Error: {e})"
+            msg = f'Invalid query (Error: {e})'
             LOGGER.error(msg)
             raise ProviderInvalidQueryError(msg)
             
 
-        if format_ == "zarr":
+        if format_ == 'zarr':
             new_dataset = data_vals.to_dataset()
             new_dataset.attrs['CRS'] = self.crs
             return _get_zarr_data_stream(new_dataset)
@@ -311,7 +314,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                         data_vals = self._data[var_name].astype('float16').sel(**query_return)  # NOTE: float16 only has 3 decimal places of precision, but it saves a lot of memory (uses half as much as float32)
 
         if data_vals.data.nbytes > MAX_DASK_BYTES:
-            raise ProviderInvalidQueryError("Data size exceeds maximum allowed size")
+            raise ProviderInvalidQueryError('Data size exceeds maximum allowed size')
 
         return _gen_covjson(self, the_data=data_vals)
 
@@ -333,7 +336,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         msg = None
 
         LOGGER.debug('Loading data')
-        LOGGER.debug('Data: {}'.format(item))
+        LOGGER.debug(f'Data: {item}')
         try:
             json_data = json.loads(item)
         except TypeError as err:
@@ -400,11 +403,6 @@ def _get_zarr_data_stream(data):
                 data.to_zarr(zarr.ZipStore(f2.name), mode='w')
                 return f2.read()
     except:
-        try:
-            f2.close()
-            f.close()
-        except:
-            pass
         raise ProviderInvalidQueryError('Data size is too large to be processed')
 
 def _gen_domain_axis(self, data):
