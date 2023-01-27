@@ -123,8 +123,9 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                 'miny': float(self._data.lat.min().values),
                 'maxx': float(self._data.lon.max().values),
                 'maxy': float(self._data.lat.max().values),
-                'coordinate_reference_system': 
-                "http://www.opengis.net/def/crs/ECCC-MSC/-/ob_tran-longlat-weong"
+                'coordinate_reference_system':
+                ("http://www.opengis.net/def/crs/ECCC-MSC" +
+                "/-/ob_tran-longlat-weong")
                 },
             'size': {
                 'width': int(self._data.lon.size),
@@ -156,7 +157,8 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         if var_name in self._coverage_properties['variables']:
             parameter['array_dimensons'] = self._data[var_name].dims
             parameter['coordinates'] = self._data[var_name].coords
-            parameter['grid_mapping'] = self._data[var_name].attrs['grid_mapping']
+            parameter['grid_mapping'] = (
+                self._data[var_name].attrs['grid_mapping'])
             parameter['units'] = self._data[var_name].attrs['units']
             parameter['long_name'] = self._data[var_name].attrs['long_name']
             parameter['id'] = self._data[var_name].attrs['nomvar'],
@@ -169,7 +171,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         Provide coverage domainset
 
         :returns: CIS JSON object of domainset metadata
-        'CIS JSON': https://docs.opengeospatial.org/is/09-146r6/09-146r6.html#46
+        'CIS JSON':https://docs.opengeospatial.org/is/09-146r6/09-146r6.html#46
         """
         a = _gen_domain_axis(self, data=self._data)
 
@@ -177,23 +179,29 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             'type': 'DomainSetType',
             'generalGrid': {
                 'type': 'GeneralGridCoverageType',
-                'srsName': self._coverage_properties['extent']['coordinate_reference_system'],
+                'srsName': (
+                    self._coverage_properties['extent']['coordinate_reference_system']
+                    ),
                 'axisLabels': a[1],
                 'axis': a[0],
                 'gridLimits': {
                     'type': 'GridLimitsType',
-                    'srsName': self._coverage_properties['extent']['coordinate_reference_system'],
+                    'srsName': (
+                        self._coverage_properties['extent']['coordinate_reference_system']
+                            ),
                     'axisLabels': ['i', 'j'],
                     'axis': [
                             {"type": 'IndexAxisType',
                             "axisLabel": 'i',
                             "lowerBound": 0,
-                            "upperBound": self._coverage_properties['size']['width']
+                            "upperBound": (
+                                self._coverage_properties['size']['width'])
                             },
                             {"type": 'IndexAxisType',
                             "axisLabel": 'j',
                             "lowerBound": 0,
-                            "upperBound": self._coverage_properties['size']['height']
+                            "upperBound": (
+                                self._coverage_properties['size']['height'])
                             }
                             ],
                     }
@@ -282,12 +290,14 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                 if any([bbox[0] < self._coverage_properties['extent']['minx'],
                         bbox[1] < self._coverage_properties['extent']['miny'],
                         bbox[2] > self._coverage_properties['extent']['maxx'],
-                        bbox[3] > self._coverage_properties['extent']['maxy']]):
-                    msg = 'Invalid bounding box (Values must fit coverage extent)'
+                        bbox[3] > self._coverage_properties['extent']['maxy']]
+                    ):
+                    msg = 'Invalid bbox (Values must fit coverage extent)'
                     LOGGER.error(msg)
                     raise ProviderInvalidQueryError(msg)
                 elif 'lat' in query_return or 'lon' in query_return:
-                    msg = 'Invalid subset (Cannot subset by both "lat", "lon" and "bbox")'
+                    msg = ('Invalid subset' + 
+                    '(Cannot subset by both "lat", "lon" and "bbox")')
                     LOGGER.error(msg)
                     raise ProviderInvalidQueryError(msg)
                 else:
@@ -327,15 +337,17 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                 da_max = str(abs(d_max))
                 da_min = str(abs(d_min))
 
-# NOTE: float16 can only represent numbers up to 65504 (+/-), useful info: `numpy.finfo(numpy.float16).max`
-# NOTE: float16 only has 3 decimal places of precision, but it saves a lot of memory (uses half as much as float32)
+# NOTE: float16 can only represent numbers up to 65504 (+/-)
+# NOTE: float16 only has 3 decimal places of precision, but saves memory 
                 if (da_max[0] != '0') or (da_min[0] != '0'):
                     if float(da_max) <= 65504:
-                        data_vals = self._data[var_name].astype('float16').sel(**query_return)  
+                        data_vals = self._data[var_name].astype('float16')
+                        data_vals = data_vals.sel(**query_return)  
 
 
         if data_vals.data.nbytes > MAX_DASK_BYTES:
-            raise ProviderInvalidQueryError('Data size exceeds maximum allowed size')
+            raise ProviderInvalidQueryError('Data size exceeds' +
+            'maximum allowed size')
 
         return _gen_covjson(self, the_data=data_vals)
 
@@ -417,7 +429,8 @@ def _get_zarr_data_stream(data):
     :returns: bytes of zip (zarr) data
     """
 
-    mem_bytes = (os.sysconf('SC_PAGE_SIZE') * os.sysconf('SC_PHYS_PAGES')) * 0.75
+    mem_bytes = ((os.sysconf('SC_PAGE_SIZE') * os.sysconf('SC_PHYS_PAGES'))
+                * 0.75)
 
     try:
         with tempfile.SpooledTemporaryFile(
@@ -470,8 +483,12 @@ def _gen_domain_axis(self, data):
 
     for a, dim in zip(all_axis, all_dims):
         if a == 'T':
-            res = ''.join(c for c in str(data[dim].values[1] - data[dim].values[0]) if c.isdigit())
-            uom = ''.join(c for c in str(data[dim].values[1] - data[dim].values[0]) if not c.isdigit())
+            res = ''.join(c for c in (
+                str(data[dim].values[1] - data[dim].values[0]))
+                if c.isdigit())
+            uom = ''.join(c for c in (
+                str(data[dim].values[1] - data[dim].values[0]))
+                if not c.isdigit())
             aa.append(
                 {
                     'type': 'RegularAxisType',
@@ -494,7 +511,8 @@ def _gen_domain_axis(self, data):
                     'lowerBound': float(data[dim].min().values),
                     'upperBound': float(data[dim].max().values),
                     'uomLabel': uom,
-                    'resolution': float(abs(data[dim].values[1] - data[dim].values[0]))
+                    'resolution': float(
+                        abs(data[dim].values[1] - data[dim].values[0]))
                 })
     return aa, all_dims
 
@@ -566,11 +584,11 @@ def _gen_covjson(self, the_data):
 
     the_range = {
         parameter_metadata['id'][0]: {
-                                                'type': 'NdArray',
-                                                'dataType': str(the_data.dtype),
-                                                'axisNames': the_data.dims,
-                                                'shape': the_data.shape
-                                                }
+                                        'type': 'NdArray',
+                                        'dataType': str(the_data.dtype),
+                                        'axisNames': the_data.dims,
+                                        'shape': the_data.shape
+                                        }
     }
 
     if 0 in the_data.shape:
@@ -579,7 +597,9 @@ def _gen_covjson(self, the_data):
         )
 
     else:
-        the_range[parameter_metadata['id'][0]]['values'] = the_data.data.flatten().compute().tolist()
+        the_range[parameter_metadata['id'][0]]['values'] = (
+                the_data.data.flatten().compute().tolist()
+            )
 
     cov_json['ranges'] = the_range
 
