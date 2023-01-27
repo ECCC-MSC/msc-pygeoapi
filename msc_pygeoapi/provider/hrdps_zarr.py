@@ -99,7 +99,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                 if some_coord not in all_axis:
                     all_axis.append(some_coord)
             except AttributeError:
-                LOGGER.warning(f"{coord} does not have an axis attribute but is a coordinate.")
+                LOGGER.warning(f'{coord} does not have an axis attribute but is a coordinate.')
                 pass
 
         all_variables = []
@@ -166,7 +166,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         :returns: CIS JSON object of domainset metadata
         'CIS JSON': https://docs.opengeospatial.org/is/09-146r6/09-146r6.html#46
         """
-        a = _gen_domain_axis(self, data = self._data)
+        a = _gen_domain_axis(self, data=self._data)
 
         domainset = {
             'type': 'DomainSetType',
@@ -249,7 +249,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             if subsets:
                 for dim, value in subsets.items():
                     if dim in var_dims:
-                        if len(value) == 2 and isinstance(value[0], (int,float)) and isinstance(value[1], (int, float)):
+                        if len(value) == 2 and isinstance(value[0], (int, float)) and isinstance(value[1], (int, float)):
                             query_return[dim] = slice(value[0], value[1])
 
                         else:
@@ -294,7 +294,6 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             msg = f'Invalid query (Error: {e})'
             LOGGER.error(msg)
             raise ProviderInvalidQueryError(msg)
-            
 
         if format_ == 'zarr':
             new_dataset = data_vals.to_dataset()
@@ -402,7 +401,7 @@ def _get_zarr_data_stream(data):
             with tempfile.NamedTemporaryFile() as f2:
                 data.to_zarr(zarr.ZipStore(f2.name), mode='w')
                 return f2.read()
-    except:
+    except Exception:
         raise ProviderInvalidQueryError('Data size is too large to be processed')
 
 def _gen_domain_axis(self, data):
@@ -420,6 +419,7 @@ def _gen_domain_axis(self, data):
             if some_coord not in all_axis:
                 all_axis.append(some_coord)
         except AttributeError:
+            LOGGER.warning(f'{coord} does not have an axis attribute but is a coordinate.')
             pass
 
     j, k = all_axis.index('X'), all_axis.index(all_axis[0])  # Makes sure axis are in the correct order
@@ -427,9 +427,6 @@ def _gen_domain_axis(self, data):
 
     j, k = all_axis.index('Y'), all_axis.index(all_axis[1])
     all_axis[j], all_axis[k] = all_axis[k], all_axis[j]
-
-
-
 
     all_dims = []
     for dim in data.dims:
@@ -441,7 +438,6 @@ def _gen_domain_axis(self, data):
     j, k = all_dims.index('lat'), all_dims.index(all_dims[1])
     all_dims[j], all_dims[k] = all_dims[k], all_dims[j]
 
-
     aa = []
 
     for a, dim in zip(all_axis, all_dims):
@@ -449,19 +445,19 @@ def _gen_domain_axis(self, data):
             res = ''.join(c for c in str(data[dim].values[1] - data[dim].values[0]) if c.isdigit())
             uom = ''.join(c for c in str(data[dim].values[1] - data[dim].values[0]) if not c.isdigit())
             aa.append(
-            {
-                'type': 'RegularAxisType',
-                'axisLabel': a,
-                'lowerBound': str(data[dim].min().values),
-                'upperBound': str(data[dim].max().values),
-                'uomLabel': uom.strip(),
-                'resolution': float(res)
-            })
+                {
+                    'type': 'RegularAxisType',
+                    'axisLabel': a,
+                    'lowerBound': str(data[dim].min().values),
+                    'upperBound': str(data[dim].max().values),
+                    'uomLabel': uom.strip(),
+                    'resolution': float(res)
+                })
 
         else:
             try:
                 uom = self._data[var_name][dim].attrs['units']
-            except:
+            except KeyError:
                 uom = 'n/a'
             aa.append(
                 {
@@ -475,11 +471,6 @@ def _gen_domain_axis(self, data):
 
 
     return aa, all_dims
-
-
-
-
-
 
 def _gen_covjson(self, the_data):
     """
