@@ -187,15 +187,7 @@ class MSCDMSCoreAPIProvider(BaseProvider):
 
         feature_collection = {'type': 'FeatureCollection', 'features': []}
 
-        if any(
-                [bbox[0] > bbox[2],
-                 bbox[1] > bbox[3]]
-                ):
-            msg = 'Invalid bbox (minx > maxx and/or miny > maxy)'
-            LOGGER.error(msg)
-            raise ProviderQueryError(msg)
-
-        else:
+        if bbox:
             LOGGER.debug('processing bbox')
             params['bbox'] = ','.join([str(b) for b in bbox])
 
