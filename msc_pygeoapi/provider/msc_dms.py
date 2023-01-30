@@ -192,7 +192,7 @@ class MSCDMSCoreAPIProvider(BaseProvider):
                     [bbox[0] > bbox[2],
                      bbox[1] > bbox[3]]
                    ):
-                msg = 'Invalid bbox (minx > maxx or miny > maxy)'
+                msg = 'Invalid bbox (minx > maxx and/or miny > maxy)'
                 LOGGER.error(msg)
                 raise ProviderQueryError(msg)
 
