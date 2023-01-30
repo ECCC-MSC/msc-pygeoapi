@@ -187,6 +187,10 @@ class MSCDMSCoreAPIProvider(BaseProvider):
 
         feature_collection = {'type': 'FeatureCollection', 'features': []}
 
+        if bbox:
+            LOGGER.debug('processing bbox')
+            params['bbox'] = ','.join([str(b) for b in bbox])
+
         if datetime_ is not None:
             LOGGER.debug('processing datetime parameter')
             if self.time_field is None:
