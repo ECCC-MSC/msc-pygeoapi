@@ -254,7 +254,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         """
         var_name = self._coverage_properties['variables'][0]
         var_dims = self._coverage_properties['dimensions']
-        query_return = {}
+        query_return = {'method': 'nearest'}
         if not subsets and not bbox and datetime_ is None:
             for i in reversed(range(1, DEFAULT_LIMIT_JSON+1)):
                 for dim in var_dims:
@@ -275,7 +275,10 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                             isinstance(value[0], (int, float)) and
                             isinstance(value[1], (int, float))
                         ):
-                            query_return[dim] = slice(value[0], value[1])
+                            if value[0] == value[1]:
+                                query_return[dim] = value[0]
+                            else:
+                                query_return[dim] = slice(value[0], value[1])
 
                         else:
                             msg = 'values must be well-defined range'
@@ -304,8 +307,12 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                     LOGGER.error(msg)
                     raise ProviderInvalidQueryError(msg)
                 else:
-                    query_return['lat'] = slice(bbox[1], bbox[3])
-                    query_return['lon'] = slice(bbox[0], bbox[2])
+                    if bbox[0] == bbox[2] and bbox[1] == bbox[3]:
+                        query_return['lat'] = bbox[1]
+                        query_return['lon'] = bbox[0]
+                    else:
+                        query_return['lat'] = slice(bbox[1], bbox[3])
+                        query_return['lon'] = slice(bbox[0], bbox[2])
 
             if datetime_:
                 if '/' not in datetime_:  # single date
@@ -314,9 +321,18 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                 else:
                     start_date = datetime_.split('/')[0]
                     end_date = datetime_.split('/')[1]
-                    query_return['time'] = slice(start_date, end_date)
+                    if start_date == end_date:
+                        query_return['time'] = start_date
+                    else:
+                        query_return['time'] = slice(start_date, end_date)
 
         try:
+            LOGGER.info(f'query_return: {query_return}')
+            for q in query_return.values():
+                if isinstance(q, slice):
+                    del query_return['method']
+                    break
+
             # is a xarray data-array
             data_vals = self._data[var_name].sel(**query_return)
 
