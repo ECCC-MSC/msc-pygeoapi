@@ -38,9 +38,11 @@ providers:
     data: http://localhost/dms-api/dms_data+msc+observation+atmospheric+surface_weather+ca-1.1-ascii # noqa
     id_field: id
     time_field: obs_date_tm
+    _time_field_format: "%Y%m%d%H%M"
 """
 
 from collections import OrderedDict
+from datetime import datetime
 import json
 import logging
 from urllib import parse
@@ -70,6 +72,9 @@ class MSCDMSCoreAPIProvider(BaseProvider):
         """
 
         super().__init__(provider_def)
+
+        self.time_field_format = provider_def.get('_time_field_format',
+                                                  '%Y%m%d%H%M')
 
         LOGGER.debug(f'data: {self.data}')
 
@@ -187,6 +192,10 @@ class MSCDMSCoreAPIProvider(BaseProvider):
 
         feature_collection = {'type': 'FeatureCollection', 'features': []}
 
+        if bbox:
+            LOGGER.debug('processing bbox')
+            params['bbox'] = ','.join([str(b) for b in bbox])
+
         if datetime_ is not None:
             LOGGER.debug('processing datetime parameter')
             if self.time_field is None:
@@ -199,12 +208,12 @@ class MSCDMSCoreAPIProvider(BaseProvider):
                 LOGGER.debug('detected time range')
                 time_begin, time_end = datetime_.split('/')
 
-                params['from'] = time_begin
-                params['to'] = time_end
+                params['from'] = self._rfc3339_to_datetime_string(time_begin)
+                params['to'] = self._rfc3339_to_datetime_string(time_end)
 
             else:  # time instant
-                params['from'] = datetime_
-                params['to'] = datetime_
+                params['from'] = self._rfc3339_to_datetime_string(datetime_)
+                params['to'] = self._rfc3339_to_datetime_string(datetime_)
 
         if properties:
             LOGGER.debug('processing properties')
@@ -296,7 +305,7 @@ class MSCDMSCoreAPIProvider(BaseProvider):
 
         if self.properties or self.select_properties:
             LOGGER.debug('Filtering properties')
-            all_properties = self.get_properties()
+            all_properties = self._get_properties()
 
             feature_thinned = {
                 'id': doc['_source']['id'],
@@ -318,7 +327,13 @@ class MSCDMSCoreAPIProvider(BaseProvider):
         else:
             return feature_
 
-    def get_properties(self):
+    def _get_properties(self):
+        """
+        Helper function to derive properties to return in a feature
+
+        :returns: `list` of default/selected properties
+        """
+
         all_properties = []
 
         LOGGER.debug('configured properties: {}'.format(self.properties))
@@ -333,6 +348,21 @@ class MSCDMSCoreAPIProvider(BaseProvider):
 
         LOGGER.debug('resulting properties: {}'.format(all_properties))
         return all_properties
+
+    def _rfc3339_to_datetime_string(self, datetime_string):
+        """
+        Helper function which transforms RFC3339 datetime into custom
+        formatted datetime string
+
+        :param datetime_string: string of RFC3339 datetime
+        :param datetime_format: time format to apply for formatting
+
+        :returns: `str` of custom formatted datetime
+        """
+
+        value = datetime.strptime(datetime_string, '%Y-%m-%dT%H:%M:%SZ')
+
+        return value.strftime(self.time_field_format)
 
     def __repr__(self):
         return '<MSCDMSCoreAPIProvider> {}'.format(self.data)
