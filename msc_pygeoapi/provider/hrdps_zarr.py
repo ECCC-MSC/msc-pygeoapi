@@ -256,6 +256,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         var_dims = self._coverage_properties['dimensions']
         query_return = {'method': 'nearest'}
         if not subsets and not bbox and datetime_ is None:
+            del query_return['method']
             for i in reversed(range(1, DEFAULT_LIMIT_JSON+1)):
                 for dim in var_dims:
                     query_return[dim] = i
