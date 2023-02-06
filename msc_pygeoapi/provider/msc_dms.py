@@ -52,6 +52,7 @@ from pygeoapi.provider.base import (
     BaseProvider,
     ProviderConnectionError,
     ProviderQueryError,
+    ProviderInvalidQueryError,
     ProviderItemNotFoundError
 )
 
@@ -360,7 +361,12 @@ class MSCDMSCoreAPIProvider(BaseProvider):
         :returns: `str` of custom formatted datetime
         """
 
-        value = datetime.strptime(datetime_string, '%Y-%m-%dT%H:%M:%SZ')
+        try:
+            value = datetime.strptime(datetime_string, '%Y-%m-%dT%H:%M:%SZ')
+        except ValueError as e:
+            raise ProviderInvalidQueryError(
+                f'Invalid datetime parameter format: {e}'
+            )
 
         return value.strftime(self.time_field_format)
 
