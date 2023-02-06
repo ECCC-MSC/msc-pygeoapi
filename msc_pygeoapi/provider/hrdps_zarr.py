@@ -116,7 +116,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
 
         properties = {
             # have to convert values to float and int to serilize into json
-            'crs': self._data.attrs['CRS'],
+            'crs': self._data.attrs['_CRS'],
             'axis': all_axis,
             'extent': {
                 'minx': float(self._data.lon.min().values),
@@ -262,7 +262,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                 data_vals = self._data[var_name].head(**query_return)
                 if format_ == 'zarr':
                     new_dataset = data_vals.to_dataset()
-                    new_dataset.attrs['CRS'] = self.crs
+                    new_dataset.attrs['_CRS'] = self.crs
                     return _get_zarr_data_stream(new_dataset)
                 elif data_vals.data.nbytes < MAX_DASK_BYTES:
                     return _gen_covjson(self, the_data=data_vals)
@@ -327,7 +327,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
 
         if format_ == 'zarr':
             new_dataset = data_vals.to_dataset()
-            new_dataset.attrs['CRS'] = self.crs
+            new_dataset.attrs['_CRS'] = self.crs
             return _get_zarr_data_stream(new_dataset)
 
         if 0 not in data_vals.shape:
