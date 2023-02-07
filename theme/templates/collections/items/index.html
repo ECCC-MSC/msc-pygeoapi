@@ -5,22 +5,22 @@
 {% if link['rel'] == 'alternate' and link['type'] == 'application/geo+json' %}
 <li>
   <a id="csv-format-url" href="{{ link['href']|replace('f=json', 'f=csv') }}" class="btn btn-xs btn-default">
-    <span class="hidden-xs">CSV</span>
-    <abbr title="CSV" class="visible-xs h3 mrgn-tp-sm mrgn-bttm-0 text-uppercase">CSV</abbr>
+    <span class="hidden-xs">{% trans %}CSV{% endtrans %}</span>
+    <abbr title="CSV" class="visible-xs h3 mrgn-tp-sm mrgn-bttm-0 text-uppercase">{% trans %}CSV{% endtrans %}</abbr>
   </a>
 </li>
 {% endif %}
 {% endfor %}
 {% endblock %}
 {% block crumbs %}{{ super() }}
-<li><a href="{{ data['collections_path'] }}">Collections</a></li>
+<li><a href="{{ data['collections_path'] }}?lang={{ (locale|lower)[:2] }}">{% trans %}Collections{% endtrans %}</a></li>
 {% for link in data['links'] %}
   {% if link.rel == 'collection' %}
-    <li><a href="{{ data['dataset_path'] }}">{{ link['title'] }}</a></li>
+    <li><a href="{{ data['dataset_path'] }}?lang={{ (locale|lower)[:2] }}">{{ link['title'] }}</a></li>
     {% set col_title = link['title'] %}
   {% endif %}
 {% endfor %}
-<li><a href="{{ data['items_path']}}">Items</a></li>
+<li><a href="{{ data['items_path']}}?lang={{ (locale|lower)[:2] }}">{% trans %}Items{% endtrans %}</a></li>
 {% endblock %}
 {% block extrahead %}
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
@@ -29,7 +29,7 @@
 {% block body %}
   <section id="collection">
     <h1>{% for l in data['links'] if l.rel == 'collection' %} {{ l['title'] }} {% endfor %}</h1>
-    <p>Items in this collection.</p>
+    <p>{% trans %}Items in this collection.{% endtrans %}</p>
   </section>
   <section id="items">
     <div class="row">
@@ -44,39 +44,39 @@
         <div class="checkbox-inline text-right">
           <label for="bboxPermalinkCheck">
             <input id="bboxPermalinkCheck" type="checkbox" v-model="bboxPermalink" @change="getItemsSorted()">
-            Only show items by map view
+            {% trans %}Only show items by map view{% endtrans %}
           </label>
         </div>
         <div v-if="items.length === 0" class="alert alert-warning">
-          <p>No results. Please modify your search query or <button 
-            title="Clear column keyword search queries and reset to display the default results" 
+          <p>{% trans %}No results. Please modify your search query or <button
+            :title="txt.reset"  
             class="btn btn-warning btn-sm" 
-            @click="clearSearch">reset</button> the table.</p>
+            @click="clearSearch">reset</button> the table.{% endtrans %}</p>
         </div>
         <div class="form-inline row" aria-controls="items-table">
           <div class="form-group col-xs-5">
-            <label class="wb-inv" for="filter-table">Filter table content</label>
+            <label class="wb-inv" for="filter-table">{% trans %}Filter table content{% endtrans %}</label>
             <input
               id="filter-table"
               type="text"
               class="form-control input-sm mrgn-rght-0"
-              placeholder="Filter table content"
+              placeholder="{% trans %}Filter table content{% endtrans %}"
               v-model="searchText">
           </div>
           <div class="col-xs-7 text-right">
             <div class="btn-group btn-group-sm inline-block">
               <button 
-                title="Clear column keyword search queries and reset to display the default results" 
+                :title="txt.reset" 
                 class="btn btn-warning" 
                 @click="clearSearch"
                 :disabled="queryColsIsEmpty">
-                <span class="glyphicon glyphicon-remove"></span> Reset</button>
+                <span class="glyphicon glyphicon-remove"></span> {% trans %}Reset{% endtrans %}</button>
               <button 
-                title="Apply column keyword search queries to the entire collection" 
+                title="{% trans %}Apply column keyword search queries to the entire collection{% endtrans %}" 
                 class="btn btn-primary" 
                 @click="applyKeywordSearch()"
                 :disabled="queryColsIsEmpty">
-                <span class="glyphicon glyphicon-search"></span> Search by keywords</button>
+                <span class="glyphicon glyphicon-search"></span> {% trans %}Search by keywords{% endtrans %}</button>
             </div>
           </div>
         </div>
@@ -94,13 +94,13 @@
                       :class="[sortIconClass, 'glyphicon']"></span>
                   </div>
                   <div v-if="th.key !== 'id'">
-                    <label class="wb-inv" :for="'search-'+th.key">Keyword search for: [% th.key %]</label>
+                    <label class="wb-inv" :for="'search-'+th.key">{% trans %}Keyword search for: [% th.key %]{% endtrans %}</label>
                     <input 
                       type="text"
                       class="form-control input-sm keyword-search-input"
-                      title="eg. &quot;BC QC ON&quot; will search for &quot;BC&quot; or &quot;ON&quot; or &quot;QC&quot;"
+                      title="{% trans %}eg. &quot;BC QC ON&quot; will search for &quot;BC&quot; or &quot;ON&quot; or &quot;QC&quot;{% endtrans %}"
                       :id="'search-'+th.key"
-                      placeholder="Keyword"
+                      placeholder="{% trans %}Keyword{% endtrans %}"
                       v-model="queryCols[th.key]"
                       @keyup.enter="applyKeywordSearch()" />
                   </div>
@@ -109,7 +109,7 @@
             </thead>
             <tbody>
               <tr v-for="(item, index) in items">
-                <td v-for="(th, index) in tableFields" v-html="linkToRow(item, th.key, itemsPath)">
+                <td v-for="(th, index) in tableFields" v-html="linkToRow(item, th.key, itemsPath, '{{ (locale|lower)[:2] }}')">
                 </td>
               </tr>
               <!-- START of noJs progressive enhancement -->
@@ -118,9 +118,9 @@
                 {% if data.get('uri_field') %}
                 <td data-label="{{ data.get('uri_field') }}"><a href="{{ ft['properties'].get(data['uri_field'])}}" title="{{ ft['properties'][data['uri_field']] }}">{{ft['properties'][data.get('uri_field')]}}</a></td>
                 {% endif %}
-                <td data-label="id"><a href="{{ data['items_path']}}/{{ ft.id }}" title="{{ ft.id }}">{{ ft.id | string | truncate( 12 )  }}</a></td>
+                <td data-label="id"><a href="{{ data['items_path']}}/{{ ft.id }}?lang={{ (locale|lower)[:2] }}" title="{{ ft.id }}">{{ ft.id | string | truncate( 12 )  }}</a></td>
                 {% if data['title_field'] %}
-                  <td data-label="name"><a href="{{ data['items_path']}}/{{ ft['id'] }}" title="{{ ft['properties'][data['title_field']] }}">{{ ft['properties'][data['title_field']] | string | truncate( 35 ) }}</a></td>
+                  <td data-label="name"><a href="{{ data['items_path']}}/{{ ft['id'] }}?lang={{ (locale|lower)[:2] }}" title="{{ ft['properties'][data['title_field']] }}">{{ ft['properties'][data['title_field']] | string | truncate( 35 ) }}</a></td>
                 {% endif %}
                 {% for k, v in ft['properties'].items() %}
                   {% if loop.index < 5 and k not in [data['id_field'], data['title_field'], data['uri_field'], 'extent'] %}
@@ -139,7 +139,7 @@
             <div class="col-xs-5 col-sm-6">
               <div class="form-inline">
                 <div class="form-group inline-block">
-                  <label>Limit: </label>
+                  <label>{% trans %}Limit:{% endtrans %} </label>
                   <select
                     id="select-limit"
                     class="input-sm form-control inline-block"
@@ -157,15 +157,15 @@
             </div>
           </div>
           <div class="alert alert-warning padding-tb-5 mrgn-bttm-0 mrgn-tp-sm">
-            <p><small>Higher limits are not recommended</small></p>
+            <p><small>{% trans %}Higher limits are not recommended{% endtrans %}</small></p>
           </div>
           <ul class="pagination pagination-sm clearfix">
             <li>
-              <button class="btn btn-sm btn-default" @click="prevPageItems" rel="prev" :disabled="itemsLoading || currentPage === 1">Previous</button>
+              <button class="btn btn-sm btn-default" @click="prevPageItems" rel="prev" :disabled="itemsLoading || currentPage === 1">{% trans %}Previous{% endtrans %}</button>
             </li>
-            <span>Page [% currentPage %] / [% maxPages %]</span>
+            <span>{% trans %}Page [% currentPage %] / [% maxPages %]{% endtrans %}</span>
             <li>
-              <button class="btn btn-sm btn-default" @click="nextPageItems" :disabled="itemsLoading || currentPage === maxPages" rel="next">Next</button>
+              <button class="btn btn-sm btn-default" @click="nextPageItems" :disabled="itemsLoading || currentPage === maxPages" rel="next">{% trans %}Next{% endtrans %}</button>
             </li>
           </ul>
         </nav>
@@ -179,6 +179,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
     <script>
       const ID_FIELD = '{{ data.get('id_field') }}'; // primary ID field (from Jinja2 template)
+      const LOCALE = '{{ (locale|lower)[:2] }}'
     </script>
     <script type="module">
       import useItems from '{{ config['server']['url'] }}/static/js/composables/useItems.js?v={{ version }}'
@@ -190,11 +191,19 @@
         delimiters: ['[%', '%]'],
         setup() {
           const noJs = ref(false) // progressive enhancement
+          /* Text */
+          const txt = {
+            'reset': '{% trans %}Clear column keyword search queries and reset to display the default results{% endtrans %}'
+          }
 
           /* Items handling */
+          const itemsi18n = {
+            showingRange: "{% trans %}Showing $firstPage to $upper of $itemsTotal{% endtrans %}",
+            showing0: "{% trans %}Showing 0 results{% endtrans %}"
+          }
           const { items, itemsJson, itemProps, getItems, getTableHeaders, itemsTotal, itemsLoading,
             currentPage, maxPages, prevPage, nextPage, limit, showingLimitText, calcOffset,
-            queryCols, clearQueryCols, queryColsIsEmpty } = useItems()
+            queryCols, clearQueryCols, queryColsIsEmpty } = useItems(itemsi18n)
           
           /* Table columns */
           const tableFields = computed(() => {
@@ -233,8 +242,13 @@
 
           /* Table filtering */
           const defaultSortCol = 'id' // root id
+          const tableTexti18n = {
+            filteredSingular: "{% trans %}filtered from $totalSize total entry{% endtrans %}",
+            filteredPlural: "{% trans %}filtered from $totalSize total entries{% endtrans %}",
+            showing: "{% trans %}Showing $startEntryOfPage to $lastEntryOfPage of $filteredNumEntries{% endtrans %}"
+          }
           const { searchText, searchTextLowered, truncate, showingFilteredFromText,
-            currentSort, currentSortDir, sortDir, sortIconClass, filteredRows, linkToRow } = useTableFilter(items, keyColumns, defaultSortCol)
+            currentSort, currentSortDir, sortDir, sortIconClass, filteredRows, linkToRow } = useTableFilter(items, keyColumns, defaultSortCol, tableTexti18n)
           const changeSortDir = function (col) {
             sortDir(col)
             getItemsSorted()
@@ -277,7 +291,7 @@
           const tileLayerUrl = '{{ config['server']['map']['url'] }}'
           const tileLayerAttr = '{{ config['server']['map']['attribution'] | safe }}'
           const bboxPermalink = ref(false)
-          const { bbox } = useMap('items-map', itemsJson, itemsPath, tileLayerUrl, tileLayerAttr, bboxPermalink)
+          const { bbox } = useMap('items-map', itemsJson, itemsPath, tileLayerUrl, tileLayerAttr, bboxPermalink, LOCALE)
 
           /* Permalink handling */
           let queryParams = new URLSearchParams(window.location.search)
@@ -415,6 +429,7 @@
           }
 
           return {
+            txt,
             tableFields, keyColumns, itemsTotal, itemsLoading,
             items: filteredRows, // don't care for unfiltered
             searchText, searchTextLowered, truncate,

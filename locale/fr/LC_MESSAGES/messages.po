@@ -1,0 +1,757 @@
+# French (Canada) translations for PROJECT.
+# Copyright (C) 2022 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2022-11-04 18:07+0000\n"
+"PO-Revision-Date: 2022-07-05 09:20-0700\n"
+"Last-Translator: \n"
+"Language: fr_CA\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.10.3\n"
+
+#: theme/templates/_base.html:34
+msgid "Skip to main content"
+msgstr "Passer au contenu principal"
+
+#: theme/templates/_base.html:37
+msgid "Skip to \"About government\""
+msgstr "Passer à «&#160;À propos de ce site&#160;»"
+
+#: theme/templates/_base.html:46
+msgid "Format and language selection"
+msgstr "Sélection du format et de la langue"
+
+#: theme/templates/_base.html:103 theme/templates/_base.html:105
+msgid "Environment & Climate Change Canada"
+msgstr "Environnement et Changement climatique Canada"
+
+#: theme/templates/_base.html:113
+msgid "You are here:"
+msgstr "Vous êtes ici :"
+
+#: theme/templates/_base.html:117 theme/templates/landing_page.html:2
+msgid "Home"
+msgstr "Accueil"
+
+#: theme/templates/_base.html:128
+msgid "Powered by"
+msgstr "Propulsé par"
+
+#: theme/templates/_base.html:138
+msgid "About government"
+msgstr "Au sujet du gouvernement"
+
+#: theme/templates/_base.html:140
+msgid "https://www.canada.ca/en/contact.html"
+msgstr "https://www.canada.ca/fr/contact.html"
+
+#: theme/templates/_base.html:140
+msgid "Contact us"
+msgstr "Contactez-nous"
+
+#: theme/templates/_base.html:141
+msgid "https://www.canada.ca/en/government/dept.html"
+msgstr "https://www.canada.ca/fr/gouvernement/min.html"
+
+#: theme/templates/_base.html:141
+msgid "Departments and agencies"
+msgstr "Ministères et agences"
+
+#: theme/templates/_base.html:142
+msgid "https://www.canada.ca/en/government/publicservice.html"
+msgstr "https://www.canada.ca/fr/gouvernement/fonctionpublique.html"
+
+#: theme/templates/_base.html:142
+msgid "Public service and military"
+msgstr "Fonction publique et force militaire"
+
+#: theme/templates/_base.html:143
+msgid "https://www.canada.ca/en/news.html"
+msgstr "https://www.canada.ca/fr/nouvelles.html"
+
+#: theme/templates/_base.html:143
+msgid "News"
+msgstr "Nouvelles"
+
+#: theme/templates/_base.html:144
+msgid "https://www.canada.ca/en/government/system/laws.html"
+msgstr "https://www.canada.ca/fr/gouvernement/systeme/lois.html"
+
+#: theme/templates/_base.html:144
+msgid "Treaties, laws and regulations"
+msgstr "Traités, lois et règlements"
+
+#: theme/templates/_base.html:145
+msgid "https://www.canada.ca/en/transparency/reporting.html"
+msgstr "https://www.canada.ca/fr/transparence/rapports.html"
+
+#: theme/templates/_base.html:145
+msgid "Government-wide reporting"
+msgstr "Rapports à l'échelle du gouvernement"
+
+#: theme/templates/_base.html:146
+msgid "https://pm.gc.ca/eng"
+msgstr "https://pm.gc.ca/fra"
+
+#: theme/templates/_base.html:146
+msgid "Prime Minister"
+msgstr "Premier ministre"
+
+#: theme/templates/_base.html:147
+msgid "https://www.canada.ca/en/government/system.html"
+msgstr "https://www.canada.ca/fr/gouvernement/systeme.html"
+
+#: theme/templates/_base.html:147
+msgid "How government works"
+msgstr "Comment le gouvernement fonctionne"
+
+#: theme/templates/_base.html:148
+msgid "https://open.canada.ca/en/"
+msgstr "https://ouvert.canada.ca/"
+
+#: theme/templates/_base.html:148
+msgid "Open government"
+msgstr "Gouvernement ouvert"
+
+#: theme/templates/_base.html:156
+msgid "About this site"
+msgstr "À propos de ce site"
+
+#: theme/templates/_base.html:158
+msgid "https://www.canada.ca/en/social.html"
+msgstr "https://www.canada.ca/fr/sociaux.html"
+
+#: theme/templates/_base.html:158
+msgid "Social media"
+msgstr "Médias sociaux"
+
+#: theme/templates/_base.html:159
+msgid "https://www.canada.ca/en/mobile.html"
+msgstr "https://www.canada.ca/fr/mobile.html"
+
+#: theme/templates/_base.html:159
+msgid "Mobile applications"
+msgstr "Applications mobiles"
+
+#: theme/templates/_base.html:160
+msgid "https://www1.canada.ca/en/newsite.html"
+msgstr "https://www1.canada.ca/fr/nouveausite.html"
+
+#: theme/templates/_base.html:160
+msgid "About Canada.ca"
+msgstr "À propos de Canada.ca"
+
+#: theme/templates/_base.html:161
+msgid "https://www.canada.ca/en/transparency/terms.html"
+msgstr "https://www.canada.ca/fr/transparence/avis.html"
+
+#: theme/templates/_base.html:161
+msgid "Terms and conditions"
+msgstr "Termes et conditions"
+
+#: theme/templates/_base.html:162
+msgid "https://www.canada.ca/en/transparency/privacy.html"
+msgstr "https://www.canada.ca/fr/transparence/confidentialite.html"
+
+#: theme/templates/_base.html:162
+msgid "Privacy"
+msgstr "Confidentialité"
+
+#: theme/templates/_base.html:166
+msgid "Top of page"
+msgstr "Haut de la page"
+
+#: theme/templates/_base.html:169
+msgid "Symbol of the Government of Canada"
+msgstr "Symbole du gouvernement du Canada"
+
+#: theme/templates/conformance.html:2 theme/templates/conformance.html:4
+#: theme/templates/conformance.html:8 theme/templates/landing_page.html:74
+msgid "Conformance"
+msgstr "Conformité"
+
+#: theme/templates/exception.html:2 theme/templates/exception.html:7
+msgid "Exception"
+msgstr "Exception"
+
+#: theme/templates/landing_page.html:25
+msgid "MSC GeoMet User Documentation"
+msgstr "Documentation utilisateur de la plateforme GeoMet du SMC"
+
+#: theme/templates/collections/collection.html:4
+#: theme/templates/collections/coverage/domainset.html:4
+#: theme/templates/collections/coverage/rangetype.html:4
+#: theme/templates/collections/index.html:2
+#: theme/templates/collections/index.html:4
+#: theme/templates/collections/items/index.html:16
+#: theme/templates/collections/items/item.html:25
+#: theme/templates/collections/queryables.html:4
+#: theme/templates/collections/tiles/index.html:4
+#: theme/templates/collections/tiles/metadata.html:4
+#: theme/templates/landing_page.html:32 theme/templates/stac/collection.html:13
+msgid "Collections"
+msgstr "Collections"
+
+#: theme/templates/landing_page.html:34
+msgid "View the collections in this service"
+msgstr "Voir les collections de ce service"
+
+#: theme/templates/landing_page.html:41
+msgid "SpatioTemporal Assets"
+msgstr "Actifs spatio-temporels"
+
+#: theme/templates/landing_page.html:43
+msgid "View the SpatioTemporal Assets in this service"
+msgstr "Voir les actifs spatio-temporels de ce service"
+
+#: theme/templates/landing_page.html:50 theme/templates/processes/index.html:2
+#: theme/templates/processes/index.html:4
+#: theme/templates/processes/process.html:4
+msgid "Processes"
+msgstr "Processus"
+
+#: theme/templates/landing_page.html:52
+msgid "View the processes in this service"
+msgstr "Voir les processus de ce service"
+
+#: theme/templates/jobs/index.html:2 theme/templates/jobs/index.html:4
+#: theme/templates/jobs/index.html:11 theme/templates/jobs/job.html:4
+#: theme/templates/jobs/results/index.html:4
+#: theme/templates/landing_page.html:56
+#: theme/templates/processes/process.html:75
+msgid "Jobs"
+msgstr "Tâches"
+
+#: theme/templates/landing_page.html:58
+msgid "View the jobs in this service"
+msgstr "Voir les tâches de ce service"
+
+#: theme/templates/landing_page.html:64
+msgid "API Definition"
+msgstr "Définition de l'API"
+
+#: theme/templates/landing_page.html:66
+msgid "Documentation: Swagger UI"
+msgstr "Documentation : Swagger UI"
+
+#: theme/templates/landing_page.html:69
+msgid "OpenAPI Document"
+msgstr "Document OpenAPI"
+
+#: theme/templates/landing_page.html:76
+msgid "View the conformance classes of this service"
+msgstr "Voir les classes de conformité de ce service"
+
+#: theme/templates/landing_page.html:85
+msgid "Provider"
+msgstr "Fournisseur"
+
+#: theme/templates/landing_page.html:95
+msgid "Contact point"
+msgstr "Point de contact"
+
+#: theme/templates/landing_page.html:98
+msgid "Address"
+msgstr "Adresse"
+
+#: theme/templates/landing_page.html:107
+msgid "Email"
+msgstr "Courriel"
+
+#: theme/templates/landing_page.html:110
+msgid "Telephone"
+msgstr "Téléphone"
+
+#: theme/templates/landing_page.html:114
+msgid "Fax"
+msgstr "Fax"
+
+#: theme/templates/landing_page.html:118
+msgid "Contact URL"
+msgstr "Lien de contact"
+
+#: theme/templates/landing_page.html:126
+msgid "Contact instructions"
+msgstr "Instructions de contact"
+
+#: theme/templates/landing_page.html:135
+msgid "Use of service"
+msgstr "Utilisation du service"
+
+#: theme/templates/landing_page.html:139
+msgid "License"
+msgstr "Licence"
+
+#: theme/templates/landing_page.html:144
+msgid "Terms of service"
+msgstr "Conditions d'utilisation"
+
+#: theme/templates/collections/collection.html:32
+msgid "Browse"
+msgstr "Parcourir"
+
+#: theme/templates/collections/collection.html:37
+#, python-format
+msgid "Browse through the items of \"%(data_title)s\""
+msgstr "Parcourez les articles de « %(data_title)s »"
+
+#: theme/templates/collections/collection.html:40
+#: theme/templates/collections/queryables.html:6
+#: theme/templates/collections/queryables.html:17
+msgid "Queryables"
+msgstr "Interrogeables"
+
+#: theme/templates/collections/collection.html:44
+msgid "Display queryables"
+msgstr "Afficher les tables de requêtes"
+
+#: theme/templates/collections/collection.html:45
+#, python-format
+msgid "Display queryables of \"%(data_title)s\""
+msgstr "Afficher les tables de requêtes de \"%(data_title)s\""
+
+#: theme/templates/collections/collection.html:54
+#, python-format
+msgid "Display tiles of \"%(title)s\""
+msgstr "Afficher les tuiles de \"%(title)s\"."
+
+#: theme/templates/collections/collection.html:61
+msgid "Output Formats"
+msgstr "Formats de fichiers"
+
+#: theme/templates/collections/collection.html:77
+#: theme/templates/jobs/job.html:49 theme/templates/processes/process.html:77
+#: theme/templates/stac/catalog.html:13
+msgid "Links"
+msgstr "Liens"
+
+#: theme/templates/collections/index.html:8
+msgid "Collections in this service"
+msgstr "Collections dans ce service"
+
+#: theme/templates/collections/index.html:23
+#: theme/templates/collections/index.html:79
+#: theme/templates/collections/tiles/index.html:109
+#: theme/templates/processes/index.html:14 theme/templates/stac/catalog.html:29
+#: theme/templates/stac/catalog.html:101
+#: theme/templates/stac/collection.html:17
+msgid "Name"
+msgstr "Nom"
+
+#: theme/templates/collections/index.html:29
+#: theme/templates/collections/index.html:83
+msgid "Type"
+msgstr "Type"
+
+#: theme/templates/collections/index.html:30
+#: theme/templates/collections/index.html:87
+#: theme/templates/processes/index.html:15
+#: theme/templates/processes/process.html:25
+#: theme/templates/processes/process.html:55
+#: theme/templates/stac/collection.html:18
+msgid "Description"
+msgstr "Description"
+
+#: theme/templates/collections/coverage/domainset.html:11
+msgid "Coverage domain set"
+msgstr "Ensemble des domaines de couverture"
+
+#: theme/templates/collections/coverage/domainset.html:12
+msgid "Axis labels"
+msgstr "Étiquettes d'axe"
+
+#: theme/templates/collections/coverage/domainset.html:18
+msgid "Extent"
+msgstr "Étendue"
+
+#: theme/templates/collections/coverage/domainset.html:20
+msgid "minx:"
+msgstr "minx :"
+
+#: theme/templates/collections/coverage/domainset.html:21
+msgid "miny:"
+msgstr "miny :"
+
+#: theme/templates/collections/coverage/domainset.html:22
+msgid "maxx:"
+msgstr "maxx :"
+
+#: theme/templates/collections/coverage/domainset.html:23
+msgid "maxy:"
+msgstr "maxy :"
+
+#: theme/templates/collections/coverage/domainset.html:24
+msgid "Coordinate reference system:"
+msgstr "Système de référence des coordonnées :"
+
+#: theme/templates/collections/coverage/domainset.html:26
+#: theme/templates/stac/catalog.html:36 theme/templates/stac/catalog.html:114
+#: theme/templates/stac/item.html:34
+msgid "Size"
+msgstr "Taille"
+
+#: theme/templates/collections/coverage/domainset.html:28
+msgid "width:"
+msgstr "largeur :"
+
+#: theme/templates/collections/coverage/domainset.html:29
+msgid "height:"
+msgstr "hauteur :"
+
+#: theme/templates/collections/coverage/domainset.html:31
+msgid "Resolution"
+msgstr "Resolution"
+
+#: theme/templates/collections/coverage/domainset.html:33
+msgid "x:"
+msgstr "x :"
+
+#: theme/templates/collections/coverage/domainset.html:34
+msgid "y:"
+msgstr "y :"
+
+#: theme/templates/collections/coverage/rangetype.html:11
+msgid "Coverage range type"
+msgstr "Type de plage de couverture"
+
+#: theme/templates/collections/coverage/rangetype.html:12
+msgid "Fields"
+msgstr "Champs"
+
+#: theme/templates/collections/coverage/rangetype.html:15
+#, python-format
+msgid "%(id)s: %(name)s (%(definition)s)"
+msgstr "%(id)s : %(name)s (%(definition)s)"
+
+#: theme/templates/collections/items/index.html:8
+#: theme/templates/collections/items/index.html:9
+msgid "CSV"
+msgstr "CSV"
+
+#: theme/templates/collections/items/index.html:23
+#: theme/templates/collections/items/item.html:31
+msgid "Items"
+msgstr "Articles"
+
+#: theme/templates/collections/items/index.html:32
+msgid "Items in this collection."
+msgstr "Articles dans cette collection."
+
+#: theme/templates/collections/items/index.html:47
+msgid "Only show items by map view"
+msgstr "Afficher les articles uniquement par la vue de la carte"
+
+#: theme/templates/collections/items/index.html:51
+msgid ""
+"No results. Please modify your search query or <button\n"
+"            :title=\"txt.reset\"  \n"
+"            class=\"btn btn-warning btn-sm\" \n"
+"            @click=\"clearSearch\">reset</button> the table."
+msgstr ""
+"Aucun résultat. Veuillez modifier votre requête de recherche ou <button\n"
+"            :title=\"txt.reset\"  \n"
+"            class=\"btn btn-warning btn-sm\" \n"
+"            @click=\"clearSearch\">remettre</button> le tableau."
+
+#: theme/templates/collections/items/index.html:58
+#: theme/templates/collections/items/index.html:63
+msgid "Filter table content"
+msgstr "Filtrer le contenu du tableau"
+
+#: theme/templates/collections/items/index.html:73
+msgid "Reset"
+msgstr "Remettre"
+
+#: theme/templates/collections/items/index.html:75
+msgid "Apply column keyword search queries to the entire collection"
+msgstr ""
+"Appliquer des requêtes de recherche par mots-clés en colonnes à "
+"l'ensemble de la collection"
+
+#: theme/templates/collections/items/index.html:79
+msgid "Search by keywords"
+msgstr "Recherche par mots-clés"
+
+#: theme/templates/collections/items/index.html:97
+msgid "Keyword search for: [% th.key %]"
+msgstr "Recherche de mots-clés pour : [% th.key %]"
+
+#: theme/templates/collections/items/index.html:101
+msgid ""
+"eg. &quot;BC QC ON&quot; will search for &quot;BC&quot; or &quot;ON&quot;"
+" or &quot;QC&quot;"
+msgstr "Par exemple, « BC QC ON » recherchera « BC » ou « ON » ou « QC »"
+
+#: theme/templates/collections/items/index.html:103
+msgid "Keyword"
+msgstr "Mot clé"
+
+#: theme/templates/collections/items/index.html:142
+msgid "Limit:"
+msgstr "Limite :"
+
+#: theme/templates/collections/items/index.html:160
+msgid "Higher limits are not recommended"
+msgstr "Des limites plus élevées ne sont pas recommandées"
+
+#: theme/templates/collections/items/index.html:164
+msgid "Previous"
+msgstr "Précédent"
+
+#: theme/templates/collections/items/index.html:166
+#, python-format
+msgid "Page [% currentPage %] / [% maxPages %]"
+msgstr "Page [% currentPage %] / [% maxPages %]"
+
+#: theme/templates/collections/items/index.html:168
+#: theme/templates/collections/items/item.html:62
+msgid "Next"
+msgstr "Suivant"
+
+#: theme/templates/collections/items/index.html:195
+msgid ""
+"Clear column keyword search queries and reset to display the default "
+"results"
+msgstr ""
+"Effacer les requêtes de recherche par mots-clés des colonnes et "
+"réinitialiser pour afficher les résultats par défaut"
+
+#: theme/templates/collections/items/index.html:200
+msgid "Showing $firstPage to $upper of $itemsTotal"
+msgstr "Affichage de $firstPage jusqu'à $upper de $itemsTotal"
+
+#: theme/templates/collections/items/index.html:201
+msgid "Showing 0 results"
+msgstr "Affichage de 0 résultats"
+
+#: theme/templates/collections/items/index.html:245
+msgid "filtered from $totalSize total entry"
+msgstr "filtré de $totalSize entrée au total"
+
+#: theme/templates/collections/items/index.html:246
+msgid "filtered from $totalSize total entries"
+msgstr "filtrées de $totalSize entrées au total"
+
+#: theme/templates/collections/items/index.html:247
+msgid "Showing $startEntryOfPage to $lastEntryOfPage of $filteredNumEntries"
+msgstr ""
+"Affichage de $startEntryOfPage jusqu'à $lastEntryOfPage de "
+"$filteredNumEntries"
+
+#: theme/templates/collections/items/item.html:60
+msgid "Prev"
+msgstr "Précédent"
+
+#: theme/templates/collections/items/item.html:75
+#: theme/templates/stac/item.html:58
+msgid "Property"
+msgstr "Propriété"
+
+#: theme/templates/collections/items/item.html:76
+#: theme/templates/stac/item.html:59
+msgid "Value"
+msgstr "Valeur"
+
+#: theme/templates/collections/tiles/index.html:6
+#: theme/templates/collections/tiles/index.html:29
+#: theme/templates/collections/tiles/metadata.html:6
+msgid "Tiles"
+msgstr "Tuiles"
+
+#: theme/templates/collections/tiles/index.html:31
+msgid "Tile matrix set"
+msgstr "Ensemble de matrices de tuiles"
+
+#: theme/templates/collections/tiles/index.html:42
+msgid "Metadata"
+msgstr "Métadonnées"
+
+#: theme/templates/collections/tiles/index.html:43
+#, python-format
+msgid "Tiles metadata in %(data_format)s format"
+msgstr "Les métadonnées des tuiles au format %(data_format)s"
+
+#: theme/templates/collections/tiles/index.html:61
+msgid "Map"
+msgstr "Carte"
+
+#: theme/templates/collections/tiles/index.html:110
+msgid "Class"
+msgstr "Classe"
+
+#: theme/templates/collections/tiles/metadata.html:7
+msgid "Tile metadata"
+msgstr "Métadonnées des tuiles"
+
+#: theme/templates/collections/tiles/metadata.html:18
+#, python-format
+msgid "Tiles metadata - %(data_format)s format"
+msgstr "Métadonnées des tuiles - format %(data_format)s"
+
+#: theme/templates/collections/tiles/metadata.html:19
+#, python-format
+msgid "Tileset %(data_tileset)s"
+msgstr "Ensemble de tuiles - %(data_tileset)s"
+
+#: theme/templates/jobs/index.html:14
+msgid "Job ID"
+msgstr "ID de la tâche"
+
+#: theme/templates/jobs/index.html:15
+msgid "Process ID"
+msgstr "ID du processus"
+
+#: theme/templates/jobs/index.html:16
+msgid "Start"
+msgstr "Début"
+
+#: theme/templates/jobs/index.html:17 theme/templates/jobs/job.html:36
+msgid "Duration"
+msgstr "Durée"
+
+#: theme/templates/jobs/index.html:18 theme/templates/jobs/job.html:34
+msgid "Progress"
+msgstr "Progrès"
+
+#: theme/templates/jobs/index.html:19
+msgid "Status"
+msgstr "Statut"
+
+#: theme/templates/jobs/index.html:20 theme/templates/jobs/job.html:21
+msgid "Message"
+msgstr "Message"
+
+#: theme/templates/jobs/job.html:2 theme/templates/jobs/job.html:10
+msgid "Job status"
+msgstr "Statut de la tâche"
+
+#: theme/templates/jobs/job.html:16
+msgid "Status:"
+msgstr "Statut :"
+
+#: theme/templates/jobs/job.html:17
+msgid "Progress:"
+msgstr "Progrès :"
+
+#: theme/templates/jobs/job.html:26
+msgid "Parameters"
+msgstr "Paramètres"
+
+#: theme/templates/jobs/job.html:44
+msgid "Started processing"
+msgstr "Début du traitement"
+
+#: theme/templates/jobs/job.html:46
+msgid "Finished processing"
+msgstr "Traitement final"
+
+#: theme/templates/jobs/job.html:52
+#, python-format
+msgid "<span>%(title)s</span> (<span>%(type)s</span>)"
+msgstr "<span>%(title)s</span> (<span>%(type)s</span>)"
+
+#: theme/templates/jobs/results/index.html:2
+msgid "Job results"
+msgstr "Résultas de la tâche"
+
+#: theme/templates/jobs/results/index.html:6
+msgid "results"
+msgstr "résultats"
+
+#: theme/templates/jobs/results/index.html:10
+#, python-format
+msgid "Results of job %(id)s"
+msgstr "Résultats des travaux %(id)s"
+
+#: theme/templates/processes/index.html:8
+msgid "Processes in this service"
+msgstr "Processus dans ce service"
+
+#: theme/templates/processes/process.html:19
+msgid "Inputs"
+msgstr "Entrées"
+
+#: theme/templates/processes/process.html:22
+#: theme/templates/processes/process.html:53
+msgid "ID"
+msgstr "ID"
+
+#: theme/templates/processes/process.html:23
+#: theme/templates/processes/process.html:54
+msgid "Title"
+msgstr "Titre"
+
+#: theme/templates/processes/process.html:24
+msgid "Data type"
+msgstr "Type de données"
+
+#: theme/templates/processes/process.html:70
+msgid "Execution modes"
+msgstr "Modes d'exécution"
+
+#: theme/templates/processes/process.html:72
+msgid "Synchronous"
+msgstr "Synchrone"
+
+#: theme/templates/processes/process.html:73
+msgid "Asynchronous"
+msgstr "Asynchrone"
+
+#: theme/templates/processes/process.html:76
+msgid "Browse jobs"
+msgstr "Parcourir les tâches"
+
+#: theme/templates/processes/process.html:82
+#, python-format
+msgid "%(title)s (%(type)s)"
+msgstr "%(title)s (%(type)s)"
+
+#: theme/templates/stac/catalog.html:2 theme/templates/stac/item.html:2
+#, python-format
+msgid "stac/%(path)s"
+msgstr "stac/%(path)s"
+
+#: theme/templates/stac/catalog.html:4 theme/templates/stac/collection.html:2
+#: theme/templates/stac/collection.html:4 theme/templates/stac/item.html:4
+msgid "SpatioTemporal Asset Catalog"
+msgstr "Catalogue des actifs spatio-temporels"
+
+#: theme/templates/stac/catalog.html:19
+msgid "Filter"
+msgstr "Filtre"
+
+#: theme/templates/stac/catalog.html:35 theme/templates/stac/catalog.html:104
+#: theme/templates/stac/item.html:33
+msgid "Last modified"
+msgstr "Dernière modification"
+
+#: theme/templates/stac/collection.html:9
+msgid "STAC version:"
+msgstr "Version STAC :"
+
+#: theme/templates/stac/item.html:19
+#, python-format
+msgid "Item %(id)s"
+msgstr "Article %(id)s"
+
+#: theme/templates/stac/item.html:28
+msgid "Assets"
+msgstr "Actifs"
+
+#: theme/templates/stac/item.html:32
+msgid "URL"
+msgstr "URL"
+
+#: theme/templates/stac/item.html:114
+msgid "Map extent preview not available"
+msgstr "Aperçu de l'étendue de la carte n'est pas disponible"
+

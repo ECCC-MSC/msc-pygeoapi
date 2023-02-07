@@ -1,11 +1,11 @@
 {% extends "_base.html" %}
-{% block title %}{{ super() }} Collections {% endblock %}
+{% block title %}{{ super() }} {% trans %}Collections{% endtrans %} {% endblock %}
 {% block crumbs %}{{ super() }}
-<li><a href="./collections">Collections</a></li>
+<li><a href="./collections?lang={{ (locale|lower)[:2] }}">{% trans %}Collections{% endtrans %}</a></li>
 {% endblock %}
 {% block body %}
     <section id="collections">
-      <h1>Collections in this service</h1>
+      <h1>{% trans %}Collections in this service{% endtrans %}</h1>
 
       <div class="form-inline" aria-controls="collections-table">
         <input
@@ -20,21 +20,21 @@
         <tr>
           <th v-for="(th, index) in tableFields"
             :class="[th.colClass, 'sortable']"
-            @click="sortDir(th.key)"><span v-text="th.text">Name</span>
+            @click="sortDir(th.key)"><span v-text="th.text">{% trans %}Name{% endtrans %}</span>
             <span
               v-show="currentSort === th.key"
               :class="sortIconClass"
               class="glyphicon"></span>
           </th>
-          <th v-if="noJs">Type</th>
-          <th v-if="noJs">Description</th>
+          <th v-if="noJs">{% trans %}Type{% endtrans %}</th>
+          <th v-if="noJs">{% trans %}Description{% endtrans %}</th>
         </tr>
         </thead>
         <tbody>
           <tr v-for="(collection, index) in collections">
             <td data-label="name">
               <a :title="truncateStripTags(collection.title)"
-                :href="'{{ config['server']['url'] }}/collections/' + collection.id">
+                :href="'{{ config['server']['url'] }}/collections/' + collection.id + '?lang={{ (locale|lower)[:2] }}'">
                 <span v-html="truncateStripTags(collection.title)"></span></a>
             </td>
             <td data-label="type" v-text="collection.itemType"></td>
@@ -76,15 +76,15 @@
           const tableFields = ref([
             {
               key: 'title',
-              text: 'Name',
+              text: '{% trans %}Name{% endtrans %}',
               colClass: 'col-sm-3'
             }, {
               key: 'itemType',
-              text: 'Type',
+              text: '{% trans %}Type{% endtrans %}',
               colClass: 'col-sm-1'
             }, {
               key: 'description',
-              text: 'Description',
+              text: '{% trans %}Description{% endtrans %}',
               colClass: 'col-sm-7'
             }
           ])

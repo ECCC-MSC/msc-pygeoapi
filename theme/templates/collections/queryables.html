@@ -1,9 +1,9 @@
 {% extends "_base.html" %}
 {% block title %}{{ super() }} {{ data['title'] }} {% endblock %}
 {% block crumbs %}{{ super() }}
-<li><a href="../../collections">Collections</a></li>
-<li><a href="./{{ data['id'] }}">{{ data['title'] }}</a></li>
-<li><a href="./{{ data['id'] }}queryables">Queryables</a></li>
+<li><a href="../../collections?lang={{ (locale|lower)[:2] }}">{% trans %}Collections{% endtrans %}</a></li>
+<li><a href="./{{ data['id'] }}?lang={{ (locale|lower)[:2] }}">{{ data['title'] }}</a></li>
+<li><a href="./{{ data['id'] }}queryables?lang={{ (locale|lower)[:2] }}">{% trans %}Queryables{% endtrans %}</a></li>
 {% endblock %}
 {% block body %}
     <section id="collection">
@@ -14,7 +14,7 @@
           <li><span class="label label-info">{{ kw }}</span></li>
         {% endfor %}
       </ul>
-      <h3>Queryables</h3>
+      <h3>{% trans %}Queryables{% endtrans %}</h3>
       <ul>
         {% for qname, qinfo in data['properties'].items() %}
           {% if qname == 'geometry' %}

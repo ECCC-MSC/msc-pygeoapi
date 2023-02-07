@@ -22,14 +22,14 @@
 {%- endmacro %}
 {% block title %}{{ super() }} {{ data['title'] }} - {{ data['id'] }}{% endblock %}
 {% block crumbs %}{{ super() }}
-<li><a href="../../../collections">Collections</a></li>
+<li><a href="../../../collections?lang={{ (locale|lower)[:2] }}">{% trans %}Collections{% endtrans %}</a></li>
 {% for link in data['links'] %}
   {% if link.rel == 'collection' %}
-  <li><a href="{{ link['href'] }}">{{ link['title'] }}</a></li>
+  <li><a href="{{ link['href'] }}?lang={{ (locale|lower)[:2] }}">{{ link['title'] }}</a></li>
   {% endif %}
 {% endfor %}
-<li><a href="../items">{% trans %}Items{% endtrans %}</a></li>
-<li><a href="./{{ data['id'] }}">{{ ptitle | truncate( 25 ) }}</a></li>
+<li><a href="../items?lang={{ (locale|lower)[:2] }}">{% trans %}Items{% endtrans %}</a></li>
+<li><a href="./{{ data['id'] }}?lang={{ (locale|lower)[:2] }}">{{ ptitle | truncate( 25 ) }}</a></li>
 {% endblock %}
 {% block extrahead %}
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>

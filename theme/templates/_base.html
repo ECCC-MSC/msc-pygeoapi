@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="en">
+<html lang="{{ (locale|lower)[:2] }}">
   <head>
     <meta charset="{{ config['server']['encoding'] }}">
     <title>{% block title %}{{ config['metadata']['identification']['title'] }} -{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="language" content="{{ config['server']['language'] }}">
+    <meta name="language" content="{{ config['server']['languages'] }}">
     <meta name="description" content="{{ config['metadata']['identification']['title'] }}">
     <meta name="keywords" content="{{ config['metadata']['identification']['keywords']|join(',') }}">
     <link rel="shortcut icon" href="{{ config['server']['url'] }}/static/img/favicon.ico" type="image/x-icon">
@@ -18,9 +18,10 @@
       <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
     <![endif]-->
     {% for link in data['links'] %}
-      <link rel="{{ link['rel'] }}" type="{{ link['type'] }}" title="{{ link['title'] }}" href="{{ link['href'] }}"/>
       {% if (link['rel']=="self" and link['type']=="text/html") %}
-      <link rel="canonical" href="{{ link['href'].split('?')[0] }}" />
+      <link rel="canonical" href="{{ link['href'].split('?')[0] }}?lang={{ (locale|lower)[:2] }}" />
+      {% elif (link['rel']!="canonical") %}
+      <link rel="{{ link['rel'] }}" type="{{ link['type'] }}" title="{{ link['title'] }}" href="{{ link['href'] }}?lang={{ (locale|lower)[:2] }}"/>
       {% endif %}
     {% endfor %}
     {% block extrahead %}
@@ -30,10 +31,10 @@
     <nav>
         <ul id="wb-tphp">
             <li class="wb-slc">
-                <a class="wb-sl" href="#wb-cont">Skip to main content</a>
+                <a class="wb-sl" href="#wb-cont">{% trans %}Skip to main content{% endtrans %}</a>
             </li>
             <li class="wb-slc">
-                <a class="wb-sl" href="#wb-info">Skip to "About government"</a>
+                <a class="wb-sl" href="#wb-info">{% trans %}Skip to "About government"{% endtrans %}</a>
             </li>
         </ul>
     </nav>
@@ -42,7 +43,7 @@
         <div class="row">
           <!-- language selection (JSON) -->
           <section id="wb-lng" class="col-xs-3 col-sm-12 pull-right text-right">
-            <h2 class="wb-inv">JSON selection</h2>
+            <h2 class="wb-inv">{% trans %}Format and language selection{% endtrans %}</h2>
             <ul class="list-inline mrgn-bttm-0">
               {% set links_found = namespace(json=0, jsonld=0) %}
 
@@ -84,15 +85,24 @@
               {% endif %}
               {% block extralang %}
               {% endblock %}
+
+              <!-- language toggle -->
+              {% for langcode in config['server']['languages'] %}
+              {% if (locale|upper)[:2] != (langcode|upper)[:2] %}
+              <li>
+                <a class="lang-toggle" href="?lang={{ (langcode|lower)[:2] }}" hreflang="{{ langcode }}">{{ (langcode|upper)[:2] }}</a>
+              </li>
+              {% endif %}
+              {% endfor %}
             </ul>
           </section>
 
           <!-- Brand -->
           <div class="brand col-xs-9 col-sm-5 col-md-4" property="publisher" typeof="GovernmentOrganization">
             <a href="https://www.canada.ca/en.html" property="url">
-              <img src="{{ config['server']['url'] }}/static/img/img_eccc-logo.png" alt="Environment & Climate Change Canada" property="logo" /><span class="wb-inv"> / <span lang="fr">Environnement et Changement climatique Canada</span></span>
+              <img src="{{ config['server']['url'] }}/static/img/img_eccc-logo.png" alt="{% trans %}Environment & Climate Change Canada{% endtrans %}" property="logo" /><span class="wb-inv"> / <span lang="fr">Environnement et Changement climatique Canada</span></span>
             </a>
-            <meta property="name" content="Environment & Climate Change Canada" />
+            <meta property="name" content="{% trans %}Environment & Climate Change Canada{% endtrans %}" />
             <meta property="areaServed" typeof="Country" content="Canada" />
             <link property="logo" href="{{ config['server']['url'] }}/static/img/img_eccc-logo.png" />
           </div>
@@ -100,11 +110,11 @@
       </div>
 
       <nav id="wb-bc" property="breadcrumb">
-        <h2>You are here:</h2>
+        <h2>{% trans %}You are here:{% endtrans %}</h2>
         <div class="container">
           <ol class="breadcrumb">
             {% block crumbs %}
-            <li><a href="{{ config['server']['url'] }}">Home</a></li>
+            <li><a href="{{ config['server']['url'] }}?lang={{ (locale|lower)[:2] }}">{% trans %}Home{% endtrans %}</a></li>
             {% endblock %}
           </ol>
         </div>
@@ -115,7 +125,7 @@
       {% endblock %}
       <div class="pagedetails">
         <dl id="wb-dtmd">
-          <dt>Powered by <a title="pygeoapi" href="https://pygeoapi.io"><img src="{{ config['server']['url'] }}/static/img/pygeoapi.png" style="height:24px;vertical-align: middle;"/></a></dt>
+          <dt>{% trans %}Powered by{% endtrans %} <a title="pygeoapi" href="https://pygeoapi.io"><img src="{{ config['server']['url'] }}/static/img/pygeoapi.png" style="height:24px;vertical-align: middle;"/></a></dt>
           <dd>{{ version }}</dd>
           | <dt><a href="https://github.com/ECCC-MSC/msc-pygeoapi" target="_blank">msc-pygeoapi</a></dt>
           <dd>MSC_PYGEOAPI_VERSION</dd>
@@ -125,17 +135,17 @@
     <footer id="wb-info">
       <div class="landscape">
         <nav class="container wb-navcurr">
-          <h2 class="wb-inv">About government</h2>
+          <h2 class="wb-inv">{% trans %}About government{% endtrans %}</h2>
           <ul class="list-unstyled colcount-sm-2 colcount-md-3">
-            <li><a href="https://www.canada.ca/en/contact.html">Contact us</a></li>
-            <li><a href="https://www.canada.ca/en/government/dept.html">Departments and agencies</a></li>
-            <li><a href="https://www.canada.ca/en/government/publicservice.html">Public service and military</a></li>
-            <li><a href="https://www.canada.ca/en/news.html">News</a></li>
-            <li><a href="https://www.canada.ca/en/government/system/laws.html">Treaties, laws and regulations</a></li>
-            <li><a href="https://www.canada.ca/en/transparency/reporting.html">Government-wide reporting</a></li>
-            <li><a href="https://pm.gc.ca/eng">Prime Minister</a></li>
-            <li><a href="https://www.canada.ca/en/government/system.html">How government works</a></li>
-            <li><a href="https://open.canada.ca/en/">Open government</a></li>
+            <li><a href="{% trans %}https://www.canada.ca/en/contact.html{% endtrans %}">{% trans %}Contact us{% endtrans %}</a></li>
+            <li><a href="{% trans %}https://www.canada.ca/en/government/dept.html{% endtrans %}">{% trans %}Departments and agencies{% endtrans %}</a></li>
+            <li><a href="{% trans %}https://www.canada.ca/en/government/publicservice.html{% endtrans %}">{% trans %}Public service and military{% endtrans %}</a></li>
+            <li><a href="{% trans %}https://www.canada.ca/en/news.html{% endtrans %}">{% trans %}News{% endtrans %}</a></li>
+            <li><a href="{% trans %}https://www.canada.ca/en/government/system/laws.html{% endtrans %}">{% trans %}Treaties, laws and regulations{% endtrans %}</a></li>
+            <li><a href="{% trans %}https://www.canada.ca/en/transparency/reporting.html{% endtrans %}">{% trans %}Government-wide reporting{% endtrans %}</a></li>
+            <li><a href="{% trans %}https://pm.gc.ca/eng{% endtrans %}">{% trans %}Prime Minister{% endtrans %}</a></li>
+            <li><a href="{% trans %}https://www.canada.ca/en/government/system.html{% endtrans %}">{% trans %}How government works{% endtrans %}</a></li>
+            <li><a href="{% trans %}https://open.canada.ca/en/{% endtrans %}">{% trans %}Open government{% endtrans %}</a></li>
           </ul>
         </nav>
       </div>
@@ -143,20 +153,20 @@
         <div class="container">
           <div class="row">
             <nav class="col-md-9 col-lg-10 ftr-urlt-lnk">
-              <h2 class="wb-inv">About this site</h2>
+              <h2 class="wb-inv">{% trans %}About this site{% endtrans %}</h2>
               <ul>
-                <li><a href="https://www.canada.ca/en/social.html">Social media</a></li>
-                <li><a href="https://www.canada.ca/en/mobile.html">Mobile applications</a></li>
-                <li><a href="https://www1.canada.ca/en/newsite.html">About Canada.ca</a></li>
-                <li><a href="https://www.canada.ca/en/transparency/terms.html">Terms and conditions</a></li>
-                <li><a href="https://www.canada.ca/en/transparency/privacy.html">Privacy</a></li>
+                <li><a href="{% trans %}https://www.canada.ca/en/social.html{% endtrans %}">{% trans %}Social media{% endtrans %}</a></li>
+                <li><a href="{% trans %}https://www.canada.ca/en/mobile.html{% endtrans %}">{% trans %}Mobile applications{% endtrans %}</a></li>
+                <li><a href="{% trans %}https://www1.canada.ca/en/newsite.html{% endtrans %}">{% trans %}About Canada.ca{% endtrans %}</a></li>
+                <li><a href="{% trans %}https://www.canada.ca/en/transparency/terms.html{% endtrans %}">{% trans %}Terms and conditions{% endtrans %}</a></li>
+                <li><a href="{% trans %}https://www.canada.ca/en/transparency/privacy.html{% endtrans %}">{% trans %}Privacy{% endtrans %}</a></li>
               </ul>
             </nav>
             <div class="col-xs-6 visible-sm visible-xs tofpg">
-              <a href="#wb-cont">Top of page <span class="glyphicon glyphicon-chevron-up"></span></a>
+              <a href="#wb-cont">{% trans %}Top of page{% endtrans %} <span class="glyphicon glyphicon-chevron-up"></span></a>
             </div>
             <div class="col-xs-6 col-md-3 col-lg-2 text-right">
-              <img src="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_32/assets/wmms-blk.svg" alt="Symbol of the Government of Canada" />
+              <img src="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_32/assets/wmms-blk.svg" alt="{% trans %}Symbol of the Government of Canada{% endtrans %}" />
             </div>
           </div>
         </div>

@@ -1,9 +1,9 @@
 {% extends "_base.html" %}
-{% block title %}{{ super() }} stac/{{ data['path'] }} {% endblock %}
+{% block title %}{{ super() }} {% trans path=data['path'] %}stac/{{ path }}{% endtrans %} {% endblock %}
 {% block crumbs %}{{ super() }}
-<li><a href="{{ config['server']['url'] }}/stac">SpatioTemporal Asset Catalog</a></li>
+<li><a href="{{ config['server']['url'] }}/stac">{% trans %}SpatioTemporal Asset Catalog{% endtrans %}</a></li>
 {% for link in get_breadcrumbs(data['path']) %}
-<li><a class="crumbs-path" href="{{config['server']['url'] }}/stac/{{ link['href'] }}">{{ link['title'] }}</a></li>
+<li><a class="crumbs-path" href="{{config['server']['url'] }}/stac/{{ link['href'] }}?lang={{ (locale|lower)[:2] }}">{{ link['title'] }}</a></li>
 {% endfor %}
 {% endblock %}
 
@@ -16,7 +16,7 @@
     <section id="item">
       <div class="row">
         <div class="col-sm">
-          <h2>Item {{ data['id'] }}</h2>
+          <h2>{% trans id=data['id'] %}Item {{ id }}{% endtrans %}</h2>
         </div>
       </div>
       <div class="row">
@@ -25,13 +25,13 @@
             <div class="col-sm-12">
               <div id="items-map"></div>
               <div id="assets">
-                <h4>Assets</h4>
+                <h4>{% trans %}Assets{% endtrans %}</h4>
                 <table class="table table-striped">
                   <thead>
                     <tr>
-                      <th>URL</th>
-                      <th>Last Modified</th>
-                      <th>Size</th>
+                      <th>{% trans %}URL{% endtrans %}</th>
+                      <th>{% trans %}Last modified{% endtrans %}</th>
+                      <th>{% trans %}Size{% endtrans %}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -55,8 +55,8 @@
             <table class="table table-striped">
               <thead>
               <tr>
-                <th>Property</th>
-                <th>Value</th>
+                <th>{% trans %}Property{% endtrans %}</th>
+                <th>{% trans %}Value{% endtrans %}</th>
               </tr>
             </thead>
             <tbody>
@@ -111,7 +111,7 @@
       map.addLayer(bbox_layer);
       map.fitBounds(bbox_layer.getBounds(), {maxZoom: 5});
     } else {
-      const warnAlert = '<div class="alert alert-warning mrgn-tp-md">Map extent preview not available</div>';
+      const warnAlert = '<div class="alert alert-warning mrgn-tp-md">{% trans %}Map extent preview not available{% endtrans %}</div>';
       document.getElementById('items-map').insertAdjacentHTML('afterend', warnAlert);
     }
     </script>

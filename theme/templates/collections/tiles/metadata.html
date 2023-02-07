@@ -1,10 +1,10 @@
 {% extends "_base.html" %}
 {% block title %}{{ super() }} {{ data['title'] }} {% endblock %}
 {% block crumbs %}{{ super() }}
-<li><a href="../../../../collections">Collections</a></li>
-<li><a href="../../../{{ data['id'] }}">{{ data['title'] }}</a></li>
-<li><a href="../../../{{ data['id'] }}/tiles">Tiles</a></li>
-<li><a href="../../../{{ data['id'] }}/tiles/{{ data['tileset'] }}/metadata">Tile Metadata</a></li>
+<li><a href="../../../../collections?lang={{ (locale|lower)[:2] }}">{% trans %}Collections{% endtrans %}</a></li>
+<li><a href="../../../{{ data['id'] }}?lang={{ (locale|lower)[:2] }}">{{ data['title'] }}</a></li>
+<li><a href="../../../{{ data['id'] }}/tiles?lang={{ (locale|lower)[:2] }}">{% trans %}Tiles{% endtrans %}</a></li>
+<li><a href="../../../{{ data['id'] }}/tiles/{{ data['tileset'] }}/metadata?lang={{ (locale|lower)[:2] }}">{% trans %}Tile metadata{% endtrans %}</a></li>
 {% endblock %}
 {% block body %}
     <section id="collection">
@@ -15,8 +15,8 @@
           <li><span class="label label-info">{{ kw }}</span></li>
         {% endfor %}
       </ul>
-      <h3>Tiles metadata - {{ data['format'] }} format</h3>
-      <h4>Tileset {{ data['tileset'] }}</h4>
+      <h3>{% trans data_format=data['format'] %}Tiles metadata - {{ data_format }} format{% endtrans %}</h3>
+      <h4>{% trans data_tileset=data['tileset'] %}Tileset {{ data_tileset }}{% endtrans %}</h4>
       <ul>
       {% for metadata in data['metadata'].items() %}
         <li>{{ metadata[0] }} (<code>{{ metadata[1] }}</code>)</li>
