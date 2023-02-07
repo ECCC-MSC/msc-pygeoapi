@@ -76,6 +76,7 @@ class MSCDMSCoreAPIProvider(BaseProvider):
 
         self.time_field_format = provider_def.get('_time_field_format',
                                                   '%Y%m%d%H%M')
+        self.geom_field = provider_def.get('geom_field', 'location')
 
         LOGGER.debug(f'data: {self.data}')
 
@@ -195,6 +196,7 @@ class MSCDMSCoreAPIProvider(BaseProvider):
 
         if bbox:
             LOGGER.debug('processing bbox')
+            params['locationField'] = self.geom_field
             params['bbox'] = ','.join([str(b) for b in bbox])
 
         if datetime_ is not None:
