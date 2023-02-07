@@ -205,7 +205,7 @@ class MSCDMSCoreAPIProvider(BaseProvider):
                 LOGGER.error('time_field not enabled for collection')
                 raise ProviderQueryError()
 
-            params['datetimeType'] = self.time_field
+            params['datetimeType'] = f'properties.{self.time_field}'
 
             if '/' in datetime_:  # envelope
                 LOGGER.debug('detected time range')
