@@ -1,6 +1,6 @@
 import { ref, computed } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.7/vue.esm-browser.prod.js'
 
-export default function useItems() {
+export default function useItems(itemsi18n) {
   // Items results
   const itemsLoading = ref(false)
   const itemsJson = ref({})
@@ -35,9 +35,12 @@ export default function useItems() {
       upper = itemsTotal.value
     }
     const firstPage = parseInt(offset.value) + 1
-    let showText = `Showing ${firstPage} to ${upper} of ${itemsTotal.value}`
+    let showText = itemsi18n.showingRange
+      .replace('$firstPage', firstPage)
+      .replace('$upper', upper)
+      .replace('$itemsTotal', itemsTotal.value)
     if (upper === 0) {
-      showText = 'Showing 0 results'
+      showText = itemsi18n.showing0
     }
     return showText
   })

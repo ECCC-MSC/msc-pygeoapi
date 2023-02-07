@@ -52,6 +52,7 @@ from pygeoapi.provider.base import (
     BaseProvider,
     ProviderConnectionError,
     ProviderQueryError,
+    ProviderInvalidQueryError,
     ProviderItemNotFoundError
 )
 
@@ -75,6 +76,7 @@ class MSCDMSCoreAPIProvider(BaseProvider):
 
         self.time_field_format = provider_def.get('_time_field_format',
                                                   '%Y%m%d%H%M')
+        self.geom_field = provider_def.get('geom_field', 'location')
 
         LOGGER.debug(f'data: {self.data}')
 
@@ -194,6 +196,7 @@ class MSCDMSCoreAPIProvider(BaseProvider):
 
         if bbox:
             LOGGER.debug('processing bbox')
+            params['locationField'] = self.geom_field
             params['bbox'] = ','.join([str(b) for b in bbox])
 
         if datetime_ is not None:
@@ -203,7 +206,7 @@ class MSCDMSCoreAPIProvider(BaseProvider):
                 LOGGER.error(msg)
                 raise ProviderQueryError(msg)
 
-            params['datetimeType'] = self.time_field
+            params['datetimeType'] = f'properties.{self.time_field}'
 
             if '/' in datetime_:  # envelope
                 LOGGER.debug('detected time range')
@@ -363,7 +366,12 @@ class MSCDMSCoreAPIProvider(BaseProvider):
         :returns: `str` of custom formatted datetime
         """
 
-        value = datetime.strptime(datetime_string, '%Y-%m-%dT%H:%M:%SZ')
+        try:
+            value = datetime.strptime(datetime_string, '%Y-%m-%dT%H:%M:%SZ')
+        except ValueError as e:
+            raise ProviderInvalidQueryError(
+                f'Invalid datetime parameter format: {e}'
+            )
 
         return value.strftime(self.time_field_format)
 

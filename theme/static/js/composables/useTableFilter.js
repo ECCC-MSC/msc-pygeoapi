@@ -1,6 +1,6 @@
 import { ref, computed } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.7/vue.esm-browser.prod.js'
 
-export default function useTableFilter(rows, keyColumns, defaultSortCol) {
+export default function useTableFilter(rows, keyColumns, defaultSortCol, tableTexti18n) {
   // sort and filtering
   const searchText = ref('')
   const searchTextLowered = computed(() => {
@@ -121,10 +121,10 @@ export default function useTableFilter(rows, keyColumns, defaultSortCol) {
     if (filteredNumEntries.value < totalSize.value) {
       if (totalSize.value === 1) {
         // singular case
-        return `filtered from ${totalSize.value} total entry`
+        return tableTexti18n.filteredSingular.replace('$totalSize', totalSize.value)
       } else { // > 1
         // plural case
-        return `filtered from ${totalSize.value} total entries`
+        return tableTexti18n.filteredPlural.replace('$totalSize', totalSize.value)
       }
     } else {
       return ''
@@ -138,7 +138,10 @@ export default function useTableFilter(rows, keyColumns, defaultSortCol) {
     }
   })
   const showingFilterText = computed(() => {
-    let showText = `Showing ${startEntryOfPage.value} to ${lastEntryOfPage.value} of ${filteredNumEntries.value}`
+    let showText = tableTexti18n.showing
+      .replace('$startEntryOfPage', startEntryOfPage.value)
+      .replace('$lastEntryOfPage', lastEntryOfPage.value)
+      .replace('$lastEntryOfPage', lastEntryOfPage.value)
     if (filteredFromText.value !== '') {
       showText += ` (${filteredFromText.value})`
     }
@@ -168,9 +171,9 @@ export default function useTableFilter(rows, keyColumns, defaultSortCol) {
   const truncateStripTags = function(str) {
     return truncate(stripTags(str), 350)
   }
-  const linkToRow = function(row, key, itemPath) {
+  const linkToRow = function(row, key, itemPath, locale) {
     if (key === 'id') {
-      return `<a href="${itemPath + '/' + row[key]}">${row[key]}</a>`
+      return `<a href="${itemPath + '/' + row[key]}?lang=${locale}">${row[key]}</a>`
     } else if (key === 'links') {
       let linksList = ''
       row[key].forEach(element =>

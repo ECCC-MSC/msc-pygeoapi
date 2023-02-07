@@ -1,18 +1,18 @@
 {% extends "_base.html" %}
 {% block title %}{{ super() }} {{ data['title'] }} {% endblock %}
 {% block crumbs %}{{ super() }}
-<li><a href="../../">Collections</a></li>
-<li><a href="../../../collections/{{ data['id'] }}">{{ data['title'] }}</a></li>
+<li><a href="../../?lang={{ (locale|lower)[:2] }}">{% trans %}Collections{% endtrans %}</a></li>
+<li><a href="../../../collections/{{ data['id'] }}?lang={{ (locale|lower)[:2] }}">{{ data['title'] }}</a></li>
 {% endblock %}
 {% block body %}
     <section id="collection">
       <h1>{{ data['title'] }}</h1>
       <p>{{ data['description'] }}</p>
-      <h3>Coverage range type</h3>
-      <h4>Fields</h4>
+      <h3>{% trans %}Coverage range type{% endtrans %}</h3>
+      <h4>{% trans %}Fields{% endtrans %}</h4>
       <ul>
 	{% for field in data['field'] %}
-	<li>{{ field['id'] }}: {{ field['name'] }} ({{ field['definition'] }})</li>
+	<li>{% trans id=field['id'], name=field['name'], definition=field['definition'] %}{{ id }}: {{ name }} ({{ definition }}){% endtrans %}</li>
 	{% endfor %}
       </ul>
     </section>

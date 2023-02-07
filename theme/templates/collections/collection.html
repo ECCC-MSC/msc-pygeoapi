@@ -1,8 +1,8 @@
 {% extends "_base.html" %}
 {% block title %}{{ super() }} {{ data['title'] }} {% endblock %}
 {% block crumbs %}{{ super() }}
-<li><a href="../collections">Collections</a></li>
-<li><a href="./{{ data['id'] }}">{{ data['title'] }}</a></li>
+<li><a href="../collections?lang={{ (locale|lower)[:2] }}">{% trans %}Collections{% endtrans %}</a></li>
+<li><a href="./{{ data['id'] }}?lang={{ (locale|lower)[:2] }}">{{ data['title'] }}</a></li>
 {% endblock %}
 
 {% block extrahead %}
@@ -29,20 +29,20 @@
         </div>
       </div>
       {% if data['itemType'] == 'feature' or data['itemType'] == 'record' %}
-      <h3>Browse</h3>
+      <h3>{% trans %}Browse{% endtrans %}</h3>
       <ul>
         <li>
           <div>
-            <a title="Browse Items" href="{{ config['server']['url'] }}/collections/{{ data['id'] }}/items">
-              Browse through the items of "{{ data['title'] }}"</a></div>
+            <a title="Browse Items" href="{{ config['server']['url'] }}/collections/{{ data['id'] }}/items?lang={{ (locale|lower)[:2] }}">
+              {% trans data_title=data['title'] %}Browse through the items of "{{ data_title }}"{% endtrans %}</a></div>
         </li>
       </ul>
-      <h3>Queryables</h3>
+      <h3>{% trans %}Queryables{% endtrans %}</h3>
       <ul>
         <li>
           <div>
-            <a title="Display Queryables" href="{{ config['server']['url'] }}/collections/{{ data['id'] }}/queryables">
-              Display Queryables of "{{ data['title'] }}"</a></div>
+            <a title="{% trans %}Display queryables{% endtrans %}" href="{{ config['server']['url'] }}/collections/{{ data['id'] }}/queryables?lang={{ (locale|lower)[:2] }}">
+              {% trans data_title=data['title'] %}Display queryables of "{{ data_title }}"{% endtrans %}</a></div>
         </li>
       </ul>
       {% for provider in config['resources'][data['id']]['providers'] %}
@@ -51,14 +51,14 @@
       <ul>
         <li>
           <div>
-            <a title="Display Tiles" href="{{ config['server']['url'] }}/collections/{{ data['id'] }}/tiles">Display Tiles of "{{ data['title'] }}"</a>
+            <a title="Display tiles" href="{{ config['server']['url'] }}/collections/{{ data['id'] }}/tiles?lang={{ (locale|lower)[:2] }}">{% trans title=data['title'] %}Display tiles of "{{ title }}"{% endtrans %}</a>
           </div>
         </li>
       </ul>
         {% endif %}
       {% endfor %}
       {% endif %}
-      <h3>Output Formats</h3>
+      <h3>{% trans %}Output Formats{% endtrans %}</h3>
       <ul>
       {% for link in data['links'] %}
         {# oapiFeatures datasets; shows the primary 'f=[format]' #}
@@ -74,7 +74,7 @@
         {% endif %}
       {% endfor %}
       </ul>
-      <h3>Links</h3>
+      <h3>{% trans %}Links{% endtrans %}</h3>
       <ul>
       {% for link in data['links'] %}
           <li>

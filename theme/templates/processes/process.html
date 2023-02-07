@@ -1,8 +1,8 @@
 {% extends "_base.html" %}
 {% block title %}{{ super() }} {{ data['title'] }} {% endblock %}
 {% block crumbs %}{{ super() }}
-<li><a href="../processes">Processes</a></li>
-<li><a href="./{{ data['id'] }}">{{ data['title'] }}</a></li>
+<li><a href="../processes?lang={{ (locale|lower)[:2] }}">{% trans %}Processes{% endtrans %}</a></li>
+<li><a href="./{{ data['id'] }}?lang={{ (locale|lower)[:2] }}">{{ data['title'] }}</a></li>
 {% endblock %}
 {% block body %}
     <section id="process">
@@ -16,13 +16,13 @@
       <div class="row">
         <div class="col-sm-12 col-md-12">
           <table class="table table-striped table-hover">
-            <caption>Inputs</caption>
+            <caption>{% trans %}Inputs{% endtrans %}</caption>
             <thead>
             <tr>
-              <th>ID</th>
-              <th>Title</th>
-              <th>Data Type</th>
-              <th>Description</th>
+              <th>{% trans %}ID{% endtrans %}</th>
+              <th>{% trans %}Title{% endtrans %}</th>
+              <th>{% trans %}Data type{% endtrans %}</th>
+              <th>{% trans %}Description{% endtrans %}</th>
             </tr>
             </thead>
             <tbody>
@@ -50,9 +50,9 @@
             <caption>Outputs</caption>
             <thead>
             <tr>
-              <th>ID</th>
-              <th>Title</th>
-              <th>Description</th>
+              <th>{% trans %}ID{% endtrans %}</th>
+              <th>{% trans %}Title{% endtrans %}</th>
+              <th>{% trans %}Description{% endtrans %}</th>
             </tr>
             </thead>
             <tbody>
@@ -67,19 +67,19 @@
               {% endfor %}
             </tbody>
           </table>
-          <h2>Execution modes</h2>
+          <h2>{% trans %}Execution modes{% endtrans %}</h2>
           <ul>
-            {% if 'sync-execute' in data.jobControlOptions %}<li>Synchronous</li>{% endif %}
-            {% if 'async-execute' in data.jobControlOptions %}<li>Asynchronous</li>{% endif %}
+            {% if 'sync-execute' in data.jobControlOptions %}<li>{% trans %}Synchronous{% endtrans %}</li>{% endif %}
+            {% if 'async-execute' in data.jobControlOptions %}<li>{% trans %}Asynchronous{% endtrans %}</li>{% endif %}
           </ul>
-          <h2>Jobs</h2>
-          <a title="Browse jobs" href="{{config.server.url}}/jobs">Browse jobs</a>
-          <h2>Links</h2>
+          <h2>{% trans %}Jobs{% endtrans %}</h2>
+          <a title="{% trans %}Browse jobs{% endtrans %}" href="{{config.server.url}}/jobs">{% trans %}Browse jobs{% endtrans %}</a>
+          <h2>{% trans %}Links{% endtrans %}</h2>
           <ul>
             {% for link in data['links'] %}
                 <li>
-                  <a title={{link.title}} type={{link.type}} rel={{link.rel}} href={{link.href}} hreflang={{link.hreflang}}>
-                    {{ link['title'] }} ({{ link['type'] }})
+                  <a title="{{link.title}}" type="{{link.type}}" rel="{{link.rel}}" href="{{link.href}}" hreflang="{{link.hreflang}}">
+                    {% trans title=link['title'], type=link['type'] %}{{ title }} ({{ type }}){% endtrans %}
                   </a>
                 </li>
             {% endfor %}

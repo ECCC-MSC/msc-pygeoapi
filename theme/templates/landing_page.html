@@ -1,8 +1,8 @@
 {% extends "_base.html" %}
-{% block title %}{{ super() }} Home {% endblock %}
+{% block title %}{{ super() }} {% trans %}Home{% endtrans %} {% endblock %}
 {% block body %}
 
-<h1>MSC GeoMet &mdash; GeoMet-OGC-API</h1>
+<h1>{{ config['metadata']['identification']['title'] }}</h1>
 
 <section id="collections">
 <div class="row">
@@ -22,58 +22,58 @@
     <section class="panel panel-info">
       <div class="panel-body">
         <p class="text-info">
-          <b><span class="glyphicon glyphicon-book"></span> MSC GeoMet User Documentation</b><br>
-          <a class="info" href="https://eccc-msc.github.io/open-data/msc-geomet/readme_en" target="_blank">https://eccc-msc.github.io/open-data/msc-geomet/readme_en</a>
+          <b><span class="glyphicon glyphicon-book"></span> {% trans %}MSC GeoMet User Documentation{% endtrans %}</b><br>
+          <a class="info" href="{{ config['metadata']['identification']['url'] }}" target="_blank">{{ config['metadata']['identification']['url'] }}</a>
         </p>
       </div>
     </section>
 
     <section id="collections">
-      <h2>Collections</h2>
+      <h2>{% trans %}Collections{% endtrans %}</h2>
       <p>
-        <a href="{{ config['server']['url'] }}/collections?f=html">View the collections in this service</a>
+        <a href="{{ config['server']['url'] }}/collections?lang={{ (locale|lower)[:2] }}">{% trans %}View the collections in this service{% endtrans %}</a>
       </p>
     </section>
 
 
     {% if data['stac'] %}
     <section id="collections">
-      <h2>SpatioTemporal Assets</h2>
+      <h2>{% trans %}SpatioTemporal Assets{% endtrans %}</h2>
       <p>
-        <a href="{{ config['server']['url'] }}/stac?f=html">View the SpatioTemporal Assets in this service</a>
+        <a href="{{ config['server']['url'] }}/stac?lang={{ (locale|lower)[:2] }}">{% trans %}View the SpatioTemporal Assets in this service{% endtrans %}</a>
       </p>
     </section>
     {% endif %}
 
     {% if data['processes'] %}
     <section id="processes">
-      <h2>Processes</h2>
+      <h2>{% trans %}Processes{% endtrans %}</h2>
       <p>
-        <a href="{{ config['server']['url'] }}/processes?f=html">View the processes in this service</a>
+        <a href="{{ config['server']['url'] }}/processes?lang={{ (locale|lower)[:2] }}">{% trans %}View the processes in this service{% endtrans %}</a>
       </p>
     </section>
     <section id="jobs">
-      <h2>Jobs</h2>
+      <h2>{% trans %}Jobs{% endtrans %}</h2>
       <p>
-        <a href="{{ config['server']['url'] }}/jobs?f=html">View the jobs in this service</a>
+        <a href="{{ config['server']['url'] }}/jobs?lang={{ (locale|lower)[:2] }}">{% trans %}View the jobs in this service{% endtrans %}</a>
       </p>
     </section>
     {% endif %}
 
     <section id="openapi">
-      <h2>API Definition</h2>
+      <h2>{% trans %}API Definition{% endtrans %}</h2>
       <p>
-        <a href="{{ config['server']['url'] }}/openapi?f=html">Documentation: Swagger UI</a>
+        <a href="{{ config['server']['url'] }}/openapi?f=html">{% trans %}Documentation: Swagger UI{% endtrans %}</a>
       </p>
       <p>
-        <a href="{{ config['server']['url'] }}/openapi?f=json">OpenAPI Document</a>
+        <a href="{{ config['server']['url'] }}/openapi?f=json">{% trans %}OpenAPI Document{% endtrans %}</a>
       </p>
     </section>
     
     <section id="conformance">
-      <h2>Conformance</h2>
+      <h2>{% trans %}Conformance{% endtrans %}</h2>
       <p>
-        <a href="{{ config['server']['url'] }}/conformance?f=html">View the conformance classes of this service</a>
+        <a href="{{ config['server']['url'] }}/conformance?lang={{ (locale|lower)[:2] }}">{% trans %}View the conformance classes of this service{% endtrans %}</a>
       </p>
     </section>
   </div>
@@ -82,7 +82,7 @@
   <div class="col-md-4 col-sm-12">
     <section class="panel panel-primary">
       <header class="panel-heading">
-        <h2 class="panel-title">Provider</h2>
+        <h2 class="panel-title">{% trans %}Provider{% endtrans %}</h2>
       </header>
       <div class="panel-body">
         <b>{{ config['metadata']['provider']['name'] }}</b><br>
@@ -92,10 +92,10 @@
 
     <section class="panel panel-primary">
       <header class="panel-heading">
-        <h2 class="panel-title">Contact point</h2>
+        <h2 class="panel-title">{% trans %}Contact point{% endtrans %}</h2>
       </header>
       <div class="panel-body">
-        <b>Address</b><br/>
+        <b>{% trans %}Address{% endtrans %}</b><br/>
         <div id="address-details">
           <span>{{ config['metadata']['contact']['address'] }}</span><br/>
           <span>{{ config['metadata']['contact']['city'] }}</span>,
@@ -104,18 +104,18 @@
           <span>{{ config['metadata']['contact']['country'] }}</span>
         </div>
         <div>
-          <b>Email</b><br/>
+          <b>{% trans %}Email{% endtrans %}</b><br/>
           <span><a href="mailto:{{ config['metadata']['contact']['email'] }}" class="text-break">{{ config['metadata']['contact']['email'] }}</a></span><br/>
           {% if config['metadata']['contact']['phone'] %}
-            <b>Telephone</b><br/>
+            <b>{% trans %}Telephone{% endtrans %}</b><br/>
             <span><a href="tel:{{ config['metadata']['contact']['phone'] }}">{{ config['metadata']['contact']['phone'] }}</a></span><br/>
           {% endif %}
           {% if config['metadata']['contact']['fax'] %}
-            <b>Fax</b><br/>
+            <b>{% trans %}Fax{% endtrans %}</b><br/>
             <span><a href="tel:{{ config['metadata']['contact']['fax'] }}">{{ config['metadata']['contact']['fax'] }}</a></span><br/>
           {% endif %}
           {% if config['metadata']['contact']['url'] %}
-            <b>Contact URL</b><br/>
+            <b>{% trans %}Contact URL{% endtrans %}</b><br/>
             <span><a href="{{ config['metadata']['contact']['url'] }}" target="_blank" class="text-break">{{ config['metadata']['contact']['url'] }}</a></span><br/>
           {% endif %}
           {% if config['metadata']['contact']['hours'] %}
@@ -123,7 +123,7 @@
             <span>{{ config['metadata']['contact']['hours'] }}</span><br/>
           {% endif %}
           {% if config['metadata']['contact']['instructions'] %}
-            <b>Contact instructions</b><br/>
+            <b>{% trans %}Contact instructions{% endtrans %}</b><br/>
             <span>{{ config['metadata']['contact']['instructions'] }}</span>
           {% endif %}
         </div>
@@ -132,16 +132,16 @@
 
     <section class="panel panel-info">
       <header class="panel-heading">
-        <h2 class="panel-title">Use of service</h2>
+        <h2 class="panel-title">{% trans %}Use of service{% endtrans %}</h2>
       </header>
       <div class="panel-body">
         {% if config['metadata']['identification']['terms_of_service'] %}
-        <b>License</b><br>
+        <b>{% trans %}License{% endtrans %}</b><br>
         <a href="{{ config['metadata']['license']['url'] }}">{{ config['metadata']['license']['name'] or config['metadata']['license']['url'] }}</a><br>
         {% endif %}
 
         {% if config['metadata']['identification']['terms_of_service'] %}
-        <b>Terms of service</b><br>
+        <b>{% trans %}Terms of service{% endtrans %}</b><br>
         <span class="text-break">{{ config['metadata']['identification']['terms_of_service'] | urlize() }}</span>
         {% endif %}
       </div>

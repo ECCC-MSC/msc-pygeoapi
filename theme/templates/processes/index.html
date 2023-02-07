@@ -1,25 +1,25 @@
 {% extends "_base.html" %}
-{% block title %}{{ super() }} Processes {% endblock %}
+{% block title %}{{ super() }} {% trans %}Processes{% endtrans %} {% endblock %}
 {% block crumbs %}{{ super() }}
-<li><a href="./processes">Processes</a></li>
+<li><a href="./processes?lang={{ (locale|lower)[:2] }}">{% trans %}Processes{% endtrans %}</a></li>
 {% endblock %}
 {% block body %}
     <section id="processes">
-      <h2>Processes in this service</h2>
+      <h2>{% trans %}Processes in this service{% endtrans %}</h2>
       <div class="row">
         <div class="col-sm-12 col-md-6">
           <table class="table table-striped">
             <thead>
               <tr>
-                <th>Name</th>
-                <th>Description</th>
+                <th>{% trans %}Name{% endtrans %}</th>
+                <th>{% trans %}Description{% endtrans %}</th>
               </tr>
             </thead>
             <tbody>
               {% for p in data['processes'] %}
               <tr>
                 <td>
-                  <a title="{{ p['title'] | striptags | truncate }}" href="{{ config['server']['url'] }}/processes/{{ p['id'] }}">{{ p['title'] | striptags | truncate }}</a>
+                  <a title="{{ p['title'] | striptags | truncate }}" href="{{ config['server']['url'] }}/processes/{{ p['id'] }}?lang={{ (locale|lower)[:2] }}">{{ p['title'] | striptags | truncate }}</a>
                 </td>
                 <td>
                   {{ p['description'] | striptags | truncate }}

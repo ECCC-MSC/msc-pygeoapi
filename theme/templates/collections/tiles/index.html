@@ -1,9 +1,9 @@
 {% extends "_base.html" %}
 {% block title %}{{ super() }} {{ data['title'] }} {% endblock %}
 {% block crumbs %}{{ super() }}
-<li><a href="../../collections">Collections</a></li>
-<li><a href="../{{ data['id'] }}">{{ data['title'] }}</a></li>
-<li><a href="../{{ data['id'] }}/tiles">Tiles</a></li>
+<li><a href="../../collections?lang={{ (locale|lower)[:2] }}">{% trans %}Collections{% endtrans %}</a></li>
+<li><a href="../{{ data['id'] }}?lang={{ (locale|lower)[:2] }}">{{ data['title'] }}</a></li>
+<li><a href="../{{ data['id'] }}/tiles?lang={{ (locale|lower)[:2] }}">{% trans %}Tiles{% endtrans %}</a></li>
 {% endblock %}
 {% block extrahead %}
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
@@ -26,9 +26,9 @@
           <li><span class="label label-info">{{ kw }}</span></li>
         {% endfor %}
       </ul>
-      <h3>Tiles</h3>
+      <h3>{% trans %}Tiles{% endtrans %}</h3>
       <div class="row">
-        <div class="col-md-2 col-sm-12">Tile Matrix Set</div>
+        <div class="col-md-2 col-sm-12">{% trans %}Tile matrix set{% endtrans %}</div>
         <div class="col-md-8">
           <select id="tilingScheme">
             {% for tileset in data['tilesets'] %}
@@ -39,8 +39,8 @@
       </div>
       <br/>
       <div class="row">
-        <div class="col-md-2 col-sm-12">Metadata</div>
-        <div class="col-md-8"><a id="tilejson" href="" target="_blank">Tiles metadata in {{ data['format'] }} format</a></div>
+        <div class="col-md-2 col-sm-12">{% trans %}Metadata{% endtrans %}</div>
+        <div class="col-md-8"><a id="tilejson" href="" target="_blank">{% trans data_format=data['format'] %}Tiles metadata in {{ data_format }} format{% endtrans %}</a></div>
       </div>
       <script>
         var select = document.getElementById('tilingScheme');
@@ -54,11 +54,11 @@
           var scheme = ev.target.value;
           document.location.search = `scheme=${scheme}`;
         });
-        document.getElementById("tilejson").href = "{{ config['server']['url'] }}/collections/{{ data['id'] }}/tiles/" + tileset + "/metadata";
+        document.getElementById("tilejson").href = "{{ config['server']['url'] }}/collections/{{ data['id'] }}/tiles/" + tileset + "/metadata?lang={{ (locale|lower)[:2] }}";
       </script>
       <br/>
       <div class="row">
-        <div class="col-md-2 col-sm-12">Map</div>
+        <div class="col-md-2 col-sm-12">{% trans %}Map{% endtrans %}</div>
         <div class="col-md-8">
           <div id="items-map"></div>
         </div>
@@ -106,8 +106,8 @@
     var tilesPbfLayer = L.vectorGrid.protobuf(url, VectorTileOptions)
       .on('click', function(e) { // The .on method attaches an event handler
           L.popup()
-            .setContent("<b>Name</b>: " + e.layer.properties.name +
-                        "<br><b>Class</b>: " + e.layer.properties.featureclass)
+            .setContent("<b>{% trans %}Name{% endtrans %}</b>: " + e.layer.properties.name +
+                        "<br><b>{% trans %}Class{% endtrans %}</b>: " + e.layer.properties.featureclass)
             .setLatLng(e.latlng)
             .openOn(map);
 

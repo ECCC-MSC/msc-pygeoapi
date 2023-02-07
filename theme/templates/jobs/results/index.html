@@ -1,13 +1,13 @@
 {% extends "_base.html" %}
-{% block title %}{{ super() }} Job result {% endblock %}
+{% block title %}{{ super() }} {% trans %}Job results{% endtrans %} {% endblock %}
 {% block crumbs %}{{ super() }}
-<li><a href="../../jobs">Jobs</a></li>
-<li><a href="../{{ data.job.id }}">{{ data.job.id }}</a></li>
-<li><a href="./results">results</a></li>
+<li><a href="../../jobs?lang={{ (locale|lower)[:2] }}">{% trans %}Jobs{% endtrans %}</a></li>
+<li><a href="../{{ data.job.id }}?lang={{ (locale|lower)[:2] }}">{{ data.job.id }}</a></li>
+<li><a href="./results?lang={{ (locale|lower)[:2] }}">{% trans %}results{% endtrans %}</a></li>
 {% endblock %}
 {% block body %}
   <section id="jobs">
-    <h2>Results of job {{data.job.id}}</h2>
+    <h2>{% trans id=data.job.id %}Results of job {{id}}{% endtrans %}</h2>
     <pre id="results"></pre>
   </section>
   <script>
