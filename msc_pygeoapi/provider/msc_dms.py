@@ -115,9 +115,9 @@ class MSCDMSCoreAPIProvider(BaseProvider):
             url = f'{self.data}/templateSearch'
             sa = self.session.get(url, params=params).json()
         except json.JSONDecodeError as e:
-            raise ProviderQueryError(
-                f'Could not decode JSON from query response: {e}'
-            )
+            msg = f'Could not decode JSON from query response: {e}'
+            LOGGER.error(msg)
+            raise ProviderQueryError(msg)
 
         try:
             properties = sa['hits']['hits'][0]['_source']['properties']
@@ -199,8 +199,9 @@ class MSCDMSCoreAPIProvider(BaseProvider):
         if datetime_ is not None:
             LOGGER.debug('processing datetime parameter')
             if self.time_field is None:
-                LOGGER.error('time_field not enabled for collection')
-                raise ProviderQueryError()
+                msg = 'time_field not enabled for collection'
+                LOGGER.error(msg)
+                raise ProviderQueryError(msg)
 
             params['datetimeType'] = self.time_field
 
@@ -218,14 +219,14 @@ class MSCDMSCoreAPIProvider(BaseProvider):
         if properties:
             LOGGER.debug('processing properties')
             params['query'] = ' AND '.join(
-                ['properties.{}:"{}"'.format(*p) for p in properties]
+                [f'properties.{p}:"{v}"' for p, v in properties]
             )
 
         if sortby:
             LOGGER.debug('processing sortby')
             sort_by_values = []
             for sort in sortby:
-                LOGGER.debug('processing sort object: {}'.format(sort))
+                LOGGER.debug(f'processing sort object: {sort}')
                 sort_property = f'{sort["order"]}properties.{sort["property"]}'
                 sort_by_values.append(sort_property)
 
@@ -242,7 +243,9 @@ class MSCDMSCoreAPIProvider(BaseProvider):
             results = self.session.get(url, params=params).json()
             results['hits']['total'] = results['hits']['total']['value']
         except Exception as e:
-            raise e
+            msg = f'Query error: {e}'
+            LOGGER.error(msg)
+            raise ProviderQueryError(msg)
 
         feature_collection['numberMatched'] = results['hits']['total']
 
@@ -264,7 +267,7 @@ class MSCDMSCoreAPIProvider(BaseProvider):
         :returns: dict of single GeoJSON feature
         """
 
-        LOGGER.debug('Fetching identifier {}'.format(identifier))
+        LOGGER.debug(f'Fetching identifier {identifier}')
 
         url = f'{self.dms_host}/search/v2.0/{self.alias}/templateSearch'
 
@@ -276,9 +279,9 @@ class MSCDMSCoreAPIProvider(BaseProvider):
         try:
             result = self.session.get(url, params=params).json()
         except json.JSONDecodeError as e:
-            raise ProviderQueryError(
-                f'Could not decode JSON from query response: {e}'
-            )
+            msg = f'Could not decode JSON from query response: {e}'
+            LOGGER.error(msg)
+            raise ProviderQueryError(msg)
 
         try:
             LOGGER.debug('Serializing feature')
@@ -320,7 +323,7 @@ class MSCDMSCoreAPIProvider(BaseProvider):
                     ]
                 except KeyError as err:
                     LOGGER.error(err)
-                    raise ProviderQueryError()
+                    raise ProviderQueryError(err)
 
         if feature_thinned:
             return feature_thinned
@@ -336,8 +339,8 @@ class MSCDMSCoreAPIProvider(BaseProvider):
 
         all_properties = []
 
-        LOGGER.debug('configured properties: {}'.format(self.properties))
-        LOGGER.debug('selected properties: {}'.format(self.select_properties))
+        LOGGER.debug(f'configured properties: {self.properties}')
+        LOGGER.debug(f'selected properties: {self.select_properties}')
 
         if not self.properties and not self.select_properties:
             all_properties = self.get_fields()
@@ -346,7 +349,7 @@ class MSCDMSCoreAPIProvider(BaseProvider):
         else:
             all_properties = set(self.properties) | set(self.select_properties)
 
-        LOGGER.debug('resulting properties: {}'.format(all_properties))
+        LOGGER.debug(f'resulting properties: {all_properties}')
         return all_properties
 
     def _rfc3339_to_datetime_string(self, datetime_string):
@@ -365,4 +368,4 @@ class MSCDMSCoreAPIProvider(BaseProvider):
         return value.strftime(self.time_field_format)
 
     def __repr__(self):
-        return '<MSCDMSCoreAPIProvider> {}'.format(self.data)
+        return f'<MSCDMSCoreAPIProvider> {self.data}'
