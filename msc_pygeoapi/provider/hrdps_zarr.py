@@ -114,6 +114,16 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         for dim in self._data.dims:
             all_dimensions.append(dim)
 
+        try:
+            size_x = float(abs(self._data.lon[1] - self._data.lon[0]))
+        except IndexError:
+            size_x = float(abs(self._data.lon[0]))
+
+        try:
+            size_y = float(abs(self._data.lat[1] - self._data.lat[0]))
+        except IndexError:
+            size_y = float(abs(self._data.lat[0]))
+
         properties = {
             # have to convert values to float and int to serilize into json
             'crs': self._data.attrs['_CRS'],
@@ -132,8 +142,8 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                 'height': int(self._data.lat.size)
                 },
             'resolution': {
-                'x': float(abs(self._data.lon[1] - self._data.lon[0])),
-                'y': float(abs(self._data.lat[1] - self._data.lat[0]))
+                'x': size_x,
+                'y': size_y
                 },
             'variables': all_variables,
             'dimensions': all_dimensions
@@ -514,6 +524,11 @@ def _gen_domain_axis(self, data):
                 uom = self._data[var_name][dim].attrs['units']
             except KeyError:
                 uom = 'n/a'
+
+            try:
+                rez = float(abs(data[dim].values[1] - data[dim].values[0]))
+            except IndexError:
+                rez = float(abs(data[dim].values[0]))
             aa.append(
                 {
                     'type': 'RegularAxisType',
@@ -521,8 +536,7 @@ def _gen_domain_axis(self, data):
                     'lowerBound': float(data[dim].min().values),
                     'upperBound': float(data[dim].max().values),
                     'uomLabel': uom,
-                    'resolution': float(
-                        abs(data[dim].values[1] - data[dim].values[0]))
+                    'resolution': rez
                 })
     return aa, all_dims
 
