@@ -3355,15 +3355,23 @@ resources:
         type: collection
         title: WMO WIS2 discovery metadata (experimental)
         description: WMO WIS2 discovery metadata (experimental)
-        keywords: [wmo, wis2, discovery, metadata]
+        keywords: 
+            en: [wmo, wis2, discovery, metadata]
+            fr: [wmo, wis2, discovery, metadata]
         crs:
             - CRS84
         links:
             - type: text/html
               rel: canonical
-              title: WMO Information System
-              href: https://community.wmo.int/activity-areas/wis
-              hreflang: en-US
+              title: 
+                en: WMO Information System
+                fr: WMO Information System
+              href: 
+                en: https://community.wmo.int/activity-areas/wis
+                fr: https://community.wmo.int/activity-areas/wis
+              hreflang: 
+                en: en-US
+                fr: en-US
         extents:
             spatial:
                 bbox: [-180, -90, 180, 90]
@@ -3376,17 +3384,29 @@ resources:
 
     wis2-notification-messages:
         type: collection
-        title: WMO WIS2 notification messages (experimental)
-        description: WMO WIS2 notification messages (experimental)
-        keywords: [wmo, wis2, notification, messages]
+        title: 
+            en: WMO WIS2 notification messages (experimental)
+            fr: WMO WIS2 notification messages (experimental)
+        description: 
+            en: WMO WIS2 notification messages (experimental)
+            fr: WMO WIS2 notification messages (experimental)
+        keywords: 
+            en: [wmo, wis2, notification, messages]
+            fr: [wmo, wis2, notification, messages]
         crs:
             - CRS84
         links:
             - type: text/html
               rel: canonical
-              title: WMO Information System
-              href: https://community.wmo.int/activity-areas/wis
-              hreflang: en-US
+              title: 
+                en: WMO Information System
+                fr: WMO Information System
+              href: 
+                en: https://community.wmo.int/activity-areas/wis
+                fr: https://community.wmo.int/activity-areas/wis
+              hreflang:
+                en: en-US
+                fr: en-US
         extents:
             spatial:
                 bbox: [-180, -90, 180, 90]
