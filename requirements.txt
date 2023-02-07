@@ -12,5 +12,5 @@ rasterio
 requests
 sqlalchemy
 unicodecsv
-xarray
+xarray<2023.2.0
 zarr
