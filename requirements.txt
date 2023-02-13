@@ -3,6 +3,7 @@ dask
 elasticsearch<8
 gdal
 lxml
+netcdf4
 parse
 pygeometa
 pyproj

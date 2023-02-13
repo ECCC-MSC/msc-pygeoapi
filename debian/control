@@ -9,8 +9,8 @@ Vcs-Git: https://github.com/ECCC-MSC/msc-pygeoapi.git
 
 Package: msc-pygeoapi
 Architecture: all
-Depends: elasticsearch (>=7), elasticsearch (<8), python3, python3-click, python3-fiona, python3-gdal, python3-lxml, python3-parse, python3-pygeoapi, python3-pygeometa, python3-pyproj, python3-rasterio, python3-requests, python3-slugify, python3-sqlalchemy, python3-unicodecsv, python3-xarray, python3-yaml
-Suggests: python3-elasticsearch (>=7), python3-elasticsearch (<8)
+Depends: elasticsearch, python3, python3-click, python3-fiona, python3-gdal, python3-lxml, python3-parse, python3-pygeoapi, python3-pygeometa, python3-pyproj, python3-rasterio, python3-requests, python3-slugify, python3-sqlalchemy, python3-unicodecsv, python3-xarray, python3-yaml
+Suggests: python3-elasticsearch
 Homepage: https://github.com/ECCC-MSC/msc-pygeoapi
 Description: MSC GeoMet pygeoapi server configuration and utilities
  This service provides OGC API services for weather, climate, and water data
