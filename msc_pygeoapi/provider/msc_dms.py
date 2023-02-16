@@ -256,9 +256,9 @@ class MSCDMSCoreAPIProvider(BaseProvider):
             LOGGER.debug(f'querying DMS Core API with: {params}')
             url = f'{self.dms_host}/search/v2.0/{self.alias}/templateSearch'
             results = self.session.get(url, params=params)
-            results = results.json()            
+            results = results.json()
             results['hits']['total'] = results['hits']['total']['value']
-        except Exception as e:
+        except Exception:
             msg = f'Query error: {results.text}'
             LOGGER.error(msg)
             raise ProviderQueryError(msg)
