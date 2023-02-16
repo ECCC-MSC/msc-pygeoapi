@@ -207,7 +207,7 @@ class MSCDMSCoreAPIProvider(BaseProvider):
             else:
                 params['bbox'] = ','.join([str(b) for b in bbox])
 
-        if None not in [kwargs.get('within'), kwargs('within_units')]:
+        if None not in [kwargs.get('within'), kwargs.get('within_units')]:
             LOGGER.debug('Setting radius parameters')
             distance = f"{kwargs.get('within')}{kwargs.get('within_units')}"
             params['distance'] = distance
