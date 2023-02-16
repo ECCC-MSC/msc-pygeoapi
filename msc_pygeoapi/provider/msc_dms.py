@@ -409,7 +409,7 @@ class MSCDMSCoreAPIEDRProvider(BaseEDRProvider, MSCDMSCoreAPIProvider):
 
         for key, value in fields_.items():
             if key.endswith('uom'):
-                 continue
+                continue
 
             uom = None
             unit_field = f'{key}-uom'
