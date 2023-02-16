@@ -255,18 +255,19 @@ class MSCDMSCoreAPIProvider(BaseProvider):
         try:
             LOGGER.debug(f'querying DMS Core API with: {params}')
             url = f'{self.dms_host}/search/v2.0/{self.alias}/templateSearch'
-            results = self.session.get(url, params=params).json()
+            results = self.session.get(url, params=params)
+            results = results.json()            
             results['hits']['total'] = results['hits']['total']['value']
         except Exception as e:
-            msg = f'Query error: {e}'
+            msg = f'Query error: {results.text}'
             LOGGER.error(msg)
             raise ProviderQueryError(msg)
 
         feature_collection['numberMatched'] = results['hits']['total']
         feature_collection['numberReturned'] = len(results['hits']['hits'])
 
-        LOGGER.debug(f"Matched: {feature_collection['numberMatched']}"))
-        LOGGER.debug(f"Returned: {feature_collection['numberReturned']}"))
+        LOGGER.debug(f"Matched: {feature_collection['numberMatched']}")
+        LOGGER.debug(f"Returned: {feature_collection['numberReturned']}")
 
         LOGGER.debug('serializing features')
         for feature in results['hits']['hits']:
