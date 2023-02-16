@@ -400,6 +400,45 @@ class MSCDMSCoreAPIEDRProvider(BaseEDRProvider, MSCDMSCoreAPIProvider):
         BaseEDRProvider.__init__(self, provider_def)
         MSCDMSCoreAPIProvider.__init__(self, provider_def)
 
+    def get_fields(self):
+        new_fields = {
+            'field': []
+        }
+
+        fields_ = MSCDMSCoreAPIProvider.get_fields(self)
+
+        for key, value in fields_.items():
+            if key.endswith('uom'):
+                continue
+
+            uom = None
+            unit_field = f'{key}-uom'
+
+            if unit_field in fields_:
+                units = fields_[unit_field]
+
+                uom = {
+                    'id': f'http://www.opengis.net/def/uom/UCUM/{units}',
+                    'type': 'UnitReference',
+                    'code': units
+                }
+
+            field_def = {
+                'id': key,
+                'name': key,
+                'type': 'Quantity',
+                'encodingInfo': {
+                    'dataType': f"http://www.opengis.net/def/dataType/OGC/0/{value['type']}"  # noqa
+                }
+            }
+
+            if uom is not None:
+                field_def['uom'] = uom
+
+            new_fields['field'].append(field_def)
+
+        return new_fields
+
     @BaseEDRProvider.register()
     def radius(self, **kwargs):
         wkt = kwargs.get('wkt')
