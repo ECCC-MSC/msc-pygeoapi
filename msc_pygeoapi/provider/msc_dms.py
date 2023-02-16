@@ -263,8 +263,10 @@ class MSCDMSCoreAPIProvider(BaseProvider):
             raise ProviderQueryError(msg)
 
         feature_collection['numberMatched'] = results['hits']['total']
-
         feature_collection['numberReturned'] = len(results['hits']['hits'])
+
+        LOGGER.debug(f"Matched: {feature_collection['numberMatched']}"))
+        LOGGER.debug(f"Returned: {feature_collection['numberReturned']}"))
 
         LOGGER.debug('serializing features')
         for feature in results['hits']['hits']:
@@ -402,4 +404,4 @@ class MSCDMSCoreAPIEDRProvider(BaseEDRProvider, MSCDMSCoreAPIProvider):
         wkt = kwargs.get('wkt')
         kwargs['bbox'] = [wkt.x, wkt.y, wkt.x, wkt.y]
 
-        super().query(**kwargs)
+        return MSCDMSCoreAPIProvider.query(self, **kwargs)
