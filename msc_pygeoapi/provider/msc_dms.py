@@ -55,6 +55,7 @@ from pygeoapi.provider.base import (
     ProviderInvalidQueryError,
     ProviderItemNotFoundError
 )
+from pygeoapi.provider.base_edr import BaseEDRProvider
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.DEBUG)
@@ -175,6 +176,8 @@ class MSCDMSCoreAPIProvider(BaseProvider):
         :param select_properties: list of property names
         :param skip_geometry: bool of whether to skip geometry (default False)
         :param q: full-text search term(s)
+        :param within: distance (for EDR radius queries)
+        :param within_units: distance units (for EDR radius queries)
 
         :returns: dict of 0..n GeoJSON features
         """
@@ -197,7 +200,17 @@ class MSCDMSCoreAPIProvider(BaseProvider):
         if bbox:
             LOGGER.debug('processing bbox')
             params['locationField'] = self.geom_field
-            params['bbox'] = ','.join([str(b) for b in bbox])
+            if bbox[0] == bbox[2] and bbox[1] == bbox[3]:
+                LOGGER.debug('Point-based geometry query detected')
+                params['latitude'] = bbox[1]
+                params['longitude'] = bbox[0]
+            else:
+                params['bbox'] = ','.join([str(b) for b in bbox])
+
+        if None not in [kwargs.get('within'), kwargs('within_units')]:
+            LOGGER.debug('Setting radius parameters')
+            distance = f"{kwargs.get('within')}{kwargs.get('within_units')}"
+            params['distance'] = distance
 
         if datetime_ is not None:
             LOGGER.debug('processing datetime parameter')
@@ -238,11 +251,6 @@ class MSCDMSCoreAPIProvider(BaseProvider):
                 sort_by_values.append(sort_property)
 
             params['sortFields'] = ','.join(sort_by_values)
-
-        if bbox:
-            LOGGER.debug('processing bbox')
-            params['locationField'] = 'geometry'
-            params['bbox'] = ','.join(str(b) for b in bbox)
 
         try:
             LOGGER.debug(f'querying DMS Core API with: {params}')
@@ -381,3 +389,17 @@ class MSCDMSCoreAPIProvider(BaseProvider):
 
     def __repr__(self):
         return f'<MSCDMSCoreAPIProvider> {self.data}'
+
+
+class MSCDMSCoreAPIEDRProvider(BaseEDRProvider, MSCDMSCoreAPIProvider):
+    def __init__(self, provider_def):
+
+        BaseEDRProvider.__init__(self, provider_def)
+        MSCDMSCoreAPIProvider.__init__(self, provider_def)
+
+    @BaseEDRProvider.register()
+    def radius(self, **kwargs):
+        wkt = kwargs.get('wkt')
+        kwargs['bbox'] = [wkt.x, wkt.y, wkt.x, wkt.y]
+
+        super().query(**kwargs)
