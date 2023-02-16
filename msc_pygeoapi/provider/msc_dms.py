@@ -55,6 +55,7 @@ from pygeoapi.provider.base import (
     ProviderInvalidQueryError,
     ProviderItemNotFoundError
 )
+from pygeoapi.provider.base_edr import BaseEDRProvider
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.DEBUG)
@@ -175,6 +176,8 @@ class MSCDMSCoreAPIProvider(BaseProvider):
         :param select_properties: list of property names
         :param skip_geometry: bool of whether to skip geometry (default False)
         :param q: full-text search term(s)
+        :param within: distance (for EDR radius queries)
+        :param within_units: distance units (for EDR radius queries)
 
         :returns: dict of 0..n GeoJSON features
         """
@@ -197,7 +200,17 @@ class MSCDMSCoreAPIProvider(BaseProvider):
         if bbox:
             LOGGER.debug('processing bbox')
             params['locationField'] = self.geom_field
-            params['bbox'] = ','.join([str(b) for b in bbox])
+            if bbox[0] == bbox[2] and bbox[1] == bbox[3]:
+                LOGGER.debug('Point-based geometry query detected')
+                params['latitude'] = bbox[1]
+                params['longitude'] = bbox[0]
+            else:
+                params['bbox'] = ','.join([str(b) for b in bbox])
+
+        if None not in [kwargs.get('within'), kwargs.get('within_units')]:
+            LOGGER.debug('Setting radius parameters')
+            distance = f"{kwargs.get('within')}{kwargs.get('within_units')}"
+            params['distance'] = distance
 
         if datetime_ is not None:
             LOGGER.debug('processing datetime parameter')
@@ -239,24 +252,22 @@ class MSCDMSCoreAPIProvider(BaseProvider):
 
             params['sortFields'] = ','.join(sort_by_values)
 
-        if bbox:
-            LOGGER.debug('processing bbox')
-            params['locationField'] = 'geometry'
-            params['bbox'] = ','.join(str(b) for b in bbox)
-
         try:
             LOGGER.debug(f'querying DMS Core API with: {params}')
             url = f'{self.dms_host}/search/v2.0/{self.alias}/templateSearch'
-            results = self.session.get(url, params=params).json()
+            results = self.session.get(url, params=params)
+            results = results.json()
             results['hits']['total'] = results['hits']['total']['value']
-        except Exception as e:
-            msg = f'Query error: {e}'
+        except Exception:
+            msg = f'Query error: {results.text}'
             LOGGER.error(msg)
             raise ProviderQueryError(msg)
 
         feature_collection['numberMatched'] = results['hits']['total']
-
         feature_collection['numberReturned'] = len(results['hits']['hits'])
+
+        LOGGER.debug(f"Matched: {feature_collection['numberMatched']}")
+        LOGGER.debug(f"Returned: {feature_collection['numberReturned']}")
 
         LOGGER.debug('serializing features')
         for feature in results['hits']['hits']:
@@ -381,3 +392,17 @@ class MSCDMSCoreAPIProvider(BaseProvider):
 
     def __repr__(self):
         return f'<MSCDMSCoreAPIProvider> {self.data}'
+
+
+class MSCDMSCoreAPIEDRProvider(BaseEDRProvider, MSCDMSCoreAPIProvider):
+    def __init__(self, provider_def):
+
+        BaseEDRProvider.__init__(self, provider_def)
+        MSCDMSCoreAPIProvider.__init__(self, provider_def)
+
+    @BaseEDRProvider.register()
+    def radius(self, **kwargs):
+        wkt = kwargs.get('wkt')
+        kwargs['bbox'] = [wkt.x, wkt.y, wkt.x, wkt.y]
+
+        return MSCDMSCoreAPIProvider.query(self, **kwargs)
