@@ -2,7 +2,7 @@
 #
 # Author: Etienne <etienne.pelletier@canada.ca>
 #
-# Copyright (c) 2021 Etienne Pelletier
+# Copyright (c) 2023 Etienne Pelletier
 # Copyright (c) 2022 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
@@ -110,12 +110,15 @@ class ElasticsearchConnector(BaseConnector):
         """
 
         # if overwrite is False, do not recreate an existing index
-        if self.Elasticsearch.indices.exists(index_name) and not overwrite:
+        if (
+            self.Elasticsearch.indices.exists(index=index_name)
+            and not overwrite
+        ):
             LOGGER.info('{} index already exists.')
             return False
 
-        elif self.Elasticsearch.indices.exists(index_name) and overwrite:
-            self.Elasticsearch.indices.delete(index_name)
+        elif self.Elasticsearch.indices.exists(index=index_name) and overwrite:
+            self.Elasticsearch.indices.delete(index=index_name)
             LOGGER.info('Deleted existing {} index.'.format(index_name))
 
         self.Elasticsearch.indices.create(
@@ -135,9 +138,9 @@ class ElasticsearchConnector(BaseConnector):
         :returns: `list` of index names matching patterns
         """
 
-        return list(self.Elasticsearch.indices.get(pattern).keys())
+        return list(self.Elasticsearch.indices.get(index=pattern).keys())
 
-    def exists(self, index):
+    def exists(self, index_name):
         """
         determines where an index exists
 
@@ -146,7 +149,7 @@ class ElasticsearchConnector(BaseConnector):
         :return: `bool` of result
         """
 
-        return self.Elasticsearch.indices.exists(index)
+        return self.Elasticsearch.indices.exists(index=index_name)
 
     def delete(self, indexes):
         """
@@ -158,7 +161,7 @@ class ElasticsearchConnector(BaseConnector):
         """
 
         if indexes in ['*', '_all'] or not self.Elasticsearch.indices.exists(
-            indexes
+            index=indexes
         ):
             msg = (
                 'Cannot delete {}. '.format(indexes),
@@ -169,7 +172,7 @@ class ElasticsearchConnector(BaseConnector):
             raise ValueError(msg)
 
         LOGGER.info('Deleting indexes {}'.format(indexes))
-        self.Elasticsearch.indices.delete(indexes)
+        self.Elasticsearch.indices.delete(index=indexes)
 
         return True
 
@@ -183,8 +186,8 @@ class ElasticsearchConnector(BaseConnector):
         :return: `bool` of index template creation status
         """
 
-        if not self.Elasticsearch.indices.exists_template(name):
-            self.Elasticsearch.indices.put_template(name, settings)
+        if not self.Elasticsearch.indices.exists_template(name=name):
+            self.Elasticsearch.indices.put_template(name=name, body=settings)
 
         return True
 
@@ -197,8 +200,8 @@ class ElasticsearchConnector(BaseConnector):
         :return: `bool` of index template deletion status
         """
 
-        if self.Elasticsearch.indices.exists_template(name):
-            self.Elasticsearch.indices.delete_template(name)
+        if self.Elasticsearch.indices.exists_template(name=name):
+            self.Elasticsearch.indices.delete_template(name=name)
 
         return True
 
@@ -275,8 +278,9 @@ class ElasticsearchConnector(BaseConnector):
         :return: `bool` of index update status
         """
 
-        self.Elasticsearch.update_by_query(body=query, index=name,
-                                           refresh=True)
+        self.Elasticsearch.update_by_query(
+            body=query, index=name, refresh=True
+        )
 
         return True
 
