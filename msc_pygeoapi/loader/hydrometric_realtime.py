@@ -99,7 +99,7 @@ SETTINGS = {
                     },
                     'DATETIME': {
                         'type': 'date',
-                        'format': 'strict_date_hour_minute_second'
+                        'format': 'strict_date_hour_minute_second||strict_date_optional_time'  # noqa
                     },
                     'DATETIME_LST': {
                         'type': 'date',

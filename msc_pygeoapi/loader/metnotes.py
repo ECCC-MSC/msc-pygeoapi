@@ -66,53 +66,89 @@ MAPPINGS = {
         },
         'properties': {
             'properties': {
-                'id': {'type': 'text', 'fields': {'raw': {'type': 'keyword'}}},
-                'aors': {'type': 'keyword', 'index': 'true'},
-                'type_id': {
-                    'type': 'text',
-                    'fields': {'raw': {'type': 'keyword'}},
-                },
-                'publication_version': {
-                    'type': 'integer',
-                },
-                'start_datetime': {
-                    'type': 'date',
-                    'format': "YYYY-MM-DD'T'HH:mm:ss.SSS'Z'",
-                },
-                'end_datetime': {
-                    'type': 'date',
-                    'format': "YYYY-MM-DD'T'HH:mm:ss.SSS'Z'",
-                },
-                'expiration_datetime': {
-                    'type': 'date',
-                    'format': "YYYY-MM-DD'T'HH:mm:ss.SSS'Z'",
-                },
-                'publication_datetime': {
-                    'type': 'date',
-                    'format': "YYYY-MM-DD'T'HH:mm:ss.SSS'Z'",
-                },
-                'metnote_status': {
-                    'type': 'text',
-                    'fields': {'raw': {'type': 'keyword'}},
-                },
-                'filename': {
-                    'type': 'text',
-                    'fields': {'raw': {'type': 'keyword'}},
-                },
-                'weather_narrative_id': {
-                    'type': 'text',
-                    'fields': {'raw': {'type': 'keyword'}},
-                },
-                'weather_narrative_version': {
-                    'type': 'integer',
-                },
-                'content_en': {
-                    'type': 'text',
-                    'fields': {'raw': {'type': 'keyword'}},
-                },
-                'content_fr': {
-                    'type': 'text',
-                    'fields': {'raw': {'type': 'keyword'}},
+                'properties': {
+                    'id': {
+                        'type': 'text',
+                        'fields': {
+                            'raw': {
+                                'type': 'keyword'
+                            }
+                        }
+                    },
+                    'aors': {
+                        'type': 'keyword',
+                        'index': 'true'
+                    },
+                    'type_id': {
+                        'type': 'text',
+                        'fields': {
+                            'raw': {
+                                'type': 'keyword'
+                            }
+                        }
+                    },
+                    'publication_version': {
+                        'type': 'integer',
+                    },
+                    'start_datetime': {
+                        'type': 'date',
+                        'format': 'strict_date_time_no_millis||strict_date_optional_time'  # noqa
+                    },
+                    'end_datetime': {
+                        'type': 'date',
+                        'format': 'strict_date_time_no_millis||strict_date_optional_time'  # noqa
+                    },
+                    'expiration_datetime': {
+                        'type': 'date',
+                        'format': 'strict_date_time_no_millis||strict_date_optional_time'  # noqa
+                    },
+                    'publication_datetime': {
+                        'type': 'date',
+                        'format': 'strict_date_time_no_millis||strict_date_optional_time'  # noqa
+                    },
+                    'metnote_status': {
+                        'type': 'text',
+                        'fields': {
+                            'raw': {
+                                'type': 'keyword'
+                            }
+                        }
+                    },
+                    'filename': {
+                        'type': 'text',
+                        'fields': {
+                            'raw': {
+                                'type': 'keyword'
+                            }
+                        }
+                    },
+                    'weather_narrative_id': {
+                        'type': 'text',
+                        'fields': {
+                            'raw': {
+                                'type': 'keyword'
+                            }
+                        }
+                    },
+                    'weather_narrative_version': {
+                        'type': 'integer',
+                    },
+                    'content_en': {
+                        'type': 'text',
+                        'fields': {
+                            'raw': {
+                                'type': 'keyword'
+                            }
+                        }
+                    },
+                    'content_fr': {
+                        'type': 'text',
+                        'fields': {
+                            'raw': {
+                                'type': 'keyword'
+                            }
+                        }
+                    }
                 }
             }
         }

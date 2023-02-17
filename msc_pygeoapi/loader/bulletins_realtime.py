@@ -65,7 +65,7 @@ SETTINGS = {
                 'properties': {
                     'datetime': {
                         'type': 'date',
-                        'format': 'strict_date_hour_minute'
+                        'format': 'strict_date_hour_minute||strict_date_optional_time'  # noqa
                     }
                 }
             }

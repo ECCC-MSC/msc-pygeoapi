@@ -86,7 +86,7 @@ MAPPINGS = {
                     },
                     'publication_datetime': {
                         'type': 'date',
-                        'format': 'strict_date_time_no_millis',
+                        'format': 'strict_date_time_no_millis||strict_date_optional_time',  # noqa
                     },
                     'forecast_datetime_text_en': {
                         'type': 'text',
@@ -133,7 +133,7 @@ MAPPINGS = {
                     },
                     'observation_datetime': {
                         'type': 'date',
-                        'format': 'strict_date_time_no_millis',
+                        'format': 'strict_date_time_no_millis||strict_date_optional_time',  # noqa
                     },
                     'observation_datetime_text_en': {
                         'type': 'text',

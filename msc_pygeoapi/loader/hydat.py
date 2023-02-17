@@ -143,7 +143,7 @@ class HydatLoader(BaseLoader):
                                 "LEVEL": {"type": "float"},
                                 "DATE": {
                                     "type": "date",
-                                    "format": "yyyy-MM-dd",
+                                    "format": "yyyy-MM-dd||strict_date_optional_time",  # noqa
                                 },
                             }
                         },
@@ -179,7 +179,7 @@ class HydatLoader(BaseLoader):
                                     "type": "text",
                                     "fields": {"raw": {"type": "keyword"}},
                                 },
-                                "DATE": {"type": "date", "format": "yyyy-MM"},
+                                "DATE": {"type": "date", "format": "yyyy-MM||strict_date_optional_time"},  # noqa
                                 "MONTHLY_MEAN_DISCHARGE": {"type": "float"},
                                 "MONTHLY_MEAN_LEVEL": {"type": "float"},
                             }
@@ -223,7 +223,7 @@ class HydatLoader(BaseLoader):
                                 },
                                 "MAX_DATE": {
                                     "type": "date",
-                                    "format": "yyyy-MM-dd",
+                                    "format": "yyyy-MM-dd||strict_date_optional_time",  # noqa
                                 },
                                 "MIN_VALUE": {"type": "float"},
                                 "MAX_VALUE": {"type": "float"},
@@ -339,7 +339,7 @@ class HydatLoader(BaseLoader):
                                 },
                                 "DATE": {
                                     "type": "date",
-                                    "format": "yyyy-MM-dd'T'HH:mm||yyy-MM-dd",
+                                    "format": "yyyy-MM-dd'T'HH:mm||yyyy-MM-dd||strict_date_optional_time",  # noqa
                                 },
                                 "TIMEZONE_OFFSET": {
                                     "type": "text",

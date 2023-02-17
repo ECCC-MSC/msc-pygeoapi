@@ -145,7 +145,10 @@ class AhccdLoader(BaseLoader):
                                     "type": "text",
                                     "fields": {"raw": {"type": "keyword"}},
                                 },
-                                "year__annee": {"type": "integer"},
+                                "year__annee": {
+                                    "type": "date",
+                                    "format": "yyyy||strict_date_optional_time"
+                                },
                             }
                         },
                         "geometry": {"type": "geo_shape"},
@@ -166,7 +169,8 @@ class AhccdLoader(BaseLoader):
                             "properties": {
                                 "date": {
                                     "type": "date",
-                                    "format": "yyyy-MM||yyyy",
+                                    "format":
+                                        "yyyy-MM||strict_date_optional_time",
                                 },
                                 "identifier__identifiant": {
                                     "type": "text",
@@ -333,7 +337,10 @@ class AhccdLoader(BaseLoader):
                                     "type": "text",
                                     "fields": {"raw": {"type": "keyword"}},
                                 },
-                                "year__annee": {"type": "integer"},
+                                "year__annee": {
+                                    "type": "date",
+                                    "format": "yyyy||strict_date_optional_time"
+                                },
                             }
                         },
                         "geometry": {"type": "geo_shape"},
