@@ -276,7 +276,7 @@ class ClimateArchiveLoader(BaseLoader):
                                 },
                                 "DATE_CALCULATED": {
                                     "type": "date",
-                                    "format": "yyyy-MM-dd HH:mm:ss",
+                                    "format": "yyyy-MM-dd HH:mm:ss||strict_date_optional_time",  # noqa
                                 },
                             }
                         },
@@ -363,7 +363,7 @@ class ClimateArchiveLoader(BaseLoader):
                                 },
                                 "LOCAL_DATE": {
                                     "type": "date",
-                                    "format": "yyyy-MM",
+                                    "format": "yyyy-MM||strict_date_optional_time",  # noqa
                                 },
                             }
                         },
@@ -478,7 +478,7 @@ class ClimateArchiveLoader(BaseLoader):
                                 "LOCAL_DAY": {"type": "integer"},
                                 "LOCAL_DATE": {
                                     "type": "date",
-                                    "format": "yyyy-MM-dd HH:mm:ss",
+                                    "format": "yyyy-MM-dd HH:mm:ss||strict_date_optional_time",  # noqa
                                 },
                             }
                         },
@@ -585,7 +585,7 @@ class ClimateArchiveLoader(BaseLoader):
                                 "LOCAL_HOUR": {"type": "integer"},
                                 "LOCAL_DATE": {
                                     "type": "date",
-                                    "format": "yyyy-MM-dd HH:mm:ss",
+                                    "format": "yyyy-MM-dd HH:mm:ss ||strict_date_optional_time",  # noqa
                                 },
                                 "UTC_YEAR": {"type": "integer"},
                                 "UTC_MONTH": {"type": "integer"},
