@@ -60,98 +60,64 @@ DAYS_TO_KEEP = 7
 INDEX_BASENAME = 'metnotes.'
 
 MAPPINGS = {
+    'properties': {
+        'geometry': {
+            'type': 'geo_shape'
+        },
         'properties': {
-            'geometry': {
-                'type': 'geo_shape'
-            },
             'properties': {
-                'properties': {
-                    'id': {
-                        'type': 'text',
-                        'fields': {
-                            'raw': {
-                                'type': 'keyword'
-                            }
-                        }
-                    },
-                    'aors': {
-                        'type': 'keyword',
-                        'index': 'true'
-                    },
-                    'type_id': {
-                        'type': 'text',
-                        'fields': {
-                            'raw': {
-                                'type': 'keyword'
-                            }
-                        }
-                    },
-                    'publication_version': {
-                        'type': 'integer',
-                    },
-                    'start_datetime': {
-                        'type': 'date',
-                        'format': "YYYY-MM-DD'T'HH:mm:ss.SSS'Z'"
-                    },
-                    'end_datetime': {
-                        'type': 'date',
-                        'format': "YYYY-MM-DD'T'HH:mm:ss.SSS'Z'"
-                    },
-                    'expiration_datetime': {
-                        'type': 'date',
-                        'format': "YYYY-MM-DD'T'HH:mm:ss.SSS'Z'"
-                    },
-                    'publication_datetime': {
-                        'type': 'date',
-                        'format': "YYYY-MM-DD'T'HH:mm:ss.SSS'Z'"
-                    },
-                    'metnote_status': {
-                        'type': 'text',
-                        'fields': {
-                            'raw': {
-                                'type': 'keyword'
-                            }
-                        }
-                    },
-                    'filename': {
-                        'type': 'text',
-                        'fields': {
-                            'raw': {
-                                'type': 'keyword'
-                            }
-                        }
-                    },
-                    'weather_narrative_id': {
-                        'type': 'text',
-                        'fields': {
-                            'raw': {
-                                'type': 'keyword'
-                            }
-                        }
-                    },
-                    'weather_narrative_version': {
-                        'type': 'integer',
-                    },
-                    'content_en': {
-                        'type': 'text',
-                        'fields': {
-                            'raw': {
-                                'type': 'keyword'
-                            }
-                        }
-                    },
-                    'content_fr': {
-                        'type': 'text',
-                        'fields': {
-                            'raw': {
-                                'type': 'keyword'
-                            }
-                        }
-                    }
+                'id': {'type': 'text', 'fields': {'raw': {'type': 'keyword'}}},
+                'aors': {'type': 'keyword', 'index': 'true'},
+                'type_id': {
+                    'type': 'text',
+                    'fields': {'raw': {'type': 'keyword'}},
+                },
+                'publication_version': {
+                    'type': 'integer',
+                },
+                'start_datetime': {
+                    'type': 'date',
+                    'format': "YYYY-MM-DD'T'HH:mm:ss.SSS'Z'",
+                },
+                'end_datetime': {
+                    'type': 'date',
+                    'format': "YYYY-MM-DD'T'HH:mm:ss.SSS'Z'",
+                },
+                'expiration_datetime': {
+                    'type': 'date',
+                    'format': "YYYY-MM-DD'T'HH:mm:ss.SSS'Z'",
+                },
+                'publication_datetime': {
+                    'type': 'date',
+                    'format': "YYYY-MM-DD'T'HH:mm:ss.SSS'Z'",
+                },
+                'metnote_status': {
+                    'type': 'text',
+                    'fields': {'raw': {'type': 'keyword'}},
+                },
+                'filename': {
+                    'type': 'text',
+                    'fields': {'raw': {'type': 'keyword'}},
+                },
+                'weather_narrative_id': {
+                    'type': 'text',
+                    'fields': {'raw': {'type': 'keyword'}},
+                },
+                'weather_narrative_version': {
+                    'type': 'integer',
+                },
+                'content_en': {
+                    'type': 'text',
+                    'fields': {'raw': {'type': 'keyword'}},
+                },
+                'content_fr': {
+                    'type': 'text',
+                    'fields': {'raw': {'type': 'keyword'}},
                 }
             }
         }
     }
+}
 
 SETTINGS = {
     'order': 0,
@@ -188,8 +154,7 @@ class MetNotesRealtimeLoader(BaseLoader):
         """
 
         self.config_file = (
-            Path(MSC_PYGEOAPI_CACHEDIR)
-            / 'metnotes-latest-file.json'
+            Path(MSC_PYGEOAPI_CACHEDIR) / 'metnotes-latest-file.json'
         )
 
         self.filename = os.path.basename(filepath)
@@ -202,8 +167,10 @@ class MetNotesRealtimeLoader(BaseLoader):
         else:
             for feature in data:
 
-                b_dt = datetime.strptime(feature['properties']['publication_datetime'],  # noqa
-                                         '%Y-%m-%dT%H:%M:%S.%fZ')
+                b_dt = datetime.strptime(
+                    feature['properties']['publication_datetime'],
+                    '%Y-%m-%dT%H:%M:%S.%fZ'
+                )
                 b_dt2 = b_dt.strftime('%Y-%m-%d')
                 es_index = '{}{}'.format(INDEX_BASENAME, b_dt2)
 
@@ -242,8 +209,7 @@ class MetNotesRealtimeLoader(BaseLoader):
 
         try:
             r = self.conn.Elasticsearch.index(
-                index=es_index, id=id, body=feature,
-                refresh=True
+                index=es_index, id=id, body=feature, refresh=True
             )
             LOGGER.debug('Result: {}'.format(r))
             return True
@@ -268,7 +234,8 @@ class MetNotesRealtimeLoader(BaseLoader):
                 config = json.load(f)
                 # get previous default time for precip type
                 previous_default_datetime = datetime.strptime(
-                    config['latest_file_time'], DATETIME_FORMAT,
+                    config['latest_file_time'],
+                    DATETIME_FORMAT
                 )
                 # update temporal config if new default time is
                 # later than previous
@@ -286,17 +253,15 @@ class MetNotesRealtimeLoader(BaseLoader):
         else:
             # and create config
             updated_config = updated_config = {
-                                'latest_file': self.filename,
-                                'latest_file_time': latest_time
-                             }
+                'latest_file': self.filename,
+                'latest_file_time': latest_time
+            }
             self.latest_file = self.filename
 
         if not updated_config:
             return False
 
-        LOGGER.info(
-            'Updating metnotes temporal configuration file...'
-        )
+        LOGGER.info('Updating metnotes temporal configuration file...')
         with self.config_file.open('w') as f:
             json.dump(updated_config, f)
 
@@ -309,17 +274,20 @@ class MetNotesRealtimeLoader(BaseLoader):
         returns: `bool` of update status
         """
 
-        script_text = """
-            if (ctx._source.properties.filename == '{}' {{
+        script_source = f"""
+            if (ctx._source.properties.filename == '{self.latest_file}') {{
                 ctx._source.properties.metnote_status = 'active'
             }}
             else {{
-                tx._source.properties.metnote_status = 'inactive'
-            }}""".format(self.latest_file)
+                ctx._source.properties.metnote_status = 'inactive'
+            }}
+        """
 
         query = {
-            'script': script_text.strip(),
-            "lang": "painless"
+            "script": {
+                "source": script_source.strip(),
+                "lang": "painless"
+            }
         }
 
         try:
@@ -368,9 +336,7 @@ def add(ctx, file_, es, username, password, ignore_certs):
 @cli_options.OPTION_ES_USERNAME()
 @cli_options.OPTION_ES_PASSWORD()
 @cli_options.OPTION_ES_IGNORE_CERTS()
-@cli_options.OPTION_YES(
-    prompt='Are you sure you want to delete old indexes?'
-)
+@cli_options.OPTION_YES(prompt='Are you sure you want to delete old indexes?')
 def clean_indexes(ctx, days, es, username, password, ignore_certs):
     """Clean MetNotes indexes older than n number of days"""
 
@@ -395,9 +361,7 @@ def clean_indexes(ctx, days, es, username, password, ignore_certs):
 @cli_options.OPTION_ES_PASSWORD()
 @cli_options.OPTION_ES_IGNORE_CERTS()
 @cli_options.OPTION_INDEX_TEMPLATE()
-@cli_options.OPTION_YES(
-    prompt='Are you sure you want to delete this index?'
-)
+@cli_options.OPTION_YES(prompt='Are you sure you want to delete this index?')
 def delete_index(ctx, es, username, password, ignore_certs, index_template):
     """Delete MetNotes index"""
 
