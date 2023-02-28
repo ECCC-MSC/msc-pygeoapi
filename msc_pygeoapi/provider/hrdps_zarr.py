@@ -39,7 +39,8 @@ import sys
 from pygeoapi.provider.base import (
     BaseProvider,
     ProviderItemNotFoundError,
-    ProviderInvalidQueryError
+    ProviderInvalidQueryError,
+    ProviderNoDataError
 )
 
 LOGGER = logging.getLogger(__name__)
@@ -587,8 +588,8 @@ def _gen_covjson(self, the_data):
             }
         }
     except Exception:
-        raise ProviderInvalidQueryError(
-            'No data found. Make sure parameters are within extent.'
+        raise ProviderNoDataError(
+            'no data found within dataset extents'
         )
 
     parameter = {
