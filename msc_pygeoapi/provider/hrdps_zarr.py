@@ -554,37 +554,42 @@ def _gen_covjson(self, the_data):
     var_name = self._coverage_properties['variables'][0]
     parameter_metadata = self._get_parameter_metadata(var_name)
 
-    cov_json = {
-        'type': 'CoverageType',
-        'domain': {
-            'type': 'DomainType',
-            'domainType': 'Grid',
-            'axes': {
-                'x': {
-                    'start': float(the_data.lon.min().values),
-                    'stop': float(the_data.lon.max().values),
-                    'num': int(the_data.lon.size)
+    try:
+        cov_json = {
+            'type': 'CoverageType',
+            'domain': {
+                'type': 'DomainType',
+                'domainType': 'Grid',
+                'axes': {
+                    'x': {
+                        'start': float(the_data.lon.min().values),
+                        'stop': float(the_data.lon.max().values),
+                        'num': int(the_data.lon.size)
+                    },
+                    'y': {
+                        'start': float(the_data.lat.min().values),
+                        'stop': float(the_data.lat.max().values),
+                        'num': int(the_data.lat.size)
+                    },
+                    't': {
+                        'start': str(the_data.time.min().values),
+                        'stop': str(the_data.time.max().values),
+                        'num': int(the_data.time.size)
+                    }
                 },
-                'y': {
-                    'start': float(the_data.lat.min().values),
-                    'stop': float(the_data.lat.max().values),
-                    'num': int(the_data.lat.size)
-                },
-                't': {
-                    'start': str(the_data.time.min().values),
-                    'stop': str(the_data.time.max().values),
-                    'num': int(the_data.time.size)
-                }
-            },
-            'referencing': [{
-                'coordinates': ['x', 'y'],
-                'system': {
-                    'type': 'GeographicCRS',
-                    'id': props['extent']['coordinate_reference_system']
-                }
-            }]
+                'referencing': [{
+                    'coordinates': ['x', 'y'],
+                    'system': {
+                        'type': 'GeographicCRS',
+                        'id': props['extent']['coordinate_reference_system']
+                    }
+                }]
+            }
         }
-    }
+    except Exception:
+        raise ProviderInvalidQueryError(
+            'No data found. Make sure parameters are within extent.'
+        )
 
     parameter = {
         parameter_metadata['id'][0]: {
