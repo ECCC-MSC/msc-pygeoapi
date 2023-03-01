@@ -27,20 +27,20 @@
 #
 # =================================================================
 
-import json
 import logging
-import tempfile
-import xarray
-import zarr
 import os
-import numpy
 import sys
+import tempfile
 
+import numpy
 from pygeoapi.provider.base import (
     BaseProvider,
-    ProviderItemNotFoundError,
-    ProviderInvalidQueryError
+    ProviderInvalidQueryError,
+    ProviderNoDataError
 )
+from pyproj import CRS, Transformer
+import xarray
+import zarr
 
 LOGGER = logging.getLogger(__name__)
 DEFAULT_LIMIT_JSON = 5
@@ -297,6 +297,9 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                         raise ProviderInvalidQueryError(msg)
 
             if bbox:
+                # convert bbox projection
+                bbox = _convert_bbox_to_crs(bbox, self.crs)
+
                 if any(
                     [bbox[0] < self._coverage_properties['extent']['minx'],
                      bbox[1] < self._coverage_properties['extent']['miny'],
@@ -335,6 +338,11 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             LOGGER.error(msg)
             raise ProviderInvalidQueryError(msg)
 
+        if data_vals.values.size == 0:
+            msg = 'Invalid query: No data found'
+            LOGGER.error(msg)
+            raise ProviderNoDataError(msg)
+
         if format_ == 'zarr':
             new_dataset = data_vals.to_dataset()
             new_dataset.attrs['_CRS'] = self.crs
@@ -369,75 +377,30 @@ class HRDPSWEonGZarrProvider(BaseProvider):
 
         return _gen_covjson(self, the_data=data_vals)
 
-    def _load_and_prepare_item(self, item, identifier=None,
-                               raise_if_exists=True):
-        """
-        Helper function to load a record, detect its idenfier and prepare
-        a record item
-
-        :param item: `str` of incoming item data
-        :param identifier: `str` of item identifier (optional)
-        :param raise_if_exists: `bool` of whether to check if record
-                                 already exists
-
-        :returns: `tuple` of item identifier and item data/payload
-        """
-
-        identifier2 = None
-        msg = None
-
-        LOGGER.debug('Loading data')
-        LOGGER.debug(f'Data: {item}')
-        try:
-            json_data = json.loads(item)
-        except TypeError as err:
-            LOGGER.error(err)
-            msg = 'Invalid data'
-        except json.decoder.JSONDecodeError as err:
-            LOGGER.error(err)
-            msg = 'Invalid JSON data'
-
-        if msg is not None:
-            raise ProviderInvalidQueryError(msg)
-
-        LOGGER.debug('Detecting identifier')
-        if identifier is not None:
-            identifier2 = identifier
-        else:
-            try:
-                identifier2 = json_data['id']
-            except KeyError:
-                LOGGER.debug('Cannot find id; trying properties.identifier')
-                try:
-                    identifier2 = json_data['properties']['identifier']
-                except KeyError:
-                    LOGGER.debug('Cannot find properties.identifier')
-
-        if identifier2 is None:
-            msg = 'Missing identifier (id or properties.identifier)'
-            LOGGER.error(msg)
-            raise ProviderInvalidQueryError(msg)
-
-        if 'geometry' not in json_data or 'properties' not in json_data:
-            msg = 'Missing core GeoJSON geometry or properties'
-            LOGGER.error(msg)
-            raise ProviderInvalidQueryError(msg)
-
-        if raise_if_exists:
-            LOGGER.debug('Querying database whether item exists')
-            try:
-                _ = self.get(identifier2)
-
-                msg = 'record already exists'
-                LOGGER.error(msg)
-                raise ProviderInvalidQueryError(msg)
-            except ProviderItemNotFoundError:
-                LOGGER.debug('record does not exist')
-
-        return identifier2, json_data
-
     def __repr__(self):
         return '<BaseProvider> {}'.format(self.type)
+
+
+def _convert_bbox_to_crs(bbox, crs):
+    """
+    Helper function to convert a bbox to a new crs
+    :param bbox: Bounding box (minx, miny, maxx, maxy)
+    :param crs: CRS to convert to
+    :returns: Bounding box in new CRS (minx, miny, maxx, maxy)
+    """
+
+    LOGGER.debug('Old bbox: {bbox}')
+    crs_src = CRS.from_epsg(4326)
+    crs_dst = CRS.from_wkt(crs)
+
+    to_transform = Transformer.from_crs(crs_src, crs_dst, always_xy=True)
+
+    minx, miny = to_transform.transform(bbox[0], bbox[1])
+    maxx, maxy = to_transform.transform(bbox[2], bbox[3])
+
+    LOGGER.debug('New bbox', [minx, miny, maxx, maxy])
+
+    return [minx, miny, maxx, maxy]
 
 
 def _get_zarr_data_stream(data):
