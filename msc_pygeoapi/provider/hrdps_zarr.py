@@ -338,7 +338,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             msg = f'Invalid query (Error: {e})'
             LOGGER.error(msg)
             raise ProviderInvalidQueryError(msg)
-        
+
         if data_vals.values.size == 0:
             msg = 'Invalid query: No data found'
             LOGGER.error(msg)
@@ -457,22 +457,17 @@ def _convert_bbox_to_crs(bbox, crs):
     :returns: Bounding box in new CRS (minx, miny, maxx, maxy)
     """
 
-
     LOGGER.debug('Old bbox:', bbox)
     crs_src = CRS.from_epsg(4326)
     crs_dst = CRS.from_wkt(crs)
 
-
     to_transform = Transformer.from_crs(crs_src, crs_dst, always_xy=True)
-
 
     minx, miny = to_transform.transform(bbox[0], bbox[1])
     maxx, maxy = to_transform.transform(bbox[2], bbox[3])
 
-
     LOGGER.debug('New bbox', [minx, miny, maxx, maxy])
 
-    
     return [minx, miny, maxx, maxy]
 
 
