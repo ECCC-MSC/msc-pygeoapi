@@ -83,7 +83,7 @@ class ElasticsearchConnector(BaseConnector):
 
         # if no protocol specified in url append http:// by default
         if not self.url.startswith('http'):
-            self.url = 'http://{}'.format(self.url)
+            self.url = f'http://{self.url}'
 
         es_args = {
             'hosts': [self.url],
@@ -117,9 +117,9 @@ class ElasticsearchConnector(BaseConnector):
             LOGGER.info('{} index already exists.')
             return False
 
-        elif self.Elasticsearch.indices.exists(index=index_name) and overwrite:
-            self.Elasticsearch.indices.delete(index=index_name)
-            LOGGER.info('Deleted existing {} index.'.format(index_name))
+        elif self.Elasticsearch.indices.exists(index_name) and overwrite:
+            self.Elasticsearch.indices.delete(index_name)
+            LOGGER.info(f'Deleted existing {index_name} index.')
 
         self.Elasticsearch.indices.create(
             index=index_name,
@@ -164,15 +164,15 @@ class ElasticsearchConnector(BaseConnector):
             index=indexes
         ):
             msg = (
-                'Cannot delete {}. '.format(indexes),
+                f'Cannot delete {indexes}. ',
                 'Either the index does not exist or an unaccepted index ',
-                'pattern was given (\'*\' or \'_all\')',
+                'pattern was given (\'*\' or \'_all\')'
             )
             LOGGER.error(msg)
             raise ValueError(msg)
 
-        LOGGER.info('Deleting indexes {}'.format(indexes))
-        self.Elasticsearch.indices.delete(index=indexes)
+        LOGGER.info(f'Deleting indexes {indexes}')
+        self.Elasticsearch.indices.delete(indexes)
 
         return True
 
@@ -202,6 +202,35 @@ class ElasticsearchConnector(BaseConnector):
 
         if self.Elasticsearch.indices.exists_template(name=name):
             self.Elasticsearch.indices.delete_template(name=name)
+
+        return True
+
+    def create_alias(self, alias, index, overwrite=False):
+        """
+        create an Elasticsearch index alias
+
+        :param alias: `str` alias name
+        :param index: `str` index name (supports wildcards)
+        :param overwrite: `bool` indicating whether to overwrite alias if it
+                           already exists
+
+        :return: `bool` of index alias creation status
+        """
+
+        if not self.Elasticsearch.indices.exists_alias(alias):
+            self.Elasticsearch.indices.put_alias(index=index, name=alias)
+        elif overwrite:
+            self.Elasticsearch.indices.update_aliases(
+                body={
+                    'actions': [
+                        {'remove': {'index': '*', 'alias': alias}},
+                        {'add': {'index': index, 'alias': alias}},
+                    ]
+                }
+            )
+        else:
+            LOGGER.warning(f'Alias {alias} already exists')
+            return False
 
         return True
 
@@ -244,25 +273,23 @@ class ElasticsearchConnector(BaseConnector):
                     elif status == 'noop':
                         noops += 1
                     else:
-                        LOGGER.error('Unhandled status code {}'.format(status))
+                        LOGGER.error(f'Unhandled status code {status}')
                         errors.append(response)
         except BulkIndexError as err:
             LOGGER.error(
-                'Unable to perform bulk insert due to: {}'.format(err.errors)
+                f'Unable to perform bulk insert due to: {err.errors}'
             )
             return False
 
         total = inserts + updates + noops
         LOGGER.info(
-            'Inserted package of {} documents ({} inserts, {} updates,'
-            ' {} no-ops)'.format(total, inserts, updates, noops)
+            f'Inserted package of {total} documents ({inserts} inserts, '
+            f'{updates} updates, {noops} no-ops)'
         )
 
         if len(errors) > 0:
             LOGGER.warning(
-                '{} errors encountered in bulk insert: {}'.format(
-                    len(errors), errors
-                )
+                f'{len(errors)} errors encountered in bulk insert: {errors}'
             )
             return False
 
@@ -285,4 +312,4 @@ class ElasticsearchConnector(BaseConnector):
         return True
 
     def __repr__(self):
-        return '<ElasticsearchConnector> {}'.format(self.url)
+        return f'<ElasticsearchConnector> {self.url}'
