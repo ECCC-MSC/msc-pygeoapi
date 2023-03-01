@@ -35,6 +35,8 @@ import zarr
 import os
 import numpy
 import sys
+from pyproj import CRS, Transformer
+
 
 from pygeoapi.provider.base import (
     BaseProvider,
@@ -298,6 +300,9 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                         raise ProviderInvalidQueryError(msg)
 
             if bbox:
+                # convert bbox projection
+                bbox = _convert_bbox_to_crs(bbox, self.crs)
+
                 if any(
                     [bbox[0] < self._coverage_properties['extent']['minx'],
                      bbox[1] < self._coverage_properties['extent']['miny'],
@@ -439,6 +444,25 @@ class HRDPSWEonGZarrProvider(BaseProvider):
 
     def __repr__(self):
         return '<BaseProvider> {}'.format(self.type)
+
+
+
+def _convert_bbox_to_crs(bbox, crs):
+    """
+    Helper function to convert a bbox to a new crs
+    :param bbox: Bounding box (minx, miny, maxx, maxy)
+    :param crs: CRS to convert to
+    :returns: Bounding box in new CRS (minx, miny, maxx, maxy)
+    """
+    LOGGER.info('Old bbox:', bbox)
+    crs_src = CRS.from_epsg(4326)
+    crs_dst = CRS.from_wkt(crs)
+    to_transform = Transformer.from_crs(crs_src, crs_dst, always_xy=True)
+    minx, miny = to_transform.transform(bbox[0], bbox[1])
+    maxx, maxy = to_transform.transform(bbox[2], bbox[3])
+    LOGGER.info('New bbox', [minx, miny, maxx, maxy])
+    return [minx, miny, maxx, maxy]
+
 
 
 def _get_zarr_data_stream(data):
@@ -588,7 +612,7 @@ def _gen_covjson(self, the_data):
             }
         }
     except Exception:
-        raise ProviderNoDataError(
+        raise ProviderInvalidQueryError(
             'no data found within dataset extents'
         )
 
