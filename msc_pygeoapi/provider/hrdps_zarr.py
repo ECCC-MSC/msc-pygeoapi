@@ -583,7 +583,7 @@ def _gen_covjson(self, the_data):
     cov_json = {
         'type': 'CoverageType',
         'domain': {
-        'type': 'DomainType',
+            'type': 'DomainType',
             'domainType': 'Grid',
             'axes': {
                 'x': {
