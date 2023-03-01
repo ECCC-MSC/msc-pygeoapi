@@ -27,7 +27,6 @@
 #
 # =================================================================
 
-import json
 import logging
 import os
 import sys
@@ -36,7 +35,6 @@ import tempfile
 import numpy
 from pygeoapi.provider.base import (
     BaseProvider,
-    ProviderItemNotFoundError,
     ProviderInvalidQueryError
 )
 from pyproj import CRS, Transformer
@@ -377,7 +375,6 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                 )
 
         return _gen_covjson(self, the_data=data_vals)
-
 
     def __repr__(self):
         return '<BaseProvider> {}'.format(self.type)
