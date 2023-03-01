@@ -29,20 +29,19 @@
 
 import json
 import logging
-import tempfile
-import xarray
-import zarr
 import os
-import numpy
 import sys
-from pyproj import CRS, Transformer
+import tempfile
 
-
+import numpy
 from pygeoapi.provider.base import (
     BaseProvider,
     ProviderItemNotFoundError,
     ProviderInvalidQueryError
 )
+from pyproj import CRS, Transformer
+import xarray
+import zarr
 
 LOGGER = logging.getLogger(__name__)
 DEFAULT_LIMIT_JSON = 5
@@ -334,13 +333,14 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         try:
             # is a xarray data-array
             data_vals = self._data[var_name].sel(**query_return)
-            if data_vals.values.size == 0:
-                msg = 'Invalid query: No data found'
-                LOGGER.error(msg)
-                raise ProviderInvalidQueryError(msg)
 
         except Exception as e:
             msg = f'Invalid query (Error: {e})'
+            LOGGER.error(msg)
+            raise ProviderInvalidQueryError(msg)
+        
+        if data_vals.values.size == 0:
+            msg = 'Invalid query: No data found'
             LOGGER.error(msg)
             raise ProviderInvalidQueryError(msg)
 
@@ -456,13 +456,23 @@ def _convert_bbox_to_crs(bbox, crs):
     :param crs: CRS to convert to
     :returns: Bounding box in new CRS (minx, miny, maxx, maxy)
     """
+
+
     LOGGER.debug('Old bbox:', bbox)
     crs_src = CRS.from_epsg(4326)
     crs_dst = CRS.from_wkt(crs)
+
+
     to_transform = Transformer.from_crs(crs_src, crs_dst, always_xy=True)
+
+
     minx, miny = to_transform.transform(bbox[0], bbox[1])
     maxx, maxy = to_transform.transform(bbox[2], bbox[3])
+
+
     LOGGER.debug('New bbox', [minx, miny, maxx, maxy])
+
+    
     return [minx, miny, maxx, maxy]
 
 
