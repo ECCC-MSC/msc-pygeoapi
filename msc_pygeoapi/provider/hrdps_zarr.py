@@ -334,6 +334,10 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         try:
             # is a xarray data-array
             data_vals = self._data[var_name].sel(**query_return)
+            if data_vals.values.size == 0:
+                msg = 'Invalid query: No data found'
+                LOGGER.error(msg)
+                raise ProviderInvalidQueryError(msg)
 
         except Exception as e:
             msg = f'Invalid query (Error: {e})'
@@ -576,42 +580,37 @@ def _gen_covjson(self, the_data):
     var_name = self._coverage_properties['variables'][0]
     parameter_metadata = self._get_parameter_metadata(var_name)
 
-    try:
-        cov_json = {
-            'type': 'CoverageType',
-            'domain': {
-                'type': 'DomainType',
-                'domainType': 'Grid',
-                'axes': {
-                    'x': {
-                        'start': float(the_data.lon.min().values),
-                        'stop': float(the_data.lon.max().values),
-                        'num': int(the_data.lon.size)
-                    },
-                    'y': {
-                        'start': float(the_data.lat.min().values),
-                        'stop': float(the_data.lat.max().values),
-                        'num': int(the_data.lat.size)
-                    },
-                    't': {
-                        'start': str(the_data.time.min().values),
-                        'stop': str(the_data.time.max().values),
-                        'num': int(the_data.time.size)
-                    }
+    cov_json = {
+        'type': 'CoverageType',
+        'domain': {
+        'type': 'DomainType',
+            'domainType': 'Grid',
+            'axes': {
+                'x': {
+                    'start': float(the_data.lon.min().values),
+                    'stop': float(the_data.lon.max().values),
+                    'num': int(the_data.lon.size)
                 },
-                'referencing': [{
-                    'coordinates': ['x', 'y'],
-                    'system': {
-                        'type': 'GeographicCRS',
-                        'id': props['extent']['coordinate_reference_system']
-                    }
-                }]
-            }
+                'y': {
+                    'start': float(the_data.lat.min().values),
+                    'stop': float(the_data.lat.max().values),
+                    'num': int(the_data.lat.size)
+                },
+                't': {
+                    'start': str(the_data.time.min().values),
+                    'stop': str(the_data.time.max().values),
+                    'num': int(the_data.time.size)
+                }
+            },
+            'referencing': [{
+                'coordinates': ['x', 'y'],
+                'system': {
+                    'type': 'GeographicCRS',
+                    'id': props['extent']['coordinate_reference_system']
+                }
+            }]
         }
-    except Exception:
-        raise ProviderInvalidQueryError(
-            'no data found within dataset extents'
-        )
+    }
 
     parameter = {
         parameter_metadata['id'][0]: {
