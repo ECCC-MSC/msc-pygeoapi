@@ -438,7 +438,7 @@ def _gen_domain_axis(self, data):
     # Dynammically getting all of the axis names
     all_axis = []
     for coord in data.dims:
-            all_axis.append(coord)
+        all_axis.append(coord)
 
     # Makes sure axis are in the correct order
     j, k = all_axis.index('lon'), all_axis.index(all_axis[0])
