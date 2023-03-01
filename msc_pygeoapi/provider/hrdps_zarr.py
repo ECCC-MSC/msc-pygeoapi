@@ -437,19 +437,14 @@ def _gen_domain_axis(self, data):
 
     # Dynammically getting all of the axis names
     all_axis = []
-    for coord in data.coords:
-        try:
-            some_coord = data[coord].attrs["axis"]
-            if some_coord not in all_axis:
-                all_axis.append(some_coord)
-        except AttributeError:
-            LOGGER.warning(f'{coord} has no axis attribute but a coordinate.')
-            pass
+    for coord in data.dims:
+        all_axis.append(coord)
+
     # Makes sure axis are in the correct order
-    j, k = all_axis.index('X'), all_axis.index(all_axis[0])
+    j, k = all_axis.index('lon'), all_axis.index(all_axis[0])
     all_axis[j], all_axis[k] = all_axis[k], all_axis[j]
 
-    j, k = all_axis.index('Y'), all_axis.index(all_axis[1])
+    j, k = all_axis.index('lat'), all_axis.index(all_axis[1])
     all_axis[j], all_axis[k] = all_axis[k], all_axis[j]
 
     all_dims = []
