@@ -41,8 +41,7 @@ from pyproj import CRS, Transformer
 from pygeoapi.provider.base import (
     BaseProvider,
     ProviderItemNotFoundError,
-    ProviderInvalidQueryError,
-    ProviderNoDataError
+    ProviderInvalidQueryError
 )
 
 LOGGER = logging.getLogger(__name__)
@@ -446,7 +445,6 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         return '<BaseProvider> {}'.format(self.type)
 
 
-
 def _convert_bbox_to_crs(bbox, crs):
     """
     Helper function to convert a bbox to a new crs
@@ -454,15 +452,14 @@ def _convert_bbox_to_crs(bbox, crs):
     :param crs: CRS to convert to
     :returns: Bounding box in new CRS (minx, miny, maxx, maxy)
     """
-    LOGGER.info('Old bbox:', bbox)
+    LOGGER.debug('Old bbox:', bbox)
     crs_src = CRS.from_epsg(4326)
     crs_dst = CRS.from_wkt(crs)
     to_transform = Transformer.from_crs(crs_src, crs_dst, always_xy=True)
     minx, miny = to_transform.transform(bbox[0], bbox[1])
     maxx, maxy = to_transform.transform(bbox[2], bbox[3])
-    LOGGER.info('New bbox', [minx, miny, maxx, maxy])
+    LOGGER.debug('New bbox', [minx, miny, maxx, maxy])
     return [minx, miny, maxx, maxy]
-
 
 
 def _get_zarr_data_stream(data):
