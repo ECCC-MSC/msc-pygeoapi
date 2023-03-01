@@ -35,7 +35,8 @@ import tempfile
 import numpy
 from pygeoapi.provider.base import (
     BaseProvider,
-    ProviderInvalidQueryError
+    ProviderInvalidQueryError,
+    ProviderNoDataError
 )
 from pyproj import CRS, Transformer
 import xarray
@@ -340,7 +341,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         if data_vals.values.size == 0:
             msg = 'Invalid query: No data found'
             LOGGER.error(msg)
-            raise ProviderInvalidQueryError(msg)
+            raise ProviderNoDataError(msg)
 
         if format_ == 'zarr':
             new_dataset = data_vals.to_dataset()
@@ -388,7 +389,7 @@ def _convert_bbox_to_crs(bbox, crs):
     :returns: Bounding box in new CRS (minx, miny, maxx, maxy)
     """
 
-    LOGGER.debug('Old bbox:', bbox)
+    LOGGER.debug('Old bbox: {bbox}')
     crs_src = CRS.from_epsg(4326)
     crs_dst = CRS.from_wkt(crs)
 
