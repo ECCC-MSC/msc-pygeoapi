@@ -299,11 +299,13 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             if bbox:
                 # convert bbox projection
                 bbox = _convert_bbox_to_crs(bbox, self.crs)
-                
-                x_range = numpy.arange(self._coverage_properties['extent']['minx'],
-                                       self._coverage_properties['extent']['maxx'])
-                y_range = numpy.arange(self._coverage_properties['extent']['miny'],
-                                       self._coverage_properties['extent']['maxy'])
+
+                x_range = numpy.arange(
+                    self._coverage_properties['extent']['minx'],
+                    self._coverage_properties['extent']['maxx'])
+                y_range = numpy.arange(
+                    self._coverage_properties['extent']['miny'],
+                    self._coverage_properties['extent']['maxy'])
 
                 if all([bbox[0] not in x_range, bbox[2] not in x_range,
                         bbox[1] not in y_range, bbox[3] not in y_range]):
