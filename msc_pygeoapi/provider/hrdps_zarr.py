@@ -299,17 +299,12 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             if bbox:
                 # convert bbox projection
                 bbox = _convert_bbox_to_crs(bbox, self.crs)
-                LOGGER.info(f'bbox: {bbox}')
 
-                if not all([
-                    self._coverage_properties['extent']['minx'] < bbox[0] <
-                    self._coverage_properties['extent']['maxx'],
-                    self._coverage_properties['extent']['miny'] < bbox[1] <
-                    self._coverage_properties['extent']['maxy'],
-                    self._coverage_properties['extent']['minx'] < bbox[2] <
-                    self._coverage_properties['extent']['maxx'],
-                    self._coverage_properties['extent']['miny'] < bbox[3] <
-                    self._coverage_properties['extent']['maxy']
+                if any([
+                    bbox[0] >= self._coverage_properties['extent']['maxx'],
+                    bbox[2] <= self._coverage_properties['extent']['minx'],
+                    bbox[1] >= self._coverage_properties['extent']['maxy'],
+                    bbox[3] <= self._coverage_properties['extent']['miny']
                 ]):
                     msg = 'Invalid bbox (Values must fit coverage extent)'
                     LOGGER.error(msg)
