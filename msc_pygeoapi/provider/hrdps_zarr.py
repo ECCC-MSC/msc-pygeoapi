@@ -311,9 +311,9 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                     self._coverage_properties['extent']['miny'] < bbox[3] <
                     self._coverage_properties['extent']['maxy']
                     ]):
-                    msg = 'Invalid bbox (Values must fit coverage extent)'
-                    LOGGER.error(msg)
-                    raise ProviderNoDataError(msg)
+                        msg = 'Invalid bbox (Values must fit coverage extent)'
+                        LOGGER.error(msg)
+                        raise ProviderNoDataError(msg)
                 elif 'lat' in query_return or 'lon' in query_return:
                     msg = (
                           'Invalid subset' +
