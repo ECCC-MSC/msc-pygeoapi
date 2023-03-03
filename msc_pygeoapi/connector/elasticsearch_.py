@@ -29,7 +29,6 @@
 # =================================================================
 
 import logging
-from urllib.parse import urlparse
 
 from elasticsearch import Elasticsearch, logger as elastic_logger
 from elasticsearch.helpers import streaming_bulk, BulkIndexError
@@ -86,25 +85,8 @@ class ElasticsearchConnector(BaseConnector):
         if not self.url.startswith('http'):
             self.url = 'http://{}'.format(self.url)
 
-        url_parsed = urlparse(self.url)
-        url_settings = {'host': url_parsed.hostname}
-
-        if url_parsed.port is None:  # proxy to default HTTP(S) port
-            if url_parsed.scheme == 'https':
-                url_settings['port'] = 443
-                url_settings['scheme'] = url_parsed.scheme
-            else:
-                url_settings['port'] = 80
-        else:  # was set explictly
-            url_settings['port'] = url_parsed.port
-
-        if url_parsed.path:
-            url_settings['url_prefix'] = url_parsed.path
-
-        LOGGER.debug('URL settings: {}'.format(url_settings))
-
         es_args = {
-            'hosts': [url_settings],
+            'hosts': [self.url],
             'verify_certs': self.verify_certs,
             'retry_on_timeout': True,
             'max_retries': 3
