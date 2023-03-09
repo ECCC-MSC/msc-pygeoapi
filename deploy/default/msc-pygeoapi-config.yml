@@ -146,7 +146,7 @@ resources:
         providers:
             - type: feature
               default: true
-              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
+              name: Elasticsearch
               data: ${MSC_PYGEOAPI_ES_URL}/hydrometric_stations
               id_field: IDENTIFIER
 
@@ -207,7 +207,7 @@ resources:
         providers:
             - type: feature
               default: true
-              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
+              name: Elasticsearch
               data: ${MSC_PYGEOAPI_ES_URL}/hydrometric_daily_mean
               id_field: IDENTIFIER
               time_field: DATE
@@ -281,7 +281,7 @@ resources:
         providers:
             - type: feature
               default: true
-              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
+              name: Elasticsearch
               data: ${MSC_PYGEOAPI_ES_URL}/hydrometric_monthly_mean
               id_field: IDENTIFIER
               time_field: DATE
@@ -351,7 +351,7 @@ resources:
         providers:
             - type: feature
               default: true
-              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
+              name: Elasticsearch
               data: ${MSC_PYGEOAPI_ES_URL}/hydrometric_annual_statistics
               id_field: IDENTIFIER
               time_field: MAX_DATE
@@ -428,7 +428,7 @@ resources:
         providers:
             - type: feature
               default: true
-              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
+              name: Elasticsearch
               data: ${MSC_PYGEOAPI_ES_URL}/hydrometric_annual_peaks
               id_field: IDENTIFIER
               time_field: DATE
@@ -495,7 +495,7 @@ resources:
         providers:
             - type: feature
               default: true
-              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
+              name: Elasticsearch
               data: ${MSC_PYGEOAPI_ES_URL}/hydrometric_realtime.*
               id_field: IDENTIFIER
               time_field: DATETIME
@@ -535,7 +535,7 @@ resources:
         providers:
             - type: feature
               default: true
-              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
+              name: Elasticsearch
               data: ${MSC_PYGEOAPI_ES_URL}/climate_normals_data
               id_field: ID
               time_field: DATE_CALCULATED
@@ -602,7 +602,7 @@ resources:
         providers:
             - type: feature
               default: true
-              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
+              name: Elasticsearch
               data: ${MSC_PYGEOAPI_ES_URL}/climate_station_information
               id_field: CLIMATE_IDENTIFIER
 
@@ -641,7 +641,7 @@ resources:
         providers:
             - type: feature
               default: true
-              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
+              name: Elasticsearch
               data: ${MSC_PYGEOAPI_ES_URL}/climate_public_climate_summary
               id_field: ID
               time_field: LOCAL_DATE
@@ -714,7 +714,7 @@ resources:
         providers:
             - type: feature
               default: true
-              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
+              name: Elasticsearch
               data: ${MSC_PYGEOAPI_ES_URL}/climate_public_daily_data
               id_field: ID
               time_field: LOCAL_DATE
@@ -789,7 +789,7 @@ resources:
         providers:
             - type: feature
               default: true
-              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
+              name: Elasticsearch
               data: ${MSC_PYGEOAPI_ES_URL}/climate_public_hourly_data
               id_field: ID
               time_field: LOCAL_DATE
@@ -856,7 +856,7 @@ resources:
         providers:
             - type: feature
               default: true
-              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
+              name: Elasticsearch
               data: ${MSC_PYGEOAPI_ES_URL}/ahccd_stations
               id_field: identifier__identifiant
 
@@ -895,7 +895,7 @@ resources:
         providers:
             - type: feature
               default: true
-              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
+              name: Elasticsearch
               data: ${MSC_PYGEOAPI_ES_URL}/ahccd_annual
               id_field: identifier__identifiant
               time_field: year__annee
@@ -962,7 +962,7 @@ resources:
         providers:
             - type: feature
               default: true
-              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
+              name: Elasticsearch
               data: ${MSC_PYGEOAPI_ES_URL}/ahccd_seasonal
               id_field: identifier__identifiant
               time_field: year__annee
@@ -1029,7 +1029,7 @@ resources:
         providers:
             - type: feature
               default: true
-              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
+              name: Elasticsearch
               data: ${MSC_PYGEOAPI_ES_URL}/ahccd_monthly
               id_field: identifier__identifiant
               time_field: date
@@ -1097,7 +1097,7 @@ resources:
         providers:
             - type: feature
               default: true
-              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
+              name: Elasticsearch
               data: ${MSC_PYGEOAPI_ES_URL}/ahccd_trends
               id_field: identifier__identifiant
               properties:
@@ -1146,7 +1146,7 @@ resources:
                 end: null # or empty
         providers:
             - type: feature
-              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
+              name: Elasticsearch
               data: ${MSC_PYGEOAPI_ES_URL}/swob_realtime.*
               id_field: id
               time_field: date_tm-value
@@ -1174,7 +1174,7 @@ resources:
                 end: null # or empty
         providers:
             - type: feature
-              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
+              name: Elasticsearch
               data: ${MSC_PYGEOAPI_ES_URL}/ltce_stations
               id_field: IDENTIFIER
 
@@ -1201,7 +1201,7 @@ resources:
                 end: null # or empty
         providers:
             - type: feature
-              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
+              name: Elasticsearch
               data: ${MSC_PYGEOAPI_ES_URL}/ltce_temp_extremes
               id_field: IDENTIFIER
               properties:
@@ -1298,7 +1298,7 @@ resources:
                 end: null # or empty
         providers:
             - type: feature
-              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
+              name: Elasticsearch
               data: ${MSC_PYGEOAPI_ES_URL}/ltce_precip_extremes
               id_field: IDENTIFIER
               properties:
@@ -1350,7 +1350,7 @@ resources:
                 end: null # or empty
         providers:
             - type: feature
-              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
+              name: Elasticsearch
               data: ${MSC_PYGEOAPI_ES_URL}/ltce_snow_extremes
               id_field: IDENTIFIER
               properties:
@@ -1413,7 +1413,7 @@ resources:
                 end: null # or empty
         providers:
             - type: feature
-              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
+              name: Elasticsearch
               data: ${MSC_PYGEOAPI_ES_URL}/aqhi-forecasts-realtime.*
               id_field: id
               time_field: publication_datetime
@@ -1452,7 +1452,7 @@ resources:
                 end: null # or empty
         providers:
             - type: feature
-              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
+              name: Elasticsearch
               data: ${MSC_PYGEOAPI_ES_URL}/aqhi-observations-realtime.*
               id_field: id
               time_field: observation_datetime
@@ -1529,7 +1529,7 @@ resources:
                 end: null # or empty
         providers:
             - type: feature
-              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
+              name: Elasticsearch
               data: ${MSC_PYGEOAPI_ES_URL}/bulletins.*
               id_field: identifier
               time_field: datetime
@@ -1569,7 +1569,7 @@ resources:
                 end: null # or empty
         providers:
             - type: feature
-              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchProvider
+              name: Elasticsearch
               data: ${MSC_PYGEOAPI_ES_URL}/metnotes.*
               id_field: id
               time_field: publication_datetime
@@ -3316,106 +3316,106 @@ resources:
                   name: GRIB
                   mimetype: application/x-grib2
 
-    discovery-metadata:
-        type: collection
-        title:
-            en: MSC discovery metadata
-            fr: Métadonnées de découverte du SMC
-        description:
-            en: MSC dataset metadata inventory
-            fr: Inventaire des métadonnées des jeux de données du SMC
-        keywords:
-            en: [discovery, metadata, open data]
-            fr: [découverte, métadonnées, données ouvertes]
-        crs:
-            - CRS84
-        links:
-            - type: text/html
-              rel: canonical
-              title:
-                en: Meteorological Service of Canada open data
-                fr: Données ouvertes du Service météorologique du Canada
-              href:
-                en: https://eccc-msc.github.io/open-data/msc-data/readme_en
-                fr: https://eccc-msc.github.io/open-data/msc-data/readme_fr
-              hreflang:
-                en: en-CA
-                fr: fr-CA
-        extents:
-            spatial:
-                bbox: [-142, 42, -52, 84]
-                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-        providers:
-            - type: record
-              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchCatalogueProvider
-              data: ${MSC_PYGEOAPI_ES_URL}/discovery-metadata
-              id_field: identifier
+    # discovery-metadata:
+    #     type: collection
+    #     title:
+    #         en: MSC discovery metadata
+    #         fr: Métadonnées de découverte du SMC
+    #     description:
+    #         en: MSC dataset metadata inventory
+    #         fr: Inventaire des métadonnées des jeux de données du SMC
+    #     keywords:
+    #         en: [discovery, metadata, open data]
+    #         fr: [découverte, métadonnées, données ouvertes]
+    #     crs:
+    #         - CRS84
+    #     links:
+    #         - type: text/html
+    #           rel: canonical
+    #           title:
+    #             en: Meteorological Service of Canada open data
+    #             fr: Données ouvertes du Service météorologique du Canada
+    #           href:
+    #             en: https://eccc-msc.github.io/open-data/msc-data/readme_en
+    #             fr: https://eccc-msc.github.io/open-data/msc-data/readme_fr
+    #           hreflang:
+    #             en: en-CA
+    #             fr: fr-CA
+    #     extents:
+    #         spatial:
+    #             bbox: [-142, 42, -52, 84]
+    #             crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+    #     providers:
+    #         - type: record
+    #           name: ElasticsearchCatalogue
+    #           data: ${MSC_PYGEOAPI_ES_URL}/discovery-metadata
+    #           id_field: identifier
 
-    wis2-discovery-metadata:
-        type: collection
-        title: WMO WIS2 discovery metadata (experimental)
-        description: WMO WIS2 discovery metadata (experimental)
-        keywords: 
-            en: [wmo, wis2, discovery, metadata]
-            fr: [wmo, wis2, discovery, metadata]
-        crs:
-            - CRS84
-        links:
-            - type: text/html
-              rel: canonical
-              title: 
-                en: WMO Information System
-                fr: WMO Information System
-              href: 
-                en: https://community.wmo.int/activity-areas/wis
-                fr: https://community.wmo.int/activity-areas/wis
-              hreflang: 
-                en: en-US
-                fr: en-US
-        extents:
-            spatial:
-                bbox: [-180, -90, 180, 90]
-                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-        providers:
-            - type: record
-              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchCatalogueWMOWIS2GDCProvider
-              data: ${MSC_PYGEOAPI_ES_URL}/wis2-discovery-metadata
-              id_field: id
+    # wis2-discovery-metadata:
+    #     type: collection
+    #     title: WMO WIS2 discovery metadata (experimental)
+    #     description: WMO WIS2 discovery metadata (experimental)
+    #     keywords: 
+    #         en: [wmo, wis2, discovery, metadata]
+    #         fr: [wmo, wis2, discovery, metadata]
+    #     crs:
+    #         - CRS84
+    #     links:
+    #         - type: text/html
+    #           rel: canonical
+    #           title: 
+    #             en: WMO Information System
+    #             fr: WMO Information System
+    #           href: 
+    #             en: https://community.wmo.int/activity-areas/wis
+    #             fr: https://community.wmo.int/activity-areas/wis
+    #           hreflang: 
+    #             en: en-US
+    #             fr: en-US
+    #     extents:
+    #         spatial:
+    #             bbox: [-180, -90, 180, 90]
+    #             crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+    #     providers:
+    #         - type: record
+    #           name: msc_pygeoapi.provider.elasticsearch.ElasticsearchCatalogueWMOWIS2GDCProvider
+    #           data: ${MSC_PYGEOAPI_ES_URL}/wis2-discovery-metadata
+    #           id_field: id
 
-    wis2-notification-messages:
-        type: collection
-        title: 
-            en: WMO WIS2 notification messages (experimental)
-            fr: WMO WIS2 notification messages (experimental)
-        description: 
-            en: WMO WIS2 notification messages (experimental)
-            fr: WMO WIS2 notification messages (experimental)
-        keywords: 
-            en: [wmo, wis2, notification, messages]
-            fr: [wmo, wis2, notification, messages]
-        crs:
-            - CRS84
-        links:
-            - type: text/html
-              rel: canonical
-              title: 
-                en: WMO Information System
-                fr: WMO Information System
-              href: 
-                en: https://community.wmo.int/activity-areas/wis
-                fr: https://community.wmo.int/activity-areas/wis
-              hreflang:
-                en: en-US
-                fr: en-US
-        extents:
-            spatial:
-                bbox: [-180, -90, 180, 90]
-                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-        providers:
-            - type: feature
-              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchWMOWIS2BrokerMessagesProvider
-              data: ${MSC_PYGEOAPI_ES_URL}/wis2-notification-messages*
-              id_field: id
+    # wis2-notification-messages:
+    #     type: collection
+    #     title: 
+    #         en: WMO WIS2 notification messages (experimental)
+    #         fr: WMO WIS2 notification messages (experimental)
+    #     description: 
+    #         en: WMO WIS2 notification messages (experimental)
+    #         fr: WMO WIS2 notification messages (experimental)
+    #     keywords: 
+    #         en: [wmo, wis2, notification, messages]
+    #         fr: [wmo, wis2, notification, messages]
+    #     crs:
+    #         - CRS84
+    #     links:
+    #         - type: text/html
+    #           rel: canonical
+    #           title: 
+    #             en: WMO Information System
+    #             fr: WMO Information System
+    #           href: 
+    #             en: https://community.wmo.int/activity-areas/wis
+    #             fr: https://community.wmo.int/activity-areas/wis
+    #           hreflang:
+    #             en: en-US
+    #             fr: en-US
+    #     extents:
+    #         spatial:
+    #             bbox: [-180, -90, 180, 90]
+    #             crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+    #     providers:
+    #         - type: feature
+    #           name: msc_pygeoapi.provider.elasticsearch.ElasticsearchWMOWIS2BrokerMessagesProvider
+    #           data: ${MSC_PYGEOAPI_ES_URL}/wis2-notification-messages*
+    #           id_field: id
 
     raster-drill:
         type: process

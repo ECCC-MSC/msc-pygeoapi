@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-11-04 18:07+0000\n"
+"POT-Creation-Date: 2023-03-07 22:11+0000\n"
 "PO-Revision-Date: 2022-07-05 09:20-0700\n"
 "Last-Translator: \n"
 "Language: fr_CA\n"
@@ -517,7 +517,7 @@ msgstr "Page [% currentPage %] / [% maxPages %]"
 msgid "Next"
 msgstr "Suivant"
 
-#: theme/templates/collections/items/index.html:195
+#: theme/templates/collections/items/index.html:196
 msgid ""
 "Clear column keyword search queries and reset to display the default "
 "results"
@@ -525,23 +525,23 @@ msgstr ""
 "Effacer les requêtes de recherche par mots-clés des colonnes et "
 "réinitialiser pour afficher les résultats par défaut"
 
-#: theme/templates/collections/items/index.html:200
+#: theme/templates/collections/items/index.html:201
 msgid "Showing $firstPage to $upper of $itemsTotal"
 msgstr "Affichage de $firstPage jusqu'à $upper de $itemsTotal"
 
-#: theme/templates/collections/items/index.html:201
+#: theme/templates/collections/items/index.html:202
 msgid "Showing 0 results"
 msgstr "Affichage de 0 résultats"
 
-#: theme/templates/collections/items/index.html:245
+#: theme/templates/collections/items/index.html:246
 msgid "filtered from $totalSize total entry"
 msgstr "filtré de $totalSize entrée au total"
 
-#: theme/templates/collections/items/index.html:246
+#: theme/templates/collections/items/index.html:247
 msgid "filtered from $totalSize total entries"
 msgstr "filtrées de $totalSize entrées au total"
 
-#: theme/templates/collections/items/index.html:247
+#: theme/templates/collections/items/index.html:248
 msgid "Showing $startEntryOfPage to $lastEntryOfPage of $filteredNumEntries"
 msgstr ""
 "Affichage de $startEntryOfPage jusqu'à $lastEntryOfPage de "
