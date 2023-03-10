@@ -72,6 +72,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             # for coverage providers
             self.axes = self._coverage_properties['dimensions']
             self.crs = self._coverage_properties['crs']
+            
         except KeyError:
             raise RuntimeError('name/type/data are required')
 
@@ -95,51 +96,43 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         :returns: `dict` of coverage properties
         """
         # Dynammically getting all of the axis names
-        all_axis = []
-        for coord in self._data.coords:
-            try:
-                some_coord = self._data[coord].attrs["axis"]
-                if some_coord not in all_axis:
-                    all_axis.append(some_coord)
-            except AttributeError:
-                msg = f'{coord} has no axis attribute but is a coordinate.'
-                LOGGER.warning(msg)
-                pass
+        all_variables = [i for i in self._data.data_vars]
+        the_crs = self._data.attrs['CRS']
+        self._data = self._data[all_variables[0]]
 
-        all_variables = []
-        for var in self._data.data_vars:
-            all_variables.append(var)
 
-        all_dimensions = []
-        for dim in self._data.dims:
-            all_dimensions.append(dim)
+
+        all_axis = [i for i in self._data.coords]
+
+
+        all_dimensions = [ i for i in self._data.dims]
 
         try:
-            size_x = float(abs(self._data.lon[1] - self._data.lon[0]))
+            size_x = float(abs(self._data.rlon[1] - self._data.rlon[0]))
         except IndexError:
-            size_x = float(abs(self._data.lon[0]))
+            size_x = float(abs(self._data.rlon[0]))
 
         try:
-            size_y = float(abs(self._data.lat[1] - self._data.lat[0]))
+            size_y = float(abs(self._data.rlat[1] - self._data.rlat[0]))
         except IndexError:
-            size_y = float(abs(self._data.lat[0]))
+            size_y = float(abs(self._data.rlat[0]))
 
         properties = {
             # have to convert values to float and int to serilize into json
-            'crs': self._data.attrs['_CRS'],
+            'crs': the_crs,
             'axis': all_axis,
             'extent': {
-                'minx': float(self._data.lon.min().values),
-                'miny': float(self._data.lat.min().values),
-                'maxx': float(self._data.lon.max().values),
-                'maxy': float(self._data.lat.max().values),
+                'minx': float(self._data.rlon.min().values),
+                'miny': float(self._data.rlat.min().values),
+                'maxx': float(self._data.rlon.max().values),
+                'maxy': float(self._data.rlat.max().values),
                 'coordinate_reference_system':
                 ("http://www.opengis.net/def/crs/ECCC-MSC" +
                     "/-/ob_tran-longlat-weong")
                 },
             'size': {
-                'width': int(self._data.lon.size),
-                'height': int(self._data.lat.size)
+                'width': int(self._data.rlon.size),
+                'height': int(self._data.rlat.size)
                 },
             'resolution': {
                 'x': size_x,
@@ -151,10 +144,9 @@ class HRDPSWEonGZarrProvider(BaseProvider):
 
         return properties
 
-    def _get_parameter_metadata(self, var_name):
+    def _get_parameter_metadata(self):
         """
         Helper function to derive parameter name and units
-        :param var_name: representation of variable name
         :returns: dict of parameter metadata
         """
         parameter = {
@@ -164,15 +156,14 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             'long_name': None
             }
 
-        if var_name in self._coverage_properties['variables']:
-            parameter['array_dimensons'] = self._data[var_name].dims
-            parameter['coordinates'] = self._data[var_name].coords
-            parameter['grid_mapping'] = (
-                self._data[var_name].attrs['grid_mapping'])
-            parameter['units'] = self._data[var_name].attrs['units']
-            parameter['long_name'] = self._data[var_name].attrs['long_name']
-            parameter['id'] = self._data[var_name].attrs['nomvar'],
-            parameter['data_type'] = self._data[var_name].dtype
+        parameter['array_dimensons'] = self._data.dims
+        parameter['coordinates'] = self._data.coords
+        parameter['grid_mapping'] = (
+            self._data.attrs['grid_mapping'])
+        parameter['units'] = self._data.attrs['units']
+        parameter['long_name'] = self._data.attrs['long_name']
+        parameter['id'] = self._data.attrs['nomvar'],
+        parameter['data_type'] = self._data.dtype
 
         return parameter
 
@@ -228,8 +219,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         'CIS JSON':https://docs.opengeospatial.org/is/09-146r6/09-146r6.html#46
         """
         # at 0, we are dealing with one variable (1 zarr file per variable)
-        var_name = self._coverage_properties['variables'][0]
-        parameter_metadata = self._get_parameter_metadata(var_name)
+        parameter_metadata = self._get_parameter_metadata()
 
         rangetype = {
             'type': 'DataRecordType',
@@ -262,14 +252,13 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         :param format_: data format of output
         #TODO: antimeridian bbox
         """
-        var_name = self._coverage_properties['variables'][0]
         var_dims = self._coverage_properties['dimensions']
         query_return = {}
         if not subsets and not bbox and datetime_ is None:
             for i in reversed(range(1, DEFAULT_LIMIT_JSON+1)):
                 for dim in var_dims:
                     query_return[dim] = i
-                data_vals = self._data[var_name].head(**query_return)
+                data_vals = self._data.head(**query_return)
                 if format_ == 'zarr':
                     new_dataset = data_vals.to_dataset()
                     new_dataset.attrs['_CRS'] = self.crs
@@ -309,16 +298,16 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                     msg = 'Invalid bbox (Values must fit coverage extent)'
                     LOGGER.error(msg)
                     raise ProviderNoDataError(msg)
-                elif 'lat' in query_return or 'lon' in query_return:
+                elif 'rlat' in query_return or 'rlon' in query_return:
                     msg = (
                           'Invalid subset' +
-                          '(Cannot subset by both "lat", "lon" and "bbox")'
+                          '(Cannot subset by both "rlat", "rlon" and "bbox")'
                     )
                     LOGGER.error(msg)
                     raise ProviderInvalidQueryError(msg)
                 else:
-                    query_return['lat'] = slice(bbox[1], bbox[3])
-                    query_return['lon'] = slice(bbox[0], bbox[2])
+                    query_return['rlat'] = slice(bbox[1], bbox[3])
+                    query_return['rlon'] = slice(bbox[0], bbox[2])
 
             if datetime_:
                 if '/' not in datetime_:  # single date
@@ -331,7 +320,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
 
         try:
             # is a xarray data-array
-            data_vals = self._data[var_name].sel(**query_return)
+            data_vals = self._data.sel(**query_return)
 
         except Exception as e:
             msg = f'Invalid query (Error: {e})'
@@ -367,7 +356,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
 # NOTE: float16 only has 3 decimal places of precision, but saves memory
                 if (da_max[0] != '0') or (da_min[0] != '0'):
                     if float(da_max) <= 65504:
-                        data_vals = self._data[var_name].astype('float16')
+                        data_vals = self._data.astype('float16')
                         data_vals = data_vals.sel(**query_return)
 
         if data_vals.data.nbytes > MAX_DASK_BYTES:
@@ -433,7 +422,6 @@ def _gen_domain_axis(self, data):
     Helper function to generate domain axis
     :returns: list of dict of domain axis
     """
-    var_name = self._coverage_properties['variables'][0]
 
     # Dynammically getting all of the axis names
     all_axis = []
@@ -441,26 +429,26 @@ def _gen_domain_axis(self, data):
         all_axis.append(coord)
 
     # Makes sure axis are in the correct order
-    j, k = all_axis.index('lon'), all_axis.index(all_axis[0])
+    j, k = all_axis.index('rlon'), all_axis.index(all_axis[0])
     all_axis[j], all_axis[k] = all_axis[k], all_axis[j]
 
-    j, k = all_axis.index('lat'), all_axis.index(all_axis[1])
+    j, k = all_axis.index('rlat'), all_axis.index(all_axis[1])
     all_axis[j], all_axis[k] = all_axis[k], all_axis[j]
 
     all_dims = []
     for dim in data.dims:
         all_dims.append(dim)
 
-    j, k = all_dims.index('lon'), all_dims.index(all_dims[0])
+    j, k = all_dims.index('rlon'), all_dims.index(all_dims[0])
     all_dims[j], all_dims[k] = all_dims[k], all_dims[j]
 
-    j, k = all_dims.index('lat'), all_dims.index(all_dims[1])
+    j, k = all_dims.index('rlat'), all_dims.index(all_dims[1])
     all_dims[j], all_dims[k] = all_dims[k], all_dims[j]
 
     aa = []
 
     for a, dim in zip(all_axis, all_dims):
-        if a == 'T':
+        if a == 'time':
             res = ''.join(c for c in (
                 str(data[dim].values[1] - data[dim].values[0]))
                 if c.isdigit())
@@ -479,7 +467,7 @@ def _gen_domain_axis(self, data):
 
         else:
             try:
-                uom = self._data[var_name][dim].attrs['units']
+                uom = self._data[dim].attrs['units']
             except KeyError:
                 uom = 'n/a'
 
@@ -509,8 +497,7 @@ def _gen_covjson(self, the_data):
     LOGGER.debug('Creating CoverageJSON domain')
     numpy.set_printoptions(threshold=sys.maxsize)
     props = self._coverage_properties
-    var_name = self._coverage_properties['variables'][0]
-    parameter_metadata = self._get_parameter_metadata(var_name)
+    parameter_metadata = self._get_parameter_metadata()
 
     cov_json = {
         'type': 'CoverageType',
@@ -519,14 +506,14 @@ def _gen_covjson(self, the_data):
             'domainType': 'Grid',
             'axes': {
                 'x': {
-                    'start': float(the_data.lon.min().values),
-                    'stop': float(the_data.lon.max().values),
-                    'num': int(the_data.lon.size)
+                    'start': float(the_data.rlon.min().values),
+                    'stop': float(the_data.rlon.max().values),
+                    'num': int(the_data.rlon.size)
                 },
                 'y': {
-                    'start': float(the_data.lat.min().values),
-                    'stop': float(the_data.lat.max().values),
-                    'num': int(the_data.lat.size)
+                    'start': float(the_data.rlat.min().values),
+                    'stop': float(the_data.rlat.max().values),
+                    'num': int(the_data.rlat.size)
                 },
                 't': {
                     'start': str(the_data.time.min().values),
