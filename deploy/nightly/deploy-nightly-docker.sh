@@ -57,8 +57,7 @@ echo "Generating nightly build for $TIMESTAMP"
 mkdir $NIGHTLYDIR && cd $NIGHTLYDIR
 
 echo "Cloning Git repository"
-# git clone $MSC_PYGEOAPI_GITREPO . -b master --depth=1
-git clone $MSC_PYGEOAPI_GITREPO . -b nightly-focal --depth=1
+git clone $MSC_PYGEOAPI_GITREPO . -b master --depth=1
 
 echo "Stopping/building/starting Docker setup"
 docker compose -f docker/docker-compose.yml -f docker/docker-compose.override.yml down
