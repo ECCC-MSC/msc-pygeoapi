@@ -72,7 +72,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             # for coverage providers
             self.axes = self._coverage_properties['dimensions']
             self.crs = self._coverage_properties['crs']
-            
+
         except KeyError:
             raise RuntimeError('name/type/data are required')
 
@@ -100,12 +100,9 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         the_crs = self._data.attrs['CRS']
         self._data = self._data[all_variables[0]]
 
-
-
         all_axis = [i for i in self._data.coords]
 
-
-        all_dimensions = [ i for i in self._data.dims]
+        all_dimensions = [i for i in self._data.dims]
 
         try:
             size_x = float(abs(self._data.rlon[1] - self._data.rlon[0]))
