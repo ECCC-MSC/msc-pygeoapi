@@ -33,6 +33,9 @@
 # every day at 0400h, clean hydrometric realtime data older than 30 days
 0 4 * * * geoadm msc-pygeoapi data hydrometric_realtime clean_indexes --days 30 --yes
 
+# every hour on the 04, cache hydrometric stations
+4 * * * * geoadm msc-pygeoapi data hydrometric_realtime cache-stations
+
 # every day at 0500h, clean swob realtime data older than 30 days
 0 5 * * * geoadm msc-pygeoapi data swob_realtime clean_indexes --days 30 --yes
 
