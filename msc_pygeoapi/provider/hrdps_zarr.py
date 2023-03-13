@@ -38,7 +38,6 @@ from pygeoapi.provider.base import (
     ProviderInvalidQueryError,
     ProviderNoDataError
 )
-from pyproj import CRS, Transformer
 import xarray
 import zarr
 
@@ -283,19 +282,10 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                         raise ProviderInvalidQueryError(msg)
 
             if bbox:
-                # convert bbox projection
-                bbox = _convert_bbox_to_crs(bbox, self.crs)
+                LOGGER.info(f'bbox: {bbox}')
+                
 
-                if any([
-                    bbox[0] >= self._coverage_properties['extent']['maxx'],
-                    bbox[2] <= self._coverage_properties['extent']['minx'],
-                    bbox[1] >= self._coverage_properties['extent']['maxy'],
-                    bbox[3] <= self._coverage_properties['extent']['miny']
-                ]):
-                    msg = 'Invalid bbox (Values must fit coverage extent)'
-                    LOGGER.error(msg)
-                    raise ProviderNoDataError(msg)
-                elif 'rlat' in query_return or 'rlon' in query_return:
+                if 'rlat' in query_return or 'rlon' in query_return:
                     msg = (
                           'Invalid subset' +
                           '(Cannot subset by both "rlat", "rlon" and "bbox")'
@@ -303,8 +293,10 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                     LOGGER.error(msg)
                     raise ProviderInvalidQueryError(msg)
                 else:
+                    new_v = (self._data.lon + 180) % 360 - 180
+                    self._data = self._data.expand_dims({'rlon_180': len(new_v)}).assign_coords({'rlon_180': new_v})
                     query_return['rlat'] = slice(bbox[1], bbox[3])
-                    query_return['rlon'] = slice(bbox[0], bbox[2])
+                    query_return['rlon_180'] = slice(bbox[0], bbox[2])
 
             if datetime_:
                 if '/' not in datetime_:  # single date
@@ -315,14 +307,15 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                     end_date = datetime_.split('/')[1]
                     query_return['time'] = slice(start_date, end_date)
 
-        try:
+        #try:
             # is a xarray data-array
+            LOGGER.info(f'query_return: {query_return}')
             data_vals = self._data.sel(**query_return)
 
-        except Exception as e:
+        '''except Exception as e:
             msg = f'Invalid query (Error: {e})'
             LOGGER.error(msg)
-            raise ProviderInvalidQueryError(msg)
+            raise ProviderInvalidQueryError(msg)'''
 
         if data_vals.values.size == 0:
             msg = 'Invalid query: No data found'
@@ -366,27 +359,6 @@ class HRDPSWEonGZarrProvider(BaseProvider):
     def __repr__(self):
         return '<BaseProvider> {}'.format(self.type)
 
-
-def _convert_bbox_to_crs(bbox, crs):
-    """
-    Helper function to convert a bbox to a new crs
-    :param bbox: Bounding box (minx, miny, maxx, maxy)
-    :param crs: CRS to convert to
-    :returns: Bounding box in new CRS (minx, miny, maxx, maxy)
-    """
-
-    LOGGER.debug('Old bbox: {bbox}')
-    crs_src = CRS.from_epsg(4326)
-    crs_dst = CRS.from_wkt(crs)
-
-    to_transform = Transformer.from_crs(crs_src, crs_dst, always_xy=True)
-
-    minx, miny = to_transform.transform(bbox[0], bbox[1])
-    maxx, maxy = to_transform.transform(bbox[2], bbox[3])
-
-    LOGGER.debug('New bbox', [minx, miny, maxx, maxy])
-
-    return [minx, miny, maxx, maxy]
 
 
 def _get_zarr_data_stream(data):
