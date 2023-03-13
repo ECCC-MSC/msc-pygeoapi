@@ -9,6 +9,7 @@ server:
     languages:
         - en-CA
         - fr-CA
+    locale_dir: ${MSC_PYGEOAPI_LOCALE}
     # cors: true
     pretty_print: false
     limit: 500
