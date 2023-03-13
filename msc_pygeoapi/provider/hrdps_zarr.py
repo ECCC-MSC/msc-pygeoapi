@@ -307,15 +307,16 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                     end_date = datetime_.split('/')[1]
                     query_return['time'] = slice(start_date, end_date)
 
-        #try:
+        try:
             # is a xarray data-array
             LOGGER.info(f'query_return: {query_return}')
             data_vals = self._data.sel(**query_return)
+            LOGGER.info(f'data_vals: {data_vals}')
 
-        '''except Exception as e:
+        except Exception as e:
             msg = f'Invalid query (Error: {e})'
             LOGGER.error(msg)
-            raise ProviderInvalidQueryError(msg)'''
+            raise ProviderInvalidQueryError(msg)
 
         if data_vals.values.size == 0:
             msg = 'Invalid query: No data found'
@@ -327,27 +328,6 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             new_dataset.attrs['_CRS'] = self.crs
             return _get_zarr_data_stream(new_dataset)
 
-        if 0 not in data_vals.shape:
-            d_max = float(data_vals.max())
-            d_min = float(data_vals.min())
-
-            if (
-                (str(d_max)[0].isnumeric()) and
-                (str(d_min)[0].isnumeric()) or
-                (
-                    (str(d_max)[0] == '-') and
-                    (str(d_min)[0] == '-')
-                )
-            ):
-                da_max = str(abs(d_max))
-                da_min = str(abs(d_min))
-
-# NOTE: float16 can only represent numbers up to 65504 (+/-)
-# NOTE: float16 only has 3 decimal places of precision, but saves memory
-                if (da_max[0] != '0') or (da_min[0] != '0'):
-                    if float(da_max) <= 65504:
-                        data_vals = self._data.astype('float16')
-                        data_vals = data_vals.sel(**query_return)
 
         if data_vals.data.nbytes > MAX_DASK_BYTES:
             raise ProviderInvalidQueryError(
@@ -463,7 +443,7 @@ def _gen_covjson(self, the_data):
     :returns: dict of CoverageJSON representation
     """
 
-    LOGGER.debug('Creating CoverageJSON domain')
+    LOGGER.info('Creating CoverageJSON domain')
     numpy.set_printoptions(threshold=sys.maxsize)
     props = self._coverage_properties
     parameter_metadata = self._get_parameter_metadata()
