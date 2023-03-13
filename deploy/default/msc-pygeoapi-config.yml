@@ -817,6 +817,8 @@ resources:
                   - STATION_PRESSURE_FLAG
                   - VISIBILITY
                   - VISIBILITY_FLAG
+                  - WEATHER_ENG_DESC
+                  - WEATHER_FRE_DESC
                   - WINDCHILL
                   - WINDCHILL_FLAG
                   - WIND_DIRECTION
