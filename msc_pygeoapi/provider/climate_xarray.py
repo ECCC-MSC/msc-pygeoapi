@@ -321,12 +321,12 @@ class ClimateProvider(XarrayProvider):
         except Exception as err:
             LOGGER.error(err)
 
-    def query(self, range_subset=[], subsets={},
+    def query(self, properties=[], subsets={},
               bbox=[], datetime_=None, format_='json'):
         """
          Extract data from collection collection
 
-        :param range_subset: list of data variables to return
+        :param properties: list of data variables to return
         :param subsets: dict of subset names with lists of ranges
         :param bbox: bounding box [minx,miny,maxx,maxy]
         :param datetime: temporal (datestamp or extent)
@@ -403,29 +403,29 @@ class ClimateProvider(XarrayProvider):
 
         self._data = open_data(self.data)
 
-        # set default variable if range_subset is None
-        range_subset_ = range_subset.copy()
+        # set default variable if properties is None
+        properties_ = properties.copy()
 
-        if not range_subset:
+        if not properties:
             name = list(self._data.variables.keys())[-1]
-            range_subset_.append(name)
+            properties_.append(name)
         elif 'dcs' in self.data:
-            dcs_range_subset = []
+            dcs_properties = []
             if 'monthly' not in self.data:
-                for v in range_subset_:
-                    dcs_range_subset.append(next(k for k in list(
+                for v in properties_:
+                    dcs_properties.append(next(k for k in list(
                         self._data.variables.keys()) if v in k))
             else:
                 dcs = {'pr': 'pr', 'tx': 'tasmax',
                        'tm': 'tmean', 'tn': 'tasmin'}
-                for v in range_subset_:
-                    dcs_range_subset.append(dcs[v])
-            range_subset_ = dcs_range_subset
+                for v in properties_:
+                    dcs_properties.append(dcs[v])
+            properties_ = dcs_properties
 
         # workaround for inconsistent time values in the NetCDF
         if 'cmip5' in self.data:
-            if len(range_subset) > 1:
-                err = 'Only one range-subset value is supported for this data'
+            if len(properties) > 1:
+                err = 'Only one properties value is supported for this data'
                 LOGGER.error(err)
                 raise ProviderQueryError(err)
             try:
@@ -435,15 +435,15 @@ class ClimateProvider(XarrayProvider):
                              'sit': 'SICETHKN',
                              'snd': 'SNDPT',
                              'tas': 'TEMP'}
-                _var = cmip5_var[range_subset_[0]]
+                _var = cmip5_var[properties_[0]]
                 cmip5_file = self.data.replace('*', _var)
             except KeyError as err:
                 LOGGER.error(err)
-                msg = 'Not a validd range-subset value'
+                msg = 'Not a valid properties value'
                 raise ProviderQueryError(msg)
             data = xarray.open_dataset(cmip5_file)
         else:
-            data = self._data[[*range_subset_]]
+            data = self._data[[*properties_]]
 
         if any([self._coverage_properties['x_axis_label'] in subsets,
                 self._coverage_properties['y_axis_label'] in subsets,
@@ -544,22 +544,22 @@ class ClimateProvider(XarrayProvider):
             out_meta['time_steps'] = data.dims[self.time_field]
 
         self.filename = self.data.split('/')[-1].replace(
-            '*', '-'.join(range_subset))
+            '*', '-'.join(properties))
 
         LOGGER.debug('Serializing data in memory')
         if format_ == 'json':
             LOGGER.debug('Creating output in CoverageJSON')
-            return self.gen_covjson(out_meta, data, range_subset_)
+            return self.gen_covjson(out_meta, data, properties_)
         elif format_ == 'zarr':
             LOGGER.debug('Returning data in native zarr format')
             return _get_zarr_data(data)
         # elif format_.lower() == 'geotiff':
-        #     if len(range_subset) == 1:
+        #     if len(properties) == 1:
         #         import rioxarray
         #         with tempfile.TemporaryFile() as fp:
         #             LOGGER.debug('Returning data in GeoTIFF format')
         #             data.rio.write_crs("epsg:4326", inplace=True)
-        #             data[range_subset[0]].rio.to_raster('/tmp/tmp.tif')
+        #             data[properties[0]].rio.to_raster('/tmp/tmp.tif')
         #             with open('/tmp/tmp.tif') as fp:
         #                 fp.seek(0)
         #                 return fp

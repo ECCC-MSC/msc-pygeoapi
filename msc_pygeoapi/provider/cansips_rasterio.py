@@ -254,11 +254,11 @@ class CanSIPSProvider(BaseProvider):
 
         return rangetype
 
-    def query(self, range_subset=[1], subsets={}, bbox=[],
+    def query(self, properties=[1], subsets={}, bbox=[],
               datetime_=None, format_='json', **kwargs):
         """
         Extract data from collection collection
-        :param range_subset: variable
+        :param properties: variable
         :param subsets: dict of subset names with lists of ranges
         :param bbox: bounding box [minx,miny,maxx,maxy]
         :param datetime_: temporal (datestamp or extent)
@@ -268,14 +268,14 @@ class CanSIPSProvider(BaseProvider):
 
         nbits = 20
 
-        if len(range_subset) > 1:
+        if len(properties) > 1:
             err = 'Only one range-subset value is supported'
             LOGGER.error(err)
             raise ProviderQueryError(err)
 
-        range_subset[0] = int(range_subset[0])
+        properties[0] = int(properties[0])
         try:
-            var_list = self.var_list[range_subset[0] - 1]
+            var_list = self.var_list[properties[0] - 1]
         except IndexError as err:
             LOGGER.error(err)
             raise ProviderQueryError(err)
@@ -369,7 +369,7 @@ class CanSIPSProvider(BaseProvider):
         LOGGER.debug('Selecting bands')
         args['indexes'] = bands
 
-        var = self.var_list[range_subset[0] - 1]
+        var = self.var_list[properties[0] - 1]
         self.data = self.data.replace(
             'cansips_forecast_raw_latlon2.5x2.5_TMP_TGL_2m', var)
 
