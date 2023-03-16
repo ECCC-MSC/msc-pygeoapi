@@ -43,7 +43,6 @@ import xarray
 import zarr
 
 LOGGER = logging.getLogger(__name__)
-DEFAULT_LIMIT_JSON = 1
 MAX_DASK_BYTES = 225000
 
 
@@ -255,7 +254,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         is_bbox = False
         bbox_str = ''
         if not subsets and not bbox and datetime_ is None:
-            for i in reversed(range(1, DEFAULT_LIMIT_JSON+1)):
+            for i in reversed(range(1, 2)):
                 for dim in var_dims:
                     query_return[dim] = i
                 data_vals = self._data.head(**query_return)
