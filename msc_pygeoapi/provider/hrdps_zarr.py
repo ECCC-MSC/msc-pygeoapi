@@ -318,13 +318,13 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             data_vals = self._data.sel(**query_return)
             if is_bbox:
 
-                new_cond = ''
+                n_con = ''
                 for key in query_return.keys():
-                    new_cond += f' & (self._data.{key} == data_vals.{key})'
+                    n_con += f' & (self._data.{key} == data_vals.{key})'
 
-                LOGGER.info(f'new_cond: {new_cond}')
-                LOGGER.info(f'THE STATE: {bbox_str + new_cond}')
-                data_vals = self._data.where(eval(bbox_str + new_cond), drop=True)
+                LOGGER.info(f'new_cond: {n_con}')
+                LOGGER.info(f'THE STATE: {bbox_str + n_con}')
+                data_vals = self._data.where(eval(bbox_str + n_con), drop=True)
                 LOGGER.info(f'data_vals in bbox: {data_vals}')
 
         except Exception as e:
@@ -341,7 +341,6 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             new_dataset = data_vals.to_dataset()
             new_dataset.attrs['_CRS'] = self.crs
             return _get_zarr_data_stream(new_dataset)
-
 
         if data_vals.data.nbytes > MAX_DASK_BYTES:
             raise ProviderInvalidQueryError(
