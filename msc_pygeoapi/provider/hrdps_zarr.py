@@ -97,7 +97,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         """
         # Dynammically getting all of the axis names
         all_variables = [i for i in self._data.data_vars]
-        the_crs = self._data.attrs('CRS', '_CRS')
+        the_crs = self._data.attrs.get('CRS', '_CRS')
         self._data = self._data[all_variables[0]]
 
         all_axis = [i for i in self._data.coords]
