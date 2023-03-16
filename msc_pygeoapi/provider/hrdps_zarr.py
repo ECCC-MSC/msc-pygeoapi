@@ -43,7 +43,7 @@ import xarray
 import zarr
 
 LOGGER = logging.getLogger(__name__)
-DEFAULT_LIMIT_JSON = 5
+DEFAULT_LIMIT_JSON = 1
 MAX_DASK_BYTES = 225000
 
 
@@ -97,7 +97,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         """
         # Dynammically getting all of the axis names
         all_variables = [i for i in self._data.data_vars]
-        the_crs = self._data.attrs['CRS']
+        the_crs = self._data.attrs('CRS', '_CRS')
         self._data = self._data[all_variables[0]]
 
         all_axis = [i for i in self._data.coords]
@@ -348,7 +348,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                 'Data size exceeds maximum allowed size'
                 )
 
-        return LOGGER.info("In RETURN"), _gen_covjson(self, the_data=data_vals)
+        return _gen_covjson(self, the_data=data_vals)
 
     def __repr__(self):
         return '<BaseProvider> {}'.format(self.type)
@@ -530,9 +530,8 @@ def _gen_covjson(self, the_data):
     else:
         arr = the_data.data.flatten()
         d_mask = ~da.isnan(arr)
-        arr = arr[d_mask]
         the_range[parameter_metadata['id'][0]]['values'] = (
-                arr.compute().tolist()
+                arr[d_mask].compute().tolist()
             )
 
     cov_json['ranges'] = the_range
