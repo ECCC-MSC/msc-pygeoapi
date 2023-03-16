@@ -324,7 +324,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
 
                 LOGGER.info(f'new_cond: {new_cond}')
                 LOGGER.info(f'THE STATE: {bbox_str + new_cond}')
-                data_vals = self._data.where(eval(bbox_str + new_cond))
+                data_vals = self._data.where(eval(bbox_str + new_cond), drop=True)
                 LOGGER.info(f'data_vals in bbox: {data_vals}')
 
         except Exception as e:
