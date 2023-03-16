@@ -316,6 +316,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         try:
             # is a xarray data-array
             data_vals = self._data.sel(**query_return)
+            LOGGER.info(f'data_vals: {data_vals}')
             if is_bbox:
 
                 n_con = ''
@@ -347,7 +348,6 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                 'Data size exceeds maximum allowed size'
                 )
 
-        LOGGER.info("In RETURN 0")
         return LOGGER.info("In RETURN"), _gen_covjson(self, the_data=data_vals)
 
     def __repr__(self):
