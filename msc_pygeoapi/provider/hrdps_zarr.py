@@ -38,6 +38,7 @@ from pygeoapi.provider.base import (
     ProviderInvalidQueryError,
     ProviderNoDataError
 )
+import dask.array as da
 import xarray
 import zarr
 
@@ -248,8 +249,11 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         :param format_: data format of output
         #TODO: antimeridian bbox
         """
+
         var_dims = self._coverage_properties['dimensions']
         query_return = {}
+        is_bbox = False
+        bbox_str = ''
         if not subsets and not bbox and datetime_ is None:
             for i in reversed(range(1, DEFAULT_LIMIT_JSON+1)):
                 for dim in var_dims:
@@ -282,8 +286,8 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                         raise ProviderInvalidQueryError(msg)
 
             if bbox:
-                LOGGER.info(f'bbox: {bbox}')
-                
+                is_bbox = True
+                self._data.coords['rlon_180'] = (self._data.lon + 180) % 360 - 180
 
                 if 'rlat' in query_return or 'rlon' in query_return:
                     msg = (
@@ -293,10 +297,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                     LOGGER.error(msg)
                     raise ProviderInvalidQueryError(msg)
                 else:
-                    new_v = (self._data.lon + 180) % 360 - 180
-                    self._data = self._data.expand_dims({'rlon_180': len(new_v)}).assign_coords({'rlon_180': new_v})
-                    query_return['rlat'] = slice(bbox[1], bbox[3])
-                    query_return['rlon_180'] = slice(bbox[0], bbox[2])
+                    bbox_str = f'(self._data.lat>={bbox[1]}) & (self._data.lat<={bbox[3]}) & (self._data.rlon_180>={bbox[0]}) & (self._data.rlon_180<={bbox[2]})'
 
             if datetime_:
                 if '/' not in datetime_:  # single date
@@ -309,9 +310,17 @@ class HRDPSWEonGZarrProvider(BaseProvider):
 
         try:
             # is a xarray data-array
-            LOGGER.info(f'query_return: {query_return}')
             data_vals = self._data.sel(**query_return)
-            LOGGER.info(f'data_vals: {data_vals}')
+            if is_bbox:
+
+                new_cond = ''
+                for key in query_return.keys():
+                    new_cond+= f' & (self._data.{key} == data_vals.{key})'
+
+                LOGGER.info(f'new_cond: {new_cond}')
+                LOGGER.info(f'TEH STATE: {bbox_str + new_cond}')
+                data_vals = self._data.where(eval(bbox_str + new_cond) , drop=True)
+                LOGGER.info(f'data_vals in bbox: {data_vals}')
 
         except Exception as e:
             msg = f'Invalid query (Error: {e})'
@@ -333,8 +342,9 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             raise ProviderInvalidQueryError(
                 'Data size exceeds maximum allowed size'
                 )
-
-        return _gen_covjson(self, the_data=data_vals)
+        
+        LOGGER.info("In RETURN 0")
+        return LOGGER.info("In RETURN"), _gen_covjson(self, the_data=data_vals)
 
     def __repr__(self):
         return '<BaseProvider> {}'.format(self.type)
@@ -515,8 +525,11 @@ def _gen_covjson(self, the_data):
         )
 
     else:
+        arr = the_data.data.flatten()
+        d_mask = ~da.isnan(arr)
+        arr = arr[d_mask]
         the_range[parameter_metadata['id'][0]]['values'] = (
-                the_data.data.flatten().compute().tolist()
+                arr.compute().tolist()
             )
 
     cov_json['ranges'] = the_range
