@@ -301,8 +301,8 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                 else:
                     bbox_str += f'(self._data.lat>={bbox[1]}) & '
                     bbox_str += f'(self._data.lat<={bbox[3]}) & '
-                    bbox+= f'(self._data.rlon_180>={bbox[0]}) & '
-                    bbox+= f'(self._data.rlon_180<={bbox[2]})'
+                    bbox += f'(self._data.rlon_180>={bbox[0]}) & '
+                    bbox += f'(self._data.rlon_180<={bbox[2]})'
 
             if datetime_:
                 if '/' not in datetime_:  # single date
@@ -320,7 +320,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
 
                 new_cond = ''
                 for key in query_return.keys():
-                    new_cond+= f' & (self._data.{key} == data_vals.{key})'
+                    new_cond += f' & (self._data.{key} == data_vals.{key})'
 
                 LOGGER.info(f'new_cond: {new_cond}')
                 LOGGER.info(f'THE STATE: {bbox_str + new_cond}')
@@ -347,13 +347,12 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             raise ProviderInvalidQueryError(
                 'Data size exceeds maximum allowed size'
                 )
-        
+
         LOGGER.info("In RETURN 0")
         return LOGGER.info("In RETURN"), _gen_covjson(self, the_data=data_vals)
 
     def __repr__(self):
         return '<BaseProvider> {}'.format(self.type)
-
 
 
 def _get_zarr_data_stream(data):
