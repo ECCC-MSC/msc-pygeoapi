@@ -80,8 +80,6 @@ RUN cd msc-pygeoapi && \
     sed -i "s/MSC_PYGEOAPI_VERSION/$MSC_PYGEOAPI_VERSION/" theme/templates/_base.html && \
     # ensure i18n translation strings are compiled
     pybabel compile -d locale -l fr && \
-    # /locale directory required at WORKDIR to ensure working i18n of Jinja2 HTML templates
-    cp -r ./locale $BASEDIR/locale && \
     cd ..
 
 # cleanup apt/build deps

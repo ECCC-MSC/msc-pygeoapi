@@ -246,11 +246,11 @@ class RDPAProvider(BaseProvider):
 
         return rangetype
 
-    def query(self, range_subset=[1], subsets={}, bbox=[],
+    def query(self, properties=[1], subsets={}, bbox=[],
               datetime_=None, format_='json', **kwargs):
         """
         Extract data from collection collection
-        :param range_subset: variable
+        :param properties: variable
         :param subsets: dict of subset names with lists of ranges
         :param bbox: bounding box [minx,miny,maxx,maxy]
         :param datetime_: temporal (datestamp or extent)
@@ -260,7 +260,7 @@ class RDPAProvider(BaseProvider):
 
         nbits = 16
 
-        bands = range_subset
+        bands = properties
         LOGGER.debug('Bands: {}, subsets: {}'.format(bands, subsets))
 
         args = {

@@ -90,12 +90,12 @@ class SPEIProvider(ClimateProvider):
 
         return domainset
 
-    def query(self, range_subset=['spei'], subsets={},
+    def query(self, properties=['spei'], subsets={},
               bbox=[], datetime_=None, format_='json'):
         """
          Extract data from collection collection
 
-        :param range_subset: empty for SPEI
+        :param properties: empty for SPEI
         :param subsets: dict of subset names with lists of ranges
         :param bbox: bounding box [minx,miny,maxx,maxy]
         :param datetime: temporal (datestamp or extent)
@@ -137,7 +137,7 @@ class SPEIProvider(ClimateProvider):
 
         self._data = open_data(self.data)
 
-        data = self._data[[*range_subset]]
+        data = self._data[[*properties]]
 
         if any([self._coverage_properties['x_axis_label'] in subsets,
                 self._coverage_properties['y_axis_label'] in subsets,
@@ -226,7 +226,7 @@ class SPEIProvider(ClimateProvider):
         LOGGER.debug('Serializing data in memory')
         if format_ == 'json':
             LOGGER.debug('Creating output in CoverageJSON')
-            return self.gen_covjson(out_meta, data, range_subset)
+            return self.gen_covjson(out_meta, data, properties)
         elif format_ == 'zarr':
             LOGGER.debug('Returning data in native zarr format')
             return _get_zarr_data(data)

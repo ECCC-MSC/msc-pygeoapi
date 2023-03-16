@@ -236,11 +236,11 @@ class CanGRDProvider(BaseProvider):
 
         return rangetype
 
-    def query(self, range_subset=['TMEAN'], subsets={}, bbox=[],
+    def query(self, properties=['TMEAN'], subsets={}, bbox=[],
               datetime_=None, format_='json', **kwargs):
         """
         Extract data from collection collection
-        :param range_subset: variable
+        :param properties: variable
         :param subsets: dict of subset names with lists of ranges
         :param bbox: bounding box [minx,miny,maxx,maxy]
         :param datetime_: temporal (datestamp or extent)
@@ -327,8 +327,8 @@ class CanGRDProvider(BaseProvider):
                ]]
             }]
 
-        if range_subset[0].upper() != 'TMEAN':
-            var = range_subset[0].upper()
+        if properties[0].upper() != 'TMEAN':
+            var = properties[0].upper()
             try:
                 self.data = self.get_file_list(var)[-1]
             except IndexError as err:
@@ -369,7 +369,7 @@ class CanGRDProvider(BaseProvider):
                     period = search('_{:d}.tif', self.data)[0]
                 self.data = self.data.replace(str(period), str(datetime_))
             else:
-                date_file_list = self.get_file_list(range_subset[0].upper(),
+                date_file_list = self.get_file_list(properties[0].upper(),
                                                     datetime_)
                 args['indexes'] = list(range(1, len(date_file_list) + 1))
 

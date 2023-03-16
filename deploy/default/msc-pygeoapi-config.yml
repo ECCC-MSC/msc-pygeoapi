@@ -9,6 +9,7 @@ server:
     languages:
         - en-CA
         - fr-CA
+    locale_dir: ${MSC_PYGEOAPI_LOCALE}
     # cors: true
     pretty_print: false
     limit: 500
@@ -817,6 +818,8 @@ resources:
                   - STATION_PRESSURE_FLAG
                   - VISIBILITY
                   - VISIBILITY_FLAG
+                  - WEATHER_ENG_DESC
+                  - WEATHER_FRE_DESC
                   - WINDCHILL
                   - WINDCHILL_FLAG
                   - WIND_DIRECTION
@@ -3351,71 +3354,71 @@ resources:
     #           data: ${MSC_PYGEOAPI_ES_URL}/discovery-metadata
     #           id_field: identifier
 
-    # wis2-discovery-metadata:
-    #     type: collection
-    #     title: WMO WIS2 discovery metadata (experimental)
-    #     description: WMO WIS2 discovery metadata (experimental)
-    #     keywords: 
-    #         en: [wmo, wis2, discovery, metadata]
-    #         fr: [wmo, wis2, discovery, metadata]
-    #     crs:
-    #         - CRS84
-    #     links:
-    #         - type: text/html
-    #           rel: canonical
-    #           title: 
-    #             en: WMO Information System
-    #             fr: WMO Information System
-    #           href: 
-    #             en: https://community.wmo.int/activity-areas/wis
-    #             fr: https://community.wmo.int/activity-areas/wis
-    #           hreflang: 
-    #             en: en-US
-    #             fr: en-US
-    #     extents:
-    #         spatial:
-    #             bbox: [-180, -90, 180, 90]
-    #             crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-    #     providers:
-    #         - type: record
-    #           name: msc_pygeoapi.provider.elasticsearch.ElasticsearchCatalogueWMOWIS2GDCProvider
-    #           data: ${MSC_PYGEOAPI_ES_URL}/wis2-discovery-metadata
-    #           id_field: id
+    wis2-discovery-metadata:
+        type: collection
+        title: WMO WIS2 discovery metadata (experimental)
+        description: WMO WIS2 discovery metadata (experimental)
+        keywords: 
+            en: [wmo, wis2, discovery, metadata]
+            fr: [wmo, wis2, discovery, metadata]
+        crs:
+            - CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title: 
+                en: WMO Information System
+                fr: WMO Information System
+              href: 
+                en: https://community.wmo.int/activity-areas/wis
+                fr: https://community.wmo.int/activity-areas/wis
+              hreflang: 
+                en: en-US
+                fr: en-US
+        extents:
+            spatial:
+                bbox: [-180, -90, 180, 90]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        providers:
+            - type: record
+              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchCatalogueWMOWIS2GDCProvider
+              data: ${MSC_PYGEOAPI_ES_URL}/wis2-discovery-metadata
+              id_field: id
 
-    # wis2-notification-messages:
-    #     type: collection
-    #     title: 
-    #         en: WMO WIS2 notification messages (experimental)
-    #         fr: WMO WIS2 notification messages (experimental)
-    #     description: 
-    #         en: WMO WIS2 notification messages (experimental)
-    #         fr: WMO WIS2 notification messages (experimental)
-    #     keywords: 
-    #         en: [wmo, wis2, notification, messages]
-    #         fr: [wmo, wis2, notification, messages]
-    #     crs:
-    #         - CRS84
-    #     links:
-    #         - type: text/html
-    #           rel: canonical
-    #           title: 
-    #             en: WMO Information System
-    #             fr: WMO Information System
-    #           href: 
-    #             en: https://community.wmo.int/activity-areas/wis
-    #             fr: https://community.wmo.int/activity-areas/wis
-    #           hreflang:
-    #             en: en-US
-    #             fr: en-US
-    #     extents:
-    #         spatial:
-    #             bbox: [-180, -90, 180, 90]
-    #             crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-    #     providers:
-    #         - type: feature
-    #           name: msc_pygeoapi.provider.elasticsearch.ElasticsearchWMOWIS2BrokerMessagesProvider
-    #           data: ${MSC_PYGEOAPI_ES_URL}/wis2-notification-messages*
-    #           id_field: id
+    wis2-notification-messages:
+        type: collection
+        title: 
+            en: WMO WIS2 notification messages (experimental)
+            fr: WMO WIS2 notification messages (experimental)
+        description: 
+            en: WMO WIS2 notification messages (experimental)
+            fr: WMO WIS2 notification messages (experimental)
+        keywords: 
+            en: [wmo, wis2, notification, messages]
+            fr: [wmo, wis2, notification, messages]
+        crs:
+            - CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title: 
+                en: WMO Information System
+                fr: WMO Information System
+              href: 
+                en: https://community.wmo.int/activity-areas/wis
+                fr: https://community.wmo.int/activity-areas/wis
+              hreflang:
+                en: en-US
+                fr: en-US
+        extents:
+            spatial:
+                bbox: [-180, -90, 180, 90]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        providers:
+            - type: feature
+              name: msc_pygeoapi.provider.elasticsearch.ElasticsearchWMOWIS2BrokerMessagesProvider
+              data: ${MSC_PYGEOAPI_ES_URL}/wis2-notification-messages*
+              id_field: id
 
     raster-drill:
         type: process
