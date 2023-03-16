@@ -301,8 +301,8 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                 else:
                     bbox_str += f'(self._data.lat>={bbox[1]}) & '
                     bbox_str += f'(self._data.lat<={bbox[3]}) & '
-                    bbox += f'(self._data.rlon_180>={bbox[0]}) & '
-                    bbox += f'(self._data.rlon_180<={bbox[2]})'
+                    bbox_str += f'(self._data.rlon_180>={bbox[0]}) & '
+                    bbox_str += f'(self._data.rlon_180<={bbox[2]})'
 
             if datetime_:
                 if '/' not in datetime_:  # single date
