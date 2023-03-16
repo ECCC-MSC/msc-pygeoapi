@@ -287,7 +287,9 @@ class HRDPSWEonGZarrProvider(BaseProvider):
 
             if bbox:
                 is_bbox = True
-                self._data.coords['rlon_180'] = (self._data.lon + 180) % 360 - 180
+                self._data.coords['rlon_180'] = (
+                    (self._data.lon + 180) % 360 - 180
+                )
 
                 if 'rlat' in query_return or 'rlon' in query_return:
                     msg = (
@@ -297,7 +299,10 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                     LOGGER.error(msg)
                     raise ProviderInvalidQueryError(msg)
                 else:
-                    bbox_str = f'(self._data.lat>={bbox[1]}) & (self._data.lat<={bbox[3]}) & (self._data.rlon_180>={bbox[0]}) & (self._data.rlon_180<={bbox[2]})'
+                    bbox_str += f'(self._data.lat>={bbox[1]}) & '
+                    bbox_str += f'(self._data.lat<={bbox[3]}) & '
+                    bbox+= f'(self._data.rlon_180>={bbox[0]}) & '
+                    bbox+= f'(self._data.rlon_180<={bbox[2]})'
 
             if datetime_:
                 if '/' not in datetime_:  # single date
@@ -318,8 +323,8 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                     new_cond+= f' & (self._data.{key} == data_vals.{key})'
 
                 LOGGER.info(f'new_cond: {new_cond}')
-                LOGGER.info(f'TEH STATE: {bbox_str + new_cond}')
-                data_vals = self._data.where(eval(bbox_str + new_cond) , drop=True)
+                LOGGER.info(f'THE STATE: {bbox_str + new_cond}')
+                data_vals = self._data.where(eval(bbox_str + new_cond))
                 LOGGER.info(f'data_vals in bbox: {data_vals}')
 
         except Exception as e:
