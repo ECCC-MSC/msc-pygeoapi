@@ -41,6 +41,7 @@ from msc_pygeoapi.loader.base import BaseLoader
 from msc_pygeoapi.util import (
     check_es_indexes_to_delete,
     configure_es_connection,
+    DATETIME_RFC3339_FMT
 )
 
 
@@ -60,7 +61,7 @@ INDEX_BASENAME = 'hydrometric_realtime.'
 SETTINGS = {
     'order': 0,
     'version': 1,
-    'index_patterns': [INDEX_BASENAME],
+    'index_patterns': [f'{INDEX_BASENAME}*'],
     'settings': {
         'number_of_shards': 1,
         'number_of_replicas': 0
@@ -98,7 +99,7 @@ SETTINGS = {
                     },
                     'DATETIME': {
                         'type': 'date',
-                        'format': 'strict_date_hour_minute_second||strict_date_optional_time'  # noqa
+                        'format': 'date_time_no_millis||strict_date_optional_time'  # noqa
                     },
                     'DATETIME_LST': {
                         'type': 'date',
@@ -174,7 +175,25 @@ class HydrometricRealtimeLoader(BaseLoader):
         BaseLoader.__init__(self)
 
         self.conn = ElasticsearchConnector(conn_config)
-        self.conn.create_template(INDEX_BASENAME, SETTINGS)
+
+        index_template = self.conn.get_template(INDEX_BASENAME)
+
+        # compare index template mappping with mapping defined in SETTINGS
+        if index_template:
+            # if mappings are different, update the index template
+            if (
+                index_template[INDEX_BASENAME]['mappings']
+                != SETTINGS['mappings']
+            ):
+                LOGGER.info(
+                    f'Updating "{INDEX_BASENAME}" index template with'
+                    ' mapping changes in provider.'
+                )
+                self.conn.create_template(
+                    INDEX_BASENAME, SETTINGS, overwrite=True
+                )
+        else:
+            self.conn.create_template(INDEX_BASENAME, SETTINGS)
 
         self.stations = {}
         self.read_stations_list()
@@ -284,11 +303,10 @@ class HydrometricRealtimeLoader(BaseLoader):
                 try:
                     # Convert timestamp to UTC time.
                     utc_datetime = delocalize_date(date_)
-                    utc_datestamp = utc_datetime.strftime('%Y-%m-%d.%H:%M:%S')
+                    utc_datestamp = utc_datetime.strftime(DATETIME_RFC3339_FMT)
                     # Generate an ID now that all fields are known.
                     observation_id = f'{station}.{utc_datestamp}'
 
-                    utc_datestamp = utc_datestamp.replace('.', 'T')
                 except Exception as err:
                     LOGGER.error(f'Cannot interpret datetime value {date_} in {filepath}'  # noqa
                                  f' due to: {err} (skipping)')

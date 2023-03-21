@@ -180,20 +180,47 @@ class ElasticsearchConnector(BaseConnector):
 
         return True
 
-    def create_template(self, name, settings):
+    def create_template(self, name, settings, overwrite=False):
         """
         create an Elasticsearch index template
 
         :param name: `str` index template name
         :param settings: `dict` settings dictionnary for index template
+        :param overwrite: `bool` indicating whether to overwrite existing
+                          template
 
         :returns: `bool` of index template creation status
         """
 
-        if not self.Elasticsearch.indices.exists_template(name=name):
+        template_exists = self.Elasticsearch.indices.exists_template(name=name)
+
+        if template_exists and overwrite:
+            self.Elasticsearch.indices.delete_template(name=name)
+            self.Elasticsearch.indices.put_template(name=name, body=settings)
+        elif template_exists:
+            LOGGER.warning(f'Template {name} already exists')
+            return False
+        else:
             self.Elasticsearch.indices.put_template(name=name, body=settings)
 
         return True
+
+    def get_template(self, name):
+        """
+        get an Elasticsearch index template
+
+        :param name: `str` index template name
+
+        :returns: `dict` of index template settings
+        """
+
+        try:
+            template = self.Elasticsearch.indices.get_template(name=name)
+        except NotFoundError:
+            LOGGER.warning(f'Template {name} not found')
+            return None
+
+        return template
 
     def delete_template(self, name):
         """
