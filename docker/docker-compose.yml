@@ -31,6 +31,7 @@ services:
   msc-pygeoapi:
     image: eccc-msc/msc-pygeoapi:nightly
     container_name: msc-pygeoapi-nightly
+    restart: unless-stopped
     build: 
       context: ..
     network_mode: host
