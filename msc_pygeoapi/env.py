@@ -61,5 +61,5 @@ else:
 
 MSC_PYGEOAPI_BASEPATH = os.path.dirname(os.path.realpath(__file__))
 
-GEOMET_DDI_BASEPATH = os.getenv('GEOMET_DDI_BASEPATH', None)
+GEOMET_HPFX_BASEPATH = os.getenv('GEOMET_HPFX_BASEPATH', None)
 GEOMET_SCIENCE_BASEPATH = os.getenv('GEOMET_SCIENCE_BASEPATH', None)
