@@ -1,6 +1,7 @@
 click
 dask
 elasticsearch<8
+fiona
 gdal
 lxml
 netcdf4
