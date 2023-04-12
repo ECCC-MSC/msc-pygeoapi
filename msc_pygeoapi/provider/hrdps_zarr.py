@@ -268,7 +268,6 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         else:
             if subsets:
                 for dim, value in subsets.items():
-                    LOGGER.info(f'dim: {dim}, value: {var_dims}')
                     if dim in var_dims:
                         if (
                             len(value) == 2 and
@@ -281,16 +280,18 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                             msg = 'values must be well-defined range'
                             LOGGER.error(msg)
                             raise ProviderInvalidQueryError(msg)
-                        
+                
                     else:  # redundant check (done in api.py)
                         msg = f'Invalid Dimension (Dimension {dim} not found)'
                         LOGGER.error(msg)
                         raise ProviderInvalidQueryError(msg)
 
                 if 'rlat' in query_return and 'rlon' in query_return:
-                    max_sub, min_sub = _convert_subset_to_crs(query_return['rlat'], query_return['rlon'], self.crs)
-                    query_return['rlat'] = slice(min_sub[1],max_sub[1])
-                    query_return['rlon'] = slice(min_sub[0],max_sub[0])
+                    max_sub, min_sub = _convert_subset_to_crs(
+                        query_return['rlat'], query_return['rlon'], self.crs
+                        )
+                    query_return['rlat'] = slice(min_sub[1], max_sub[1])
+                    query_return['rlon'] = slice(min_sub[0], max_sub[0])
 
             if bbox:
                 is_bbox = True
@@ -319,21 +320,21 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                     start_date = datetime_.split('/')[0]
                     end_date = datetime_.split('/')[1]
                     query_return['time'] = slice(start_date, end_date)
-        LOGGER.info(f'query_return: {query_return}')
+        LOGGER.debug(f'query_return: {query_return}')
         try:
             # is a xarray data-array
             data_vals = self._data.sel(**query_return)
-            LOGGER.info(f'data_vals: {data_vals}')
+            LOGGER.debug(f'data_vals: {data_vals}')
             if is_bbox:
 
                 n_con = ''
                 for key in query_return.keys():
                     n_con += f' & (self._data.{key} == data_vals.{key})'
 
-                LOGGER.info(f'new_cond: {n_con}')
-                LOGGER.info(f'THE STATE: {bbox_str + n_con}')
+                LOGGER.debug(f'new_cond: {n_con}')
+                LOGGER.debug(f'THE STATE: {bbox_str + n_con}')
                 data_vals = self._data.where(eval(bbox_str + n_con), drop=True)
-                LOGGER.info(f'data_vals in bbox: {data_vals}')
+                LOGGER.debug(f'data_vals in bbox: {data_vals}')
 
         except Exception as e:
             msg = f'Invalid query (Error: {e})'
@@ -455,20 +456,24 @@ def _gen_domain_axis(self, data):
                 })
     return aa, all_dims
 
+
 def _convert_subset_to_crs(new_lat: slice, new_lon: slice, crs):
     """
-    Helper function to convert a bbox to a new crs
-    :param bbox: Bounding box (minx, miny, maxx, maxy)
+    Helper function to convert a rlat and rlon values
+    from WGS84 to a native crs
+    :param new_lat: rlat slice
+    :param new_lon: rlon slice
     :param crs: CRS to convert to
-    :returns: Bounding box in new CRS (minx, miny, maxx, maxy)
+    :returns: max and min subset of rlat and rlon in native crs
     """
     crs_src = CRS.from_epsg(4326)
     crs_dst = CRS.from_wkt(crs)
     to_transform = Transformer.from_crs(crs_src, crs_dst, always_xy=True)
-    max_sub= to_transform.transform(new_lon.stop, new_lat.stop)
+    max_sub = to_transform.transform(new_lon.stop, new_lat.stop)
     min_sub = to_transform.transform(new_lon.start, new_lat.start)
-    LOGGER.info(f'Max subset: {max_sub}, Min subset: {min_sub}')
+    LOGGER.debug(f'Max subset: {max_sub}, Min subset: {min_sub}')
     return max_sub, min_sub
+
 
 def _gen_covjson(self, the_data):
     """
@@ -557,6 +562,6 @@ def _gen_covjson(self, the_data):
 
     cov_json['ranges'] = the_range
 
-    LOGGER.info(cov_json)
+    LOGGER.debug(cov_json)
 
     return cov_json
