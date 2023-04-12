@@ -280,7 +280,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                             msg = 'values must be well-defined range'
                             LOGGER.error(msg)
                             raise ProviderInvalidQueryError(msg)
-                
+
                     else:  # redundant check (done in api.py)
                         msg = f'Invalid Dimension (Dimension {dim} not found)'
                         LOGGER.error(msg)
