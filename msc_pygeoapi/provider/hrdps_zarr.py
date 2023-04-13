@@ -320,11 +320,8 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                     start_date = datetime_.split('/')[0]
                     end_date = datetime_.split('/')[1]
                     query_return['time'] = slice(start_date, end_date)
-        LOGGER.debug(f'query_return: {query_return}')
+        LOGGER.info(f'query_return: {query_return}')
         try:
-            # is a xarray data-array
-            data_vals = self._data.sel(**query_return)
-            LOGGER.debug(f'data_vals: {data_vals}')
             if is_bbox:
 
                 n_con = ''
@@ -335,11 +332,48 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                 LOGGER.debug(f'THE STATE: {bbox_str + n_con}')
                 data_vals = self._data.where(eval(bbox_str + n_con), drop=True)
                 LOGGER.debug(f'data_vals in bbox: {data_vals}')
-
+            else:
+                # is a xarray data-array
+                data_vals = self._data.sel(**query_return)
+                LOGGER.info(f'data_vals: {data_vals}')
         except Exception as e:
             msg = f'Invalid query (Error: {e})'
             LOGGER.error(msg)
             raise ProviderInvalidQueryError(msg)
+
+        if data_vals.values.size == 0:
+            try:
+                single_query = {}
+                if query_return['rlat'].start == query_return['rlat'].stop:
+                    single_query['rlat'] = query_return['rlat'].start
+                if query_return['rlon'].start == query_return['rlon'].stop:
+                    single_query['rlon'] = query_return['rlon'].start
+                
+                data_vals = self._data.sel(**single_query, method='nearest')
+                new_rlon = data_vals.rlon.values
+                new_rlat = data_vals.rlat.values
+                LOGGER.info(f'Nearest point returned: {new_rlon}, {new_rlat}')
+                LOGGER.info('Nearest point query')
+                for key in query_return.keys():
+                    if key == 'time':
+                        if isinstance(query_return[key], str):
+                            single_query[key] = query_return[key]
+
+                    if key != 'rlat' and key != 'rlon' and key != 'time':
+                        if query_return[key].start == query_return[key].stop:
+                            single_query[key] = query_return[key].start
+                LOGGER.info(f'Nearest point returned: {single_query}')
+                data_vals = self._data.sel(**single_query, method='nearest')
+                LOGGER.info(f'Nearest point returned DIMS: {data_vals.dims}')
+                if query_return.keys() != single_query.keys():
+                    query_str = _make_where_str(query_return, single_query)
+                    data_vals= data_vals.where(eval(query_str), drop=True)
+                    LOGGER.info(f'Nearest point returned DIMS: {data_vals.dims}')
+            except Exception as e:
+                msg = f'Invalid query (Error: {e})'
+                LOGGER.error(msg)
+                raise ProviderInvalidQueryError(msg)
+
 
         if data_vals.values.size == 0:
             msg = 'Invalid query: No data found'
@@ -455,6 +489,22 @@ def _gen_domain_axis(self, data):
                     'resolution': rez
                 })
     return aa, all_dims
+
+
+def _make_where_str(first_query: dict, new_query: dict):
+    LOGGER.info(f'First query: {first_query}')
+    LOGGER.info(f'New query: {new_query}')
+    LOGGER.info(f'Keys: {first_query.keys()}')
+    LOGGER.info(f'Keys: {new_query.keys()}')
+
+    where_query_str = ''
+    for key in first_query.keys():
+        if key not in new_query.keys():
+            LOGGER.info(f'Key: {first_query[key]}')
+            where_query_str += f'(self._data.{key}>={first_query[key].start}) & '
+            where_query_str += f'(self._data.{key}<={first_query[key].stop}) & '
+    LOGGER.info(f'Where query string: {where_query_str}')
+    return where_query_str[:-3]
 
 
 def _convert_subset_to_crs(new_lat: slice, new_lon: slice, crs):
