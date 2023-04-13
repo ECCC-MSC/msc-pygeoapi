@@ -334,12 +334,14 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                 LOGGER.debug(f'data_vals in bbox: {data_vals}')
             else:
                 # is a xarray data-array
+                LOGGER.info(f'query_return: {query_return}')
                 data_vals = self._data.sel(**query_return)
                 LOGGER.debug(f'data_vals: {data_vals}')
-        except Exception as e:
-            msg = f'Invalid query (Error: {e})'
+        except Exception:
+            # most likely invalid time or subset value
+            msg = 'Invalid query: No data found'
             LOGGER.error(msg)
-            raise ProviderInvalidQueryError(msg)
+            raise ProviderNoDataError(msg)
 
         if data_vals.values.size == 0:
             try:
@@ -348,11 +350,11 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                     single_query['rlat'] = query_return['rlat'].start
                 if query_return['rlon'].start == query_return['rlon'].stop:
                     single_query['rlon'] = query_return['rlon'].start
-
+                LOGGER.info(f'Nearest point query: {single_query}')
                 data_vals = self._data.sel(**single_query, method='nearest')
                 new_rlon = data_vals.rlon.values
                 new_rlat = data_vals.rlat.values
-                LOGGER.debug(f'Nearest point returned: {new_rlon}, {new_rlat}')
+                LOGGER.info(f'Nearest point returned: {new_rlon}, {new_rlat}')
                 LOGGER.debug('Nearest point query')
                 for key in query_return.keys():
                     if key == 'time':
