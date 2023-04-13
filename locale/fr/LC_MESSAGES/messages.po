@@ -302,7 +302,7 @@ msgstr "Parcourir"
 #: theme/templates/collections/collection.html:37
 #, python-format
 msgid "Browse through the items of \"%(data_title)s\""
-msgstr "Parcourez les articles de « %(data_title)s »"
+msgstr "Parcourez les items de « %(data_title)s »"
 
 #: theme/templates/collections/collection.html:40
 #: theme/templates/collections/queryables.html:6
@@ -440,15 +440,15 @@ msgstr "CSV"
 #: theme/templates/collections/items/index.html:23
 #: theme/templates/collections/items/item.html:31
 msgid "Items"
-msgstr "Articles"
+msgstr "Items"
 
 #: theme/templates/collections/items/index.html:32
 msgid "Items in this collection."
-msgstr "Articles dans cette collection."
+msgstr "Items dans cette collection."
 
 #: theme/templates/collections/items/index.html:47
 msgid "Only show items by map view"
-msgstr "Afficher les articles uniquement par la vue de la carte"
+msgstr "Afficher les items uniquement par la vue de la carte"
 
 #: theme/templates/collections/items/index.html:51
 msgid ""
@@ -741,7 +741,7 @@ msgstr "Version STAC :"
 #: theme/templates/stac/item.html:19
 #, python-format
 msgid "Item %(id)s"
-msgstr "Article %(id)s"
+msgstr "Item %(id)s"
 
 #: theme/templates/stac/item.html:28
 msgid "Assets"
