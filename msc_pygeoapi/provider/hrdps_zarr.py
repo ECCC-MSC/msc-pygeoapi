@@ -370,9 +370,10 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                     data_vals = data_vals.where(eval(query_str), drop=True)
 
             except Exception as e:
-                msg = f'Invalid query (Error: {e})'
+                # most likely invalid time or subset value
+                msg = 'Invalid query: No data found'
                 LOGGER.error(msg)
-                raise ProviderInvalidQueryError(msg)
+                raise ProviderNoDataError(msg)
 
         if data_vals.values.size == 0:
             msg = 'Invalid query: No data found'
