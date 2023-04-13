@@ -369,7 +369,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                     query_str = _make_where_str(query_return, single_query)
                     data_vals = data_vals.where(eval(query_str), drop=True)
 
-            except Exception as e:
+            except Exception:
                 # most likely invalid time or subset value
                 msg = 'Invalid query: No data found'
                 LOGGER.error(msg)
