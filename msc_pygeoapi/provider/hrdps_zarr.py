@@ -320,7 +320,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                     start_date = datetime_.split('/')[0]
                     end_date = datetime_.split('/')[1]
                     query_return['time'] = slice(start_date, end_date)
-        LOGGER.info(f'query_return: {query_return}')
+        LOGGER.debug(f'query_return: {query_return}')
         try:
             if is_bbox:
 
@@ -335,7 +335,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             else:
                 # is a xarray data-array
                 data_vals = self._data.sel(**query_return)
-                LOGGER.info(f'data_vals: {data_vals}')
+                LOGGER.debug(f'data_vals: {data_vals}')
         except Exception as e:
             msg = f'Invalid query (Error: {e})'
             LOGGER.error(msg)
@@ -348,12 +348,12 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                     single_query['rlat'] = query_return['rlat'].start
                 if query_return['rlon'].start == query_return['rlon'].stop:
                     single_query['rlon'] = query_return['rlon'].start
-                
+
                 data_vals = self._data.sel(**single_query, method='nearest')
                 new_rlon = data_vals.rlon.values
                 new_rlat = data_vals.rlat.values
-                LOGGER.info(f'Nearest point returned: {new_rlon}, {new_rlat}')
-                LOGGER.info('Nearest point query')
+                LOGGER.debug(f'Nearest point returned: {new_rlon}, {new_rlat}')
+                LOGGER.debug('Nearest point query')
                 for key in query_return.keys():
                     if key == 'time':
                         if isinstance(query_return[key], str):
@@ -362,18 +362,17 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                     if key != 'rlat' and key != 'rlon' and key != 'time':
                         if query_return[key].start == query_return[key].stop:
                             single_query[key] = query_return[key].start
-                LOGGER.info(f'Nearest point returned: {single_query}')
+                LOGGER.debug(f'Nearest point returned: {single_query}')
                 data_vals = self._data.sel(**single_query, method='nearest')
-                LOGGER.info(f'Nearest point returned DIMS: {data_vals.dims}')
+                LOGGER.debug(f'Nearest point returned DIMS: {data_vals.dims}')
                 if query_return.keys() != single_query.keys():
                     query_str = _make_where_str(query_return, single_query)
-                    data_vals= data_vals.where(eval(query_str), drop=True)
-                    LOGGER.info(f'Nearest point returned DIMS: {data_vals.dims}')
+                    data_vals= data_vals.where(eval(query_str), drop = True)
+
             except Exception as e:
                 msg = f'Invalid query (Error: {e})'
                 LOGGER.error(msg)
                 raise ProviderInvalidQueryError(msg)
-
 
         if data_vals.values.size == 0:
             msg = 'Invalid query: No data found'
@@ -492,19 +491,21 @@ def _gen_domain_axis(self, data):
 
 
 def _make_where_str(first_query: dict, new_query: dict):
-    LOGGER.info(f'First query: {first_query}')
-    LOGGER.info(f'New query: {new_query}')
-    LOGGER.info(f'Keys: {first_query.keys()}')
-    LOGGER.info(f'Keys: {new_query.keys()}')
+    """
+    Helper function to make a where query string for
+    nearest method when exact coordinates are not found
+    :param first_query: original_dict of query
+    :param new_query: transformed_dict of query
+    :returns: where query string for use in .where()
+    """
 
-    where_query_str = ''
+    where_str = ''
     for key in first_query.keys():
         if key not in new_query.keys():
-            LOGGER.info(f'Key: {first_query[key]}')
-            where_query_str += f'(self._data.{key}>={first_query[key].start}) & '
-            where_query_str += f'(self._data.{key}<={first_query[key].stop}) & '
-    LOGGER.info(f'Where query string: {where_query_str}')
-    return where_query_str[:-3]
+            where_str += f'(self._data.{key}>={first_query[key].start}) & '
+            where_str += f'(self._data.{key}<={first_query[key].stop}) & '
+    LOGGER.debug(f'Where query string: {where_str}')
+    return where_str[:-3]
 
 
 def _convert_subset_to_crs(new_lat: slice, new_lon: slice, crs):
