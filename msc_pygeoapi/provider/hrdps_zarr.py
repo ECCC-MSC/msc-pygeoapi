@@ -367,7 +367,7 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                 LOGGER.debug(f'Nearest point returned DIMS: {data_vals.dims}')
                 if query_return.keys() != single_query.keys():
                     query_str = _make_where_str(query_return, single_query)
-                    data_vals= data_vals.where(eval(query_str), drop = True)
+                    data_vals = data_vals.where(eval(query_str), drop=True)
 
             except Exception as e:
                 msg = f'Invalid query (Error: {e})'
