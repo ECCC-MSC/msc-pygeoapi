@@ -37,7 +37,6 @@ import os
 import re
 
 from osgeo import gdal, osr
-import pyproj
 from pyproj import Proj, transform
 import yaml
 from yaml import CLoader
@@ -412,13 +411,7 @@ def raster_drill(layer, x, y, format_):
 
     from msc_pygeoapi.process.cccs import (GEOMET_CLIMATE_CONFIG,
                                            GEOMET_CLIMATE_BASEPATH,
-                                           GEOMET_CLIMATE_BASEPATH_VRT,
-                                           GEOMET_CLIMATE_EPSG)
-
-    if GEOMET_CLIMATE_EPSG is not None:
-        pyproj.set_datapath(GEOMET_CLIMATE_EPSG)
-    else:
-        raise Exception("Could not locate geomet-climate EPSG file.")
+                                           GEOMET_CLIMATE_BASEPATH_VRT)
 
     LOGGER.info('start raster drilling')
 
