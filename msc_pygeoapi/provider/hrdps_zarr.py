@@ -525,9 +525,6 @@ def _convert_subset_to_crs(new_lat: slice, new_lon: slice, crs):
     to_transform = Transformer.from_crs(crs_src, crs_dst, always_xy=True)
     max_sub = to_transform.transform(new_lon.stop, new_lat.stop)
     min_sub = to_transform.transform(new_lon.start, new_lat.start)
-    # if slices are same, it sets min_cub to inf
-    if new_lat == new_lon:
-        return max_sub, max_sub
     LOGGER.debug(f'Max subset: {max_sub}, Min subset: {min_sub}')
     return max_sub, min_sub
 
