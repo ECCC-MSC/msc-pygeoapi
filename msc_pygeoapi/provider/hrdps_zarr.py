@@ -38,8 +38,9 @@ from pygeoapi.provider.base import (
     ProviderInvalidQueryError,
     ProviderNoDataError
 )
-from pyproj import CRS, Transformer
 import dask.array as da
+from pyproj import CRS, Transformer
+from typing import Tuple
 import xarray
 import zarr
 
@@ -243,10 +244,11 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         """
         query the provider
 
-        :returns: dict of 0..n GeoJSON features or coverage data
         :param bbox: bounding box [minx,miny,maxx,maxy]
         :param datetime: temporal (datestamp or extent)
         :param format_: data format of output
+
+        :returns: dict of 0..n GeoJSON features or coverage data
         #TODO: antimeridian bbox
         """
 
@@ -369,11 +371,14 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                 LOGGER.debug(f'Nearest point returned DIMS: {data_vals.dims}')
                 if query_return.keys() != single_query.keys():
                     query_str = _make_where_str(query_return, single_query)
-                    data_vals = data_vals.where(eval(query_str), drop=True)
+                    if query_str != '':
+                        data_vals = data_vals.where(eval(query_str), drop=True).sel(time = query_return['time'])
+                    else:
+                        data_vals = data_vals.sel(time = query_return['time'])
 
-            except Exception:
+            except Exception as e:
                 # most likely invalid time or subset value
-                msg = 'Invalid query: No data found'
+                msg = f'Invalid query: No data found {e}'
                 LOGGER.error(msg)
                 raise ProviderNoDataError(msg)
 
@@ -401,7 +406,9 @@ class HRDPSWEonGZarrProvider(BaseProvider):
 def _get_zarr_data_stream(data):
     """
     Helper function to convert a xarray dataset to zip file in memory
+
     :param data: Xarray dataset of coverage data
+
     :returns: bytes of zip (zarr) data
     """
 
@@ -426,6 +433,9 @@ def _get_zarr_data_stream(data):
 def _gen_domain_axis(self, data):
     """
     Helper function to generate domain axis
+
+    :param data: Xarray dataset of coverage data
+
     :returns: list of dict of domain axis
     """
 
@@ -493,31 +503,38 @@ def _gen_domain_axis(self, data):
     return aa, all_dims
 
 
-def _make_where_str(first_query: dict, new_query: dict):
+def _make_where_str(first_query: dict, new_query: dict) -> str:
     """
     Helper function to make a where query string for
     nearest method when exact coordinates are not found
+
     :param first_query: original_dict of query
     :param new_query: transformed_dict of query
+
     :returns: where query string for use in .where()
     """
 
-    where_str = ''
+    query_params = []
+
     for key in first_query.keys():
         if key not in new_query.keys():
-            where_str += f'(self._data.{key}>={first_query[key].start}) & '
-            where_str += f'(self._data.{key}<={first_query[key].stop}) & '
-    LOGGER.debug(f'Where query string: {where_str}')
-    return where_str[:-3]
+            query_params.append(f'(self._data.{key}>={first_query[key].start})')
+            query_params.append(f'(self._data.{key}<={first_query[key].stop})')
+
+    query_string = ' & '.join(query_params)
+    LOGGER.debug(f'Where query string: {query_string}')
+    return query_string
 
 
-def _convert_subset_to_crs(new_lat: slice, new_lon: slice, crs):
+def _convert_subset_to_crs(new_lat: slice, new_lon: slice, crs) -> Tuple:
     """
     Helper function to convert a rlat and rlon values
     from WGS84 to a native crs
+
     :param new_lat: rlat slice
     :param new_lon: rlon slice
     :param crs: CRS to convert to
+
     :returns: max and min subset of rlat and rlon in native crs
     """
     crs_src = CRS.from_epsg(4326)
@@ -532,7 +549,9 @@ def _convert_subset_to_crs(new_lat: slice, new_lon: slice, crs):
 def _gen_covjson(self, the_data):
     """
     Helper function to Generate coverage as CoverageJSON representation
+
     :param the_data: xarray dataArray from query
+
     :returns: dict of CoverageJSON representation
     """
 
