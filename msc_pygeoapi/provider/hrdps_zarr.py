@@ -372,9 +372,11 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                 if query_return.keys() != single_query.keys():
                     query_str = _make_where_str(query_return, single_query)
                     if query_str != '':
-                        data_vals = data_vals.where(eval(query_str), drop=True).sel(time = query_return['time'])
+                        data_vals = data_vals.where(
+                            eval(query_str), drop=True
+                            ).sel(time=query_return['time'])
                     else:
-                        data_vals = data_vals.sel(time = query_return['time'])
+                        data_vals = data_vals.sel(time=query_return['time'])
 
             except Exception as e:
                 # most likely invalid time or subset value
@@ -514,14 +516,14 @@ def _make_where_str(first_query: dict, new_query: dict) -> str:
     :returns: where query string for use in .where()
     """
 
-    query_params = []
+    query_param = []
 
     for key in first_query.keys():
         if key not in new_query.keys():
-            query_params.append(f'(self._data.{key}>={first_query[key].start})')
-            query_params.append(f'(self._data.{key}<={first_query[key].stop})')
+            query_param.append(f'(self._data.{key}>={first_query[key].start})')
+            query_param.append(f'(self._data.{key}<={first_query[key].stop})')
 
-    query_string = ' & '.join(query_params)
+    query_string = ' & '.join(query_param)
     LOGGER.debug(f'Where query string: {query_string}')
     return query_string
 
