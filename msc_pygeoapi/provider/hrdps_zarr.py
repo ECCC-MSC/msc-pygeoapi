@@ -516,14 +516,17 @@ def _make_where_str(first_query: dict, new_query: dict) -> str:
     :returns: where query string for use in .where()
     """
 
-    query_param = []
+    query_str = []
 
     for key in first_query.keys():
         if key not in new_query.keys():
-            query_param.append(f'(self._data.{key}>={first_query[key].start})')
-            query_param.append(f'(self._data.{key}<={first_query[key].stop})')
+            if key == 'time':
+                continue
+            else:
+                query_str.append(f'(self._data.{key}>={first_query[key].start})')
+                query_str.append(f'(self._data.{key}<={first_query[key].stop})')
 
-    query_string = ' & '.join(query_param)
+    query_string = ' & '.join(query_str)
     LOGGER.debug(f'Where query string: {query_string}')
     return query_string
 
