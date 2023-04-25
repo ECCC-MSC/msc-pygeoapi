@@ -523,8 +523,10 @@ def _make_where_str(first_query: dict, new_query: dict) -> str:
             if key == 'time':
                 continue
             else:
-                query_str.append(f'(self._data.{key}>={first_query[key].start})')
-                query_str.append(f'(self._data.{key}<={first_query[key].stop})')
+                query_str.append(
+                    f'(self._data.{key}>={first_query[key].start})')
+                query_str.append(
+                    f'(self._data.{key}<={first_query[key].stop})')
 
     query_string = ' & '.join(query_str)
     LOGGER.debug(f'Where query string: {query_string}')
