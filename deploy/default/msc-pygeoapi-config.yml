@@ -804,6 +804,10 @@ resources:
                   - LOCAL_MONTH
                   - LOCAL_DAY
                   - LOCAL_HOUR
+                  - UTC_DATE
+                  - UTC_YEAR
+                  - UTC_MONTH
+                  - UTC_DAY
                   - TEMP
                   - TEMP_FLAG
                   - DEW_POINT_TEMP
