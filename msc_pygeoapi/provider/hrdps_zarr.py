@@ -39,6 +39,8 @@ from pygeoapi.provider.base import (
     ProviderNoDataError
 )
 import dask.array as da
+from pyproj import CRS, Transformer
+from typing import Tuple
 import xarray
 import zarr
 
@@ -242,10 +244,11 @@ class HRDPSWEonGZarrProvider(BaseProvider):
         """
         query the provider
 
-        :returns: dict of 0..n GeoJSON features or coverage data
         :param bbox: bounding box [minx,miny,maxx,maxy]
         :param datetime: temporal (datestamp or extent)
         :param format_: data format of output
+
+        :returns: dict of 0..n GeoJSON features or coverage data
         #TODO: antimeridian bbox
         """
 
@@ -279,10 +282,18 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                             msg = 'values must be well-defined range'
                             LOGGER.error(msg)
                             raise ProviderInvalidQueryError(msg)
+
                     else:  # redundant check (done in api.py)
                         msg = f'Invalid Dimension (Dimension {dim} not found)'
                         LOGGER.error(msg)
                         raise ProviderInvalidQueryError(msg)
+
+                if 'rlat' in query_return and 'rlon' in query_return:
+                    max_sub, min_sub = _convert_subset_to_crs(
+                        query_return['rlat'], query_return['rlon'], self.crs
+                        )
+                    query_return['rlat'] = slice(min_sub[1], max_sub[1])
+                    query_return['rlon'] = slice(min_sub[0], max_sub[0])
 
             if bbox:
                 is_bbox = True
@@ -311,26 +322,67 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                     start_date = datetime_.split('/')[0]
                     end_date = datetime_.split('/')[1]
                     query_return['time'] = slice(start_date, end_date)
-
+        LOGGER.debug(f'query_return: {query_return}')
         try:
-            # is a xarray data-array
-            data_vals = self._data.sel(**query_return)
-            LOGGER.info(f'data_vals: {data_vals}')
             if is_bbox:
 
                 n_con = ''
                 for key in query_return.keys():
                     n_con += f' & (self._data.{key} == data_vals.{key})'
 
-                LOGGER.info(f'new_cond: {n_con}')
-                LOGGER.info(f'THE STATE: {bbox_str + n_con}')
+                LOGGER.debug(f'new_cond: {n_con}')
+                LOGGER.debug(f'THE STATE: {bbox_str + n_con}')
                 data_vals = self._data.where(eval(bbox_str + n_con), drop=True)
-                LOGGER.info(f'data_vals in bbox: {data_vals}')
-
-        except Exception as e:
-            msg = f'Invalid query (Error: {e})'
+                LOGGER.debug(f'data_vals in bbox: {data_vals}')
+            else:
+                # is a xarray data-array
+                LOGGER.info(f'query_return: {query_return}')
+                data_vals = self._data.sel(**query_return)
+                LOGGER.debug(f'data_vals: {data_vals}')
+        except Exception:
+            # most likely invalid time or subset value
+            msg = 'Invalid query: No data found'
             LOGGER.error(msg)
-            raise ProviderInvalidQueryError(msg)
+            raise ProviderNoDataError(msg)
+
+        if data_vals.values.size == 0:
+            try:
+                single_query = {}
+                if query_return['rlat'].start == query_return['rlat'].stop:
+                    single_query['rlat'] = query_return['rlat'].start
+                if query_return['rlon'].start == query_return['rlon'].stop:
+                    single_query['rlon'] = query_return['rlon'].start
+                LOGGER.info(f'Nearest point query: {single_query}')
+                data_vals = self._data.sel(**single_query, method='nearest')
+                new_rlon = data_vals.rlon.values
+                new_rlat = data_vals.rlat.values
+                LOGGER.info(f'Nearest point returned: {new_rlon}, {new_rlat}')
+                LOGGER.debug('Nearest point query')
+                for key in query_return.keys():
+                    if key == 'time':
+                        if isinstance(query_return[key], str):
+                            single_query[key] = query_return[key]
+
+                    if key != 'rlat' and key != 'rlon' and key != 'time':
+                        if query_return[key].start == query_return[key].stop:
+                            single_query[key] = query_return[key].start
+                LOGGER.debug(f'Nearest point returned: {single_query}')
+                data_vals = self._data.sel(**single_query, method='nearest')
+                LOGGER.debug(f'Nearest point returned DIMS: {data_vals.dims}')
+                if query_return.keys() != single_query.keys():
+                    query_str = _make_where_str(query_return, single_query)
+                    if query_str != '':
+                        data_vals = data_vals.where(
+                            eval(query_str), drop=True
+                            ).sel(time=query_return['time'])
+                    else:
+                        data_vals = data_vals.sel(time=query_return['time'])
+
+            except Exception as e:
+                # most likely invalid time or subset value
+                msg = f'Invalid query: No data found {e}'
+                LOGGER.error(msg)
+                raise ProviderNoDataError(msg)
 
         if data_vals.values.size == 0:
             msg = 'Invalid query: No data found'
@@ -356,7 +408,9 @@ class HRDPSWEonGZarrProvider(BaseProvider):
 def _get_zarr_data_stream(data):
     """
     Helper function to convert a xarray dataset to zip file in memory
+
     :param data: Xarray dataset of coverage data
+
     :returns: bytes of zip (zarr) data
     """
 
@@ -381,6 +435,9 @@ def _get_zarr_data_stream(data):
 def _gen_domain_axis(self, data):
     """
     Helper function to generate domain axis
+
+    :param data: Xarray dataset of coverage data
+
     :returns: list of dict of domain axis
     """
 
@@ -448,10 +505,55 @@ def _gen_domain_axis(self, data):
     return aa, all_dims
 
 
+def _make_where_str(first_query: dict, new_query: dict) -> str:
+    """
+    Helper function to make a where query string for
+    nearest method when exact coordinates are not found
+
+    :param first_query: original_dict of query
+    :param new_query: transformed_dict of query
+
+    :returns: where query string for use in .where()
+    """
+
+    query_param = []
+
+    for key in first_query.keys():
+        if key not in new_query.keys():
+            query_param.append(f'(self._data.{key}>={first_query[key].start})')
+            query_param.append(f'(self._data.{key}<={first_query[key].stop})')
+
+    query_string = ' & '.join(query_param)
+    LOGGER.debug(f'Where query string: {query_string}')
+    return query_string
+
+
+def _convert_subset_to_crs(new_lat: slice, new_lon: slice, crs) -> Tuple:
+    """
+    Helper function to convert a rlat and rlon values
+    from WGS84 to a native crs
+
+    :param new_lat: rlat slice
+    :param new_lon: rlon slice
+    :param crs: CRS to convert to
+
+    :returns: max and min subset of rlat and rlon in native crs
+    """
+    crs_src = CRS.from_epsg(4326)
+    crs_dst = CRS.from_wkt(crs)
+    to_transform = Transformer.from_crs(crs_src, crs_dst, always_xy=True)
+    max_sub = to_transform.transform(new_lon.stop, new_lat.stop)
+    min_sub = to_transform.transform(new_lon.start, new_lat.start)
+    LOGGER.debug(f'Max subset: {max_sub}, Min subset: {min_sub}')
+    return max_sub, min_sub
+
+
 def _gen_covjson(self, the_data):
     """
     Helper function to Generate coverage as CoverageJSON representation
+
     :param the_data: xarray dataArray from query
+
     :returns: dict of CoverageJSON representation
     """
 
@@ -535,6 +637,6 @@ def _gen_covjson(self, the_data):
 
     cov_json['ranges'] = the_range
 
-    LOGGER.info(cov_json)
+    LOGGER.debug(cov_json)
 
     return cov_json
