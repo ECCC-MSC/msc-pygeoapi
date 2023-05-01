@@ -40,6 +40,7 @@ from msc_pygeoapi.connector.elasticsearch_ import ElasticsearchConnector
 from msc_pygeoapi.env import MSC_PYGEOAPI_LOGGING_LOGLEVEL
 from msc_pygeoapi.loader.base import BaseLoader
 from msc_pygeoapi.util import (
+    check_es_indexes_to_delete,
     configure_es_connection,
     strftime_rfc3339,
     DATETIME_RFC3339_FMT,
@@ -49,9 +50,15 @@ LOGGER = logging.getLogger(__name__)
 
 LOGGER.setLevel(getattr(logging, MSC_PYGEOAPI_LOGGING_LOGLEVEL))
 
-INDEX_NAME = 'ltce_{}'
+DAYS_TO_KEEP = 7
+
+INDEX_BASENAME = 'ltce_{}.'
+INDEX_PATTERN = '{index_name}.{year:d}-{month:d}-{day:d}.{hour:2d}{minute:2d}{second:2d}'  # noqa
 
 SETTINGS = {
+    'order': 0,
+    'version': 1,
+    'index_patterns': [],
     'settings': {'number_of_shards': 1, 'number_of_replicas': 0},
     'mappings': {
         'properties': {
@@ -343,7 +350,7 @@ MAPPINGS = {
     },
 }
 
-INDICES = [INDEX_NAME.format(index) for index in MAPPINGS]
+INDICES = [INDEX_BASENAME.format(index) for index in MAPPINGS]
 
 
 class LtceLoader(BaseLoader):
@@ -355,6 +362,7 @@ class LtceLoader(BaseLoader):
         BaseLoader.__init__(self)
         self.conn = ElasticsearchConnector(conn_config)
         self.db_conn = None
+        self.date = datetime.utcnow().strftime('%Y-%m-%d.%H%M%S')
 
         # setup DB connection
         if db_string is not None:
@@ -362,7 +370,7 @@ class LtceLoader(BaseLoader):
                 self.db_conn = cx_Oracle.connect(db_string)
                 self.cur = self.db_conn.cursor()
             except Exception as err:
-                msg = 'Could not connect to Oracle: {}'.format(err)
+                msg = f'Could not connect to Oracle: {err}'
                 LOGGER.critical(msg)
                 raise click.ClickException(msg)
         else:
@@ -373,7 +381,8 @@ class LtceLoader(BaseLoader):
             SETTINGS['mappings']['properties']['properties'][
                 'properties'
             ] = MAPPINGS[item]
-            self.conn.create(INDEX_NAME.format(item), SETTINGS)
+            SETTINGS['index_patterns'] = [f'ltce_{item}.*']
+            self.conn.create_template(INDEX_BASENAME.format(item), SETTINGS)
 
     def get_stations_info(self, element_name, station_id):
         """
@@ -527,11 +536,7 @@ class LtceLoader(BaseLoader):
                 )
             )
         except Exception as err:
-            LOGGER.error(
-                'Could not fetch records from oracle due to: {}.'.format(
-                    str(err)
-                )
-            )
+            LOGGER.error(f'Could not fetch records from oracle due to: {err}.')
 
         # fetch records and ensure that some records were retrieved
         records = self.cur.fetchall()
@@ -596,7 +601,7 @@ class LtceLoader(BaseLoader):
 
             action = {
                 '_id': es_id,
-                '_index': 'ltce_stations',
+                '_index': f'ltce_stations.{self.date}',
                 '_op_type': 'update',
                 'doc': wrapper,
                 'doc_as_upsert': True,
@@ -771,7 +776,7 @@ class LtceLoader(BaseLoader):
 
             action = {
                 '_id': es_id,
-                '_index': 'ltce_temp_extremes',
+                '_index': f'ltce_temp_extremes.{self.date}',
                 '_op_type': 'update',
                 'doc': wrapper,
                 'doc_as_upsert': True,
@@ -890,7 +895,7 @@ class LtceLoader(BaseLoader):
 
             action = {
                 '_id': es_id,
-                '_index': 'ltce_precip_extremes',
+                '_index': f'ltce_precip_extremes.{self.date}',
                 '_op_type': 'update',
                 'doc': wrapper,
                 'doc_as_upsert': True,
@@ -1008,7 +1013,7 @@ class LtceLoader(BaseLoader):
 
             action = {
                 '_id': es_id,
-                '_index': 'ltce_snow_extremes',
+                '_index': f'ltce_snow_extremes.{self.date}',
                 '_op_type': 'update',
                 'doc': wrapper,
                 'doc_as_upsert': True,
@@ -1033,8 +1038,14 @@ def ltce():
 @cli_options.OPTION_ES_IGNORE_CERTS()
 @cli_options.OPTION_DATASET(
     type=click.Choice(
-        ['all', 'observations', 'stations', 'temperature', 'precipitation',
-         'snowfall']
+        [
+            'all',
+            'observations',
+            'stations',
+            'temperature',
+            'precipitation',
+            'snowfall'
+        ]
     ),
     help='LTCE dataset to load',
 )
@@ -1082,12 +1093,17 @@ def add(
             if stations:
                 loader.conn.submit_elastic_package(stations, batch_size)
                 LOGGER.info('Stations populated.')
+                LOGGER.info(
+                    f'Setting alias ltce_station to point '
+                    f'to index ltce_stations.{loader.date}.'
+                )
+                loader.conn.create_alias(
+                    'ltce_stations', f'ltce_stations.{loader.date}'
+                )
             else:
                 LOGGER.error('No stations populated.')
         except Exception as err:
-            LOGGER.error(
-                'Could not populate stations due to: {}.'.format(str(err))
-            )
+            LOGGER.error(f'Could not populate stations due to: {err}.')
             raise err
 
     if 'temperature' in datasets_to_process:
@@ -1096,13 +1112,19 @@ def add(
             if temp_extremes:
                 loader.conn.submit_elastic_package(temp_extremes, batch_size)
                 LOGGER.info('Daily temperature extremes populated.')
+                LOGGER.info(
+                    f'Setting alias ltce_temp_extremes to '
+                    f'point to index ltce_temp_extremes.{loader.date}.'
+                )
+                loader.conn.create_alias(
+                    'ltce_temp_extremes', f'ltce_temp_extremes.{loader.date}'
+                )
             else:
                 LOGGER.error('No temperature extremes populated.')
         except Exception as err:
             LOGGER.error(
-                'Could not populate daily temperature extremes due to: {}.'.format(  # noqa
-                    str(err)
-                )
+                'Could not populate daily temperature extremes due to: '
+                f'{err}.'
             )
             raise err
 
@@ -1112,13 +1134,20 @@ def add(
             if precip_extremes:
                 loader.conn.submit_elastic_package(precip_extremes, batch_size)
                 LOGGER.info('Daily precipitation extremes populated.')
+                LOGGER.info(
+                    f'Setting alias ltce_precip_extremes to '
+                    f'point to index ltce_precip_extremes.{loader.date}.'
+                )
+                loader.conn.create_alias(
+                    'ltce_precip_extremes',
+                    f'ltce_precip_extremes.{loader.date}',
+                )
             else:
                 LOGGER.error('No precipitation extremes populated.')
         except Exception as err:
             LOGGER.error(
-                'Could not populate daily precipitations extremes due to: {}.'.format(  # noqa
-                    str(err)
-                )
+                'Could not populate daily precipitations extremes due to: '
+                f'{err}'
             )
             raise err
 
@@ -1128,13 +1157,20 @@ def add(
             if snow_extremes:
                 loader.conn.submit_elastic_package(snow_extremes, batch_size)
                 LOGGER.info('Daily snowfall extremes populated.')
+                LOGGER.info(
+                    f'Setting alias ltce_snow_extremes to '
+                    f'point to index ltce_snow_extremes.{loader.date}.'
+                )
+                loader.conn.create_alias(
+                    'ltce_snow_extremes',
+                    f'ltce_snow_extremes.{loader.date}',
+                    overwrite=True,
+                )
             else:
                 LOGGER.error('No snowfall extremes populated.')
         except Exception as err:
             LOGGER.error(
-                'Could not populate daily snowfall extremes due to: {}.'.format(  # noqa
-                    str(err)
-                )
+                f'Could not populate daily snowfall extremes due to: {err}.'
             )
             raise err
 
@@ -1143,11 +1179,45 @@ def add(
     loader.db_conn.close()
 
 
+@click.command()
+@click.pass_context
+@cli_options.OPTION_DAYS(
+    default=DAYS_TO_KEEP,
+    help='Delete indexes older than n days (default={})'.format(DAYS_TO_KEEP),
+)
+@cli_options.OPTION_ELASTICSEARCH()
+@cli_options.OPTION_ES_USERNAME()
+@cli_options.OPTION_ES_PASSWORD()
+@cli_options.OPTION_ES_IGNORE_CERTS()
+@cli_options.OPTION_YES(prompt='Are you sure you want to delete old indexes?')
+def clean_indexes(ctx, days, es, username, password, ignore_certs):
+    """Clean hydrometric realtime indexes older than n number of days"""
+
+    conn_config = configure_es_connection(es, username, password, ignore_certs)
+    conn = ElasticsearchConnector(conn_config)
+
+    indexes = conn.get('{}*'.format(INDEX_BASENAME.format('*')))
+
+    if indexes:
+        indexes_to_delete = check_es_indexes_to_delete(
+            indexes,
+            days,
+            pattern=INDEX_PATTERN
+        )
+        if indexes_to_delete:
+            click.echo('Deleting indexes {}'.format(indexes_to_delete))
+            conn.delete(','.join(indexes_to_delete))
+
+    click.echo('Done')
+
+
 def confirm(ctx, param, value):
     if not value and ctx.params['index_name']:
         click.confirm(
             'Are you sure you want to delete ES index named: {}?'.format(
-                click.style(ctx.params['index_name'], fg='red')
+                click.style(
+                    [f'{i}*' for i in ctx.params['index_name']], fg='red'
+                )
             ),
             abort=True,
         )
@@ -1156,7 +1226,7 @@ def confirm(ctx, param, value):
             'Are you sure you want to delete {} LTCE'
             ' indices ({})?'.format(
                 click.style('ALL', fg='red'),
-                click.style(", ".join(INDICES), fg='red'),
+                click.style([f'{index}*' for index in INDICES], fg='red'),
             ),
             abort=True,
         )
@@ -1173,8 +1243,11 @@ def confirm(ctx, param, value):
 @cli_options.OPTION_ES_USERNAME()
 @cli_options.OPTION_ES_PASSWORD()
 @cli_options.OPTION_ES_IGNORE_CERTS()
+@cli_options.OPTION_INDEX_TEMPLATE()
 @cli_options.OPTION_YES(callback=confirm)
-def delete_indexes(ctx, index_name, es, username, password, ignore_certs):
+def delete_indexes(
+    ctx, index_name, es, username, password, ignore_certs, index_template
+):
     """
     Delete a particular ES index with a given name as argument or all if no
     argument is passed
@@ -1187,13 +1260,19 @@ def delete_indexes(ctx, index_name, es, username, password, ignore_certs):
         for i in index_name.split(","):
             if i in INDICES:
                 LOGGER.info('Deleting ES index {}'.format(i))
-                loader.conn.delete(i)
-        return True
+                loader.conn.delete(f'{i}.*')
     else:
         LOGGER.info('Deleting all LTCE ES indices')
-        loader.conn.delete(",".join(INDICES))
-        return True
+        loader.conn.delete("ltce_*")
+
+    if index_template:
+        for template in [INDEX_BASENAME.format(item) for item in MAPPINGS]:
+            LOGGER.info(f'Deleting ES index template {template}')
+            loader.conn.delete_template(template)
+
+    return True
 
 
 ltce.add_command(add)
+ltce.add_command(clean_indexes)
 ltce.add_command(delete_indexes)

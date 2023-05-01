@@ -145,25 +145,27 @@ def generate_datetime_range(start, end, delta):
         current += delta
 
 
-def check_es_indexes_to_delete(indexes, days):
+def check_es_indexes_to_delete(
+    indexes, days, pattern='{index_name}.{year:d}-{month:d}-{day:d}'
+):
     """
     helper function to determine ES indexes that are older than a certain date
 
     :param indexes: list of ES index names
     :param days: number of days used to determine deletion criteria
+    :param pattern: pattern used to parse index name
+                    (default: {index_name}.{year:d}-{month:d}-{day:d})
 
     :returns: list of indexes to delete
     """
 
     today = datetime.utcnow()
-    pattern = '{index_name}.{YYYY:d}-{MM:d}-{dd:d}'
     to_delete = []
 
     for index in indexes:
         parsed = parse(pattern, index)
-        index_date = datetime(
-            parsed.named['YYYY'], parsed.named['MM'], parsed.named['dd']
-        )
+        parsed.named.pop('index_name')
+        index_date = datetime(**parsed.named)
         if index_date < (today - timedelta(days=days)):
             to_delete.append(index)
 
