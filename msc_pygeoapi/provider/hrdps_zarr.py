@@ -254,8 +254,6 @@ class HRDPSWEonGZarrProvider(BaseProvider):
 
         var_dims = self._coverage_properties['dimensions']
         query_return = {}
-        is_bbox = False
-        bbox_str = ''
         if not subsets and not bbox and datetime_ is None:
             for i in reversed(range(1, 2)):
                 for dim in var_dims:
@@ -319,11 +317,10 @@ class HRDPSWEonGZarrProvider(BaseProvider):
 
         try:
             if all([query_return['rlat'].start != query_return['rlat'].stop,
-                query_return['rlon'].start != query_return['rlon'].stop]):
+                    query_return['rlon'].start != query_return['rlon'].stop]):
                 LOGGER.info('Spatial subset query')
                 LOGGER.info(f'Rlat start {query_return["rlat"].start}')
                 LOGGER.info(f'Rlat stop {query_return["rlat"].stop}')
-                LOGGER.info(f'{query_return["rlat"].start != query_return["rlat"].stop}')
                 data_vals = self._data.sel(**query_return)
             else:
                 single_query = {}
@@ -339,19 +336,23 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                         single_query['nolon'] = '0'
                     if ('nolat' and 'nolon') not in single_query:
                         LOGGER.info(f'Nearest point query: {single_query}')
-                        data_vals = self._data.sel(**single_query, method='nearest')
+                        data_vals = self._data.sel(
+                            **single_query, method='nearest')
                         new_rlon = data_vals.rlon.values
                         new_rlat = data_vals.rlat.values
-                        LOGGER.info(f'Nearest point returned: {new_rlon}, {new_rlat}')
+                        LOGGER.info(
+                            f'Nearest point returned: {new_rlon}, {new_rlat}')
                         LOGGER.info(f'NEAREST DATA: {data_vals}')
                     elif 'nolat' in single_query:
-                        data_vals = self._data.sel(rlon=single_query['rlon'], method='nearest')
+                        data_vals = self._data.sel(
+                            rlon=single_query['rlon'], method='nearest')
                         new_rlon = data_vals.rlon.values
                         LOGGER.info(f'New rlon: {new_rlon}')
                         single_query.pop('nolat')
                         single_query['rlon'] = slice(new_rlon, new_rlon)
                     elif 'nolon' in single_query:
-                        data_vals = self._data.sel(rlat=single_query['rlat'], method='nearest')
+                        data_vals = self._data.sel(
+                            rlat=single_query['rlat'], method='nearest')
                         new_rlat = data_vals.rlat.values
                         LOGGER.info(f'New rlat: {new_rlat}')
                         single_query.pop('nolon')
