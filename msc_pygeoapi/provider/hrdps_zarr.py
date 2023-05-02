@@ -392,10 +392,10 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             new_dataset.attrs['_CRS'] = self.crs
             return _get_zarr_data_stream(new_dataset)
 
-        '''if data_vals.data.nbytes > MAX_DASK_BYTES:
+        if data_vals.data.nbytes > MAX_DASK_BYTES:
             raise ProviderInvalidQueryError(
                 'Data size exceeds maximum allowed size'
-                )'''
+                )
 
         return _gen_covjson(self, the_data=data_vals)
 
