@@ -319,8 +319,8 @@ class HRDPSWEonGZarrProvider(BaseProvider):
             if all([query_return['rlat'].start != query_return['rlat'].stop,
                     query_return['rlon'].start != query_return['rlon'].stop]):
                 LOGGER.info('Spatial subset query')
-                LOGGER.info(f'Rlat start {query_return["rlat"].start}')
-                LOGGER.info(f'Rlat stop {query_return["rlat"].stop}')
+                LOGGER.debug(f'Rlat start {query_return["rlat"].start}')
+                LOGGER.debug(f'Rlat stop {query_return["rlat"].stop}')
                 data_vals = self._data.sel(**query_return)
             else:
                 single_query = {}
@@ -342,24 +342,24 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                         new_rlat = data_vals.rlat.values
                         LOGGER.info(
                             f'Nearest point returned: {new_rlon}, {new_rlat}')
-                        LOGGER.info(f'NEAREST DATA: {data_vals}')
+                        LOGGER.debug(f'NEAREST DATA: {data_vals}')
                     elif 'nolat' in single_query:
                         data_vals = self._data.sel(
                             rlon=single_query['rlon'], method='nearest')
                         new_rlon = data_vals.rlon.values
-                        LOGGER.info(f'New rlon: {new_rlon}')
+                        LOGGER.debug(f'New rlon: {new_rlon}')
                         single_query.pop('nolat')
                         single_query['rlon'] = slice(new_rlon, new_rlon)
                     elif 'nolon' in single_query:
                         data_vals = self._data.sel(
                             rlat=single_query['rlat'], method='nearest')
                         new_rlat = data_vals.rlat.values
-                        LOGGER.info(f'New rlat: {new_rlat}')
+                        LOGGER.debug(f'New rlat: {new_rlat}')
                         single_query.pop('nolon')
                         single_query['rlat'] = slice(new_rlat, new_rlat)
 
                     else:
-                        LOGGER.info('Reseting query')
+                        LOGGER.debug('Reseting query')
                         single_query = {}
                 except Exception as e:
                     msg = f'Nearest point query failed: {e}'
@@ -371,11 +371,11 @@ class HRDPSWEonGZarrProvider(BaseProvider):
                         single_query[key] = query_return[key].start
                     else:
                         new_query[key] = query_return[key]
-                LOGGER.info(f'Nearest point returned: {single_query}')
+                LOGGER.debug(f'Nearest point returned: {single_query}')
                 data_vals = self._data.sel(**single_query, method='nearest')
-                LOGGER.info(f'Nearest point returned DIMS: {data_vals}')
+                LOGGER.debug(f'Nearest point returned DIMS: {data_vals}')
                 data_vals = data_vals.sel(**new_query)
-                LOGGER.info(f'FINAL data_vals: {data_vals}')
+                LOGGER.debug(f'FINAL data_vals: {data_vals}')
 
         except Exception as e:
             # most likely invalid time or subset value
