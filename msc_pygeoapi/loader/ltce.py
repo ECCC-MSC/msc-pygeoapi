@@ -1098,7 +1098,9 @@ def add(
                     f'to index ltce_stations.{loader.date}.'
                 )
                 loader.conn.create_alias(
-                    'ltce_stations', f'ltce_stations.{loader.date}'
+                    'ltce_stations',
+                    f'ltce_stations.{loader.date}',
+                    overwrite=True,
                 )
             else:
                 LOGGER.error('No stations populated.')
@@ -1117,7 +1119,9 @@ def add(
                     f'point to index ltce_temp_extremes.{loader.date}.'
                 )
                 loader.conn.create_alias(
-                    'ltce_temp_extremes', f'ltce_temp_extremes.{loader.date}'
+                    'ltce_temp_extremes',
+                    f'ltce_temp_extremes.{loader.date}',
+                    overwrite=True,
                 )
             else:
                 LOGGER.error('No temperature extremes populated.')
@@ -1141,6 +1145,7 @@ def add(
                 loader.conn.create_alias(
                     'ltce_precip_extremes',
                     f'ltce_precip_extremes.{loader.date}',
+                    overwrite=True,
                 )
             else:
                 LOGGER.error('No precipitation extremes populated.')
