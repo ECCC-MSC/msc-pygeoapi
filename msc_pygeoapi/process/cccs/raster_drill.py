@@ -69,8 +69,8 @@ UNITS = {
 PROCESS_METADATA = {
     'version': '0.1.0',
     'id': 'raster-drill',
-    'title': 'Raster Drill process',
-    'description': 'Raster Drill process',
+    'title': 'GeoMet-Climate Raster Drill process',
+    'description': 'GeoMet-Climate Raster Drill process',
     'keywords': ['raster drill'],
     'links': [{
         'type': 'text/html',
@@ -88,6 +88,7 @@ PROCESS_METADATA = {
     'inputs': {
         'layer': {
             'title': 'layer name',
+            'description': 'GeoMet-Climate layer to request',
             'schema': {
                 'type': 'number',
             },
@@ -96,6 +97,7 @@ PROCESS_METADATA = {
         },
         'y': {
             'title': 'y coordinate',
+            'description': 'Latitude of the requested location (EPSG:4326)',
             'schema': {
                 'type': 'number',
             },
@@ -104,6 +106,7 @@ PROCESS_METADATA = {
         },
         'x': {
             'title': 'x coordinate',
+            'description': 'Longitude of the requested location (EPSG:4326)',
             'schema': {
                 'type': 'number',
             },
@@ -112,6 +115,7 @@ PROCESS_METADATA = {
         },
         'format': {
             'title': 'format: GeoJSON or CSV',
+            'description': 'Output format for retrieving the data',
             'schema': {
                 'type': 'string',
             },
@@ -122,6 +126,9 @@ PROCESS_METADATA = {
     'outputs': {
         'raster-drill-response': {
             'title': 'output raster drill',
+            'description': 'GeoJSON or CSV of climate data for specific ' +
+                           'locations retrieved from a GeoMet-Climate ' +
+                           'layer for all time steps',
             'schema': {
                 'oneOf': [{
                     'contentMediaType': 'application/json'
