@@ -14,5 +14,6 @@ rasterio
 requests
 sqlalchemy
 unicodecsv
+urllib3<2
 xarray<2023.2.0
 zarr
