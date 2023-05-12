@@ -429,7 +429,7 @@ resources:
         providers:
             - type: feature
               default: true
-              name: Elasticsearch
+              name: msc_pygeoapi.provider.elasticsearch.MSCElasticsearchProvider
               data: ${MSC_PYGEOAPI_ES_URL}/hydrometric_annual_peaks
               id_field: IDENTIFIER
               time_field: DATE
@@ -642,7 +642,7 @@ resources:
         providers:
             - type: feature
               default: true
-              name: Elasticsearch
+              name: msc_pygeoapi.provider.elasticsearch.MSCElasticsearchProvider
               data: ${MSC_PYGEOAPI_ES_URL}/climate_public_climate_summary
               id_field: ID
               time_field: LOCAL_DATE
@@ -902,7 +902,7 @@ resources:
         providers:
             - type: feature
               default: true
-              name: Elasticsearch
+              name: msc_pygeoapi.provider.elasticsearch.MSCElasticsearchProvider
               data: ${MSC_PYGEOAPI_ES_URL}/ahccd_annual
               id_field: identifier__identifiant
               time_field: year__annee
@@ -969,7 +969,7 @@ resources:
         providers:
             - type: feature
               default: true
-              name: Elasticsearch
+              name: msc_pygeoapi.provider.elasticsearch.MSCElasticsearchProvider
               data: ${MSC_PYGEOAPI_ES_URL}/ahccd_seasonal
               id_field: identifier__identifiant
               time_field: year__annee
@@ -1036,7 +1036,7 @@ resources:
         providers:
             - type: feature
               default: true
-              name: Elasticsearch
+              name: msc_pygeoapi.provider.elasticsearch.MSCElasticsearchProvider
               data: ${MSC_PYGEOAPI_ES_URL}/ahccd_monthly
               id_field: identifier__identifiant
               time_field: date
