@@ -39,7 +39,9 @@ WORKDIR $BASEDIR
 RUN sed -i 's/http:\/\/archive.ubuntu.com\/ubuntu\//mirror:\/\/mirrors.ubuntu.com\/mirrors.txt/g' /etc/apt/sources.list
 RUN apt-get update && \
     apt-get install -y software-properties-common  && \
-    apt-get install -y python3 python3-pip git curl unzip python3-gdal 
+    add-apt-repository ppa:gcpp-kalxas/wmo && \
+    add-apt-repository ppa:ubuntugis/ppa && apt update && \
+    apt-get install -y python3 python3-setuptools python3-pip git curl unzip python3-click python3-fiona python3-gdal python3-lxml python3-parse python3-pyproj python3-rasterio python3-requests python3-slugify python3-sqlalchemy python3-unicodecsv python3-xarray python3-yaml
 
 # install pygeoapi
 RUN git clone $PYGEOAPI_GITREPO && \

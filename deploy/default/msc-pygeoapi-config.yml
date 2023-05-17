@@ -1068,7 +1068,6 @@ resources:
                   - wind_speed__vitesse_vent
                   - wind_speed_units__vitesse_vent_unites
 
-
     ahccd-trends:
         type: collection
         title:
@@ -1590,7 +1589,6 @@ resources:
         keywords:
             en: [MetNote, Contextual information, Forecaster comment, Impact]
             fr: [MetNote, Renseignements contextuels, Commentaire du prévisionniste, Impact]
-
         crs:
             - CRS84
         links:
