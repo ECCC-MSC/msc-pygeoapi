@@ -38,7 +38,6 @@ from pygeoapi.provider.base import (
     ProviderInvalidQueryError,
     ProviderNoDataError
 )
-import dask.array as da
 from pyproj import CRS, Transformer
 from typing import Tuple
 import xarray
@@ -605,10 +604,8 @@ def _gen_covjson(self, the_data):
         )
 
     else:
-        arr = the_data.data.flatten()
-        d_mask = ~da.isnan(arr)
         the_range[parameter_metadata['id'][0]]['values'] = (
-                arr[d_mask].compute().tolist()
+                the_data.data.flatten().compute().data.tolist()
             )
 
     cov_json['ranges'] = the_range
