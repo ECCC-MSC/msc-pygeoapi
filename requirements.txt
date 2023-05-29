@@ -1,5 +1,5 @@
 click
-dask
+dask==2023.5.0
 elasticsearch<8
 fiona
 gdal
