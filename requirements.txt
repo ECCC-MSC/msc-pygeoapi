@@ -1,6 +1,6 @@
 click
 dask==2023.5.0
-elasticsearch<8
+elasticsearch>=8,<9
 fiona
 gdal
 lxml
