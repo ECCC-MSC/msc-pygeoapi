@@ -49,13 +49,8 @@ RUN git clone $PYGEOAPI_GITREPO && \
     python3 setup.py install && \
     cd ..
 
-# install geomet_climate for python module access (and eliminate warnings)
-RUN git clone https://github.com/ECCC-CCCS/geomet-climate.git && \
-    cd geomet-climate && \
-    pip install -r requirements.txt && \
-    pip install -r requirements-dev.txt && \
-    pip install -e . && \
-    cd ..
+# requirement of GEOMET_CLIMATE_CONFIG file
+RUN curl -O https://raw.githubusercontent.com/ECCC-CCCS/geomet-climate/master/geomet-climate.yml --create-dirs --output /opt/geomet-climate
 
 # get latest schemas.opengis.net
 RUN mkdir schemas.opengis.net && \
