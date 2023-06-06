@@ -3131,7 +3131,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.rdpa_rasterio.RDPAProvider
-              data: /data-san/geomet/local/rdpa-archives/forecast/15km/2012/10/CMC_RDPA_APCP-024-0700cutoff_SFC_0_ps15km_2012100212_000.grib2
+              data: /data/geomet/local/rdpa-archives/forecast/15km/2012/10/CMC_RDPA_APCP-024-0700cutoff_SFC_0_ps15km_2012100212_000.grib2
               options:
                   DATA_ENCODING: COMPLEX_PACKING
               format:
@@ -3168,7 +3168,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.rdpa_rasterio.RDPAProvider
-              data: /data-san/geomet/local/rdpa-archives/forecast/15km/2012/10/CMC_RDPA_APCP-006-0700cutoff_SFC_0_ps15km_2012100300_000.grib2
+              data: /data/geomet/local/rdpa-archives/forecast/15km/2012/10/CMC_RDPA_APCP-006-0700cutoff_SFC_0_ps15km_2012100300_000.grib2
               options:
                   DATA_ENCODING: COMPLEX_PACKING
               format:
@@ -3205,7 +3205,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.rdpa_rasterio.RDPAProvider
-              data: /data-san/geomet/local/rdpa-archives/forecast/10km/2012/10/CMC_RDPA_APCP-024-0700cutoff_SFC_0_ps10km_2012100312_000.grib2
+              data: /data/geomet/local/rdpa-archives/forecast/10km/2012/10/CMC_RDPA_APCP-024-0700cutoff_SFC_0_ps10km_2012100312_000.grib2
               options:
                   DATA_ENCODING: COMPLEX_PACKING
               format:
@@ -3242,7 +3242,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.rdpa_rasterio.RDPAProvider
-              data: /data-san/geomet/local/rdpa-archives/forecast/10km/2012/10/CMC_RDPA_APCP-006-0700cutoff_SFC_0_ps10km_2012100306_000.grib2
+              data: /data/geomet/local/rdpa-archives/forecast/10km/2012/10/CMC_RDPA_APCP-006-0700cutoff_SFC_0_ps10km_2012100306_000.grib2
               options:
                   DATA_ENCODING: COMPLEX_PACKING
               format:
@@ -3317,7 +3317,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.rdpa_rasterio.RDPAProvider
-              data: /data-san/geomet/feeds/hpfx/analysis/precip/rdpa/grib2/polar_stereographic/06/CMC_RDPA_APCP-006-0100cutoff_SFC_0_ps10km_*_000.grib2
+              data: /data/geomet/feeds/hpfx/analysis/precip/rdpa/grib2/polar_stereographic/06/CMC_RDPA_APCP-006-0100cutoff_SFC_0_ps10km_*_000.grib2
               options:
                   DATA_ENCODING: COMPLEX_PACKING
               format:
@@ -3354,7 +3354,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.cansips_rasterio.CanSIPSProvider
-              data: /data-san/geomet/feeds/hpfx/ensemble/cansips/grib2/forecast/raw/2013/04/cansips_forecast_raw_latlon2.5x2.5_*_2013-04_allmembers.grib2
+              data: /data/geomet/feeds/hpfx/ensemble/cansips/grib2/forecast/raw/2013/04/cansips_forecast_raw_latlon2.5x2.5_*_2013-04_allmembers.grib2
               options:
                   DATA_ENCODING: COMPLEX_PACKING
               format:
