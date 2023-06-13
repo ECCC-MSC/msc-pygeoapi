@@ -119,7 +119,7 @@
             <span><a href="{{ config['metadata']['contact']['url'] }}" target="_blank" class="text-break">{{ config['metadata']['contact']['url'] }}</a></span><br/>
           {% endif %}
           {% if config['metadata']['contact']['hours'] %}
-            <b>Hours</b><br/>
+            <b>{% trans %}Hours{% endtrans %}</b><br/>
             <span>{{ config['metadata']['contact']['hours'] }}</span><br/>
           {% endif %}
           {% if config['metadata']['contact']['instructions'] %}
