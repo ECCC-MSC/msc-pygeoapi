@@ -505,7 +505,7 @@ class RDPAProvider(BaseProvider):
                     'coordinates': ['x', 'y'],
                     'system': {
                         'type': self._coverage_properties['crs_type'],
-                        'id': self._coverage_properties['bbox_crs']
+                        'id': 'http://www.opengis.net/def/crs/OGC/1.3/CRS84'
                     }
                 }]
             },
