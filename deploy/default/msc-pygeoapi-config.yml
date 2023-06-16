@@ -3361,6 +3361,41 @@ resources:
                   name: GRIB
                   mimetype: application/x-grib2
 
+    datasets-footprints:
+        type: collection
+        title:
+            en: MSC Datasets Footprints
+            fr: Empreintes des jeux de données du SMC
+        description:
+            en: MSC datasets footprints inventory
+            fr: Inventaire des empreintes des jeux de données du SMC
+        keywords:
+            en: [discovery, weather, open data, climate]
+            fr: [découverte, météo, données ouvertes, climat]
+        crs:
+            - CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title:
+                en: Meteorological Service of Canada open data
+                fr: Données ouvertes du Service météorologique du Canada
+              href:
+                en: https://eccc-msc.github.io/open-data/msc-data/readme_en
+                fr: https://eccc-msc.github.io/open-data/msc-data/readme_fr
+              hreflang:
+                en: en-CA
+                fr: fr-CA
+        extents:
+            spatial:
+                bbox: [-180, -90, 180, 90]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        providers:
+            - type: feature
+              name: Elasticsearch
+              data: ${MSC_PYGEOAPI_ES_URL}/msc_dataset_footprints
+              id_field: id
+
     # discovery-metadata:
     #     type: collection
     #     title:

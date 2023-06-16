@@ -2,8 +2,11 @@
 #
 # Author: Nicolas Dion-Degodez
 #         <nicolas.dion-degodez@ec.gc.ca>
+#         Louis-Philippe Rousseau-Lambert
+#             <louis-philippe.rousseaulambert@ec.gc.ca>
 #
 # Copyright (c) 2023 Nicolas Dion-Degodez
+# Copyright (c) 2023 Louis-Philippe Rousseau-Lambert
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -45,25 +48,41 @@ from msc_pygeoapi.util import configure_es_connection
 LOGGER = logging.getLogger(__name__)
 
 # index settings
-INDEX_NAME = 'nwp_dataset_footprints'
+INDEX_NAME = 'msc_dataset_footprints'
 
 MAPPINGS = {
     'properties': {
         'geometry': {'type': 'geo_shape'},
         'properties': {
             'properties': {
+                'id': {
+                    'type': 'text',
+                    'fields': {'raw': {'type': 'keyword'}},
+                },
                 'title_en': {
                     'type': 'text',
+                    'fields': {'raw': {'type': 'keyword'}},
                 },
                 'title_fr': {
                     'type': 'text',
+                    'fields': {'raw': {'type': 'keyword'}},
                 },
                 'abstract_en': {
                     'type': 'text',
+                    'fields': {'raw': {'type': 'keyword'}},
                 },
                 'abstract_fr': {
                     'type': 'text',
+                    'fields': {'raw': {'type': 'keyword'}},
                 },
+                'documentation_url_en': {
+                    'type': 'text',
+                    'fields': {'raw': {'type': 'keyword'}},
+                },
+                'documentation_url_fr': {
+                    'type': 'text',
+                    'fields': {'raw': {'type': 'keyword'}},
+                }
             }
         }
     }
@@ -193,10 +212,20 @@ class DatasetFootprintLoader(BaseLoader):
         dict_['id'] = dict_['properties']['id'] = mcf['metadata']['identifier']
         dict_['properties']['title_en'] = mcf['identification']['title']['en']
         dict_['properties']['title_fr'] = mcf['identification']['title']['fr']
+
         # If the MCF doesn't have an abstract key, then look at his parent
         try:
             dict_['properties']['abstract_en'] = (
                 mcf['identification']['abstract']['en']
+            )
+            dict_['properties']['abstract_fr'] = (
+                mcf['identification']['abstract']['fr']
+            )
+            dict_['properties']['documentation_url_en'] = (
+                mcf['identification']['url']['en']
+            )
+            dict_['properties']['documentation_url_fr'] = (
+                mcf['identification']['url']['fr']
             )
         except KeyError:
             self.parent_filepath = os.path.join(
@@ -206,20 +235,15 @@ class DatasetFootprintLoader(BaseLoader):
             dict_['properties']['abstract_en'] = (
                 opened_parent_mcf['identification']['abstract']['en']
             )
-
-        try:
-            dict_['properties']['abstract_fr'] = (
-                mcf['identification']['abstract']['fr']
-            )
-        except KeyError:
-            self.parent_filepath = os.path.join(
-                os.path.dirname(self.filepath), mcf['base_mcf']
-            )
-            opened_parent_mcf = self.open_mcf(self.parent_filepath)
             dict_['properties']['abstract_fr'] = (
                 opened_parent_mcf['identification']['abstract']['fr']
             )
-
+            dict_['properties']['documentation_url_en'] = (
+                opened_parent_mcf['identification']['url']['en']
+            )
+            dict_['properties']['documentation_url_fr'] = (
+                opened_parent_mcf['identification']['url']['fr']
+            )
         return dict_
 
     def load_data(self, filepath):
@@ -236,7 +260,12 @@ class DatasetFootprintLoader(BaseLoader):
         LOGGER.debug('Received file {}'.format(self.filepath))
 
         # Open the MCF
-        opened_file = self.open_mcf(self.filepath)
+        try:
+            opened_file = self.open_mcf(self.filepath)
+        except yaml.parser.ParserError as err:
+            msg = 'Could not open {}: {}'.format(self.filepath, err)
+            LOGGER.warning(msg)
+            return False
 
         # If the MCF contains a proj4, proceed to the rest of the code
         if (self.contains_proj4(opened_file)):
@@ -244,8 +273,13 @@ class DatasetFootprintLoader(BaseLoader):
             data = self.mcf_to_dict(opened_file)
 
             # Get the reprojected polygon and stock it in the dict
-            polygon = self.get_reprojected_polygon()
-            data['geometry'] = json.loads(polygon)
+            try:
+                polygon = self.get_reprojected_polygon()
+                data['geometry'] = json.loads(polygon)
+            except AttributeError as err:
+                msg = 'Error generating footprint polygon: {}'.format(err)
+                LOGGER.warning(msg)
+                return False
 
             # Send the data to ElasticSearch
             try:
@@ -301,7 +335,7 @@ def add(ctx, file_, directory, es, username, password, ignore_certs):
         loader = DatasetFootprintLoader(conn_config)
         result = loader.load_data(file_to_process)
         if not result:
-            click.echo('features not generated')
+            click.echo('features not generated: {}'.format(file_to_process))
 
 
 @click.command()
