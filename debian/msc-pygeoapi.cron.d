@@ -1,3 +1,4 @@
+MAILTO=""
 # =================================================================
 #
 # Author: Tom Kralidis <tom.kralidis@canada.ca>
