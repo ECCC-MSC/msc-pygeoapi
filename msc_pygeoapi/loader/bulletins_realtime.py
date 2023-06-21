@@ -66,9 +66,49 @@ SETTINGS = {
                     'datetime': {
                         'type': 'date',
                         'format': 'strict_date_hour_minute||strict_date_optional_time'  # noqa
+                    },
+                    'identifier': {
+                        'type': 'text',
+                        'fields': {
+                            'raw': {
+                                'type': 'keyword'
+                            }
+                        }
+                    },
+                    'issuer_code': {
+                        'type': 'text',
+                        'fields': {
+                            'raw': {
+                                'type': 'keyword'
+                            }
+                        }
+                    },
+                    'issuing_office': {
+                        'type': 'text',
+                        'fields': {
+                            'raw': {
+                                'type': 'keyword'
+                            }
+                        }
+                    },
+                    'type': {
+                        'type': 'text',
+                        'fields': {
+                            'raw': {
+                                'type': 'keyword'
+                            }
+                        }
+                    },
+                    'url': {
+                        'type': 'text',
+                        'fields': {
+                            'raw': {
+                                'type': 'keyword'
+                            }
+                        }
                     }
                 }
-            }
+            },
         }
     }
 }
