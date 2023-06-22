@@ -117,8 +117,8 @@ class ElasticsearchConnector(BaseConnector):
             LOGGER.info('{} index already exists.')
             return False
 
-        elif self.Elasticsearch.indices.exists(index_name) and overwrite:
-            self.Elasticsearch.indices.delete(index_name)
+        elif self.Elasticsearch.indices.exists(index=index_name) and overwrite:
+            self.Elasticsearch.indices.delete(index=index_name)
             LOGGER.info(f'Deleted existing {index_name} index.')
 
         self.Elasticsearch.indices.create(
@@ -172,7 +172,7 @@ class ElasticsearchConnector(BaseConnector):
             raise ValueError(msg)
 
         LOGGER.info(f'Deleting indexes {indexes}')
-        self.Elasticsearch.indices.delete(indexes)
+        self.Elasticsearch.indices.delete(index=indexes)
 
         return True
 
@@ -217,7 +217,7 @@ class ElasticsearchConnector(BaseConnector):
         :return: `bool` of index alias creation status
         """
 
-        if not self.Elasticsearch.indices.exists_alias(alias):
+        if not self.Elasticsearch.indices.exists_alias(name=alias):
             self.Elasticsearch.indices.put_alias(index=index, name=alias)
         elif overwrite:
             self.Elasticsearch.indices.update_aliases(
