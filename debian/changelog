@@ -1,3 +1,57 @@
+msc-pygeoapi (0.11.0) focal; urgency=medium
+
+  * fix Leaflet attribution
+  * replace startindex with offset per pygeoapi updates
+  * fix to ES GeoJSON response when properties= is detected
+  * change JSON, JSON-LD and CSV links to buttons
+  * update GRIB2 provider to use higher number of bytes for data
+  * fix to stations SQL is inclusive of inputted data
+  * improve click data command imports
+  * add realtime loader for metnotes
+  * add process for sounding data
+  * add loader for cumulative effects hotspots
+  * update GRIB2 provider encoding float precision
+  * fix to stringify property values if they are JSON/array displayed in data tables
+  * update covjson to be valid covjson for non-NetCDF data
+  * add discovery metadata
+  * add additional CLI options for ogc datetime field and load directory
+  * add radar coverage loader
+  * fix fields to align with pygeoapi ES provider
+  * add WMO WIS2 discovery metadata collection
+  * add WIS2 notification collection
+  * update OpenAPI document
+  * add DMS Core API provider
+  * add HRDP WEonG zarr data provider
+  * update climate paths
+  * update deafault env variables
+  * update requirements.txt
+  * add French HTML template
+  * fix to ensure mappings use RFC 3339 compliant date formats
+  * fix Elasticsearch connector to be ES8 compliant
+  * add docker nightly setup for Ubuntu focal
+  * add hydrometric station caching to cron
+  * add weather information for climate hourly data
+  * update range-subset for properties in providers
+  * add loader for AQHI stations
+  * fix to breaking change with GEOMET_HPFX_BASEPATH env variable and extract sounding data
+  * add UTC date fields to climate hourly collection
+  * update sarracenia configurations
+  * add index aliasing for LTCE loaders
+  * update raster drill metadata and descriptions
+  * add clamp to datetime for certain ES-based collections
+  * update abstract CanSIPS and climate hourly
+  * add nwp_dataset_footprints loader
+  * remove geomet-climate epsg file path
+  * update CanGRD BBOX in configuration file
+  * update to pin elasticsearch to version 8
+  * update data paths (remove data-san)
+  * update CRS reference for RDPA CovJSON
+  * add msc datasets footprints as a collection
+  * fix to disable emails sent by cron
+  * other minor fixes and enhancements
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Thu, 22 Jun 2022 17:47:00 +0000
+
 msc-pygeoapi (0.10.3) bionic; urgency=medium
 
   * moving version logic to build stage
