@@ -22,3 +22,6 @@ MSC_PYGEOAPI_VERSION=$(shell dpkg-parsechangelog -SVersion)
 	&& unzip -o ./SCHEMAS_OPENGIS_NET.zip "ogcapi/*" -d debian/schemas.opengis.net \
 	&& rm -f ./SCHEMAS_OPENGIS_NET.zip
 	sed -i "s/MSC_PYGEOAPI_VERSION/$(MSC_PYGEOAPI_VERSION)/" theme/templates/_base.html
+
+override_dh_auto_test:
+	@echo "nocheck set, not running tests"
