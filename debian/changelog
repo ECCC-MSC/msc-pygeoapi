@@ -23,7 +23,7 @@ msc-pygeoapi (0.11.0) focal; urgency=medium
   * add DMS Core API provider
   * add HRDP WEonG zarr data provider
   * update climate paths
-  * update deafault env variables
+  * update default env variables
   * update requirements.txt
   * add French HTML template
   * fix to ensure mappings use RFC 3339 compliant date formats
