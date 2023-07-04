@@ -7,3 +7,4 @@ msc_pygeoapi/event/file_.py opt/msc-pygeoapi/event
 msc_pygeoapi/event/message.py opt/msc-pygeoapi/event
 debian/schemas.opengis.net opt/msc-pygeoapi
 theme opt/msc-pygeoapi
+locale opt/msc-pygeoapi
