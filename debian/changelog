@@ -1,3 +1,11 @@
+msc-pygeoapi (0.11.1) focal; urgency=medium
+
+  * suppress testing on build
+  * fix typo
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Tue, 04 Jul 2023 18:38:33 +0000
+
+
 msc-pygeoapi (0.11.0) focal; urgency=medium
 
   * fix Leaflet attribution
@@ -50,7 +58,7 @@ msc-pygeoapi (0.11.0) focal; urgency=medium
   * fix to disable emails sent by cron
   * other minor fixes and enhancements
 
- -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Thu, 22 Jun 2022 17:47:00 +0000
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Thu, 22 Jun 2023 17:47:00 +0000
 
 msc-pygeoapi (0.10.3) bionic; urgency=medium
 
