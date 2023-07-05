@@ -6,7 +6,7 @@ lxml
 netcdf4
 parse
 pygeometa
-pyproj
+pyproj<3.5
 python-slugify
 pyyaml
 rasterio
