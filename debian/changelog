@@ -1,3 +1,9 @@
+msc-pygeoapi (0.11.3) focal; urgency=medium
+
+  * remove HRDPS provider (for use in msc-ip-api)
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Wed, 05 Jul 2023 19:12:52 +0000
+
 msc-pygeoapi (0.11.2) focal; urgency=medium
 
   * fix locale on debian
