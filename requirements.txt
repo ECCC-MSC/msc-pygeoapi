@@ -1,5 +1,4 @@
 click
-dask==2023.5.0
 elasticsearch>=8,<9
 fiona
 gdal
@@ -7,7 +6,7 @@ lxml
 netcdf4
 parse
 pygeometa
-pyproj==3.5.0
+pyproj
 python-slugify
 pyyaml
 rasterio
@@ -16,4 +15,3 @@ sqlalchemy
 unicodecsv
 urllib3<2
 xarray<2023.2.0
-zarr
