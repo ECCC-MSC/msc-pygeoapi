@@ -213,7 +213,8 @@ class MetNotesRealtimeLoader(BaseLoader):
                     feature['properties']['publication_version']
                 )
 
-                feature['properties']['id'] = feature['id']
+                feature['properties']['metnote_id'] = feature['id']
+                feature['id'] = feature['properties']['id'] = id_
                 feature['properties']['metnote_status'] = 'inactive'
                 feature['properties']['filename'] = self.filename
 
