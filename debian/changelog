@@ -1,3 +1,9 @@
+msc-pygeoapi (0.11.5) focal; urgency=medium
+
+  * fix MetNotes ids
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Tue, 08 Aug 2023 11:04:35 +0000
+
 msc-pygeoapi (0.11.4) focal; urgency=medium
 
   * fix sarra configuration for metnotes
