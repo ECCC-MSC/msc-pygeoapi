@@ -1620,6 +1620,7 @@ resources:
               time_field: publication_datetime
               properties:
                   - id
+                  - metnote_id
                   - aors
                   - type_id
                   - publication_version
