@@ -74,6 +74,14 @@ MAPPINGS = {
                         }
                     }
                 },
+                'metnote_id': {
+                    'type': 'text',
+                    'fields': {
+                        'raw': {
+                            'type': 'keyword'
+                        }
+                    }
+                },
                 'aors': {
                     'type': 'keyword',
                     'index': 'true'
