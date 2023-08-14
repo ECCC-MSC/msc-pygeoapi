@@ -53,7 +53,7 @@ LOGGER.setLevel(getattr(logging, MSC_PYGEOAPI_LOGGING_LOGLEVEL))
 DAYS_TO_KEEP = 7
 
 INDEX_BASENAME = 'ltce_{}.'
-INDEX_PATTERN = '{index_name}.{year:d}-{month:d}-{day:d}.{hour:2d}{minute:2d}{second:2d}'  # noqa
+INDEX_PATTERN = '{index_name}.{year:d}-{month:d}-{day:d}.{hour:d}-{minute:d}-{second:d}'  # noqa
 
 SETTINGS = {
     'order': 0,
@@ -362,7 +362,7 @@ class LtceLoader(BaseLoader):
         BaseLoader.__init__(self)
         self.conn = ElasticsearchConnector(conn_config)
         self.db_conn = None
-        self.date = datetime.utcnow().strftime('%Y-%m-%d.%H%M%S')
+        self.date = datetime.utcnow().strftime('%Y-%m-%d.%H-%M-%S')
 
         # setup DB connection
         if db_string is not None:
