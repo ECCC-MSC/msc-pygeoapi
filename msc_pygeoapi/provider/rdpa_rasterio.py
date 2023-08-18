@@ -427,7 +427,6 @@ class RDPAProvider(BaseProvider):
                     out_meta['bands'] = [1]
                     return self.gen_covjson(out_meta, out_image)
             else:
-                out_meta.update(DATA_ENCODING='IEEE_FLOATING_POINT')
                 if date_file_list:
                     out_meta.update(count=len(date_file_list))
 
