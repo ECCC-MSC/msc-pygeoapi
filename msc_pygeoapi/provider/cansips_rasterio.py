@@ -443,7 +443,6 @@ class CanSIPSProvider(BaseProvider):
             else:
                 LOGGER.debug('Serializing data in memory')
                 out_meta.update(count=len(args['indexes']))
-                out_meta.update(DATA_ENCODING='IEEE_FLOATING_POINT')
                 with MemoryFile() as memfile:
                     with memfile.open(**out_meta, nbits=nbits) as dest:
                         dest.write(out_image)
