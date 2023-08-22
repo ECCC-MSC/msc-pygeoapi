@@ -28,8 +28,8 @@
 #
 # =================================================================
 
-import tempfile
 import logging
+import tempfile
 
 from pygeoapi.provider.base import (BaseProvider,
                                     ProviderConnectionError,
