@@ -28,8 +28,8 @@
 #
 # =================================================================
 
-import tempfile
 import logging
+import tempfile
 
 import numpy as np
 import xarray
@@ -43,8 +43,6 @@ from pygeoapi.provider.xarray_ import (XarrayProvider,
                                        _get_zarr_data)
 
 LOGGER = logging.getLogger(__name__)
-
-DCS_VAR = ('tx', 'tm', 'tn', 'pr')
 
 
 class ClimateProvider(XarrayProvider):
