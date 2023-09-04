@@ -4,8 +4,9 @@
 #           <louis-philippe.rousseaulambert@ec.gc.ca>
 #
 # Copyright (c) 2022 Louis-Philippe Rousseau-Lambert
+# Copyright (c) 2023 Tom Kralidis
 #
-
+#
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
 # files (the "Software"), to deal in the Software without
@@ -216,7 +217,7 @@ class RDPAProvider(BaseProvider):
 
         for i, dtype, nodataval in zip(self._data.indexes, self._data.dtypes,
                                        self._data.nodatavals):
-            LOGGER.debug('Determing rangetype for band {}'.format(i))
+            LOGGER.debug(f'Determing rangetype for band {i}')
 
             name, units = None, None
             if self._data.units[i-1] is None:
@@ -230,12 +231,11 @@ class RDPAProvider(BaseProvider):
                 'type': 'Quantity',
                 'name': name,
                 'encodingInfo': {
-                    'dataType': 'http://www.opengis.net/def/dataType/OGC/0/{}'.format(dtype)  # noqa
+                    'dataType': f'http://www.opengis.net/def/dataType/OGC/0/{dtype}'  # noqa
                 },
                 'nodata': nodataval,
                 'uom': {
-                    'id': 'http://www.opengis.net/def/uom/UCUM/{}'.format(
-                         units),
+                    'id': f'http://www.opengis.net/def/uom/UCUM/{units}',
                     'type': 'UnitReference',
                     'code': units
                 },
@@ -261,7 +261,7 @@ class RDPAProvider(BaseProvider):
         nbits = 16
 
         bands = properties
-        LOGGER.debug('Bands: {}, subsets: {}'.format(bands, subsets))
+        LOGGER.debug(f'Bands: {bands}, subsets: {subsets}')
 
         args = {
             'indexes': None
@@ -305,10 +305,8 @@ class RDPAProvider(BaseProvider):
                                                            temp_geom_maxdown)
             maxx2down, miny2down = downright_coord['coordinates']
 
-            LOGGER.debug('Source coordinates: {}'.format(
-                [minx, miny, maxx, maxy]))
-            LOGGER.debug('Destination coordinates: {}'.format(
-                [minx2, miny2, maxx2, maxy2]))
+            LOGGER.debug(f'Source coordinates: {minx}, {miny}, {maxx}, {maxy}')
+            LOGGER.debug(f'Destination coordinates: {minx2}, {miny2}, {maxx2}, {maxy2}')  # noqa
 
             shapes = [{
                 'type': 'Polygon',
@@ -517,7 +515,7 @@ class RDPAProvider(BaseProvider):
         else:
             bands_select = metadata['bands']
 
-        LOGGER.debug('bands selected: {}'.format(bands_select))
+        LOGGER.debug(f'bands selected: {bands_select}')
         for bs in bands_select:
             pm = _get_parameter_metadata(
                 self._data.profile['driver'], self._data.tags(bs))
@@ -586,10 +584,8 @@ class RDPAProvider(BaseProvider):
 
         if self._data.crs is not None:
             if self._data.crs.is_projected:
-                properties['bbox_crs'] = '{}/{}'.format(
-                    'http://www.opengis.net/def/crs/OGC/1.3/',
-                    self._data.crs.to_epsg())
-
+                bbox_crs = f'http://www.opengis.net/def/crs/OGC/1.3/{self._data.crs.to_epsg()}'  # noqa
+                properties['bbox_crs'] = bbox_crs
                 properties['x_axis_label'] = 'x'
                 properties['y_axis_label'] = 'y'
                 properties['bbox_units'] = self._data.crs.linear_units
@@ -618,8 +614,7 @@ class RDPAProvider(BaseProvider):
             file_path[-1] = '*'
             file_path[-2] = '*'
 
-            file_path_ = glob.glob(os.path.join('/'.join(file_path),
-                                                '*{}*'.format(variable)))
+            file_path_ = glob.glob(os.path.join('/'.join(file_path), f'*{variable}*'))  # noqa
             file_path_.sort()
 
             if datetime_:

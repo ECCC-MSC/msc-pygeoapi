@@ -2,11 +2,11 @@
 #
 # Author: Alex Hurka <alex.hurka@canada.ca>
 # Author: Etienne Pelletier <etienne.pelletier@canada.ca>
-# Author: Tom Kralidis <tom.kralidis@canada.ca>
+# Author: Tom Kralidis <tom.kralidis@ec.gc.ca>
 #
 # Copyright (c) 2019 Alex Hurka
 # Copyright (c) 2020 Etienne Pelletier
-# Copyright (c) 2021 Tom Kralidis
+# Copyright (c) 2023 Tom Kralidis
 
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -70,7 +70,7 @@ class HydatLoader(BaseLoader):
         super().__init__()
 
         self.conn = ElasticsearchConnector(conn_config)
-        self.db_string = 'sqlite:///{}'.format(db_string)
+        self.db_string = f'sqlite:///{db_string}'
 
         self.engine, self.session, self.metadata = self.connect_db()
 
@@ -85,7 +85,7 @@ class HydatLoader(BaseLoader):
                 the string representation of the value otherwise.
         """
         if len(str(val)) == 1:
-            return '0{}'.format(val)
+            return f'0{val}'
         else:
             return str(val)
 
@@ -403,7 +403,7 @@ class HydatLoader(BaseLoader):
         """
 
         try:
-            LOGGER.info('Connecting to database {}.'.format(self.db_string))
+            LOGGER.info(f'Connecting to database {self.db_string}')
             LOGGER.info('Creating engine...')
             engine = create_engine(self.db_string)
             LOGGER.info('Success. Database engine created.')
@@ -476,11 +476,11 @@ class HydatLoader(BaseLoader):
                     word_out: '',
                     'IDENTIFIER': '',
                 }
-                date = '{}-{}-{}'.format(
+                date_ = '-'.join([
                     str(row[1]), self.zero_pad(row[2]), self.zero_pad(i)
-                )
-                insert_dict['DATE'] = date
-                insert_dict['IDENTIFIER'] = '{}.{}'.format(row[0], date)
+                ])
+                insert_dict['DATE'] = date_
+                insert_dict['IDENTIFIER'] = f'{row[0]}.{date_}'
                 value = row[keys.index(word_in.upper() + str(i))]
                 symbol = row[keys.index(word_in.upper() + '_SYMBOL' + str(i))]
                 if symbol is not None and symbol.strip():
@@ -509,9 +509,9 @@ class HydatLoader(BaseLoader):
                 )
 
                 mean_dict = {}
-                date = '{}-{}'.format(str(row[1]), self.zero_pad(row[2]))
-                mean_dict['DATE'] = date
-                mean_dict['IDENTIFIER'] = '{}.{}'.format(row[0], date)
+                date_ = '-'.join([str(row[1]), self.zero_pad(row[2])])
+                mean_dict['DATE'] = date_
+                mean_dict['IDENTIFIER'] = f'{row[0]}.{date_}'
 
                 if row[keys.index('MONTHLY_MEAN')]:
                     mean_dict['MONTHLY_MEAN_' + word_out] = float(
@@ -561,11 +561,7 @@ class HydatLoader(BaseLoader):
             set(discharge_station_codes).union(level_station_codes)
         )
         for station in station_codes:
-            LOGGER.debug(
-                'Generating discharge and level values for station {}'.format(
-                    station
-                )
-            )
+            LOGGER.debug(f'Generating discharge and level values for station {station}')  # noqa
             discharge_lst, discharge_means = self.generate_obs(
                 station, discharge_var, symbol_table, True
             )
@@ -703,11 +699,7 @@ class HydatLoader(BaseLoader):
                 agency_fr = agency_metadata[agency_keys.index('AGENCY_FR')]
             else:
                 agency_en = agency_fr = ''
-                LOGGER.warning(
-                    'Could not find agency information for station {}'.format(
-                        station
-                    )
-                )
+                LOGGER.warning(f'Could not find agency information for station {station}')  # noqa
             if datum_id is not None:
                 datum_args = {'DATUM_ID': datum_id}
                 datum_table = self.get_table_var('DATUM_LIST')
@@ -720,11 +712,7 @@ class HydatLoader(BaseLoader):
                 datum_en = datum_metadata[datum_keys.index('DATUM_EN')]
             else:
                 datum_en = ''
-                LOGGER.warning(
-                    'Could not find datum information for station {}'.format(
-                        station
-                    )
-                )
+                LOGGER.warning(f'Could not find datum information for station {station}')  # noqa
             if station_status is not None:
                 status_args = {'STATUS_CODE': station_status}
                 status_table = self.get_table_var('STN_STATUS_CODES')
@@ -738,11 +726,7 @@ class HydatLoader(BaseLoader):
                 status_fr = status_metadata[status_keys.index('STATUS_FR')]
             else:
                 status_en = status_fr = ''
-                LOGGER.warning(
-                    'Could not find status information for station {}'.format(
-                        station
-                    )
-                )
+                LOGGER.warning(f'Could not find status information for station {station}')  # noqa
 
             station_number_args = {'STATION_NUMBER': station}
 
@@ -786,9 +770,7 @@ class HydatLoader(BaseLoader):
                         {
                             'type': 'text/html',
                             'rel': 'alternate',
-                            'title': 'Station Information for {} ({})'.format(
-                                station_name, station
-                            ),
+                            'title': f'Station Information for {station_name} ({station})',  # noqa
                             'href': f'https://wateroffice.ec.gc.ca/report/historical_e.html?stn={station}',  # noqa
                             'hreflang': 'en-CA',
                         },
@@ -907,18 +889,18 @@ class HydatLoader(BaseLoader):
                     f'Could not find min date for station {station_number}'
                 )
             else:
-                min_date = '{}-{}-{}'.format(
+                min_date = '-'.join([
                     year, self.zero_pad(min_month), self.zero_pad(min_day)
-                )
+                ])
             if max_month is None or max_day is None:
                 max_date = None
                 LOGGER.warning(
                     f'Could not find max date for station {station_number}'
                 )
             else:
-                max_date = '{}-{}-{}'.format(
+                max_date = '-'.join([
                     year, self.zero_pad(max_month), self.zero_pad(max_day)
-                )
+                ])
             symbol_keys = symbol_table.columns.keys()
             if min_symbol is not None and min_symbol.strip():
                 args = {'SYMBOL_ID': min_symbol}
@@ -945,15 +927,18 @@ class HydatLoader(BaseLoader):
                     f'Could not find max symbol for station {station_number}'
                 )
             if data_type_en == 'Water Level':
-                es_id = '{}.{}.level-niveaux'.format(station_number, year)
+                level_name_fr = 'level-niveaux'
             elif data_type_en == 'Discharge':
-                es_id = '{}.{}.discharge-debit'.format(station_number, year)
+                level_name_fr = 'discharge-debit'
             elif data_type_en == 'Sediment in mg/L':
-                es_id = '{}.{}.sediment-sediment'.format(station_number, year)
+                level_name_fr = 'sediment-sediment'
             elif data_type_en == 'Daily Mean Tonnes':
-                es_id = '{}.{}.tonnes-tonnes'.format(station_number, year)
+                level_name_fr = 'tonnes-tonnes'
             else:
-                es_id = '{}.{}.None'.format(station_number, year)
+                level_name_fr = 'None'
+
+            es_id = f'{station_number}.{year}.{level_name_fr}'
+
             insert_dict = {
                 'type': 'Feature',
                 'properties': {
@@ -1046,22 +1031,19 @@ class HydatLoader(BaseLoader):
             peak_value = result[annual_peaks_keys.index('PEAK')]
             symbol_id = result[annual_peaks_keys.index('SYMBOL')]
             if month is None or day is None:
-                date = None
+                date_ = None
                 LOGGER.warning(
                     f'Could not find date for station {station_number}'
                 )
             elif hour is None or minute is None:
-                date = '{}-{}-{}'.format(
+                date_ = '-'.join([
                     year, self.zero_pad(month), self.zero_pad(day)
-                )
+                ])
             else:
-                date = '{}-{}-{}T{}:{}'.format(
-                    year,
-                    self.zero_pad(month),
-                    self.zero_pad(day),
-                    self.zero_pad(hour),
-                    self.zero_pad(minute),
-                )
+                ymd = '-'.join([year, self.zero_pad(month), self.zero_pad(day)])  # noqa
+                hm = ':'.join([self.zero_pad(hour), self.zero_pad(minute)])
+                date_ = f'{ymd}T{hm}'
+
             args = {'STATION_NUMBER': station_number}
             try:
                 station_metadata = list(
@@ -1110,11 +1092,7 @@ class HydatLoader(BaseLoader):
                 unit_fr = unit_data[unit_keys.index('PRECISION_FR')]
             else:
                 unit_en = unit_fr = None
-                LOGGER.warning(
-                    'Could not find units for station {}'.format(
-                        station_number
-                    )
-                )
+                LOGGER.warning(f'Could not find units for station {station_number}')  # noqa
             if peak_id:
                 peak_codes = self.get_table_var('PEAK_CODES')
                 peak_keys = peak_codes.columns.keys()
@@ -1150,23 +1128,18 @@ class HydatLoader(BaseLoader):
                 peak = None
 
             if data_type_en == 'Water Level':
-                es_id = '{}.{}.level-niveaux.{}'.format(
-                    station_number, year, peak
-                )
+                level_name_fr = 'level-niveaux'
             elif data_type_en == 'Discharge':
-                es_id = '{}.{}.discharge-debit.{}'.format(
-                    station_number, year, peak
-                )
+                level_name_fr = 'discharge-debit'
             elif data_type_en == 'Sediment in mg/L':
-                es_id = '{}.{}.sediment-sediment.{}'.format(
-                    station_number, year, peak
-                )
+                level_name_fr = 'sediment-sediment'
             elif data_type_en == 'Daily Mean Tonnes':
-                es_id = '{}.{}.tonnes-tonnes.{}'.format(
-                    station_number, year, peak
-                )
+                level_name_fr = 'tonnes-tonnes'
             else:
-                es_id = '{}.{}.None'.format(station_number, year)
+                level_name_fr = 'None'
+
+            es_id = f'{station_name}.{year}.{level_name_fr}.{peak}'
+
             insert_dict = {
                 'type': 'Feature',
                 'properties': {
@@ -1176,7 +1149,7 @@ class HydatLoader(BaseLoader):
                     'IDENTIFIER': es_id,
                     'DATA_TYPE_EN': data_type_en,
                     'DATA_TYPE_FR': data_type_fr,
-                    'DATE': date,
+                    'DATE': date_,
                     'TIMEZONE_OFFSET': time_zone,
                     'PEAK_CODE_EN': peak_en,
                     'PEAK_CODE_FR': peak_fr,
@@ -1238,9 +1211,9 @@ def add(
     conn_config = configure_es_connection(es, username, password, ignore_certs)
     loader = HydatLoader(db, conn_config)
 
-    click.echo('Accessing SQLite database {}'.format(db))
+    click.echo(f'Accessing SQLite database {db}')
     try:
-        click.echo('Accessing SQLite database {}'.format(db))
+        click.echo('Accessing SQLite database {db}')
         discharge_var = level_var = station_table = None
 
         level_var = loader.get_table_var('DLY_LEVELS')
@@ -1251,7 +1224,7 @@ def add(
         symbol_table = loader.get_table_var('DATA_SYMBOLS')
         annual_peaks_table = loader.get_table_var('ANNUAL_INSTANT_PEAKS')
     except Exception as err:
-        msg = 'Could not create table variables: {}'.format(err)
+        msg = f'Could not create table variables: {err}'
         raise click.ClickException(msg)
 
     if dataset == 'all':
@@ -1264,7 +1237,7 @@ def add(
     else:
         datasets_to_process = [dataset]
 
-    click.echo('Processing dataset(s): {}'.format(datasets_to_process))
+    click.echo(f'Processing dataset(s): {datasets_to_process}')
 
     if 'stations' in datasets_to_process:
         if MSC_PYGEOAPI_OGC_API_URL is None:
@@ -1277,7 +1250,7 @@ def add(
                 station_table, annual_peaks_table, annual_stats_table)
             loader.conn.submit_elastic_package(stations, batch_size)
         except Exception as err:
-            msg = 'Could not populate stations index: {}'.format(err)
+            msg = f'Could not populate stations index: {err}'
             raise click.ClickException(msg)
 
     if 'observations' in datasets_to_process:
@@ -1288,7 +1261,7 @@ def add(
                                           station_table, symbol_table)
             loader.conn.submit_elastic_package(means, batch_size)
         except Exception as err:
-            msg = 'Could not populate observations indexes: {}'.format(err)
+            msg = f'Could not populate observations indexes: {err}'
             raise click.ClickException(msg)
 
     if 'annual-statistics' in datasets_to_process:
@@ -1300,7 +1273,7 @@ def add(
                                                  station_table, symbol_table)
             loader.conn.submit_elastic_package(stats, batch_size)
         except Exception as err:
-            msg = 'Could not populate annual statistics index: {}'.format(err)
+            msg = f'Could not populate annual statistics index: {err}'
             raise click.ClickException(msg)
 
     if 'annual-peaks' in datasets_to_process:
@@ -1312,7 +1285,7 @@ def add(
                                                  symbol_table, station_table)
             loader.conn.submit_elastic_package(peaks, batch_size)
         except Exception as err:
-            msg = 'Could not populate annual peaks index: {}'.format(err)
+            msg = f'Could not populate annual peaks index: {err}'
             raise click.ClickException(msg)
 
 

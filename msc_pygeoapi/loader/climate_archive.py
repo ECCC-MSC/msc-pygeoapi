@@ -2,11 +2,11 @@
 #
 # Author: Alex Hurka <alex.hurka@canada.ca>
 # Author: Etienne Pelletier <etienne.pelletier@canada.ca>
-# Author: Tom Kralidis <tom.kralidis@canada.ca>
+# Author: Tom Kralidis <tom.kralidis@ec.gc.ca>
 #
 # Copyright (c) 2020 Etienne Pelletier
 # Copyright (c) 2019 Alex Hurka
-# Copyright (c) 2020 Tom Kralidis
+# Copyright (c) 2023 Tom Kralidis
 
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -697,11 +697,11 @@ class ClimateArchiveLoader(BaseLoader):
                         if insert_dict[key] is not None
                         else insert_dict[key]
                     )
-            insert_dict['ID'] = '{}.{}.{}'.format(
+            insert_dict['ID'] = '.'.join([
                 insert_dict['STN_ID'],
                 insert_dict['NORMAL_ID'],
-                insert_dict['MONTH'],
-            )
+                insert_dict['MONTH']
+            ])
             if insert_dict['STN_ID'] in stn_dict:
                 coords = stn_dict[insert_dict['STN_ID']]['coordinates']
                 insert_dict['STATION_NAME'] = stn_dict[insert_dict['STN_ID']][
@@ -795,11 +795,11 @@ class ClimateArchiveLoader(BaseLoader):
                 else insert_dict['LAST_UPDATED']
             )
 
-            insert_dict['ID'] = '{}.{}.{}'.format(
+            insert_dict['ID'] = '.'.join([
                 insert_dict['STN_ID'],
                 insert_dict['LOCAL_YEAR'],
-                insert_dict['LOCAL_MONTH'],
-            )
+                insert_dict['LOCAL_MONTH']
+            ])
             if insert_dict['STN_ID'] in stn_dict:
                 coords = stn_dict[insert_dict['STN_ID']]['coordinates']
                 insert_dict['PROVINCE_CODE'] = stn_dict[insert_dict['STN_ID']][
@@ -877,12 +877,12 @@ class ClimateArchiveLoader(BaseLoader):
                     else insert_dict['LOCAL_DATE']
                 )
 
-                insert_dict['ID'] = '{}.{}.{}.{}'.format(
+                insert_dict['ID'] = '.'.join([
                     insert_dict['CLIMATE_IDENTIFIER'],
                     insert_dict['LOCAL_YEAR'],
                     insert_dict['LOCAL_MONTH'],
-                    insert_dict['LOCAL_DAY'],
-                )
+                    insert_dict['LOCAL_DAY']
+                ])
                 if insert_dict['STN_ID'] in stn_dict:
                     coords = stn_dict[insert_dict['STN_ID']]['coordinates']
                     insert_dict['PROVINCE_CODE'] = stn_dict[
@@ -963,13 +963,13 @@ class ClimateArchiveLoader(BaseLoader):
                     else insert_dict['LOCAL_DATE']
                 )
 
-                insert_dict['ID'] = '{}.{}.{}.{}.{}'.format(
+                insert_dict['ID'] = '.'.join([
                     insert_dict['CLIMATE_IDENTIFIER'],
                     insert_dict['LOCAL_YEAR'],
                     insert_dict['LOCAL_MONTH'],
                     insert_dict['LOCAL_DAY'],
-                    insert_dict['LOCAL_HOUR'],
-                )
+                    insert_dict['LOCAL_HOUR']
+                ])
                 if insert_dict['STN_ID'] in stn_dict:
                     coords = stn_dict[insert_dict['STN_ID']]['coordinates']
                     insert_dict['PROVINCE_CODE'] = stn_dict[
@@ -1182,7 +1182,7 @@ def add(
     else:
         datasets_to_process = [dataset]
 
-    click.echo('Processing dataset(s): {}'.format(datasets_to_process))
+    click.echo(f'Processing dataset(s): {datasets_to_process}')
 
     if 'stations' in datasets_to_process:
         try:
@@ -1191,7 +1191,7 @@ def add(
             stations = loader.generate_stations()
             loader.conn.submit_elastic_package(stations, batch_size)
         except Exception as err:
-            msg = 'Could not populate stations index: {}'.format(err)
+            msg = f'Could not populate stations index: {err}'
             raise click.ClickException(msg)
 
     if 'normals' in datasets_to_process:
@@ -1206,7 +1206,7 @@ def add(
             )
             loader.conn.submit_elastic_package(normals, batch_size)
         except Exception as err:
-            msg = 'Could not populate normals index: {}'.format(err)
+            msg = f'Could not populate normals index: {err}'
             raise click.ClickException(msg)
 
     if 'monthly' in datasets_to_process:
@@ -1218,7 +1218,7 @@ def add(
             monthlies = loader.generate_monthly_data(stn_dict, date)
             loader.conn.submit_elastic_package(monthlies, batch_size)
         except Exception as err:
-            msg = 'Could not populate montly index: {}'.format(err)
+            msg = f'Could not populate montly index: {err}'
             raise click.ClickException(msg)
 
     if 'daily' in datasets_to_process:
@@ -1230,7 +1230,7 @@ def add(
             dailies = loader.generate_daily_data(stn_dict, date)
             loader.conn.submit_elastic_package(dailies, batch_size)
         except Exception as err:
-            msg = 'Could not populate daily index: {}'.format(err)
+            msg = f'Could not populate daily index: {err}'
             raise click.ClickException(msg)
 
     if 'hourly' in datasets_to_process:
@@ -1242,7 +1242,7 @@ def add(
             hourlies = loader.generate_hourly_data(stn_dict, date)
             loader.conn.submit_elastic_package(hourlies, batch_size)
         except Exception as err:
-            msg = 'Could not populate hourly index: {}'.format(err)
+            msg = f'Could not populate hourly index: {err}'
             raise click.ClickException(msg)
 
     loader.db_conn.close()

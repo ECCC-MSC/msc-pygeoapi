@@ -4,6 +4,7 @@
 #           <louis-philippe.rousseaulambert@ec.gc.ca>
 #
 # Copyright (c) 2022 Louis-Philippe Rousseau-Lambert
+# Copyright (c) 2023 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -164,7 +165,7 @@ MAPPINGS = {
 SETTINGS = {
     'order': 0,
     'version': 1,
-    'index_patterns': ['{}*'.format(INDEX_BASENAME)],
+    'index_patterns': [f'{INDEX_BASENAME}*'],
     'settings': {'number_of_shards': 1, 'number_of_replicas': 0},
     'mappings': None
 }
@@ -214,12 +215,9 @@ class MetNotesRealtimeLoader(BaseLoader):
                     '%Y-%m-%dT%H:%M:%S.%fZ'
                 )
                 b_dt2 = b_dt.strftime('%Y-%m-%d')
-                es_index = '{}{}'.format(INDEX_BASENAME, b_dt2)
+                es_index = f'{INDEX_BASENAME}{b_dt2}'
 
-                id_ = '{}_{}'.format(
-                    feature['id'],
-                    feature['properties']['publication_version']
-                )
+                id_ = f"{feature['id']}_{feature['properties']['publication_version']}"  # noqa
 
                 feature['properties']['metnote_id'] = feature['id']
                 feature['id'] = feature['properties']['id'] = id_
@@ -229,7 +227,7 @@ class MetNotesRealtimeLoader(BaseLoader):
                 try:
                     self.update_es_index(es_index, id_, feature)
                 except Exception as err:
-                    LOGGER.warning('Error indexing: {}'.format(err))
+                    LOGGER.warning(f'Error indexing: {err}')
                     return False
 
         self.update_temporal_config()
@@ -254,10 +252,10 @@ class MetNotesRealtimeLoader(BaseLoader):
             r = self.conn.Elasticsearch.index(
                 index=es_index, id=id, body=feature, refresh=True
             )
-            LOGGER.debug('Result: {}'.format(r))
+            LOGGER.debug(f'Result: {r}')
             return True
         except Exception as err:
-            LOGGER.warning('Error indexing: {}'.format(err))
+            LOGGER.warning(f'Error indexing: {err}')
             return False
 
     def update_temporal_config(self):
@@ -334,9 +332,9 @@ class MetNotesRealtimeLoader(BaseLoader):
         }
 
         try:
-            self.conn.update_by_query(query, '{}*'.format(INDEX_BASENAME))
+            self.conn.update_by_query(query, f'{INDEX_BASENAME}*')
         except Exception as err:
-            LOGGER.warning('{}: failed to update ES index'.format(err))
+            LOGGER.warning(f'Failed to update ES index: {err}')
 
         return True
 
@@ -373,7 +371,7 @@ def add(ctx, file_, es, username, password, ignore_certs):
 @click.pass_context
 @cli_options.OPTION_DAYS(
     default=DAYS_TO_KEEP,
-    help='Delete indexes older than n days (default={})'.format(DAYS_TO_KEEP)
+    help=f'Delete indexes older than n days (default={DAYS_TO_KEEP})'
 )
 @cli_options.OPTION_ELASTICSEARCH()
 @cli_options.OPTION_ES_USERNAME()
@@ -386,12 +384,12 @@ def clean_indexes(ctx, days, es, username, password, ignore_certs):
     conn_config = configure_es_connection(es, username, password, ignore_certs)
     conn = ElasticsearchConnector(conn_config)
 
-    indexes = conn.get('{}*'.format(INDEX_BASENAME))
+    indexes = conn.get(f'{INDEX_BASENAME}*')
 
     if indexes:
         indexes_to_delete = check_es_indexes_to_delete(indexes, days)
         if indexes_to_delete:
-            click.echo('Deleting indexes {}'.format(indexes_to_delete))
+            click.echo(f'Deleting indexes {indexes_to_delete}')
             conn.delete(','.join(indexes_to_delete))
 
     click.echo('Done')
@@ -411,13 +409,13 @@ def delete_index(ctx, es, username, password, ignore_certs, index_template):
     conn_config = configure_es_connection(es, username, password, ignore_certs)
     conn = ElasticsearchConnector(conn_config)
 
-    all_indexes = '{}*'.format(INDEX_BASENAME)
+    all_indexes = f'{INDEX_BASENAME}*'
 
-    click.echo('Deleting indexes {}'.format(all_indexes))
+    click.echo(f'Deleting indexes {all_indexes}')
     conn.delete(all_indexes)
 
     if index_template:
-        click.echo('Deleting index template {}'.format(INDEX_BASENAME))
+        click.echo(f'Deleting index template {INDEX_BASENAME}')
         conn.delete_template(INDEX_BASENAME)
 
     click.echo('Done')

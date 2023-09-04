@@ -1,9 +1,9 @@
 # =================================================================
 #
-# Author: Tom Kralidis <tom.kralidis@canada.ca>
+# Author: Tom Kralidis <tom.kralidis@ec.gc.ca>
 #         Felix Laframboise <felix.laframboise@canada.ca>
 #
-# Copyright (c) 2022 Tom Kralidis
+# Copyright (c) 2023 Tom Kralidis
 # Copyright (c) 2021 Felix Laframboise
 #
 # Permission is hereby granted, free of charge, to any person
@@ -78,11 +78,9 @@ for module, name in commands:
         data.add_command(getattr(mod, name))
     except ImportError as err:
         command_name = name.replace('_', '-')
-        LOGGER.info(
-            'msc-pygeoapi data {} command unavailable.'.format(command_name)
-        )
-        module_name = '{}.{}'.format(module, name)
-        msg = 'Import error when loading {}: {}'.format(module_name, err)
+        LOGGER.info(f'msc-pygeoapi data {command_name} command unavailable')
+        module_name = f'{module}.{name}'
+        msg = f'Import error when loading {module_name}: {err}'
         LOGGER.debug(msg)
 
 

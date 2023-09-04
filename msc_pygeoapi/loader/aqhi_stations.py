@@ -5,6 +5,7 @@
 #             <louis-philippe.rousseaulambert@ec.gc.ca>
 #
 # Copyright (c) 2023 Louis-Philippe Rousseau-Lambert
+# Copyright (c) 2023 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -51,8 +52,7 @@ LOGGER = logging.getLogger(__name__)
 INDEX_BASENAME = 'aqhi_stations'
 
 STATIONS_LIST_NAME = 'AQHI_XML_File_List.xml'
-STATIONS_LIST_URL = 'https://dd.weather.gc.ca/air_quality/doc/{}' \
-    .format(STATIONS_LIST_NAME)
+STATIONS_LIST_URL = f'https://dd.weather.gc.ca/air_quality/doc/{STATIONS_LIST_NAME}'  # noqa
 STATIONS_CACHE = os.path.join(MSC_PYGEOAPI_CACHEDIR, STATIONS_LIST_NAME)
 
 if not os.path.exists(MSC_PYGEOAPI_CACHEDIR):
@@ -61,7 +61,7 @@ if not os.path.exists(MSC_PYGEOAPI_CACHEDIR):
 SETTINGS = {
     'order': 0,
     'version': 1,
-    'index_patterns': ['{}'.format(INDEX_BASENAME)],
+    'index_patterns': [INDEX_BASENAME],
     'settings': {
         'number_of_shards': 1,
         'number_of_replicas': 0
@@ -243,7 +243,7 @@ class AQHIStationLoader(BaseLoader):
         :returns: `bool` of status result
         """
 
-        LOGGER.debug('Received file {}'.format(self.filepath))
+        LOGGER.debug(f'Received file {self.filepath}')
 
         # generate geojson features
         package = self.generate_geojson_features()
@@ -258,7 +258,7 @@ def download_stations():
     :returns: void
     """
 
-    LOGGER.debug('Caching {} to {}'.format(STATIONS_LIST_URL, STATIONS_CACHE))
+    LOGGER.debug(f'Caching {STATIONS_LIST_URL} to {STATIONS_CACHE}')
     urllib.request.urlretrieve(STATIONS_LIST_URL, STATIONS_CACHE)
 
 
@@ -307,7 +307,7 @@ def clean_index(ctx, es, username, password, ignore_certs):
     if indexes:
         indexes_to_delete = check_es_indexes_to_delete(indexes)
         if indexes_to_delete:
-            click.echo('Deleting indexes {}'.format(indexes_to_delete))
+            click.echo(f'Deleting indexes {indexes_to_delete}')
             conn.delete(','.join(indexes_to_delete))
 
     click.echo('Done')
@@ -327,15 +327,15 @@ def delete_index(ctx, es, username, password, ignore_certs,
     conn_config = configure_es_connection(es, username, password, ignore_certs)
     conn = ElasticsearchConnector(conn_config)
 
-    indexes = '{}*'.format(INDEX_BASENAME)
+    indexes = f'{INDEX_BASENAME}*'
 
-    click.echo('Deleting indexes {}'.format(indexes))
+    click.echo(f'Deleting indexes {indexes}')
 
     conn.delete(indexes)
 
     if index_template:
         index_name = INDEX_BASENAME
-        click.echo('Deleting index template {}'.format(index_name))
+        click.echo(f'Deleting index template {index_name}')
         conn.delete_template(index_name)
 
     click.echo('Done')

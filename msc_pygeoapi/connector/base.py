@@ -3,7 +3,7 @@
 # Author: Etienne <etienne.pelletier@canada.ca>
 #
 # Copyright (c) 2021 Etienne Pelletier
-# Copyright (c) 2021 Tom Kralidis
+# Copyright (c) 2023 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -93,4 +93,4 @@ class BaseConnector:
         raise NotImplementedError()
 
     def __repr__(self):
-        return '<BaseConnector> {}'.format(self.name)
+        return f'<BaseConnector> {self.name}'

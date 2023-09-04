@@ -2,7 +2,7 @@
 #
 # Authors: Tom Kralidis <tomkralidis@gmail.com>
 #
-# Copyright (c) 2021 Tom Kralidis
+# Copyright (c) 2023 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -176,7 +176,7 @@ class ElasticsearchCatalogueWMOWIS2GDCProvider(ElasticsearchCatalogueProvider):
         return property_name
 
     def __repr__(self):
-        return '<ElasticsearchCatalogueWMOWIS2GDCProvider> {}'.format(self.data)  # noqa
+        return f'<ElasticsearchCatalogueWMOWIS2GDCProvider> {self.data}'
 
 
 class ElasticsearchWMOWIS2BrokerMessagesProvider(ElasticsearchCatalogueWMOWIS2GDCProvider):  # noqa
@@ -186,4 +186,4 @@ class ElasticsearchWMOWIS2BrokerMessagesProvider(ElasticsearchCatalogueWMOWIS2GD
         super().__init__(provider_def)
 
     def __repr__(self):
-        return '<ElasticsearchWMOWIS2BrokerMessagesProvider> {}'.format(self.data)  # noqa
+        return f'<ElasticsearchWMOWIS2BrokerMessagesProvider> {self.data}'

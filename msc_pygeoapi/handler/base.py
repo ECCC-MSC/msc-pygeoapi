@@ -1,8 +1,8 @@
 # =================================================================
 #
-# Author: Tom Kralidis <tom.kralidis@canada.ca>
+# Author: Tom Kralidis <tom.kralidis@ec.gc.ca>
 #
-# Copyright (c) 2020 Tom Kralidis
+# Copyright (c) 2023 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -45,7 +45,7 @@ class BaseHandler(object):
         """
 
         self.filepath = filepath
-        LOGGER.debug('Filepath: {}'.format(self.filepath))
+        LOGGER.debug(f'Filepath: {self.filepath}')
 
     def handle(self):
         """handle incoming file"""
@@ -53,4 +53,4 @@ class BaseHandler(object):
         raise NotImplementedError()
 
     def __repr__(self):
-        return '<BaseHandler> {}'.format(self.filepath)
+        return f'<BaseHandler> {self.filepath}'

@@ -8,7 +8,7 @@
 # Copyright (c) 2020 Etienne Pelletier
 # Copyright (c) 2021 Felix Laframboise
 # Copyright (c) 2021 Louis-Philippe Rousseau-Lambert
-# Copyright (c) 2022 Tom Kralidis
+# Copyright (c) 2023 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -156,7 +156,7 @@ MAPPINGS = {
 SETTINGS = {
     'order': 0,
     'version': 1,
-    'index_patterns': ['{}*'.format(INDEX_BASENAME)],
+    'index_patterns': [f'{INDEX_BASENAME}*'],
     'settings': {'number_of_shards': 1, 'number_of_replicas': 0},
     'mappings': None
 }
@@ -185,7 +185,7 @@ class AQHIRealtimeLoader(BaseLoader):
 
         for aqhi_type in template_mappings:
             template_name = INDEX_BASENAME.format(aqhi_type)
-            SETTINGS['index_patterns'] = ['{}*'.format(template_name)]
+            SETTINGS['index_patterns'] = [f'{template_name}*']
             SETTINGS['mappings'] = MAPPINGS[aqhi_type]
             self.conn.create_template(template_name, SETTINGS)
 
@@ -289,7 +289,7 @@ class AQHIRealtimeLoader(BaseLoader):
         try:
             self.conn.update_by_query(query, index_)
         except Exception as err:
-            LOGGER.warning('{}: failed to update ES index'.format(err))
+            LOGGER.warning(f'Failed to update ES index: {err}')
 
         return True
 
@@ -304,7 +304,7 @@ class AQHIRealtimeLoader(BaseLoader):
         # set class variables from filename
         self.parse_filename()
 
-        LOGGER.debug('Received file {}'.format(self.filepath))
+        LOGGER.debug(f'Received file {self.filepath}')
 
         # generate geojson features
         package = self.generate_geojson_features()
@@ -360,7 +360,7 @@ def add(ctx, file_, directory, es, username, password, ignore_certs):
 @click.pass_context
 @cli_options.OPTION_DAYS(
     default=DAYS_TO_KEEP,
-    help='Delete indexes older than n days (default={})'.format(DAYS_TO_KEEP),
+    help=f'Delete indexes older than n days (default={DAYS_TO_KEEP})',
 )
 @cli_options.OPTION_DATASET(
     help='AQHI dataset indexes to delete.',
@@ -387,7 +387,7 @@ def clean_indexes(ctx, days, dataset, es, username, password, ignore_certs):
     if indexes:
         indexes_to_delete = check_es_indexes_to_delete(indexes, days)
         if indexes_to_delete:
-            click.echo('Deleting indexes {}'.format(indexes_to_delete))
+            click.echo(f'Deleting indexes {indexes_to_delete}')
             conn.delete(','.join(indexes_to_delete))
 
     click.echo('Done')
@@ -416,14 +416,14 @@ def delete_indexes(ctx, dataset, es, username, password, ignore_certs,
     else:
         indexes = '{}*'.format(INDEX_BASENAME.format(dataset))
 
-    click.echo('Deleting indexes {}'.format(indexes))
+    click.echo(f'Deleting indexes {indexes}')
 
     conn.delete(indexes)
 
     if index_template:
         for type_ in ('forecasts', 'observations'):
             index_name = INDEX_BASENAME.format(type_)
-            click.echo('Deleting index template {}'.format(index_name))
+            click.echo(f'Deleting index template {index_name}')
             conn.delete_template(index_name)
 
     click.echo('Done')

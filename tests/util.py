@@ -1,8 +1,8 @@
 # =================================================================
 #
-# Author: Tom Kralidis <tom.kralidis@canada.ca>
+# Author: Tom Kralidis <tom.kralidis@ec.gc.ca>
 #
-# Copyright (c) 2021 Tom Kralidis
+# Copyright (c) 2023 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -39,7 +39,7 @@ def get_test_file_path(filename):
     if os.path.isfile(filename):
         return filename
     else:
-        return 'tests/{}'.format(filename)
+        return f'tests/{filename}'
 
 
 def read_json(file_name):

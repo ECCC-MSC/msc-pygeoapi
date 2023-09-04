@@ -2,7 +2,7 @@
 #
 # Author: Tom Kralidis <tom.kralidis@ec.gc.ca>
 #
-# Copyright (c) 2022 Tom Kralidis
+# Copyright (c) 2023 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -71,7 +71,7 @@ class DiscoveryMetadataLoader(BaseLoader):
         self.items = []
 
         if not self.conn.exists(INDEX_NAME):
-            LOGGER.debug('Creating index {}'.format(INDEX_NAME))
+            LOGGER.debug(f'Creating index {INDEX_NAME}')
             self.conn.create(INDEX_NAME, SETTINGS)
 
     def load_data(self, json_dict):
@@ -85,7 +85,7 @@ class DiscoveryMetadataLoader(BaseLoader):
 
         identifier = json_dict['id']
 
-        LOGGER.debug('Adding record {} to index {}'.format(identifier, INDEX_NAME))  # noqa
+        LOGGER.debug(f'Adding record {identifier} to index {INDEX_NAME}')
 
         package = {
             '_id': identifier,
@@ -108,12 +108,12 @@ class DiscoveryMetadataLoader(BaseLoader):
         :returns: `dict` of discovery metadata
         """
 
-        LOGGER.info('Processing MCF: {}'.format(filepath))
+        LOGGER.info(f'Processing MCF: {filepath}')
 
         try:
             m = read_mcf(filepath)
         except Exception as err:
-            msg = 'ERROR: cannot read MCF: {}'.format(err)
+            msg = f'ERROR: cannot read MCF: {err}'
             LOGGER.error(msg)
             raise
 
@@ -122,7 +122,7 @@ class DiscoveryMetadataLoader(BaseLoader):
         try:
             metadata = output_schema().write(m, stringify=False)
         except Exception as err:
-            msg = 'ERROR: cannot generate metadata: {}'.format(err)
+            msg = f'ERROR: cannot generate metadata: {err}'
             LOGGER.error(msg)
             raise
 
@@ -156,16 +156,16 @@ def add(ctx, directory, es, username, password, ignore_certs):
     passed = 0
     failed = 0
 
-    click.echo('Processing discovery metadata in {}'.format(directory))
-    for root, dirs, files in os.walk('{}/mcf'.format(directory)):
+    click.echo(f'Processing discovery metadata in {directory}')
+    for root, dirs, files in os.walk(f'{directory}/mcf'):
         for name in files:
             total += 1
             if any(['shared' in root,
                     'template' in name, not name.endswith('yml')]):
                 continue
-            mcf_file = ('{}/{}'.format(root, name))
+            mcf_file = f'{root}/{name}'
             try:
-                click.echo('Processing MCF file {}'.format(mcf_file))
+                click.echo(f'Processing MCF file {mcf_file}')
                 metadata = loader.generate_metadata(mcf_file)
                 _ = loader.load_data(metadata)
                 passed += 1
@@ -174,9 +174,9 @@ def add(ctx, directory, es, username, password, ignore_certs):
                 continue
 
     click.echo('Results')
-    click.echo('Total: {}'.format(total))
-    click.echo('Passed: {}'.format(passed))
-    click.echo('Failed: {}'.format(failed))
+    click.echo(f'Total: {total}')
+    click.echo(f'Passed: {passed}')
+    click.echo(f'Failed: {failed}')
 
 
 @click.command()
@@ -195,7 +195,7 @@ def delete_index(ctx, es, username, password, ignore_certs):
     conn = ElasticsearchConnector(conn_config)
 
     if conn.exists(INDEX_NAME):
-        click.echo('Deleting index {}'.format(INDEX_NAME))
+        click.echo(f'Deleting index {INDEX_NAME}')
         conn.delete(INDEX_NAME)
 
     click.echo('Done')

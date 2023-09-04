@@ -1,8 +1,8 @@
 # =================================================================
 #
-# Author: Tom Kralidis <tom.kralidis@canada.ca>
+# Author: Tom Kralidis <tom.kralidis@ec.gc.ca>
 #
-# Copyright (c) 2021 Tom Kralidis
+# Copyright (c) 2023 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -52,7 +52,7 @@ def test_api(url):
     ]
 
     # display all hydrometric data feature collections
-    req = '{}/collections'.format(url)
+    req = f'{url}/collections'
     response = requests.get(req).json()
 
     collections = [c['id'] for c in response['collections']]
@@ -61,7 +61,7 @@ def test_api(url):
     assert all(elem in collections for elem in hydat_collections)
 
     # describe hydrometric stations feature collection
-    req = '{}/collections/hydrometric-stations'.format(url)
+    req = f'{url}/collections/hydrometric-stations'
     response = requests.get(req).json()
 
     # feature collections metadata is displayed including appropriate title,
@@ -79,7 +79,7 @@ def test_api(url):
     assert 'links' in response
 
     # query hydrometric stations feature collection
-    req = '{}/collections/hydrometric-stations/items'.format(url)
+    req = f'{url}/collections/hydrometric-stations/items'
     response = requests.get(req).json()
 
     # default list of 500 stations is returned with correct data
@@ -87,7 +87,7 @@ def test_api(url):
 
     # query hydrometric stations feature collection and return
     # sorted by IDENTIFIER
-    req = '{}/collections/hydrometric-stations/items'.format(url)
+    req = f'{url}/collections/hydrometric-stations/items'
     params = {
         'sortby': 'IDENTIFIER'
     }
@@ -96,7 +96,7 @@ def test_api(url):
     assert response['features'][0]['id'] == '01AA002'
 
     # query hydrometric stations feature collection to return in CSV format
-    req = '{}/collections/hydrometric-stations/items'.format(url)
+    req = f'{url}/collections/hydrometric-stations/items'
     params = {
         'f': 'csv'
     }
@@ -107,7 +107,7 @@ def test_api(url):
     assert len(reader.fieldnames) == 12
 
     # access a single hydrometric stations feature
-    req = '{}/collections/hydrometric-stations/items/01BH001'.format(url)
+    req = f'{url}/collections/hydrometric-stations/items/01BH001'
     response = requests.get(req, params=params).json()
 
     # single station (01BH001) is returned with correct data
@@ -117,7 +117,7 @@ def test_api(url):
 
     # query hydrometric stations feature collection based on
     # PROV_TERR_STATE_LOC property
-    req = '{}/collections/hydrometric-stations/items'.format(url)
+    req = f'{url}/collections/hydrometric-stations/items'
     params = {
         'PROV_TERR_STATE_LOC': 'SK'
     }
@@ -129,7 +129,7 @@ def test_api(url):
     assert response['features'][feature]['properties']['PROV_TERR_STATE_LOC'] == 'SK'  # noqa
 
     # query hydrometric stations feature collection based on STATUS_EN property
-    req = '{}/collections/hydrometric-stations/items'.format(url)
+    req = f'{url}/collections/hydrometric-stations/items'
     params = {
         'STATUS_EN': 'Active'
     }
@@ -140,7 +140,7 @@ def test_api(url):
     assert response['features'][feature]['properties']['STATUS_EN'] == 'Active'
 
     # access a single hydrometric daily mean feature
-    req = '{}/collections/hydrometric-daily-mean/items/10NC001.1979-07-19'.format(url)  # noqa
+    req = f'{url}/collections/hydrometric-daily-mean/items/10NC001.1979-07-19'
     response = requests.get(req, params=params).json()
 
     # single daily mean is returned with correct data
@@ -149,7 +149,7 @@ def test_api(url):
 
     # query hydrometric daily means feature collection based on
     # STATION_NUMBER property
-    req = '{}/collections/hydrometric-daily-mean/items'.format(url)
+    req = f'{url}/collections/hydrometric-daily-mean/items'
     params = {
         'STATION_NUMBER': '10NC001'
     }
@@ -161,7 +161,7 @@ def test_api(url):
 
     # query hydrometric daily means feature collection based on
     # STATION_NUMBER property sorted by IDENTIFIER
-    req = '{}/collections/hydrometric-daily-mean/items'.format(url)
+    req = f'{url}/collections/hydrometric-daily-mean/items'
     params = {
         'STATION_NUMBER': '10NC001',
         'sortby': 'IDENTIFIER'
@@ -174,7 +174,7 @@ def test_api(url):
 
     # query hydrometric daily means feature collection based on
     # STATION_NUMBER property and temporal subsetting
-    req = '{}/collections/hydrometric-daily-mean/items'.format(url)
+    req = f'{url}/collections/hydrometric-daily-mean/items'
     params = {
         'STATION_NUMBER': '10NC001',
         'datetime': '1979-01-01/1981-01-01'
@@ -189,7 +189,7 @@ def test_api(url):
 
     # query hydrometric daily means feature collection based on spatial
     # subsetting
-    req = '{}/collections/hydrometric-daily-mean/items'.format(url)
+    req = f'{url}/collections/hydrometric-daily-mean/items'
     params = {
         'bbox': '-80,40,-50,50'
     }
@@ -205,7 +205,7 @@ def test_api(url):
     assert coords[1] < bbox[3]
 
     # access a single hydrometric monthly mean feature
-    req = '{}/collections/hydrometric-monthly-mean/items/09EA004.1979-09'.format(url)  # noqa
+    req = f'{url}/collections/hydrometric-monthly-mean/items/09EA004.1979-09'
 
     response = requests.get(req).json()
 
@@ -215,7 +215,7 @@ def test_api(url):
 
     # query hydrometric monthly means feature collection based on
     # STATION_NUMBER property
-    req = '{}/collections/hydrometric-monthly-mean/items'.format(url)
+    req = f'{url}/collections/hydrometric-monthly-mean/items'
     params = {
         'STATION_NUMBER': '10NC001'
     }
@@ -227,7 +227,7 @@ def test_api(url):
 
     # query hydrometric monthly means feature collection based on
     # STATION_NUMBER property sorted by STATION_NAME
-    req = '{}/collections/hydrometric-monthly-mean/items'.format(url)
+    req = f'{url}/collections/hydrometric-monthly-mean/items'
     params = {
         'STATION_NUMBER': '10NC001',
         'sortby': 'STATION_NAME'
@@ -240,7 +240,7 @@ def test_api(url):
 
     # query hydrometric monthly means feature collection based on
     # STATION_NUMBER property and temporal subsetting
-    req = '{}/collections/hydrometric-monthly-mean/items'.format(url)
+    req = f'{url}/collections/hydrometric-monthly-mean/items'
     params = {
         'STATION_NUMBER': '10NC001',
         'datetime': '1979-01/1981-01'
@@ -255,7 +255,7 @@ def test_api(url):
 
     # query hydrometric monthly means feature collection based on
     # spatial subsetting
-    req = '{}/collections/hydrometric-monthly-mean/items'.format(url)
+    req = f'{url}/collections/hydrometric-monthly-mean/items'
     params = {
         'bbox': '-80,40,-50,50'
     }
@@ -271,7 +271,7 @@ def test_api(url):
     assert coords[1] < bbox[3]
 
     # access a single hydrometric annual statistics feature
-    req = '{}/collections/hydrometric-annual-statistics/items/01AA002.1976.discharge-debit'.format(url)  # noqa
+    req = f'{url}/collections/hydrometric-annual-statistics/items/01AA002.1976.discharge-debit'  # noqa
 
     response = requests.get(req, params=params).json()
 
@@ -280,7 +280,7 @@ def test_api(url):
     assert response['properties']['MAX_VALUE'] == 281
 
     # query hydrometric annual statistics feature collection based on data type
-    req = '{}/collections/hydrometric-annual-statistics/items'.format(url)
+    req = f'{url}/collections/hydrometric-annual-statistics/items'
     params = {
         'DATA_TYPE_EN': 'Discharge'
     }
@@ -294,7 +294,7 @@ def test_api(url):
 
     # query hydrometric annual statistics feature collection based on
     # data type sorted by MAX_VALUE
-    req = '{}/collections/hydrometric-annual-statistics/items'.format(url)
+    req = f'{url}/collections/hydrometric-annual-statistics/items'
     params = {
         'DATA_TYPE_EN': 'Discharge',
         'sortby': 'MAX_VALUE'
@@ -307,7 +307,7 @@ def test_api(url):
     assert response['features'][0]['properties']['MAX_VALUE'] == 0
 
     # access a single hydrometric annual peaks feature
-    req = '{}/collections/hydrometric-annual-peaks/items/02FE012.1961.level-niveaux.maximum-maximale'.format(url)  # noqa
+    req = f'{url}/collections/hydrometric-annual-peaks/items/02FE012.1961.level-niveaux.maximum-maximale'  # noqa
 
     response = requests.get(req).json()
 
@@ -315,7 +315,7 @@ def test_api(url):
     assert response['id'] == '02FE012.1961.level-niveaux.maximum-maximale'
 
     # query hydrometric annual peaks feature collection based on STATION_NUMBER
-    req = '{}/collections/hydrometric-annual-statistics/items'.format(url)
+    req = f'{url}/collections/hydrometric-annual-statistics/items'
     params = {
         'STATION_NUMBER': '01AG003'
     }
@@ -328,7 +328,7 @@ def test_api(url):
 
     # query hydrometric annual peaks feature collection based on
     # STATION_NUMBER sorted by DATA_TYPE_EN
-    req = '{}/collections/hydrometric-annual-statistics/items'.format(url)
+    req = f'{url}/collections/hydrometric-annual-statistics/items'
     params = {
         'STATION_NUMBER': '01AG003',
         'sortby': 'DATA_TYPE_EN'

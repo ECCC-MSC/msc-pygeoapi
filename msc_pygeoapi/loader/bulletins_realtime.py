@@ -1,8 +1,8 @@
 # =================================================================
 #
-# Author: Tom Kralidis <tom.kralidis@canada.ca>
+# Author: Tom Kralidis <tom.kralidis@ec.gc.ca>
 #
-# Copyright (c) 2021 Tom Kralidis
+# Copyright (c) 2023 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -51,7 +51,7 @@ INDEX_BASENAME = 'bulletins.'
 SETTINGS = {
     'order': 0,
     'version': 1,
-    'index_patterns': ['{}*'.format(INDEX_BASENAME)],
+    'index_patterns': [INDEX_BASENAME],
     'settings': {
         'number_of_shards': 1,
         'number_of_replicas': 0
@@ -142,16 +142,16 @@ class BulletinsRealtimeLoader(BaseLoader):
         b_dt = datetime.strptime(data['properties']['datetime'],
                                  '%Y-%m-%dT%H:%M')
         b_dt2 = b_dt.strftime('%Y-%m-%d')
-        es_index = '{}{}'.format(INDEX_BASENAME, b_dt2)
+        es_index = f'{INDEX_BASENAME}{b_dt2}'
 
         try:
             r = self.conn.Elasticsearch.index(
                 index=es_index, id=data['id'], body=data
             )
-            LOGGER.debug('Result: {}'.format(r))
+            LOGGER.debug(f'Result: {r}')
             return True
         except Exception as err:
-            LOGGER.warning('Error indexing: {}'.format(err))
+            LOGGER.warning(f'Error indexing: {err}')
             return False
 
     def bulletin2dict(self, filepath):
@@ -172,7 +172,7 @@ class BulletinsRealtimeLoader(BaseLoader):
         try:
             bulletin_path = filepath.split('/alphanumeric/')[1]
         except IndexError as err:
-            LOGGER.warning('no bulletin path: {}'.format(err))
+            LOGGER.warning(f'no bulletin path: {err}')
             raise RuntimeError(err)
 
         identifier = bulletin_path.replace('/', '.')
@@ -193,7 +193,7 @@ class BulletinsRealtimeLoader(BaseLoader):
 
         min_ = filename.split('_')[2][-2:]
 
-        datetime_ = '{}-{}-{}T{}:{}'.format(yyyy, mm, dd, hh, min_)
+        datetime_ = f'{yyyy}-{mm}-{dd}T{hh}:{min_}'
 
         # TODO: use real coordinates
 
@@ -203,7 +203,7 @@ class BulletinsRealtimeLoader(BaseLoader):
         dict_['properties']['issuer_name'] = issuer_name
         dict_['properties']['issuer_country'] = issuer_country
         dict_['properties']['issuing_office'] = tokens[2][2:]
-        dict_['properties']['url'] = '{}/{}'.format(self.DD_URL, bulletin_path)
+        dict_['properties']['url'] = f'{self.DD_URL}/{bulletin_path}'
 
         return dict_
 
@@ -218,7 +218,7 @@ def bulletins_realtime():
 @click.pass_context
 @cli_options.OPTION_DAYS(
     default=DAYS_TO_KEEP,
-    help='Delete indexes older than n days (default={})'.format(DAYS_TO_KEEP)
+    help=f'Delete indexes older than n days (default={DAYS_TO_KEEP})'
 )
 @cli_options.OPTION_ELASTICSEARCH()
 @cli_options.OPTION_ES_USERNAME()
@@ -233,12 +233,12 @@ def clean_indexes(ctx, days, es, username, password, ignore_certs):
     conn_config = configure_es_connection(es, username, password, ignore_certs)
     conn = ElasticsearchConnector(conn_config)
 
-    indexes = conn.get('{}*'.format(INDEX_BASENAME))
+    indexes = conn.get(f'{INDEX_BASENAME}*')
 
     if indexes:
         indexes_to_delete = check_es_indexes_to_delete(indexes, days)
         if indexes_to_delete:
-            click.echo('Deleting indexes {}'.format(indexes_to_delete))
+            click.echo(f'Deleting indexes {indexes_to_delete}')
             conn.delete(','.join(indexes_to_delete))
 
     click.echo('Done')
@@ -260,13 +260,13 @@ def delete_indexes(ctx, es, username, password, ignore_certs, index_template):
     conn_config = configure_es_connection(es, username, password, ignore_certs)
     conn = ElasticsearchConnector(conn_config)
 
-    all_indexes = '{}*'.format(INDEX_BASENAME)
+    all_indexes = f'{INDEX_BASENAME}*'
 
-    click.echo('Deleting indexes {}'.format(all_indexes))
+    click.echo(f'Deleting indexes {all_indexes}')
     conn.delete(all_indexes)
 
     if index_template:
-        click.echo('Deleting index template {}'.format(INDEX_BASENAME))
+        click.echo(f'Deleting index template {INDEX_BASENAME}')
         conn.delete_template(INDEX_BASENAME)
 
     click.echo('Done')

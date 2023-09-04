@@ -3,7 +3,7 @@
 # Author: Etienne Pelletier <etienne.pelletier@canada.ca>
 #
 # Copyright (c) 2020 Etienne Pelletier
-# Copyright (c) 2022 Tom Kralidis
+# Copyright (c) 2023 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -424,11 +424,11 @@ class HurricanesRealtimeLoader(BaseLoader):
             self.items.append(feature_json)
 
             action = {
-                '_id': '{}-{}-{}-{}-{}'.format(self.storm_name,
-                                               self.storm_variable,
-                                               file_datetime_str,
-                                               self.fh,
-                                               feature_json['id']),
+                '_id': '-'.join([self.storm_name,
+                                 self.storm_variable,
+                                 file_datetime_str,
+                                 self.fh,
+                                 feature_json['id']]),
                 '_index': INDEX_NAME.format(self.storm_variable),
                 '_op_type': 'update',
                 'doc': feature_json,
@@ -448,7 +448,7 @@ class HurricanesRealtimeLoader(BaseLoader):
         # set class variables from filename
         self.parse_filename()
 
-        LOGGER.debug('Received file {}'.format(self.filepath))
+        LOGGER.debug(f'Received file {self.filepath}')
 
         # check for shapefile dependencies
         if self.check_shapefile_deps():
@@ -525,11 +525,11 @@ def deactivate(ctx, days, es, username, password, ignore_certs):
 
     for index in INDICES:
         query = {
-            "script": "ctx._source.properties.active=false",
-            "query": {
-                "range": {
-                    "properties.filedate": {
-                        "lte": "now-{}d".format(days)
+            'script': 'ctx._source.properties.active=false',
+            'query': {
+                'range': {
+                    'properties.filedate': {
+                        'lte': f'now-{days}d'
                     }
                 }
             }
