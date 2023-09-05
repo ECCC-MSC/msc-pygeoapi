@@ -2167,6 +2167,386 @@ resources:
                   name: NetCDF
                   mimetype: application/x-netcdf
 
+    climate:candcsu6:projected:annual:absolute:
+        type: collection
+        title:
+            en: CanDCSU6 Projected annual
+            fr: CanDCSU6 Annuelle projetée
+        description:
+            en: CMIP6 climate projections are based on both updated global climate models and new emissions scenarios called “Shared Socioeconomic Pathways” (SSPs). Statistically downscaled datasets have been produced from 26 CMIP6 global climate models (GCMs) under three different emission scenarios (i.e., SSP1-2.6, SSP2-4.5, and SSP5-8.5) using the same downscaling method (Bias Correction/Constructed Analogues with Quantile mapping (BCCAQv2)) and downscaling target data (NRCANmet) as the CMIP5-based downscaled scenarios. Statistically downscaled individual model output are available for download. Downscaled daily maximum and minimum temperatures (°C) and daily precipitation (mm) are available across Canada at 10km grid spatial resolution for the 1950-2014 historical period and for the 2015-2100 period following each of the three emission scenarios.
+            fr: Les projections climatiques du CMIP6 sont fondées à la fois sur des modèles climatiques mondiaux actualisés et sur de nouveaux scénarios d’émissions appelés « trajectoires socioéconomiques partagées » (SSP, pour « Shared Socioeconomic Pathways »). Des ensembles de données mis à l’échelle statistique ont été produits à l’aide de 26 modèle climatique mondial (MCM) du CMIP6 selon trois scénarios d’émissions différents (c.-à-d. SSP1-2.6, SSP2-4.5 et SSP5-8.5) utilisant la même méthode de mise à l’échelle statistique (la méthode des analogues avec correction de biais et cartographie des quantiles (BCCAQv2)) et les mêmes données cibles de réduction d’échelle (NRCANmet) que les scénarios mis à l’échelle statistique du CMIP5. Les résultats des modèles individuels mis à l’échelle statistique peuvent être téléchargés. Les températures maximales et minimales quotidiennes (°C) et les précipitations quotidiennes (mm) à échelle réduite sont disponibles partout au Canada à une résolution spatiale de grille de 10 km pour la période antérieure 1950 2014 et la période 2015 2100 suivant chacun des trois scénarios d’émissions.
+        keywords:
+            en: [Weather and Climate, Provide Climate Information Products and Services, Expand Scientific Knowledge for Climate Monitoring and Prediction, National (CA), Climate, Climate change]
+            fr: [Météo et climat, Fournir des produits et services d'information sur le climat, Développer les connaissances scientifiques pour la surveillance et la prévision du climat, National (CA), Climat, Changement climatique]
+        extents:
+            spatial:
+                bbox: [-141,41,-52,83.5]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title:
+                  en: Statistically downscaled climate scenarios from CMIP6 global climate models (CanDCS-U6) - Open Government (open.canada.ca)
+                  fr: Scénarios climatiques mis à l’échelle statistique des modèles climatiques mondiaux du CMIP6 (CanDCS-U6) - Gouvernement ouvert (open.canada.ca)
+              href:
+                  en: https://open.canada.ca/data/en/dataset/9bd4781f-533d-4a27-b4b9-18fec1c88bb6
+                  fr: https://open.canada.ca/data/fr/dataset/9bd4781f-533d-4a27-b4b9-18fec1c88bb6
+              hreflang:
+                  en: en-CA
+                  fr: fr-CA
+        providers:
+            - type: coverage
+              name: msc_pygeoapi.provider.candcsu6_xarray.CanDCSU6Provider
+              data: /data/geomet/feeds/dd/climate/CanDCSU6/10km/scenarios/ssp126/2015-2100_ECCC_CanDCSU6-SSP126_*-Pct50_Sfc_LatLon0.86_P1Y.nc
+              x_field: lon
+              y_field: lat
+              time_field: time
+              format:
+                  name: NetCDF
+                  mimetype: application/x-netcdf
+
+    climate:candcsu6:projected:seasonal:absolute:
+        type: collection
+        title:
+            en: CanDCSU6 Projected seasonal
+            fr: CanDCSU6 Saisonnière projetée
+        description:
+            en: CMIP6 climate projections are based on both updated global climate models and new emissions scenarios called “Shared Socioeconomic Pathways” (SSPs). Statistically downscaled datasets have been produced from 26 CMIP6 global climate models (GCMs) under three different emission scenarios (i.e., SSP1-2.6, SSP2-4.5, and SSP5-8.5) using the same downscaling method (Bias Correction/Constructed Analogues with Quantile mapping (BCCAQv2)) and downscaling target data (NRCANmet) as the CMIP5-based downscaled scenarios. Statistically downscaled individual model output are available for download. Downscaled daily maximum and minimum temperatures (°C) and daily precipitation (mm) are available across Canada at 10km grid spatial resolution for the 1950-2014 historical period and for the 2015-2100 period following each of the three emission scenarios.
+            fr: Les projections climatiques du CMIP6 sont fondées à la fois sur des modèles climatiques mondiaux actualisés et sur de nouveaux scénarios d’émissions appelés « trajectoires socioéconomiques partagées » (SSP, pour « Shared Socioeconomic Pathways »). Des ensembles de données mis à l’échelle statistique ont été produits à l’aide de 26 modèle climatique mondial (MCM) du CMIP6 selon trois scénarios d’émissions différents (c.-à-d. SSP1-2.6, SSP2-4.5 et SSP5-8.5) utilisant la même méthode de mise à l’échelle statistique (la méthode des analogues avec correction de biais et cartographie des quantiles (BCCAQv2)) et les mêmes données cibles de réduction d’échelle (NRCANmet) que les scénarios mis à l’échelle statistique du CMIP5. Les résultats des modèles individuels mis à l’échelle statistique peuvent être téléchargés. Les températures maximales et minimales quotidiennes (°C) et les précipitations quotidiennes (mm) à échelle réduite sont disponibles partout au Canada à une résolution spatiale de grille de 10 km pour la période antérieure 1950 2014 et la période 2015 2100 suivant chacun des trois scénarios d’émissions.
+        keywords:
+            en: [Weather and Climate, Provide Climate Information Products and Services, Expand Scientific Knowledge for Climate Monitoring and Prediction, National (CA), Climate, Climate change]
+            fr: [Météo et climat, Fournir des produits et services d'information sur le climat, Développer les connaissances scientifiques pour la surveillance et la prévision du climat, National (CA), Climat, Changement climatique]
+        extents:
+            spatial:
+                bbox: [-141,41,-52,83.5]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title:
+                  en: Statistically downscaled climate scenarios from CMIP6 global climate models (CanDCS-U6) - Open Government (open.canada.ca)
+                  fr: Scénarios climatiques mis à l’échelle statistique des modèles climatiques mondiaux du CMIP6 (CanDCS-U6) - Gouvernement ouvert (open.canada.ca)
+              href:
+                  en: https://open.canada.ca/data/en/dataset/9bd4781f-533d-4a27-b4b9-18fec1c88bb6
+                  fr: https://open.canada.ca/data/fr/dataset/9bd4781f-533d-4a27-b4b9-18fec1c88bb6
+              hreflang:
+                  en: en-CA
+                  fr: fr-CA
+        providers:
+            - type: coverage
+              name: msc_pygeoapi.provider.candcsu6_xarray.CanDCSU6Provider
+              data: /data/geomet/feeds/dd/climate/CanDCSU6/10km/scenarios/ssp126/2015-2100_ECCC_CanDCSU6-SSP126_*-Pct50_Sfc_LatLon0.86_P1Y-DJF.nc
+              x_field: lon
+              y_field: lat
+              time_field: time
+              format:
+                  name: NetCDF
+                  mimetype: application/x-netcdf
+
+    climate:candcsu6:projected:monthly:absolute:
+        type: collection
+        title:
+            en: CanDCSU6 Projected monthly
+            fr: CanDCSU6 Mensuelle projetée
+        description:
+            en: CMIP6 climate projections are based on both updated global climate models and new emissions scenarios called “Shared Socioeconomic Pathways” (SSPs). Statistically downscaled datasets have been produced from 26 CMIP6 global climate models (GCMs) under three different emission scenarios (i.e., SSP1-2.6, SSP2-4.5, and SSP5-8.5) using the same downscaling method (Bias Correction/Constructed Analogues with Quantile mapping (BCCAQv2)) and downscaling target data (NRCANmet) as the CMIP5-based downscaled scenarios. Statistically downscaled individual model output are available for download. Downscaled daily maximum and minimum temperatures (°C) and daily precipitation (mm) are available across Canada at 10km grid spatial resolution for the 1950-2014 historical period and for the 2015-2100 period following each of the three emission scenarios.
+            fr: Les projections climatiques du CMIP6 sont fondées à la fois sur des modèles climatiques mondiaux actualisés et sur de nouveaux scénarios d’émissions appelés « trajectoires socioéconomiques partagées » (SSP, pour « Shared Socioeconomic Pathways »). Des ensembles de données mis à l’échelle statistique ont été produits à l’aide de 26 modèle climatique mondial (MCM) du CMIP6 selon trois scénarios d’émissions différents (c.-à-d. SSP1-2.6, SSP2-4.5 et SSP5-8.5) utilisant la même méthode de mise à l’échelle statistique (la méthode des analogues avec correction de biais et cartographie des quantiles (BCCAQv2)) et les mêmes données cibles de réduction d’échelle (NRCANmet) que les scénarios mis à l’échelle statistique du CMIP5. Les résultats des modèles individuels mis à l’échelle statistique peuvent être téléchargés. Les températures maximales et minimales quotidiennes (°C) et les précipitations quotidiennes (mm) à échelle réduite sont disponibles partout au Canada à une résolution spatiale de grille de 10 km pour la période antérieure 1950 2014 et la période 2015 2100 suivant chacun des trois scénarios d’émissions.
+        keywords:
+            en: [Weather and Climate, Provide Climate Information Products and Services, Expand Scientific Knowledge for Climate Monitoring and Prediction, National (CA), Climate, Climate change]
+            fr: [Météo et climat, Fournir des produits et services d'information sur le climat, Développer les connaissances scientifiques pour la surveillance et la prévision du climat, National (CA), Climat, Changement climatique]
+        extents:
+            spatial:
+                bbox: [-141,41,-52,83.5]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title:
+                  en: Statistically downscaled climate scenarios from CMIP6 global climate models (CanDCS-U6) - Open Government (open.canada.ca)
+                  fr: Scénarios climatiques mis à l’échelle statistique des modèles climatiques mondiaux du CMIP6 (CanDCS-U6) - Gouvernement ouvert (open.canada.ca)
+              href:
+                  en: https://open.canada.ca/data/en/dataset/9bd4781f-533d-4a27-b4b9-18fec1c88bb6
+                  fr: https://open.canada.ca/data/fr/dataset/9bd4781f-533d-4a27-b4b9-18fec1c88bb6
+              hreflang:
+                  en: en-CA
+                  fr: fr-CA
+        providers:
+            - type: coverage
+              name: msc_pygeoapi.provider.candcsu6_xarray.CanDCSU6Provider
+              data: /data/geomet/feeds/dd/climate/CanDCSU6/10km/scenarios/ssp126/2015-2100_ECCC_CanDCSU6-SSP126_*-Pct50_Sfc_LatLon0.86_P1M.nc
+              x_field: lon
+              y_field: lat
+              time_field: time
+              format:
+                  name: NetCDF
+                  mimetype: application/x-netcdf
+
+    climate:candcsu6:projected:annual:P30Y-Avg:
+        type: collection
+        title:
+            en: CanDCSU6 Projected annual anomaly for 30 years average
+            fr: CanDCSU6 Anomalie annuelle projetée pour une moyenne de 30 ans
+        description:
+            en: CMIP6 climate projections are based on both updated global climate models and new emissions scenarios called “Shared Socioeconomic Pathways” (SSPs). Statistically downscaled datasets have been produced from 26 CMIP6 global climate models (GCMs) under three different emission scenarios (i.e., SSP1-2.6, SSP2-4.5, and SSP5-8.5) using the same downscaling method (Bias Correction/Constructed Analogues with Quantile mapping (BCCAQv2)) and downscaling target data (NRCANmet) as the CMIP5-based downscaled scenarios. Statistically downscaled individual model output are available for download. Downscaled daily maximum and minimum temperatures (°C) and daily precipitation (mm) are available across Canada at 10km grid spatial resolution for the 1950-2014 historical period and for the 2015-2100 period following each of the three emission scenarios.
+            fr: Les projections climatiques du CMIP6 sont fondées à la fois sur des modèles climatiques mondiaux actualisés et sur de nouveaux scénarios d’émissions appelés « trajectoires socioéconomiques partagées » (SSP, pour « Shared Socioeconomic Pathways »). Des ensembles de données mis à l’échelle statistique ont été produits à l’aide de 26 modèle climatique mondial (MCM) du CMIP6 selon trois scénarios d’émissions différents (c.-à-d. SSP1-2.6, SSP2-4.5 et SSP5-8.5) utilisant la même méthode de mise à l’échelle statistique (la méthode des analogues avec correction de biais et cartographie des quantiles (BCCAQv2)) et les mêmes données cibles de réduction d’échelle (NRCANmet) que les scénarios mis à l’échelle statistique du CMIP5. Les résultats des modèles individuels mis à l’échelle statistique peuvent être téléchargés. Les températures maximales et minimales quotidiennes (°C) et les précipitations quotidiennes (mm) à échelle réduite sont disponibles partout au Canada à une résolution spatiale de grille de 10 km pour la période antérieure 1950 2014 et la période 2015 2100 suivant chacun des trois scénarios d’émissions.
+        keywords:
+            en: [Weather and Climate, Provide Climate Information Products and Services, Expand Scientific Knowledge for Climate Monitoring and Prediction, National (CA), Climate, Climate change]
+            fr: [Météo et climat, Fournir des produits et services d'information sur le climat, Développer les connaissances scientifiques pour la surveillance et la prévision du climat, National (CA), Climat, Changement climatique]
+        extents:
+            spatial:
+                bbox: [-141,41,-52,83.5]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title:
+                  en: Statistically downscaled climate scenarios from CMIP6 global climate models (CanDCS-U6) - Open Government (open.canada.ca)
+                  fr: Scénarios climatiques mis à l’échelle statistique des modèles climatiques mondiaux du CMIP6 (CanDCS-U6) - Gouvernement ouvert (open.canada.ca)
+              href:
+                  en: https://open.canada.ca/data/en/dataset/9bd4781f-533d-4a27-b4b9-18fec1c88bb6
+                  fr: https://open.canada.ca/data/fr/dataset/9bd4781f-533d-4a27-b4b9-18fec1c88bb6
+              hreflang:
+                  en: en-CA
+                  fr: fr-CA
+        providers:
+            - type: coverage
+              name: msc_pygeoapi.provider.candcsu6_xarray.CanDCSU6Provider
+              data: /data/geomet/feeds/dd/climate/CanDCSU6/10km/scenarios/ssp126/2021-2050_ECCC_CanDCSU6-SSP126_*-Pct50_Sfc_LatLon0.86_P0Y.nc
+              x_field: lon
+              y_field: lat
+              time_field: time
+              format:
+                  name: NetCDF
+                  mimetype: application/x-netcdf
+
+    climate:candcsu6:projected:seasonal:P30Y-Avg:
+        type: collection
+        title:
+            en: CanDCSU6 Projected seasonal anomaly for 30 years average
+            fr: CanDCSU6 Anomalie saisonnière projetée pour une moyenne de 30 ans
+        description:
+            en: CMIP6 climate projections are based on both updated global climate models and new emissions scenarios called “Shared Socioeconomic Pathways” (SSPs). Statistically downscaled datasets have been produced from 26 CMIP6 global climate models (GCMs) under three different emission scenarios (i.e., SSP1-2.6, SSP2-4.5, and SSP5-8.5) using the same downscaling method (Bias Correction/Constructed Analogues with Quantile mapping (BCCAQv2)) and downscaling target data (NRCANmet) as the CMIP5-based downscaled scenarios. Statistically downscaled individual model output are available for download. Downscaled daily maximum and minimum temperatures (°C) and daily precipitation (mm) are available across Canada at 10km grid spatial resolution for the 1950-2014 historical period and for the 2015-2100 period following each of the three emission scenarios.
+            fr: Les projections climatiques du CMIP6 sont fondées à la fois sur des modèles climatiques mondiaux actualisés et sur de nouveaux scénarios d’émissions appelés « trajectoires socioéconomiques partagées » (SSP, pour « Shared Socioeconomic Pathways »). Des ensembles de données mis à l’échelle statistique ont été produits à l’aide de 26 modèle climatique mondial (MCM) du CMIP6 selon trois scénarios d’émissions différents (c.-à-d. SSP1-2.6, SSP2-4.5 et SSP5-8.5) utilisant la même méthode de mise à l’échelle statistique (la méthode des analogues avec correction de biais et cartographie des quantiles (BCCAQv2)) et les mêmes données cibles de réduction d’échelle (NRCANmet) que les scénarios mis à l’échelle statistique du CMIP5. Les résultats des modèles individuels mis à l’échelle statistique peuvent être téléchargés. Les températures maximales et minimales quotidiennes (°C) et les précipitations quotidiennes (mm) à échelle réduite sont disponibles partout au Canada à une résolution spatiale de grille de 10 km pour la période antérieure 1950 2014 et la période 2015 2100 suivant chacun des trois scénarios d’émissions.
+        keywords:
+            en: [Weather and Climate, Provide Climate Information Products and Services, Expand Scientific Knowledge for Climate Monitoring and Prediction, National (CA), Climate, Climate change]
+            fr: [Météo et climat, Fournir des produits et services d'information sur le climat, Développer les connaissances scientifiques pour la surveillance et la prévision du climat, National (CA), Climat, Changement climatique]
+        extents:
+            spatial:
+                bbox: [-141,41,-52,83.5]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title:
+                  en: Statistically downscaled climate scenarios from CMIP6 global climate models (CanDCS-U6) - Open Government (open.canada.ca)
+                  fr: Scénarios climatiques mis à l’échelle statistique des modèles climatiques mondiaux du CMIP6 (CanDCS-U6) - Gouvernement ouvert (open.canada.ca)
+              href:
+                  en: https://open.canada.ca/data/en/dataset/9bd4781f-533d-4a27-b4b9-18fec1c88bb6
+                  fr: https://open.canada.ca/data/fr/dataset/9bd4781f-533d-4a27-b4b9-18fec1c88bb6
+              hreflang:
+                  en: en-CA
+                  fr: fr-CA
+        providers:
+            - type: coverage
+              name: msc_pygeoapi.provider.candcsu6_xarray.CanDCSU6Provider
+              data: /data/geomet/feeds/dd/climate/CanDCSU6/10km/scenarios/ssp126/2021-2050_ECCC_CanDCSU6-SSP126_*-Pct50_Sfc_LatLon0.86_P0Y-DJF.nc
+              x_field: lon
+              y_field: lat
+              time_field: time
+              format:
+                  name: NetCDF
+                  mimetype: application/x-netcdf
+
+    climate:candcsu6:historical:annual:absolute:
+        type: collection
+        title:
+            en: CanDCSU6 Historical annual
+            fr: CanDCSU6 Annuelle historique
+        description:
+            en: CMIP6 climate projections are based on both updated global climate models and new emissions scenarios called “Shared Socioeconomic Pathways” (SSPs). Statistically downscaled datasets have been produced from 26 CMIP6 global climate models (GCMs) under three different emission scenarios (i.e., SSP1-2.6, SSP2-4.5, and SSP5-8.5) using the same downscaling method (Bias Correction/Constructed Analogues with Quantile mapping (BCCAQv2)) and downscaling target data (NRCANmet) as the CMIP5-based downscaled scenarios. Statistically downscaled individual model output are available for download. Downscaled daily maximum and minimum temperatures (°C) and daily precipitation (mm) are available across Canada at 10km grid spatial resolution for the 1950-2014 historical period and for the 2015-2100 period following each of the three emission scenarios.
+            fr: Les projections climatiques du CMIP6 sont fondées à la fois sur des modèles climatiques mondiaux actualisés et sur de nouveaux scénarios d’émissions appelés « trajectoires socioéconomiques partagées » (SSP, pour « Shared Socioeconomic Pathways »). Des ensembles de données mis à l’échelle statistique ont été produits à l’aide de 26 modèle climatique mondial (MCM) du CMIP6 selon trois scénarios d’émissions différents (c.-à-d. SSP1-2.6, SSP2-4.5 et SSP5-8.5) utilisant la même méthode de mise à l’échelle statistique (la méthode des analogues avec correction de biais et cartographie des quantiles (BCCAQv2)) et les mêmes données cibles de réduction d’échelle (NRCANmet) que les scénarios mis à l’échelle statistique du CMIP5. Les résultats des modèles individuels mis à l’échelle statistique peuvent être téléchargés. Les températures maximales et minimales quotidiennes (°C) et les précipitations quotidiennes (mm) à échelle réduite sont disponibles partout au Canada à une résolution spatiale de grille de 10 km pour la période antérieure 1950 2014 et la période 2015 2100 suivant chacun des trois scénarios d’émissions.
+        keywords:
+            en: [Weather and Climate, Provide Climate Information Products and Services, Expand Scientific Knowledge for Climate Monitoring and Prediction, National (CA), Climate, Climate change]
+            fr: [Météo et climat, Fournir des produits et services d'information sur le climat, Développer les connaissances scientifiques pour la surveillance et la prévision du climat, National (CA), Climat, Changement climatique]
+        extents:
+            spatial:
+                bbox: [-141,41,-52,83.5]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title:
+                  en: Statistically downscaled climate scenarios from CMIP6 global climate models (CanDCS-U6) - Open Government (open.canada.ca)
+                  fr: Scénarios climatiques mis à l’échelle statistique des modèles climatiques mondiaux du CMIP6 (CanDCS-U6) - Gouvernement ouvert (open.canada.ca)
+              href:
+                  en: https://open.canada.ca/data/en/dataset/9bd4781f-533d-4a27-b4b9-18fec1c88bb6
+                  fr: https://open.canada.ca/data/fr/dataset/9bd4781f-533d-4a27-b4b9-18fec1c88bb6
+              hreflang:
+                  en: en-CA
+                  fr: fr-CA
+        providers:
+            - type: coverage
+              name: msc_pygeoapi.provider.candcsu6_xarray.CanDCSU6Provider
+              data: /data/geomet/feeds/dd/climate/CanDCSU6/10km/historical/1950-2014_ECCC_CanDCSU6_*-Pct50_Sfc_LatLon0.86_P1Y.nc
+              x_field: lon
+              y_field: lat
+              time_field: time
+              format:
+                  name: NetCDF
+                  mimetype: application/x-netcdf
+
+    climate:candcsu6:historical:seasonal:absolute:
+        type: collection
+        title:
+            en: CanDCSU6 Historical seasonal
+            fr: CanDCSU6 Saisonnière historique
+        description:
+            en: CMIP6 climate projections are based on both updated global climate models and new emissions scenarios called “Shared Socioeconomic Pathways” (SSPs). Statistically downscaled datasets have been produced from 26 CMIP6 global climate models (GCMs) under three different emission scenarios (i.e., SSP1-2.6, SSP2-4.5, and SSP5-8.5) using the same downscaling method (Bias Correction/Constructed Analogues with Quantile mapping (BCCAQv2)) and downscaling target data (NRCANmet) as the CMIP5-based downscaled scenarios. Statistically downscaled individual model output are available for download. Downscaled daily maximum and minimum temperatures (°C) and daily precipitation (mm) are available across Canada at 10km grid spatial resolution for the 1950-2014 historical period and for the 2015-2100 period following each of the three emission scenarios.
+            fr: Les projections climatiques du CMIP6 sont fondées à la fois sur des modèles climatiques mondiaux actualisés et sur de nouveaux scénarios d’émissions appelés « trajectoires socioéconomiques partagées » (SSP, pour « Shared Socioeconomic Pathways »). Des ensembles de données mis à l’échelle statistique ont été produits à l’aide de 26 modèle climatique mondial (MCM) du CMIP6 selon trois scénarios d’émissions différents (c.-à-d. SSP1-2.6, SSP2-4.5 et SSP5-8.5) utilisant la même méthode de mise à l’échelle statistique (la méthode des analogues avec correction de biais et cartographie des quantiles (BCCAQv2)) et les mêmes données cibles de réduction d’échelle (NRCANmet) que les scénarios mis à l’échelle statistique du CMIP5. Les résultats des modèles individuels mis à l’échelle statistique peuvent être téléchargés. Les températures maximales et minimales quotidiennes (°C) et les précipitations quotidiennes (mm) à échelle réduite sont disponibles partout au Canada à une résolution spatiale de grille de 10 km pour la période antérieure 1950 2014 et la période 2015 2100 suivant chacun des trois scénarios d’émissions.
+        keywords:
+            en: [Weather and Climate, Provide Climate Information Products and Services, Expand Scientific Knowledge for Climate Monitoring and Prediction, National (CA), Climate, Climate change]
+            fr: [Météo et climat, Fournir des produits et services d'information sur le climat, Développer les connaissances scientifiques pour la surveillance et la prévision du climat, National (CA), Climat, Changement climatique]
+        extents:
+            spatial:
+                bbox: [-141,41,-52,83.5]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title:
+                  en: Statistically downscaled climate scenarios from CMIP6 global climate models (CanDCS-U6) - Open Government (open.canada.ca)
+                  fr: Scénarios climatiques mis à l’échelle statistique des modèles climatiques mondiaux du CMIP6 (CanDCS-U6) - Gouvernement ouvert (open.canada.ca)
+              href:
+                  en: https://open.canada.ca/data/en/dataset/9bd4781f-533d-4a27-b4b9-18fec1c88bb6
+                  fr: https://open.canada.ca/data/fr/dataset/9bd4781f-533d-4a27-b4b9-18fec1c88bb6
+              hreflang:
+                  en: en-CA
+                  fr: fr-CA
+        providers:
+            - type: coverage
+              name: msc_pygeoapi.provider.candcsu6_xarray.CanDCSU6Provider
+              data: /data/geomet/feeds/dd/climate/CanDCSU6/10km/historical/1950-2014_ECCC_CanDCSU6_*-Pct50_Sfc_LatLon0.86_P1Y-DJF.nc
+              x_field: lon
+              y_field: lat
+              time_field: time
+              format:
+                  name: NetCDF
+                  mimetype: application/x-netcdf
+
+    climate:candcsu6:historical:monthly:absolute:
+        type: collection
+        title:
+            en: CanDCSU6 Historical monthly
+            fr: CanDCSU6 Mensuelle historique
+        description:
+            en: CMIP6 climate projections are based on both updated global climate models and new emissions scenarios called “Shared Socioeconomic Pathways” (SSPs). Statistically downscaled datasets have been produced from 26 CMIP6 global climate models (GCMs) under three different emission scenarios (i.e., SSP1-2.6, SSP2-4.5, and SSP5-8.5) using the same downscaling method (Bias Correction/Constructed Analogues with Quantile mapping (BCCAQv2)) and downscaling target data (NRCANmet) as the CMIP5-based downscaled scenarios. Statistically downscaled individual model output are available for download. Downscaled daily maximum and minimum temperatures (°C) and daily precipitation (mm) are available across Canada at 10km grid spatial resolution for the 1950-2014 historical period and for the 2015-2100 period following each of the three emission scenarios.
+            fr: Les projections climatiques du CMIP6 sont fondées à la fois sur des modèles climatiques mondiaux actualisés et sur de nouveaux scénarios d’émissions appelés « trajectoires socioéconomiques partagées » (SSP, pour « Shared Socioeconomic Pathways »). Des ensembles de données mis à l’échelle statistique ont été produits à l’aide de 26 modèle climatique mondial (MCM) du CMIP6 selon trois scénarios d’émissions différents (c.-à-d. SSP1-2.6, SSP2-4.5 et SSP5-8.5) utilisant la même méthode de mise à l’échelle statistique (la méthode des analogues avec correction de biais et cartographie des quantiles (BCCAQv2)) et les mêmes données cibles de réduction d’échelle (NRCANmet) que les scénarios mis à l’échelle statistique du CMIP5. Les résultats des modèles individuels mis à l’échelle statistique peuvent être téléchargés. Les températures maximales et minimales quotidiennes (°C) et les précipitations quotidiennes (mm) à échelle réduite sont disponibles partout au Canada à une résolution spatiale de grille de 10 km pour la période antérieure 1950 2014 et la période 2015 2100 suivant chacun des trois scénarios d’émissions.
+        keywords:
+            en: [Weather and Climate, Provide Climate Information Products and Services, Expand Scientific Knowledge for Climate Monitoring and Prediction, National (CA), Climate, Climate change]
+            fr: [Météo et climat, Fournir des produits et services d'information sur le climat, Développer les connaissances scientifiques pour la surveillance et la prévision du climat, National (CA), Climat, Changement climatique]
+        extents:
+            spatial:
+                bbox: [-141,41,-52,83.5]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title:
+                  en: Statistically downscaled climate scenarios from CMIP6 global climate models (CanDCS-U6) - Open Government (open.canada.ca)
+                  fr: Scénarios climatiques mis à l’échelle statistique des modèles climatiques mondiaux du CMIP6 (CanDCS-U6) - Gouvernement ouvert (open.canada.ca)
+              href:
+                  en: https://open.canada.ca/data/en/dataset/9bd4781f-533d-4a27-b4b9-18fec1c88bb6
+                  fr: https://open.canada.ca/data/fr/dataset/9bd4781f-533d-4a27-b4b9-18fec1c88bb6
+              hreflang:
+                  en: en-CA
+                  fr: fr-CA
+        providers:
+            - type: coverage
+              name: msc_pygeoapi.provider.candcsu6_xarray.CanDCSU6Provider
+              data: /data/geomet/feeds/dd/climate/CanDCSU6/10km/historical/1950-2014_ECCC_CanDCSU6_*-Pct50_Sfc_LatLon0.86_P1M.nc
+              x_field: lon
+              y_field: lat
+              time_field: time
+              format:
+                  name: NetCDF
+                  mimetype: application/x-netcdf
+
+    climate:candcsu6:historical:annual:P30Y-Avg:
+        type: collection
+        title:
+            en: CanDCSU6 histrorical annual values for 30 years average
+            fr: CanDCSU6 Valeurs annuelle historique pour une moyenne de 30 ans
+        description:
+            en: CMIP6 climate projections are based on both updated global climate models and new emissions scenarios called “Shared Socioeconomic Pathways” (SSPs). Statistically downscaled datasets have been produced from 26 CMIP6 global climate models (GCMs) under three different emission scenarios (i.e., SSP1-2.6, SSP2-4.5, and SSP5-8.5) using the same downscaling method (Bias Correction/Constructed Analogues with Quantile mapping (BCCAQv2)) and downscaling target data (NRCANmet) as the CMIP5-based downscaled scenarios. Statistically downscaled individual model output are available for download. Downscaled daily maximum and minimum temperatures (°C) and daily precipitation (mm) are available across Canada at 10km grid spatial resolution for the 1950-2014 historical period and for the 2015-2100 period following each of the three emission scenarios.
+            fr: Les projections climatiques du CMIP6 sont fondées à la fois sur des modèles climatiques mondiaux actualisés et sur de nouveaux scénarios d’émissions appelés « trajectoires socioéconomiques partagées » (SSP, pour « Shared Socioeconomic Pathways »). Des ensembles de données mis à l’échelle statistique ont été produits à l’aide de 26 modèle climatique mondial (MCM) du CMIP6 selon trois scénarios d’émissions différents (c.-à-d. SSP1-2.6, SSP2-4.5 et SSP5-8.5) utilisant la même méthode de mise à l’échelle statistique (la méthode des analogues avec correction de biais et cartographie des quantiles (BCCAQv2)) et les mêmes données cibles de réduction d’échelle (NRCANmet) que les scénarios mis à l’échelle statistique du CMIP5. Les résultats des modèles individuels mis à l’échelle statistique peuvent être téléchargés. Les températures maximales et minimales quotidiennes (°C) et les précipitations quotidiennes (mm) à échelle réduite sont disponibles partout au Canada à une résolution spatiale de grille de 10 km pour la période antérieure 1950 2014 et la période 2015 2100 suivant chacun des trois scénarios d’émissions.
+        keywords:
+            en: [Weather and Climate, Provide Climate Information Products and Services, Expand Scientific Knowledge for Climate Monitoring and Prediction, National (CA), Climate, Climate change]
+            fr: [Météo et climat, Fournir des produits et services d'information sur le climat, Développer les connaissances scientifiques pour la surveillance et la prévision du climat, National (CA), Climat, Changement climatique]
+        extents:
+            spatial:
+                bbox: [-141,41,-52,83.5]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title:
+                  en: Statistically downscaled climate scenarios from CMIP6 global climate models (CanDCS-U6) - Open Government (open.canada.ca)
+                  fr: Scénarios climatiques mis à l’échelle statistique des modèles climatiques mondiaux du CMIP6 (CanDCS-U6) - Gouvernement ouvert (open.canada.ca)
+              href:
+                  en: https://open.canada.ca/data/en/dataset/9bd4781f-533d-4a27-b4b9-18fec1c88bb6
+                  fr: https://open.canada.ca/data/fr/dataset/9bd4781f-533d-4a27-b4b9-18fec1c88bb6
+              hreflang:
+                  en: en-CA
+                  fr: fr-CA
+        providers:
+            - type: coverage
+              name: msc_pygeoapi.provider.candcsu6_xarray.CanDCSU6Provider
+              data: /data/geomet/feeds/dd/climate/CanDCSU6/10km/historical/1971-2000_ECCC_CanDCSU6-SSP585_*-Pct50_Sfc_LatLon0.86_P0Y.nc
+              x_field: lon
+              y_field: lat
+              time_field: time
+              format:
+                  name: NetCDF
+                  mimetype: application/x-netcdf
+
+    climate:candcsu6:historical:seasonal:P30Y-Avg:
+        type: collection
+        title:
+            en: CanDCSU6 Historical seasonal value for 30 years average
+            fr: CanDCSU6 valeur historique pour une moyenne de 30 ans
+        description:
+            en: CMIP6 climate projections are based on both updated global climate models and new emissions scenarios called “Shared Socioeconomic Pathways” (SSPs). Statistically downscaled datasets have been produced from 26 CMIP6 global climate models (GCMs) under three different emission scenarios (i.e., SSP1-2.6, SSP2-4.5, and SSP5-8.5) using the same downscaling method (Bias Correction/Constructed Analogues with Quantile mapping (BCCAQv2)) and downscaling target data (NRCANmet) as the CMIP5-based downscaled scenarios. Statistically downscaled individual model output are available for download. Downscaled daily maximum and minimum temperatures (°C) and daily precipitation (mm) are available across Canada at 10km grid spatial resolution for the 1950-2014 historical period and for the 2015-2100 period following each of the three emission scenarios.
+            fr: Les projections climatiques du CMIP6 sont fondées à la fois sur des modèles climatiques mondiaux actualisés et sur de nouveaux scénarios d’émissions appelés « trajectoires socioéconomiques partagées » (SSP, pour « Shared Socioeconomic Pathways »). Des ensembles de données mis à l’échelle statistique ont été produits à l’aide de 26 modèle climatique mondial (MCM) du CMIP6 selon trois scénarios d’émissions différents (c.-à-d. SSP1-2.6, SSP2-4.5 et SSP5-8.5) utilisant la même méthode de mise à l’échelle statistique (la méthode des analogues avec correction de biais et cartographie des quantiles (BCCAQv2)) et les mêmes données cibles de réduction d’échelle (NRCANmet) que les scénarios mis à l’échelle statistique du CMIP5. Les résultats des modèles individuels mis à l’échelle statistique peuvent être téléchargés. Les températures maximales et minimales quotidiennes (°C) et les précipitations quotidiennes (mm) à échelle réduite sont disponibles partout au Canada à une résolution spatiale de grille de 10 km pour la période antérieure 1950 2014 et la période 2015 2100 suivant chacun des trois scénarios d’émissions.
+        keywords:
+            en: [Weather and Climate, Provide Climate Information Products and Services, Expand Scientific Knowledge for Climate Monitoring and Prediction, National (CA), Climate, Climate change]
+            fr: [Météo et climat, Fournir des produits et services d'information sur le climat, Développer les connaissances scientifiques pour la surveillance et la prévision du climat, National (CA), Climat, Changement climatique]
+        extents:
+            spatial:
+                bbox: [-141,41,-52,83.5]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title:
+                  en: Statistically downscaled climate scenarios from CMIP6 global climate models (CanDCS-U6) - Open Government (open.canada.ca)
+                  fr: Scénarios climatiques mis à l’échelle statistique des modèles climatiques mondiaux du CMIP6 (CanDCS-U6) - Gouvernement ouvert (open.canada.ca)
+              href:
+                  en: https://open.canada.ca/data/en/dataset/9bd4781f-533d-4a27-b4b9-18fec1c88bb6
+                  fr: https://open.canada.ca/data/fr/dataset/9bd4781f-533d-4a27-b4b9-18fec1c88bb6
+              hreflang:
+                  en: en-CA
+                  fr: fr-CA
+        providers:
+            - type: coverage
+              name: msc_pygeoapi.provider.candcsu6_xarray.CanDCSU6Provider
+              data: /data/geomet/feeds/dd/climate/CanDCSU6/10km/historical/1971-2000_ECCC_CanDCSU6-SSP585_*-Pct50_Sfc_LatLon0.86_P0Y-DJF.nc
+              x_field: lon
+              y_field: lat
+              time_field: time
+              format:
+                  name: NetCDF
+                  mimetype: application/x-netcdf
+
     climate:dcs:projected:annual:anomaly:
         type: collection
         title:
