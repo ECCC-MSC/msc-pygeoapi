@@ -2,7 +2,7 @@
 #
 # Author: Tom Kralidis <tom.kralidis@ec.gc.ca>
 #
-# Copyright (c) 2021 Tom Kralidis
+# Copyright (c) 2023 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -48,10 +48,10 @@ class FileEvent:
             from msc_pygeoapi.handler.core import CoreHandler
 
             filepath = parent.msg.local_file
-            parent.logger.debug('Filepath: {}'.format(filepath))
+            parent.logger.debug(f'Filepath: {filepath}')
             handler = CoreHandler(filepath)
             result = handler.handle()
-            parent.logger.debug('Result: {}'.format(result))
+            parent.logger.debug(f'Result: {result}')
             return True
         except Exception as err:
             parent.logger.warning(err)

@@ -1,8 +1,8 @@
 # =================================================================
 #
-# Author: Tom Kralidis <tom.kralidis@canada.ca>
+# Author: Tom Kralidis <tom.kralidis@ec.gc.ca>
 #
-# Copyright (c) 2020 Tom Kralidis
+# Copyright (c) 2023 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -73,7 +73,7 @@ class PyCleanBuild(Command):
 
         for file_ in os.listdir('..'):
             if file_.endswith(('.deb', '.build', '.changes')):
-                os.remove('../{}'.format(file_))
+                os.remove(f'../{file_}')
 
 
 class PyTest(Command):
@@ -153,7 +153,7 @@ setup(
     author='Tom Kralidis',
     author_email='tom.kralidis@ec.gc.ca',
     maintainer='Tom Kralidis',
-    maintainer_email='tom.kralidis@canada.ca',
+    maintainer_email='tom.kralidis@ec.gc.ca',
     url='https://github.com/ECCC-MSC/msc-pygeoapi',
     install_requires=read('requirements.txt').splitlines(),
     packages=find_packages(exclude=['msc_pygeoapi.tests']),

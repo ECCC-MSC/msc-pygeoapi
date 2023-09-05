@@ -4,6 +4,7 @@
 #         <Louis-Philippe.RousseauLambert2@canada.ca>
 #
 # Copyright (c) 2019 Louis-Philippe Rousseau-Lambert
+# Copyright (c) 2023 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -179,7 +180,7 @@ def get_time_info(cfg):
             if month == 0:
                 year = year - 1
                 month = 12
-            time_stamp = '{}-{}'.format(year, str(month).zfill(2))
+            time_stamp = f'{year}-{month:02}'
             dates.append(time_stamp)
 
     return dates
@@ -232,7 +233,7 @@ def get_location_info(file_, x, y, cfg, layer_keys):
         'dates': []
     }
 
-    LOGGER.debug('Opening {}'.format(file_))
+    LOGGER.debug(f'Opening {file_}')
     try:
         LOGGER.debug('Fetching units')
         dict_['time_step'] = cfg['timestep']
@@ -246,13 +247,13 @@ def get_location_info(file_, x, y, cfg, layer_keys):
 
     except RuntimeError as err:
         ds = None
-        msg = 'Cannot open file: {}'.format(err)
+        msg = f'Cannot open file: {err}'
         LOGGER.exception(msg)
 
     LOGGER.debug('Running through bands')
 
     for band in range(1, ds.RasterCount + 1):
-        LOGGER.debug('Fetching band {}'.format(band))
+        LOGGER.debug(f'Fetching band {band}')
 
         srcband = ds.GetRasterBand(band)
         array = srcband.ReadAsArray().tolist()
@@ -260,7 +261,7 @@ def get_location_info(file_, x, y, cfg, layer_keys):
         try:
             dict_['values'].append(array[y_][x_])
         except IndexError as err:
-            msg = 'Invalid x/y value: {}'.format(err)
+            msg = f'Invalid x/y value: {err}'
             LOGGER.exception(msg)
 
     dict_['dates'] = get_time_info(cfg)
@@ -322,10 +323,8 @@ def serialize(values_dict, cfg, output_format, x, y):
             pctl_en = pctl_fr = ''
 
         if output_format == 'CSV':
-            time = 'time_{}/{}/{}'.format(time_begin,
-                                          time_end,
-                                          time_step)
-            row = [time,
+            time_ = 'time_{time_begin}/{time_end}/{time_step}'
+            row = [time_,
                    'values',
                    'longitude',
                    'latitude',
@@ -459,7 +458,7 @@ def raster_drill(layer, x, y, format_):
         file_path = cfg['layers'][layer]['filepath']
         inter_path = os.path.join(climate_model_path, file_path)
 
-        file_name = '{}.vrt'.format(cfg['layers'][layer]['filename'])
+        file_name = f"{cfg['layers'][layer]['filename']}.vrt"
 
     elif layer.startswith('SPEI'):
         keys = ['Variable', 'Variation', 'Scenario', 'Period', 'Percentile']
@@ -478,7 +477,7 @@ def raster_drill(layer, x, y, format_):
         file_name = cfg['layers'][layer]['filename']
 
     else:
-        msg = 'Not a valid or time enabled layer: {}'.format(layer)
+        msg = f'Not a valid or time enabled layer: {layer}'
         LOGGER.error(msg)
         raise ValueError(msg)
 
@@ -547,7 +546,7 @@ try:
             try:
                 output = raster_drill(layer, x, y, format_)
             except ValueError as err:
-                msg = 'Process execution error: {}'.format(err)
+                msg = f'Process execution error: {err}'
                 LOGGER.error(msg)
                 raise ProcessorExecuteError(msg)
 
@@ -564,6 +563,7 @@ try:
             return mimetype, dict_
 
         def __repr__(self):
-            return '<RasterDrillProcessor> {}'.format(self.name)
+            return f'<RasterDrillProcessor> {self.name}'
+
 except (ImportError, RuntimeError):
     pass

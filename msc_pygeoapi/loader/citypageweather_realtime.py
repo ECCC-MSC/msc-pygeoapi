@@ -4,6 +4,7 @@
 #         <Louis-Philippe.RousseauLambert2@canada.ca>
 #
 # Copyright (c) 2020 Louis-Philippe Rousseau-Lambert
+# Copyright (c) 2023 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -265,10 +266,10 @@ class CitypageweatherRealtimeLoader(BaseLoader):
                 id=data['properties']['identifier'],
                 body=data
             )
-            LOGGER.debug('Result: {}'.format(r))
+            LOGGER.debug(f'Result: {r}')
             return True
         except Exception as err:
-            LOGGER.warning('Error indexing: {}'.format(err))
+            LOGGER.warning(f'Error indexing: {err}')
             return False
 
     def _get_element(self, node, path, attrib=None):
@@ -320,21 +321,20 @@ class CitypageweatherRealtimeLoader(BaseLoader):
         feature = {}
         row = {}
 
-        LOGGER.debug('Processing XML: {}'.format(xml))
+        LOGGER.debug(f'Processing XML: {xml}')
         LOGGER.debug('Fetching English elements')
 
         try:
             root = etree.parse(xml).getroot()
         except Exception as err:
-            LOGGER.error('ERROR: cannot process data: {}'.format(err))
+            LOGGER.error(f'ERROR: cannot process data: {err}')
 
         if root.findall("currentConditions/"):
             sitecode = os.path.basename(xml)[:-6]
             try:
                 citycode = wxo_lookup[sitecode]['citycode']
             except KeyError as err:
-                LOGGER.error('ERROR: cannot find sitecode {} : '
-                             'err: {}'.format(sitecode, err))
+                LOGGER.error(f'ERROR: cannot find sitecode {sitecode}: {err}')
 
             location_name = root.find('location/name')
             x = float(location_name.attrib.get('lon')[:-1])
@@ -349,8 +349,7 @@ class CitypageweatherRealtimeLoader(BaseLoader):
             icon = self._get_element(root, 'currentConditions/iconCode')
 
             if icon:
-                row['icon'] = 'https://weather.gc.ca/' \
-                              'weathericons/{}.gif'.format(icon)
+                row['icon'] = f'https://weather.gc.ca/weathericons/{icon}.gif'
             else:
                 row['icon'] = None
 
@@ -392,8 +391,7 @@ class CitypageweatherRealtimeLoader(BaseLoader):
                                      root,
                                      'currentConditions/pressure',
                                      'tendency')
-                row['url_en'] = 'https://weather.gc.ca/city/pages/' \
-                                '{}_metric_e.html'.format(citycode)
+                row['url_en'] = f'https://weather.gc.ca/city/pages/{citycode}_metric_e.html'  # noqa
 
                 row['national'] = 0
                 if row['name'] in NATIONAL_CITIES:
@@ -431,7 +429,7 @@ class CitypageweatherRealtimeLoader(BaseLoader):
                 }
 
             elif xml.endswith('f.xml'):
-                LOGGER.debug('Processing {}'.format(xml))
+                LOGGER.debug(f'Processing {xml}')
 
                 row['nom'] = self._get_element(root, 'location/name')
                 row['station_fr'] = self._get_element(
@@ -444,8 +442,7 @@ class CitypageweatherRealtimeLoader(BaseLoader):
                                      root,
                                      'currentConditions/pressure',
                                      'tendency')
-                row['url_fr'] = 'https://meteo.gc.ca/city/pages/' \
-                                '{}_metric_f.html'.format(citycode)
+                row['url_fr'] = f'https://meteo.gc.ca/city/pages/{citycode}_metric_f.html'  # noqa
 
                 row['national'] = 0
                 if row['nom'] in NATIONAL_CITIES:
@@ -512,8 +509,7 @@ def clean_records(ctx, days, es, username, password, ignore_certs):
 
     older_than = (datetime.now() - timedelta(days=days)).strftime(
         '%Y-%m-%d %H:%M')
-    click.echo('Deleting documents older than {} ({} days)'.format(
-        older_than, days))
+    click.echo(f'Deleting documents older than {older_than} ({days} days)')
 
     query = {
         'query': {

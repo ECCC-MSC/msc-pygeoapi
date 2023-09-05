@@ -4,6 +4,7 @@
 #         <Louis-Philippe.RousseauLambert2@canada.ca>
 #
 # Copyright (c) 2020 Louis-Philippe Rousseau-Lambert
+# Copyright (c) 2023 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -213,7 +214,7 @@ class CapAlertsRealtimeLoader(BaseLoader):
                 index=INDEX_NAME, body=self.bulk_data
             )
 
-            LOGGER.debug('Result: {}'.format(r))
+            LOGGER.debug(f'Result: {r}')
 
             previous_alerts = self.delete_references_alerts()
 
@@ -226,7 +227,7 @@ class CapAlertsRealtimeLoader(BaseLoader):
             return True
 
         except Exception as err:
-            LOGGER.warning('Error bulk indexing: {}'.format(err))
+            LOGGER.warning(f'Error bulk indexing: {err}')
             return False
 
     def delete_references_alerts(self):
@@ -274,14 +275,14 @@ class CapAlertsRealtimeLoader(BaseLoader):
         # we want to run a loop on every cap-xml in filepath and add them
         # in the geojson
         # we want to strat by the newest file in the directory
-        LOGGER.info('Processing {} CAP documents'.format(len(filepath)))
+        LOGGER.info(f'Processing {len(filepath)} CAP documents')
 
-        LOGGER.debug('Processing {}'.format(filepath))
+        LOGGER.debug(f'Processing {filepath}')
         # with the lxml library we parse the xml file
         try:
             tree = etree.parse(filepath)
         except Exception as err:
-            LOGGER.warning('Cannot parse {}: {}'.format(filepath, err))
+            LOGGER.warning(f'Cannot parse {filepath}: {err}')
 
         url = 'https://dd.weather.gc.ca/alerts/{}'.\
             format(filepath.split('alerts')[1])
@@ -290,52 +291,45 @@ class CapAlertsRealtimeLoader(BaseLoader):
 
         b_xml = '{urn:oasis:names:tc:emergency:cap:1.2}'
 
-        identifier = _get_element(root,
-                                  '{}identifier'.format(b_xml))
+        identifier = _get_element(root, f'{b_xml}identifier')
 
-        references = _get_element(root,
-                                  '{}references'.format(b_xml))
+        references = _get_element(root, f'{b_xml}references')
 
         if references:
             for ref in references.split(' '):
                 self.references_arr.append(ref.split(',')[1])
 
-        for grandchild in root.iter('{}info'.format(b_xml)):
+        for grandchild in root.iter(f'{b_xml}info'):
             expires = _get_date_format(_get_element(grandchild,
-                                       '{}expires'.format(b_xml)))\
+                                       f'{b_xml}expires'))\
                       .strftime(timeformat)
 
             status_alert = _get_element(grandchild,
-                                        '{}parameter[last()-4]/'
-                                        '{}value'.format(b_xml,
-                                                         b_xml))
+                                        f'{b_xml}parameter[last()-4]/'
+                                        f'{b_xml}value')
 
             if _get_date_format(expires) > now:
-                language = _get_element(grandchild,
-                                        '{}language'.format(b_xml))
+                language = _get_element(grandchild, f'{b_xml}language')
                 if language == 'fr-CA':
-                    headline = _get_element(grandchild,
-                                            '{}headline'.format(b_xml))
+                    headline = _get_element(grandchild, f'{b_xml}headline')
 
-                    description_fr = '{}description'.format(b_xml)
+                    description_fr = f'{b_xml}description'
                     descript = _get_element(grandchild, description_fr)
                     descript = descript.replace("\n", " ").strip()
 
-                    for i in grandchild.iter('{}area'.format(b_xml)):
-                        tag = _get_element(i,
-                                           '{}polygon'.format(b_xml))
-                        name = _get_element(i,
-                                            '{}areaDesc'.format(b_xml))
+                    for i in grandchild.iter(f'{b_xml}area'):
+                        tag = _get_element(i, f'{b_xml}polygon')
+                        name = _get_element(i, f'{b_xml}areaDesc')
 
-                        for j in grandchild.iter('{}geocode'.format(b_xml)):
-                            str_value_name = '{}valueName'.format(b_xml)
+                        for j in grandchild.iter(f'{b_xml}geocode'):
+                            str_value_name = f'{b_xml}valueName'
                             valueName = _get_element(j, str_value_name)
 
                             if valueName == 'layer:EC-MSC-SMC:1.0:CLC':
-                                geocode_value = '{}value'.format(b_xml)
+                                geocode_value = f'{b_xml}value'
                                 geocode = _get_element(j, geocode_value)
 
-                        id_warning = '{}_{}'.format(identifier, geocode)
+                        id_warning = f'{identifier}_{geocode}'
 
                         if id_warning not in french_alert:
                             french_alert[id_warning] = (id_warning,
@@ -343,40 +337,34 @@ class CapAlertsRealtimeLoader(BaseLoader):
                                                         headline,
                                                         descript)
                 else:
-                    headline = _get_element(grandchild,
-                                            '{}headline'.format(b_xml))
+                    headline = _get_element(grandchild, f'{b_xml}headline')
 
-                    description = '{}description'.format(b_xml)
+                    description = f'{b_xml}description'
                     descript = _get_element(grandchild, description)
                     descript = descript.replace("\n", " ").strip()
 
                     effective_date =\
-                        _get_element(grandchild,
-                                     '{}effective'.format(b_xml))
+                        _get_element(grandchild, f'{b_xml}effective')
                     effective = _get_date_format(effective_date)
                     effective = effective.strftime(timeformat)
 
                     warning = _get_element(grandchild,
-                                           '{}parameter[1]/'
-                                           '{}value'.format(b_xml,
-                                                            b_xml))
+                                           f'{b_xml}parameter[1]/{b_xml}value')
 
                     # There can be many <area> cobvered by one
                     #  <info> so we have to loop through the info
-                    for i in grandchild.iter('{}area'.format(b_xml)):
-                        tag = _get_element(i, '{}polygon'.format(b_xml))
-                        name = _get_element(i, '{}areaDesc'.format(b_xml))
+                    for i in grandchild.iter(f'{b_xml}area'):
+                        tag = _get_element(i, f'{b_xml}polygon')
+                        name = _get_element(i, f'{b_xml}areaDesc')
 
-                        for j in grandchild.iter('{}geocode'.format(b_xml)):
-                            valueName = \
-                                _get_element(j, '{}valueName'.format(b_xml))
+                        for j in grandchild.iter(f'{b_xml}geocode'):
+                            valueName = _get_element(j, f'{b_xml}valueName')
                             if valueName == 'layer:EC-MSC-SMC:1.0:CLC':
-                                geocode = \
-                                    _get_element(j, '{}value'.format(b_xml))
+                                geocode = _get_element(j, f'{b_xml}value')
 
                         split_tag = re.split(' |,', tag)
 
-                        id_warning = '{}_{}'.format(identifier, geocode)
+                        id_warning = f'{identifier}_{geocode}'
 
                         if id_warning not in english_alert:
                             english_alert[id_warning] = (split_tag,
@@ -515,8 +503,7 @@ def clean_records(ctx, days, es, username, password, ignore_certs):
 
     older_than = (datetime.now() - timedelta(days=days)).strftime(
         '%Y-%m-%dT%H:%M:%SZ')
-    click.echo('Deleting documents older than {} ({} days)'.format(
-        older_than, days))
+    click.echo(f'Deleting documents older than {older_than} ({days} days)')
 
     query = {
         'query': {

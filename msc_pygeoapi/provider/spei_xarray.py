@@ -4,6 +4,7 @@
 #          <louis-philippe.rousseaulambert@ec.gc.ca>
 #
 # Copyright (c) 2022 Louis-Philippe Rousseau-Lambert
+# Copyright (c) 2023 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -126,8 +127,7 @@ class SPEIProvider(ClimateProvider):
             try:
                 if percentile != [50]:
                     pctl = str(percentile[0])
-                    self.data = self.data.replace('pctl50',
-                                                  'pctl{}'.format(pctl))
+                    self.data = self.data.replace('pctl50', f'pctl{pctl}')
 
             except Exception as err:
                 LOGGER.error(err)
@@ -187,7 +187,7 @@ class SPEIProvider(ClimateProvider):
                     else:
                         query_params[self.time_field] = datetime_
 
-            LOGGER.debug('Query parameters: {}'.format(query_params))
+            LOGGER.debug(f'Query parameters: {query_params}')
             try:
                 data = self._data.loc[query_params]
             except Exception as err:

@@ -3,6 +3,7 @@
 # Author: Tom Cooney <tom.cooney@canada.ca>
 #
 # Copyright (c) 2021 Tom Cooney
+# Copyright (c) 2023 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -172,13 +173,13 @@ def get_files(layers, fh, mr):
 
                     list_files.append(files)
 
-                except IndexError as error:
-                    msg = 'invalid input value: {}' .format(error)
+                except IndexError as err:
+                    msg = f'invalid input value: {err}'
                     LOGGER.error(msg)
                     return None, None
 
-            except exceptions.ElasticsearchException as error:
-                msg = 'ES search failed: {}' .format(error)
+            except exceptions.ElasticsearchException as err:
+                msg = f'ES search failed: {err}'
                 LOGGER.error(msg)
                 return None, None
 
@@ -604,7 +605,7 @@ try:
             return 'application/json', output_geojson
 
         def __repr__(self):
-            return '<ExtractRasterProcessor> {}'.format(self.name)
+            return f'<ExtractRasterProcessor> {self.name}'
 
 except (ImportError, RuntimeError) as err:
-    LOGGER.warning('Import errors: {}'.format(err))
+    LOGGER.warning(f'Import errors: {err}')

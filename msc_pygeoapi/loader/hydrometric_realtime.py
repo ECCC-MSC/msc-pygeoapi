@@ -2,7 +2,7 @@
 #
 # Author: Tom Kralidis <tom.kralidis@ec.gc.ca>
 #
-# Copyright (c) 2022 Tom Kralidis
+# Copyright (c) 2023 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -47,8 +47,7 @@ from msc_pygeoapi.util import (
 LOGGER = logging.getLogger(__name__)
 
 STATIONS_LIST_NAME = 'hydrometric_StationList.csv'
-STATIONS_LIST_URL = 'https://dd.weather.gc.ca/hydrometric/doc/{}' \
-    .format(STATIONS_LIST_NAME)
+STATIONS_LIST_URL = f'https://dd.weather.gc.ca/hydrometric/doc/{STATIONS_LIST_NAME}'  # noqa
 
 STATIONS_CACHE = os.path.join(MSC_PYGEOAPI_CACHEDIR, STATIONS_LIST_NAME)
 
@@ -61,7 +60,7 @@ INDEX_BASENAME = 'hydrometric_realtime.'
 SETTINGS = {
     'order': 0,
     'version': 1,
-    'index_patterns': ['{}*'.format(INDEX_BASENAME)],
+    'index_patterns': [INDEX_BASENAME],
     'settings': {
         'number_of_shards': 1,
         'number_of_replicas': 0
@@ -199,17 +198,16 @@ class HydrometricRealtimeLoader(BaseLoader):
                 # Discard one row of headers
                 next(reader)
             except StopIteration:
-                raise EOFError('Stations file at {} is empty'
-                               .format(STATIONS_CACHE))
+                raise EOFError(f'Stations file at {STATIONS_CACHE} is empty')
 
             self.stations.clear()
             for row in reader:
                 if len(row) > 6:
-                    LOGGER.warning('Station list row has too many values: {}'
-                                   ' (using first 6)'.format(row))
+                    LOGGER.warning(f'Station list row has too many values: {row}' # noqa
+                                   ' (using first 6)')
                 elif len(row) < 6:
-                    LOGGER.error('Station list row has too few values: {}'
-                                 ' (skipping)'.format(row))
+                    LOGGER.error(f'Station list row has too few values: {row}'
+                                 ' (skipping)')
                     continue
 
                 stn_id, name, lat, lon, province, timezone = row[:6]
@@ -218,21 +216,18 @@ class HydrometricRealtimeLoader(BaseLoader):
                     lat = float(lat)
                     lon = float(lon)
                 except ValueError:
-                    LOGGER.error('Cannot interpret coordinates ({}, {}) for'
-                                 ' station {} (skipping)'
-                                 .format(lon, lat, stn_id))
+                    LOGGER.error(f'Cannot interpret coordinates ({lon}, {lat}) for'  # noqa
+                                 f' station {stn_id} (skipping)')
                     continue
 
                 utcoffset = timezone[4:]
                 if utcoffset.strip() == '':
-                    LOGGER.error('Cannot interpret UTC offset {} for station'
-                                 ' {} (skipping)'.format(timezone, stn_id))
+                    LOGGER.error(f'Cannot interpret UTC offset {timezone} for station {stn_id} (skipping)')  # noqa
                     continue
 
                 LOGGER.debug(
-                    'Station {}: name={}, province/territory={},'
-                    ' coordinates={}, utcoffset={}'
-                    .format(stn_id, name, province, (lon, lat), utcoffset))
+                    f'Station {stn_id}: name={name}, province/territory={province},'  # noqa
+                    f' coordinates={(lon, lat)}, utcoffset={utcoffset}')
 
                 stn_info = {
                     'STATION_NAME': name,
@@ -243,8 +238,7 @@ class HydrometricRealtimeLoader(BaseLoader):
 
                 self.stations[stn_id] = stn_info
 
-        LOGGER.debug('Collected stations information: loaded {} stations'
-                     .format(len(self.stations)))
+        LOGGER.debug(f'Collected stations information: loaded {len(self.stations)} stations')  # noqa
 
     def generate_observations(self, filepath):
         """
@@ -271,64 +265,57 @@ class HydrometricRealtimeLoader(BaseLoader):
 
             for row in reader:
                 if len(row) > 10:
-                    LOGGER.warning('Data row in {} has too many values:'
-                                   ' {} (using only first 10)'
-                                   .format(filepath, row))
+                    LOGGER.warning(f'Data row in {filepath} has too many values:'  # noqa
+                                   f' {row} (using only first 10)')
                 elif len(row) < 10:
-                    LOGGER.error('Data row in {} has too few values: {}'
-                                 ' (skipping)'.format(filepath, row))
+                    LOGGER.error(f'Data row in {filepath} has too few values: {row}')  # noqa
                     continue
 
-                station, date, level, _, level_symbol, _, \
+                station, date_, level, _, level_symbol, _, \
                     discharge, _, discharge_symbol, _ = row
 
                 if station in self.stations:
                     stn_info = self.stations[station]
-                    LOGGER.debug('Found info for station {}'.format(station))
+                    LOGGER.debug(f'Found info for station {station}')
                 else:
-                    LOGGER.error('Cannot find info for station {} (skipping)'
-                                 .format(station))
+                    LOGGER.error(f'Cannot find info for station {station} (skipping)')  # noqa
                     continue
 
                 try:
                     # Convert timestamp to UTC time.
-                    utc_datetime = delocalize_date(date)
+                    utc_datetime = delocalize_date(date_)
                     utc_datestamp = utc_datetime.strftime('%Y-%m-%d.%H:%M:%S')
                     # Generate an ID now that all fields are known.
-                    observation_id = '{}.{}'.format(station, utc_datestamp)
+                    observation_id = f'{station}.{utc_datestamp}'
 
                     utc_datestamp = utc_datestamp.replace('.', 'T')
                 except Exception as err:
-                    LOGGER.error('Cannot interpret datetime value {} in {}'
-                                 ' due to: {} (skipping)'
-                                 .format(date, filepath, str(err)))
+                    LOGGER.error(f'Cannot interpret datetime value {date_} in {filepath}'  # noqa
+                                 f' due to: {err} (skipping)')
                     continue
 
                 if 'daily' in filepath and utc_datetime > hourly_domain_start:
-                    LOGGER.debug('Daily observation {} overlaps hourly data'
-                                 ' (skipping)'.format(observation_id))
+                    LOGGER.debug(f'Daily observation {observation_id} overlaps hourly data'  # noqa
+                                 ' (skipping)')
                     continue
                 elif utc_datetime < daily_domain_start:
-                    LOGGER.debug('Daily observation {} precedes retention'
-                                 ' period (skipping)'.format(observation_id))
+                    LOGGER.debug(f'Daily observation {observation_id} precedes retention'  # noqa
+                                 ' period (skipping)')
                     continue
 
-                LOGGER.debug('Generating observation {} from {}: datetime={},'
-                             ' level={}, discharge={}'
-                             .format(observation_id, filepath, utc_datestamp,
-                                     level, discharge))
+                LOGGER.debug(f'Generating observation {observation_id} from {filepath}: datetime={utc_datestamp},'  # noqa
+                             f' level={level}, discharge={discharge}')
 
                 try:
                     level = float(level) if level.strip() else None
                 except ValueError:
-                    LOGGER.error('Cannot interpret level value {}'
-                                 ' (setting null)'.format(level))
+                    LOGGER.error(f'Cannot interpret level value {level}'
+                                 ' (setting null)')
 
                 try:
                     discharge = float(discharge) if discharge.strip() else None
                 except ValueError:
-                    LOGGER.error('Cannot interpret discharge value {}'
-                                 ' (setting null)'.format(discharge))
+                    LOGGER.error(f'Cannot interpret discharge value {discharge} (setting null)')  # noqa
 
                 if level_symbol.strip() == '':
                     level_symbol_en = None
@@ -349,7 +336,7 @@ class HydrometricRealtimeLoader(BaseLoader):
                         'STATION_NAME': stn_info['STATION_NAME'],
                         'PROV_TERR_STATE_LOC': stn_info['PROV_TERR_STATE_LOC'],
                         'DATETIME': utc_datestamp,
-                        'DATETIME_LST': date,
+                        'DATETIME_LST': date_,
                         'LEVEL': level,
                         'DISCHARGE': discharge,
                         'LEVEL_SYMBOL_EN': level_symbol_en,
@@ -359,11 +346,9 @@ class HydrometricRealtimeLoader(BaseLoader):
                     }
                 }
 
-                LOGGER.debug('Observation {} created successfully'
-                             .format(observation_id))
+                LOGGER.debug(f'Observation {observation_id} created successfully')  # noqa
 
-                es_index = '{}{}'.format(INDEX_BASENAME,
-                                         utc_datetime.strftime('%Y-%m-%d'))
+                es_index = f"{INDEX_BASENAME}{utc_datetime.strftime('%Y-%m-%d')}"  # noqa
 
                 action = {
                     '_id': observation_id,
@@ -387,7 +372,7 @@ class HydrometricRealtimeLoader(BaseLoader):
         if filepath.endswith('hydrometric_StationList.csv'):
             return True
 
-        LOGGER.debug('Received file {}'.format(filepath))
+        LOGGER.debug(f'Received file {filepath}')
 
         package = self.generate_observations(filepath)
         self.conn.submit_elastic_package(package, request_size=80000)
@@ -402,7 +387,7 @@ def download_stations():
     :returns: void
     """
 
-    LOGGER.debug('Caching {} to {}'.format(STATIONS_LIST_URL, STATIONS_CACHE))
+    LOGGER.debug(f'Caching {STATIONS_LIST_URL} to {STATIONS_CACHE}')
     urllib.request.urlretrieve(STATIONS_LIST_URL, STATIONS_CACHE)
 
 
@@ -450,7 +435,7 @@ def add(ctx, file_, directory, es, username, password, ignore_certs):
 def cache_stations(ctx):
     """Cache local copy of hydrometric realtime stations index"""
 
-    click.echo('Caching realtime stations to {}'.format(STATIONS_CACHE))
+    click.echo(f'Caching realtime stations to {STATIONS_CACHE}')
     download_stations()
 
 
@@ -458,7 +443,7 @@ def cache_stations(ctx):
 @click.pass_context
 @cli_options.OPTION_DAYS(
     default=DAYS_TO_KEEP,
-    help='Delete indexes older than n days (default={})'.format(DAYS_TO_KEEP)
+    help=f'Delete indexes older than n days (default={DAYS_TO_KEEP})'
 )
 @cli_options.OPTION_ELASTICSEARCH()
 @cli_options.OPTION_ES_USERNAME()
@@ -473,12 +458,12 @@ def clean_indexes(ctx, days, es, username, password, ignore_certs):
     conn_config = configure_es_connection(es, username, password, ignore_certs)
     conn = ElasticsearchConnector(conn_config)
 
-    indexes = conn.get('{}*'.format(INDEX_BASENAME))
+    indexes = conn.get(f'{INDEX_BASENAME}*')
 
     if indexes:
         indexes_to_delete = check_es_indexes_to_delete(indexes, days)
         if indexes_to_delete:
-            click.echo('Deleting indexes {}'.format(indexes_to_delete))
+            click.echo(f'Deleting indexes {indexes_to_delete}')
             conn.delete(','.join(indexes_to_delete))
 
     click.echo('Done')
@@ -500,13 +485,13 @@ def delete_indexes(ctx, es, username, password, ignore_certs, index_template):
     conn_config = configure_es_connection(es, username, password, ignore_certs)
     conn = ElasticsearchConnector(conn_config)
 
-    all_indexes = '{}*'.format(INDEX_BASENAME)
+    all_indexes = f'{INDEX_BASENAME}*'
 
-    click.echo('Deleting indexes {}'.format(all_indexes))
+    click.echo(f'Deleting indexes {all_indexes}')
     conn.delete(all_indexes)
 
     if index_template:
-        click.echo('Deleting index template {}'.format(INDEX_BASENAME))
+        click.echo(f'Deleting index template {INDEX_BASENAME}')
         conn.delete_template(INDEX_BASENAME)
 
     click.echo('Done')

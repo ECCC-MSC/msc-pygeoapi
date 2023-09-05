@@ -1,9 +1,9 @@
 # =================================================================
 #
-# Author: Tom Kralidis <tom.kralidis@canada.ca>
+# Author: Tom Kralidis <tom.kralidis@ec.gc.ca>
 #         Felix Laframboise <felix.laframboise@canada.ca>
 #
-# Copyright (c) 2020 Tom Kralidis
+# Copyright (c) 2023 Tom Kralidis
 # Copyright (c) 2021 Felix Laframboise
 #
 # Permission is hereby granted, free of charge, to any person
@@ -95,7 +95,7 @@ def load_plugin(plugin_type, plugin_def, **kwargs):
     """
 
     if plugin_type not in PLUGINS.keys():
-        msg = 'Plugin {} not found'.format(plugin_type)
+        msg = f'Plugin {plugin_type} not found'
         LOGGER.exception(msg)
         raise InvalidPluginError(msg)
 
@@ -103,8 +103,8 @@ def load_plugin(plugin_type, plugin_def, **kwargs):
 
     packagename, classname = handler.rsplit('.', 1)
 
-    LOGGER.debug('package name: {}'.format(packagename))
-    LOGGER.debug('class name: {}'.format(classname))
+    LOGGER.debug(f'package name: {packagename}')
+    LOGGER.debug(f'class name: {classname}')
 
     module = importlib.import_module(packagename)
     class_ = getattr(module, classname)

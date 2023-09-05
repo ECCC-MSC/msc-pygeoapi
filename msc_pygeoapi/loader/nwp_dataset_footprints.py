@@ -7,6 +7,7 @@
 #
 # Copyright (c) 2023 Nicolas Dion-Degodez
 # Copyright (c) 2023 Louis-Philippe Rousseau-Lambert
+# Copyright (c) 2023 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -91,7 +92,7 @@ MAPPINGS = {
 SETTINGS = {
     'order': 0,
     'version': 1,
-    'index_patterns': ['{}*'.format(INDEX_NAME)],
+    'index_patterns': [f'{INDEX_NAME}*'],
     'settings': {'number_of_shards': 1, 'number_of_replicas': 0},
     'mappings': None
 }
@@ -257,13 +258,13 @@ class DatasetFootprintLoader(BaseLoader):
 
         self.filepath = Path(filepath)
 
-        LOGGER.debug('Received file {}'.format(self.filepath))
+        LOGGER.debug(f'Received file {self.filepath}')
 
         # Open the MCF
         try:
             opened_file = self.open_mcf(self.filepath)
         except yaml.parser.ParserError as err:
-            msg = 'Could not open {}: {}'.format(self.filepath, err)
+            msg = f'Could not open {self.filepath}: {err}'
             LOGGER.warning(msg)
             return False
 
@@ -277,7 +278,7 @@ class DatasetFootprintLoader(BaseLoader):
                 polygon = self.get_reprojected_polygon()
                 data['geometry'] = json.loads(polygon)
             except AttributeError as err:
-                msg = 'Error generating footprint polygon: {}'.format(err)
+                msg = f'Error generating footprint polygon: {err}'
                 LOGGER.warning(msg)
                 return False
 
@@ -286,10 +287,10 @@ class DatasetFootprintLoader(BaseLoader):
                 r = self.conn.Elasticsearch.index(
                     index=INDEX_NAME, id=data['id'], body=data
                 )
-                LOGGER.debug('Result: {}'.format(r))
+                LOGGER.debug(f'Result: {r}')
                 return True
             except Exception as err:
-                LOGGER.warning('Error indexing: {}'.format(err))
+                LOGGER.warning(f'Error indexing: {err}')
                 return False
         else:
             LOGGER.warning(
@@ -335,7 +336,7 @@ def add(ctx, file_, directory, es, username, password, ignore_certs):
         loader = DatasetFootprintLoader(conn_config)
         result = loader.load_data(file_to_process)
         if not result:
-            click.echo('features not generated: {}'.format(file_to_process))
+            click.echo(f'features not generated: {file_to_process}')
 
 
 @click.command()

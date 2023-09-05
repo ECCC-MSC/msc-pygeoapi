@@ -2,10 +2,11 @@
 #
 # Author: Thinesh Sornalingam <thinesh.sornalingam@canada.ca>,
 #         Robert Westhaver <robert.westhaver.eccc@gccollaboration.ca>,
-#         Tom Kralidis <tom.kralidis@canada.ca>
+#         Tom Kralidis <tom.kralidis@ec.gc.ca>
 #         Felix Laframboise <felix.laframboise@canada.ca>
 #
 # Copyright (c) 2021 Felix Laframboise
+# Copyright (c) 2023 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -50,7 +51,7 @@ def test_api(url):
     ]
 
     # display all aqhi realtime data feature collections
-    req = '{}/collections'.format(url)
+    req = f'{url}/collections'
 
     response = requests.get(req).json()
 
@@ -61,7 +62,7 @@ def test_api(url):
 
     for collection in aqhi_collections:
         # describe aqhi realtime data feature collection
-        req = '{}/collections/{}'.format(url, collection)
+        req = f'{url}/collections/{collection}'
 
         response = requests.get(req).json()
 
@@ -81,7 +82,7 @@ def test_api(url):
         assert 'links' in response
 
         # access a single aqhi realtime feature
-        req = '{}/collections/{}/items'.format(url, collection)
+        req = f'{url}/collections/{collection}/items'
         response = requests.get(req).json()
 
         # single realtime measurement is returned from the past 30 days
@@ -93,7 +94,7 @@ def test_api(url):
 
         # query aqhi realtime feature collection based on
         # region property
-        req = '{}/collections/{}/items'.format(url, collection)
+        req = f'{url}/collections/{collection}/items'
         params = {
             'region': 'AADCE'
         }
@@ -106,7 +107,7 @@ def test_api(url):
 
         # query aqhi realtime feature collection based on
         # region sorted by id
-        req = '{}/collections/{}/items'.format(url, collection)
+        req = f'{url}/collections/{collection}/items'
         params = {
             'region': 'AADCE',
             'sortby': 'datetime_utc'
@@ -123,7 +124,7 @@ def test_api(url):
 
         # query aqhi realtime feature collection sorted by
         # earliest date and time
-        req = '{}/collections/{}/items'.format(url, collection)
+        req = f'{url}/collections/{collection}/items'
         params = {
             'sortby': 'datetime_utc'
         }
@@ -139,7 +140,7 @@ def test_api(url):
 
         # query aqhi realtime feature collection sorted by
         # latest date and time
-        req = '{}/collections/{}/items'.format(url, collection)
+        req = f'{url}/collections/{collection}/items'
         params = {
             'sortby': '-datetime_utc'
         }
@@ -160,7 +161,7 @@ def test_api(url):
             assert delta.seconds < 86400
 
         # query aqhi realtime feature collection based on spatial subsetting
-        req = '{}/collections/{}/items'.format(url, collection)
+        req = f'{url}/collections/{collection}/items'
         params = {
             'bbox': '-60,45,-50,50'
         }

@@ -2,11 +2,11 @@
 #
 # Author: Alex Hurka <alex.hurka@canada.ca>
 # Author: Etienne Pelletier <etienne.pelletier@canada.ca>
-# Author: Tom Kralidis <tom.kralidis@canada.ca>
+# Author: Tom Kralidis <tom.kralidis@ec.gc.ca>
 #
 # Copyright (c) 2019 Alex Hurka
 # Copyright (c) 2021 Etienne Pelletier
-# Copyright (c) 2020 Tom Kralidis
+# Copyright (c) 2023 Tom Kralidis
 
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -472,7 +472,7 @@ class AhccdLoader(BaseLoader):
             'seasonal',
             'trends',
         ]:
-            LOGGER.error('Unrecognized AHCCD data type {}'.format(index))
+            LOGGER.error(f'Unrecognized AHCCD data type {index}')
             return
 
         try:
@@ -494,22 +494,22 @@ class AhccdLoader(BaseLoader):
                 record['properties']['identifier__identifiant'] = stn_id
             elif index == 'monthly':
                 index_name = 'ahccd_monthly'
-                record['properties']['date'] = '{}-{}'.format(
+                record['properties']['date'] = '-'.join([
                     record['properties']['identifier__identifiant'].split('.')[
                         1
                     ],
                     record['properties']['identifier__identifiant'].split('.')[
                         2
                     ],
-                )
+                ])
                 del record['properties']['year__annee']
             elif index == 'trends':
                 index_name = 'ahccd_trends'
-                identifier = '{}.{}.{}'.format(
+                identifier = '.'.join([
                     record['properties']['station_id__id_station'],
                     record['properties']['period__periode'],
-                    record['properties']['measurement_type__type_mesure'],
-                )
+                    record['properties']['measurement_type__type_mesure']
+                ])
                 record['properties']['identifier__identifiant'] = identifier
 
             action = {
@@ -573,7 +573,7 @@ def add(
         with open(ctl, 'r') as f:
             ctl_dict = json.loads(f.read())
     except Exception as err:
-        msg = 'Could not open JSON location file: {}'.format(err)
+        msg = f'Could not open JSON location file: {err}'
         click.ClickException(err)
 
     if dataset == 'all':
@@ -587,16 +587,16 @@ def add(
     else:
         datasets_to_process = [dataset]
 
-    click.echo('Processing dataset(s): {}'.format(datasets_to_process))
+    click.echo(f'Processing dataset(s): {datasets_to_process}')
 
     for dtp in datasets_to_process:
         try:
-            click.echo('Populating {} index'.format(dtp))
+            click.echo(f'Populating {dtp} index')
             loader.create_index(dtp)
             dtp_data = loader.generate_docs(ctl_dict[dtp], dtp)
             loader.conn.submit_elastic_package(dtp_data, batch_size)
         except Exception as err:
-            msg = 'Could not populate {} index: {}'.format(dtp, err)
+            msg = f'Could not populate {dtp} index: {err}'
             raise click.ClickException(msg)
 
 

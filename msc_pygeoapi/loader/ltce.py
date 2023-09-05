@@ -3,7 +3,7 @@
 # Author: Etienne Pelletier <etienne.pelletier@canada.ca>
 #
 # Copyright (c) 2020 Etienne Pelletier
-# Copyright (c) 2022 Tom Kralidis
+# Copyright (c) 2023 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -536,7 +536,7 @@ class LtceLoader(BaseLoader):
                 )
             )
         except Exception as err:
-            LOGGER.error(f'Could not fetch records from oracle due to: {err}.')
+            LOGGER.error(f'Could not fetch records from Oracle due to: {err}.')
 
         # fetch records and ensure that some records were retrieved
         records = self.cur.fetchall()
@@ -555,13 +555,13 @@ class LtceLoader(BaseLoader):
                     )
 
             es_id = slugify(
-                '{}-{}-{}-{}-{}'.format(
+                '-'.join([
                     insert_dict['VIRTUAL_CLIMATE_ID'],
                     insert_dict["ELEMENT_NAME_E"],
                     insert_dict["CLIMATE_IDENTIFIER"],
                     insert_dict["START_DATE"],
-                    insert_dict["END_DATE"],
-                )
+                    insert_dict["END_DATE"]
+                ])
             )
 
             coords = [
@@ -657,11 +657,7 @@ class LtceLoader(BaseLoader):
                 )
             )
         except Exception as err:
-            LOGGER.error(
-                'Could not fetch records from oracle due to: {}.'.format(
-                    str(err)
-                )
-            )
+            LOGGER.error(f'Could not fetch records from Oracle due to: {err}')
 
         # dictionnary to store stations information once retrieved
         stations_dict = {}
@@ -684,11 +680,11 @@ class LtceLoader(BaseLoader):
                     )
 
             virtual_climate_id = insert_dict['VIRTUAL_CLIMATE_ID']
-            es_id = '{}-{}-{}'.format(
+            es_id = '-'.join([
                 insert_dict['VIRTUAL_CLIMATE_ID'],
-                insert_dict["LOCAL_MONTH"],
-                insert_dict["LOCAL_DAY"],
-            )
+                insert_dict['LOCAL_MONTH'],
+                insert_dict['LOCAL_DAY']
+            ])
 
             # check if we have station IDs record begin and end. If not
             # retrieve the information and store in stations_dict
@@ -742,10 +738,10 @@ class LtceLoader(BaseLoader):
             for level in ['MIN', 'MAX']:
                 # set new insert_dict keys
                 insert_dict[
-                    '{}_TEMP_RECORD_BEGIN'.format(level)
+                    f'{level}_TEMP_RECORD_BEGIN'
                 ] = stations_dict[virtual_climate_id][level]['record_begin']
                 insert_dict[
-                    '{}_TEMP_RECORD_END'.format(level)
+                    f'{level}_TEMP_RECORD_END'
                 ] = stations_dict[virtual_climate_id][level]['record_end']
 
             # cleanup unwanted fields retained from SQL join
@@ -808,11 +804,7 @@ class LtceLoader(BaseLoader):
                 )
             )
         except Exception as err:
-            LOGGER.error(
-                'Could not fetch records from oracle due to: {}.'.format(
-                    str(err)
-                )
-            )
+            LOGGER.error(f'Could not fetch records from Oracle due to: {err}')
 
         stations_dict = {}
 
@@ -836,11 +828,11 @@ class LtceLoader(BaseLoader):
                     )
 
             virtual_climate_id = insert_dict['VIRTUAL_CLIMATE_ID']
-            es_id = '{}-{}-{}'.format(
+            es_id = '-'.join([
                 insert_dict['VIRTUAL_CLIMATE_ID'],
                 insert_dict["LOCAL_MONTH"],
-                insert_dict["LOCAL_DAY"],
-            )
+                insert_dict["LOCAL_DAY"]
+            ])
 
             # check if we have station IDs record begin and end if not retrieve
             if virtual_climate_id not in stations_dict:
@@ -927,11 +919,7 @@ class LtceLoader(BaseLoader):
                 )
             )
         except Exception as err:
-            LOGGER.error(
-                'Could not fetch records from oracle due to: {}.'.format(
-                    str(err)
-                )
-            )
+            LOGGER.error(f'Could not fetch records from Oracle due to: {err}')
 
         stations_dict = {}
 
@@ -953,11 +941,11 @@ class LtceLoader(BaseLoader):
                     )
 
             virtual_climate_id = insert_dict['VIRTUAL_CLIMATE_ID']
-            es_id = '{}-{}-{}'.format(
+            es_id = '-'.join([
                 insert_dict['VIRTUAL_CLIMATE_ID'],
                 insert_dict["LOCAL_MONTH"],
-                insert_dict["LOCAL_DAY"],
-            )
+                insert_dict["LOCAL_DAY"]
+            ])
 
             # check if we have station IDs record begin and end if not retrieve
             if virtual_climate_id not in stations_dict:
@@ -1188,8 +1176,7 @@ def add(
 @click.pass_context
 @cli_options.OPTION_DAYS(
     default=DAYS_TO_KEEP,
-    help='Delete indexes older than n days (default={})'.format(DAYS_TO_KEEP),
-)
+    help=f'Delete indexes older than n days (default={DAYS_TO_KEEP})')
 @cli_options.OPTION_ELASTICSEARCH()
 @cli_options.OPTION_ES_USERNAME()
 @cli_options.OPTION_ES_PASSWORD()
@@ -1210,7 +1197,7 @@ def clean_indexes(ctx, days, es, username, password, ignore_certs):
             pattern=INDEX_PATTERN
         )
         if indexes_to_delete:
-            click.echo('Deleting indexes {}'.format(indexes_to_delete))
+            click.echo(f'Deleting indexes {indexes_to_delete}')
             conn.delete(','.join(indexes_to_delete))
 
     click.echo('Done')
@@ -1264,7 +1251,7 @@ def delete_indexes(
     if index_name:
         for i in index_name.split(","):
             if i in INDICES:
-                LOGGER.info('Deleting ES index {}'.format(i))
+                LOGGER.info(f'Deleting ES index {i}')
                 loader.conn.delete(f'{i}.*')
     else:
         LOGGER.info('Deleting all LTCE ES indices')

@@ -5,7 +5,7 @@
 #          Tom Kralidis <tom.kralidis@ec.gc.ca>
 #
 # Copyright (c) 2022 Louis-Philippe Rousseau-Lambert
-# Copyright (c) 2022 Tom Kralidis
+# Copyright (c) 2023 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -155,10 +155,10 @@ class CanGRDProvider(BaseProvider):
                 time_axis['uomLabel'] = 'year'
             else:
                 begin = search('_{:d}-{:d}.tif', begin_file)
-                begin = '{}-{}'.format(begin[0], str(begin[1]).zfill(2))
+                begin = f'{begin[0]}-{begin[1]:02}'
 
                 end = search('_{:d}-{:d}.tif', end_file)
-                end = '{}-{}'.format(end[0], str(end[1]).zfill(2))
+                end = f'{end[0]}-{end[1]:02}'
                 time_axis['uomLabel'] = 'month'
 
             time_axis['lowerBound'] = begin
@@ -213,19 +213,19 @@ class CanGRDProvider(BaseProvider):
             var_key = var_dict.keys()
 
         for var in var_key:
+            units = var_dict[var]['units']
             rangetype['field'].append({
                 'id': var_dict[var]['id'],
                 'type': 'Quantity',
                 'name': var_dict[var]['name'],
                 'encodingInfo': {
-                    'dataType': 'http://www.opengis.net/def/dataType/OGC/0/{}'.format(dtype)  # noqa
+                    'dataType': f'http://www.opengis.net/def/dataType/OGC/0/{dtype}'  # noqa
                 },
                 'nodata': nodataval,
                 'uom': {
-                    'id': 'http://www.opengis.net/def/uom/UCUM/{}'.format(
-                         var_dict[var]['units']),
+                    'id': 'http://www.opengis.net/def/uom/UCUM/{units}',
                     'type': 'UnitReference',
-                    'code': var_dict[var]['units']
+                    'code': units
                 },
                 '_meta': {
                     'tags': {
@@ -293,10 +293,8 @@ class CanGRDProvider(BaseProvider):
                                                          temp_geom_max)
                 maxx2, maxy2 = max_coord['coordinates']
 
-                LOGGER.debug('Source coordinates: {}'.format(
-                    [minx, miny, maxx, maxy]))
-                LOGGER.debug('Destination coordinates: {}'.format(
-                    [minx2, miny2, maxx2, maxy2]))
+                LOGGER.debug(f'Source coordinates: {minx}, {miny}, {maxx}, {maxy}')  # noqa
+                LOGGER.debug(f'Destination coordinates: {minx2}, {miny2}, {maxx2}, {maxy2}')  # noqa
 
                 shapes = [{
                    'type': 'Polygon',
@@ -363,7 +361,7 @@ class CanGRDProvider(BaseProvider):
             if '/' not in datetime_:
                 if 'month' in self.data:
                     month = search('_{:d}-{:d}.tif', self.data)
-                    period = '{}-{}'.format(month[0], str(month[1]).zfill(2))
+                    period = f'{month[0]}-{month[1]:02}'
                     self.data = self.data.replace(str(month), str(datetime_))
                 else:
                     period = search('_{:d}.tif', self.data)[0]
@@ -428,8 +426,7 @@ class CanGRDProvider(BaseProvider):
             self.filename = self.data.split('/')[-1]
             if 'trend' not in self.data and datetime_:
                 self.filename = self.filename.split('_')
-                self.filename[-1] = '{}.tif'.format(
-                    datetime_.replace('/', '-'))
+                self.filename[-1] = f"{datetime_.replace('/', '-')}.tif"
                 self.filename = '_'.join(self.filename)
 
             # CovJSON output does not support multiple bands yet
@@ -545,7 +542,7 @@ class CanGRDProvider(BaseProvider):
         else:
             bands_select = metadata['bands']
 
-        LOGGER.debug('bands selected: {}'.format(bands_select))
+        LOGGER.debug(f'bands selected: {bands_select}')
         for bs in bands_select:
             pm = _get_parameter_metadata(
                 self._data.profile['driver'], self._data.tags(bs))
@@ -614,9 +611,8 @@ class CanGRDProvider(BaseProvider):
 
         if self._data.crs is not None:
             if self._data.crs.is_projected:
-                properties['bbox_crs'] = '{}/{}'.format(
-                    'http://www.opengis.net/def/crs/OGC/1.3/',
-                    self._data.crs.to_epsg())
+                bbox_crs = f'http://www.opengis.net/def/crs/OGC/1.3/{self._data.crs.to_epsg()'  # noqa
+                properties['bbox_crs'] = bbox_crs
 
                 properties['x_axis_label'] = 'x'
                 properties['y_axis_label'] = 'y'
@@ -640,8 +636,7 @@ class CanGRDProvider(BaseProvider):
         """
 
         file_path = pathlib.Path(self.data).parent.resolve()
-        file_path_ = glob.glob(os.path.join(file_path,
-                                            '*{}*'.format(variable)))
+        file_path_ = glob.glob(os.path.join(file_path, f'*{variable}*'))
         file_path_.sort()
 
         if datetime_:

@@ -4,6 +4,7 @@
 #          <louis-philippe.rousseaulambert@ec.gc.ca>
 #
 # Copyright (c) 2022 Louis-Philippe Rousseau-Lambert
+# Copyright (c) 2023 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -154,7 +155,7 @@ class ClimateProvider(XarrayProvider):
         }
 
         for name, var in self._data.variables.items():
-            LOGGER.debug('Determining rangetype for {}'.format(name))
+            LOGGER.debug(f'Determining rangetype for {name}')
 
             desc, units = None, None
             if len(var.shape) >= 2:
@@ -177,12 +178,11 @@ class ClimateProvider(XarrayProvider):
                     'type': 'Quantity',
                     'name': var.attrs.get('long_name') or desc,
                     'encodingInfo': {
-                        'dataType': 'http://www.opengis.net/def/dataType/OGC/0/{}'.format(str(var.dtype))  # noqa
+                        'dataType': f'http://www.opengis.net/def/dataType/OGC/0/{var.dtype}'  # noqa
                     },
                     'nodata': 'null',
                     'uom': {
-                        'id': 'http://www.opengis.net/def/uom/UCUM/{}'.format(
-                             units),
+                        'id': f'http://www.opengis.net/def/uom/UCUM/{units}',
                         'type': 'UnitReference',
                         'code': units
                     },
@@ -243,9 +243,8 @@ class ClimateProvider(XarrayProvider):
         }
 
         if 'crs' in self._data.variables.keys():
-            properties['bbox_crs'] = '{}/{}'.format(
-                'http://www.opengis.net/def/crs/OGC/1.3/',
-                self._data.crs.epsg_code)
+            bbox_crs = f'http://www.opengis.net/def/crs/OGC/1.3/{self._data.crs.epsg_code}'  # noqa
+            properties['bbox_crs'] = bbox_crs
 
             properties['inverse_flattening'] = self._data.crs.\
                 inverse_flattening
@@ -311,7 +310,7 @@ class ClimateProvider(XarrayProvider):
             if any(month in self.data for month in self.monthly_data):
                 month = datetime_.astype('datetime64[M]').astype(int) % 12 + 1
                 year = datetime_.astype('datetime64[Y]').astype(int) + 1970
-                value = '{}-{}'.format(year, str(month).zfill(2))
+                value = f'{year}-{month:02}'
             else:
                 value = datetime_.astype('datetime64[Y]').astype(int) + 1970
                 value = str(value)
@@ -355,8 +354,7 @@ class ClimateProvider(XarrayProvider):
             try:
                 if percentile != [50]:
                     pctl = str(percentile[0])
-                    self.data = self.data.replace('pctl50',
-                                                  'pctl{}'.format(pctl))
+                    self.data = self.data.replace('pctl50', f'pctl{pctl}')
 
             except Exception as err:
                 LOGGER.error(err)
@@ -503,7 +501,7 @@ class ClimateProvider(XarrayProvider):
                     else:
                         query_params[self.time_field] = datetime_
 
-            LOGGER.debug('Query parameters: {}'.format(query_params))
+            LOGGER.debug(f'Query parameters: {query_params}')
             try:
                 data = data.loc[query_params]
             except Exception as err:

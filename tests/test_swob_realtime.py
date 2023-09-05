@@ -2,11 +2,11 @@
 #
 # Author: Thinesh Sornalingam <thinesh.sornalingam@canada.ca>,
 #         Robert Westhaver <robert.westhaver.eccc@gccollaboration.ca>,
-#         Tom Kralidis <tom.kralidis@canada.ca>
+#         Tom Kralidis <tom.kralidis@ec.gc.ca>
 #
 # Copyright (c) 2020 Thinesh Sornalingam
 # Copyright (c) 2020 Robert Westhaver
-# Copyright (c) 2021 Tom Kralidis
+# Copyright (c) 2023 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -61,8 +61,8 @@ def url(pytestconfig):
 def test_loader(swob):
     """Test suite for converting swobs to geojson"""
 
-    xml = get_test_file_path('{}.xml'.format(swob))
-    geojson = read_json(get_test_file_path('{}.geojson'.format(swob)))
+    xml = get_test_file_path(f'{swob}.xml')
+    geojson = read_json(get_test_file_path(f'{swob}.geojson'))
     assert swob2geojson(xml) == geojson
 
 
@@ -74,7 +74,7 @@ def test_api(url):
     ]
 
     # display all swob realtime data feature collections
-    req = '{}/collections'.format(url)
+    req = f'{url}/collections'
     response = requests.get(req).json()
 
     collections = [c['id'] for c in response['collections']]
@@ -83,7 +83,7 @@ def test_api(url):
     assert all(elem in collections for elem in swob_collections)
 
     # describe swob realtime data feature collection
-    req = '{}/collections/swob-realtime'.format(url)
+    req = f'{url}/collections/swob-realtime'
     response = requests.get(req).json()
 
     # feature collections metadata is displayed including appropriate title,
@@ -96,7 +96,7 @@ def test_api(url):
     assert 'links' in response
 
     # access a single swob realtime feature
-    req = '{}/collections/swob-realtime/items'.format(url)
+    req = f'{url}/collections/swob-realtime/items'
     response = requests.get(req).json()
 
     # single realtime measurement is returned from the past 30 days
@@ -108,7 +108,7 @@ def test_api(url):
 
     # query swob realtime feature collection based on
     # msc_id-value property
-    req = '{}/collections/swob-realtime/items'.format(url)
+    req = f'{url}/collections/swob-realtime/items'
     params = {
         'msc_id-value': '3031875'
     }
@@ -121,7 +121,7 @@ def test_api(url):
 
     # query swob realtime feature collection based on
     # msc_id-value property sorted by id
-    req = '{}/collections/swob-realtime/items'.format(url)
+    req = f'{url}/collections/swob-realtime/items'
     params = {
         'msc_id-value': '3031875',
         'sortby': 'date_tm-value'
@@ -138,7 +138,7 @@ def test_api(url):
 
     # query swob realtime feature collection sorted by
     # earliest date and time
-    req = '{}/collections/swob-realtime/items'.format(url)
+    req = f'{url}/collections/swob-realtime/items'
     params = {
         'sortby': 'date_tm-value'
     }
@@ -154,7 +154,7 @@ def test_api(url):
 
     # query swob realtime feature collection sorted by
     # latest date and time
-    req = '{}/collections/swob-realtime/items'.format(url)
+    req = f'{url}/collections/swob-realtime/items'
     params = {
         'sortby': '-date_tm-value'
     }
@@ -170,7 +170,7 @@ def test_api(url):
     assert delta.seconds < 3600
 
     # query swob realtime feature collection based on spatial subsetting
-    req = '{}/collections/swob-realtime/items'.format(url)
+    req = f'{url}/collections/swob-realtime/items'
     params = {
         'bbox': '-80,50,-50,60'
     }

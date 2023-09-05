@@ -1,8 +1,8 @@
 # =================================================================
 #
-# Author: Tom Kralidis <tom.kralidis@canada.ca>
+# Author: Tom Kralidis <tom.kralidis@ec.gc.ca>
 #
-# Copyright (c) 2021 Tom Kralidis
+# Copyright (c) 2023 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -47,7 +47,7 @@ def test_api(url):
     ]
 
     # display all hydrometric realtime data feature collections
-    req = '{}/collections'.format(url)
+    req = f'{url}/collections'
     response = requests.get(req).json()
 
     collections = [c['id'] for c in response['collections']]
@@ -56,7 +56,7 @@ def test_api(url):
     assert all(elem in collections for elem in hydrometric_realtime_collections)  # noqa
 
     # describe hydrometric realtime data feature collection
-    req = '{}/collections/hydrometric-realtime'.format(url)
+    req = f'{url}/collections/hydrometric-realtime'
     response = requests.get(req).json()
 
     # feature collections metadata is displayed including appropriate title,
@@ -69,7 +69,7 @@ def test_api(url):
     assert 'links' in response
 
     # access a single hydrometric realtime feature
-    req = '{}/collections/hydrometric-realtime/items'.format(url)
+    req = f'{url}/collections/hydrometric-realtime/items'
     response = requests.get(req).json()
 
     # single realtime measurement is returned from the past 30 days
@@ -81,7 +81,7 @@ def test_api(url):
 
     # query hydrometric realtime feature collection based on
     # STATION_NUMBER property
-    req = '{}/collections/hydrometric-realtime/items'.format(url)
+    req = f'{url}/collections/hydrometric-realtime/items'
     params = {
         'STATION_NUMBER': '02KD004'
     }
@@ -94,7 +94,7 @@ def test_api(url):
 
     # query hydrometric realtime feature collection based on
     # STATION_NUMBER property sorted by IDENTIFIER
-    req = '{}/collections/hydrometric-realtime/items'.format(url)
+    req = f'{url}/collections/hydrometric-realtime/items'
     params = {
         'STATION_NUMBER': '02KD004',
         'sortby': 'IDENTIFIER'
@@ -111,7 +111,7 @@ def test_api(url):
 
     # query hydrometric realtime feature collection sorted by
     # earliest date and time
-    req = '{}/collections/hydrometric-realtime/items'.format(url)
+    req = f'{url}/collections/hydrometric-realtime/items'
     params = {
         'sortby': 'DATETIME'
     }
@@ -127,7 +127,7 @@ def test_api(url):
 
     # query hydrometric realtime feature collection sorted by
     # latest date and time
-    req = '{}/collections/hydrometric-realtime/items'.format(url)
+    req = f'{url}/collections/hydrometric-realtime/items'
     params = {
         'sortby': '-DATETIME'
     }
@@ -143,7 +143,7 @@ def test_api(url):
     assert delta.seconds < 3600
 
     # query hydrometric realtime feature collection based on spatial subsetting
-    req = '{}/collections/hydrometric-realtime/items'.format(url)
+    req = f'{url}/collections/hydrometric-realtime/items'
     params = {
         'bbox': '-80,50,-50,60'
     }

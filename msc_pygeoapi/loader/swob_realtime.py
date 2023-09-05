@@ -6,7 +6,7 @@
 #
 # Copyright (c) 2020 Thinesh Sornalingam
 # Copyright (c) 2020 Robert Westhaver
-# Copyright (c) 2022 Tom Kralidis
+# Copyright (c) 2023 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -52,9 +52,7 @@ from msc_pygeoapi.util import (
 LOGGER = logging.getLogger(__name__)
 
 STATIONS_LIST_NAME = 'swob-xml_station_list.csv'
-STATIONS_LIST_URL = 'https://dd.weather.gc.ca/observations/doc/{}'.format(
-    STATIONS_LIST_NAME
-)
+STATIONS_LIST_URL = f'https://dd.weather.gc.ca/observations/doc/{STATIONS_LIST_NAME}'  # noqa
 
 STATIONS_CACHE = os.path.join(MSC_PYGEOAPI_CACHEDIR, STATIONS_LIST_NAME)
 
@@ -67,7 +65,7 @@ INDEX_BASENAME = 'swob_realtime.'
 SETTINGS = {
     'order': 0,
     'version': 1,
-    'index_patterns': ['{}*'.format(INDEX_BASENAME)],
+    'index_patterns': [f'{INDEX_BASENAME}*'],
     'settings': {'number_of_shards': 1, 'number_of_replicas': 0},
     'mappings': {
         'properties': {
@@ -113,7 +111,7 @@ def parse_swob(swob_file):
         try:
             xml_tree = etree.parse(fh)
         except (FileNotFoundError, etree.ParseError):
-            msg = 'Error: file {} cannot be parsed as xml'.format(swob_file)
+            msg = f'Error: file {swob_file} cannot be parsed as xml'
             LOGGER.debug(msg)
             raise RuntimeError(msg)
 
@@ -160,9 +158,7 @@ def parse_swob(swob_file):
                         else:
                             element_name = element.attrib[key]
                     else:
-                        properties[
-                            "{}-{}".format(element_name, key)
-                        ] = element.attrib[key]
+                        properties[f'{element_name}-{key}'] = element.attrib[key]  # noqa
 
         # set up cords and time stamps
         swob_values['coordinates'] = [longitude, latitude, elevation]
@@ -226,24 +222,14 @@ def parse_swob(swob_file):
                     if all([name != 'qa_summary', name != 'data_flag']):
                         properties[name] = value
                         if uom:
-                            properties["{}-{}".format(name, 'uom')] = uom
+                            properties[f'{name}-uom'] = uom
                         last_element = name
                     elif name == 'qa_summary':
-                        properties["{}-{}".format(last_element, 'qa')] = value
+                        properties[f'{last_element}-qa'] = value
                     elif name == 'data_flag':
-                        properties[
-                            "{}-{}-{}".format(last_element, 'data_flag', 'uom')
-                        ] = uom
-                        properties[
-                            "{}-{}-{}".format(
-                                last_element, 'data_flag', 'code_src'
-                            )
-                        ] = nest_elem.attrib['code-src']
-                        properties[
-                            "{}-{}-{}".format(
-                                last_element, 'data_flag', 'value'
-                            )
-                        ] = value
+                        properties[f'{last_element}-data_flag-uom'] = uom
+                        properties[f'{last_element}-data_flag-code-src'] = nest_elem.attrib['code-src']  # noqa
+                        properties[f'{last_element}-data_flag-value'] = value
 
             swob_values['properties'] = properties
 
@@ -323,16 +309,14 @@ class SWOBRealtimeLoader(BaseLoader):
         observation = swob2geojson(filepath)
         observation_id = observation['id']
 
-        LOGGER.debug(
-            'Observation {} created successfully'.format(observation_id)
-        )
+        LOGGER.debug(f'Observation {observation_id} created successfully')
 
         obs_dt = datetime.strptime(
             observation['properties']['date_tm-value'],
             DATETIME_RFC3339_MILLIS_FMT,
         )
         obs_dt2 = obs_dt.strftime('%Y-%m-%d')
-        es_index = '{}{}'.format(INDEX_BASENAME, obs_dt2)
+        es_index = f'{INDEX_BASENAME}{obs_dt2}'
 
         action = {
             '_id': observation_id,
@@ -355,7 +339,7 @@ class SWOBRealtimeLoader(BaseLoader):
         :returns: `bool` of status result
         """
 
-        LOGGER.debug('Received file {}'.format(filepath))
+        LOGGER.debug(f'Received file {filepath}')
         chunk_size = 80000
 
         package = self.generate_observations(filepath)
@@ -407,7 +391,7 @@ def add(ctx, file_, directory, es, username, password, ignore_certs):
 @click.pass_context
 @cli_options.OPTION_DAYS(
     default=DAYS_TO_KEEP,
-    help='Delete indexes older than n days (default={})'.format(DAYS_TO_KEEP)
+    help=f'Delete indexes older than n days (default={DAYS_TO_KEEP})'
 )
 @cli_options.OPTION_ELASTICSEARCH()
 @cli_options.OPTION_ES_USERNAME()
@@ -420,13 +404,13 @@ def clean_indexes(ctx, days, es, username, password, ignore_certs):
     conn_config = configure_es_connection(es, username, password, ignore_certs)
     conn = ElasticsearchConnector(conn_config)
 
-    indexes = conn.get('{}*'.format(INDEX_BASENAME))
+    indexes = conn.get(f'{INDEX_BASENAME}*')
     click.echo(indexes)
 
     if indexes:
         indexes_to_delete = check_es_indexes_to_delete(indexes, days)
         if indexes_to_delete:
-            click.echo('Deleting indexes {}'.format(indexes_to_delete))
+            click.echo(f'Deleting indexes {indexes_to_delete}')
             conn.delete(','.join(indexes_to_delete))
 
     click.echo('Done')
@@ -448,13 +432,13 @@ def delete_indexes(ctx, es, username, password, ignore_certs, index_template):
     conn_config = configure_es_connection(es, username, password, ignore_certs)
     conn = ElasticsearchConnector(conn_config)
 
-    all_indexes = '{}*'.format(INDEX_BASENAME)
+    all_indexes = f'{INDEX_BASENAME}*'
 
-    click.echo('Deleting indexes {}'.format(all_indexes))
+    click.echo(f'Deleting indexes {all_indexes}')
     conn.delete(all_indexes)
 
     if index_template:
-        click.echo('Deleting index template {}'.format(INDEX_BASENAME))
+        click.echo(f'Deleting index template {INDEX_BASENAME}')
         conn.delete_template(INDEX_BASENAME)
 
     click.echo('Done')

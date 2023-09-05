@@ -3,6 +3,7 @@
 # Author: Etienne Pelletier <etienne.pelletier@ec.gc.ca>
 #
 # Copyright (c) 2022 Etienne Pelletier
+# Copyright (c) 2023 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -480,7 +481,7 @@ def delete_indexes(
     else:
         indexes = '{}*'.format(INDEX_BASENAME.format(dataset))
 
-    click.echo('Deleting indexes {}'.format(indexes))
+    click.echo(f'Deleting indexes {indexes}')
 
     conn.delete(indexes)
 

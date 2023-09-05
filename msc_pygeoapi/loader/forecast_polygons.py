@@ -3,7 +3,7 @@
 # Author: Etienne Pelletier <etienne.pelletier@canada.ca>
 #
 # Copyright (c) 2020 Etienne Pelletier
-# Copyright (c) 2022 Tom Kralidis
+# Copyright (c) 2023 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -348,7 +348,7 @@ class ForecastPolygonsLoader(BaseLoader):
         """
         filepath = str((self.filepath / self.filepath.stem /
                         shapefile_name).resolve())
-        data = ogr.Open(r'/vsizip/{}'.format(filepath))
+        data = ogr.Open(rf'/vsizip/{filepath}')
         lyr = data.GetLayer()
 
         for feature in lyr:
@@ -361,7 +361,7 @@ class ForecastPolygonsLoader(BaseLoader):
             self.items.append(feature_json)
 
             action = {
-                '_id': '{}'.format(_id),
+                '_id': _id,
                 '_index': INDEX_NAME.format(self.zone.lower(),
                                             shapefile_name.split('_')[2]
                                             ),
@@ -382,7 +382,7 @@ class ForecastPolygonsLoader(BaseLoader):
 
         # set class variables from filename
         self.parse_filename()
-        LOGGER.debug('Received file {}'.format(self.filepath))
+        LOGGER.debug(f'Received file {self.filepath}')
 
         for shapefile in SHAPEFILES_TO_LOAD[self.filepath.stem]:
             # generate geojson features
@@ -453,7 +453,7 @@ def delete_indexes(ctx, index_name, es, username, password, ignore_certs):
         if click.confirm(
                 'Are you sure you want to delete ES index named: {}?'.format(
                     click.style(index_name, fg='red')), abort=True):
-            LOGGER.info('Deleting ES index {}'.format(index_name))
+            LOGGER.info(f'Deleting ES index {index_name}')
             conn.delete(index_name)
             return True
     else:

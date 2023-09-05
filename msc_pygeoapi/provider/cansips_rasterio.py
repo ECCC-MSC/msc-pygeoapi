@@ -4,8 +4,9 @@
 #           <louis-philippe.rousseaulambert@ec.gc.ca>
 #
 # Copyright (c) 2022 Louis-Philippe Rousseau-Lambert
+# Copyright (c) 2023 Tom Kralidis
 #
-
+#
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
 # files (the "Software"), to deal in the Software without
@@ -211,7 +212,7 @@ class CanSIPSProvider(BaseProvider):
             i, dtype, nodataval = self._data.indexes[0], \
                 self._data.dtypes[0], self._data.nodatavals[0]
 
-            LOGGER.debug('Determing rangetype for band {}'.format(i))
+            LOGGER.debug(f'Determing rangetype for band {i}')
 
             tags = self._data.tags(i)
             keys_to_remove = ['GRIB_FORECAST_SECONDS',
@@ -238,12 +239,11 @@ class CanSIPSProvider(BaseProvider):
                 'type': 'Quantity',
                 'name': name,
                 'encodingInfo': {
-                    'dataType': 'http://www.opengis.net/def/dataType/OGC/0/{}'.format(dtype)  # noqa
+                    'dataType': f'http://www.opengis.net/def/dataType/OGC/0/{dtype}'  # noqa
                 },
                 'nodata': nodataval,
                 'uom': {
-                    'id': 'http://www.opengis.net/def/uom/UCUM/{}'.format(
-                         units),
+                    'id': f'http://www.opengis.net/def/uom/UCUM/{units}',
                     'type': 'UnitReference',
                     'code': units
                 },
@@ -302,15 +302,13 @@ class CanSIPSProvider(BaseProvider):
         if len(bbox) > 0:
             minx, miny, maxx, maxy = bbox
 
-            LOGGER.debug('Source coordinates: {}'.format(
-                [minx, miny, maxx, maxy]))
+            LOGGER.debug(f'Source coordinates: {minx}, {maxy}, {maxx}, {maxy}')
 
             # because cansips long is from 0 to 360
             minx += 180
             maxx += 180
 
-            LOGGER.debug('Destination coordinates: {}'.format(
-                [minx, miny, maxx, maxy]))
+            LOGGER.debug(f'Destination coordinates: {minx}, {maxy}, {maxx}, {maxy}')  # noqa
 
             shapes = [{
                 'type': 'Polygon',
@@ -497,7 +495,7 @@ class CanSIPSProvider(BaseProvider):
         else:
             bands_select = metadata['bands']
 
-        LOGGER.debug('bands selected: {}'.format(bands_select))
+        LOGGER.debug(f'bands selected: {bands_select}')
         for bs in bands_select:
             pm = _get_parameter_metadata(
                 self._data.profile['driver'], self._data.tags(bs))
@@ -567,10 +565,9 @@ class CanSIPSProvider(BaseProvider):
 
         if self._data.crs is not None:
             if self._data.crs.is_projected:
-                properties['bbox_crs'] = '{}/{}'.format(
-                    'http://www.opengis.net/def/crs/OGC/1.3/',
-                    self._data.crs.to_epsg())
+                bbox_crs = f'http://www.opengis.net/def/crs/OGC/1.3/{self._data.crs.to_epsg()}',  # noqa
 
+                properties['bbox_crs'] = bbox_crs
                 properties['x_axis_label'] = 'x'
                 properties['y_axis_label'] = 'y'
                 properties['bbox_units'] = self._data.crs.linear_units
@@ -600,7 +597,7 @@ class CanSIPSProvider(BaseProvider):
             file_path[-2] = '*'
 
             file_path_ = glob.glob(os.path.join('/'.join(file_path),
-                                                '{}*'.format(variable)))
+                                                f'{variable}*'))
             file_path_.sort()
 
             if datetime_:
@@ -695,8 +692,7 @@ class CanSIPSProvider(BaseProvider):
         # making a list of the datetime for the given dim_ref_time
         possible_time = []
         for i in range(1, 13):
-            possible_time.append(self.get_time_from_dim(
-                '{}-{}'.format(year, month), i))
+            possible_time.append(self.get_time_from_dim(f'{year}-{month}', i))
 
         if '/' not in datetime_:
             if datetime_ not in possible_time:

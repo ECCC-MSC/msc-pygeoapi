@@ -1,8 +1,8 @@
 # =================================================================
 #
-# Author: Tom Kralidis <tom.kralidis@canada.ca>
+# Author: Tom Kralidis <tom.kralidis@ec.gc.ca>
 #
-# Copyright (c) 2020 Tom Kralidis
+# Copyright (c) 2023 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -62,7 +62,7 @@ class CoreHandler(BaseHandler):
         for key in PLUGINS['loader'].keys():
             if PLUGINS['loader'][key]['filename_pattern'] in self.filepath:
                 plugin_def = PLUGINS['loader'][key]
-                LOGGER.debug('Loading plugin {}'.format(plugin_def))
+                LOGGER.debug(f'Loading plugin {plugin_def}')
                 self.plugin = load_plugin('loader', plugin_def)
 
         if self.plugin is None:
@@ -72,9 +72,9 @@ class CoreHandler(BaseHandler):
 
         LOGGER.debug('Handling file')
         status = self.plugin.load_data(self.filepath)
-        LOGGER.debug('Status: {}'.format(status))
+        LOGGER.debug(f'Status: {status}')
 
         return True
 
     def __repr__(self):
-        return '<CoreHandler> {}'.format(self.filepath)
+        return f'<CoreHandler> {self.filepath}'

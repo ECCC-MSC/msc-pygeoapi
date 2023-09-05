@@ -1,9 +1,9 @@
 # =================================================================
 #
-# Author: Philippe Theroux
-#         <Philippe.Theroux@ec.gc.ca>
+# Author: Philippe Theroux <Philippe.Theroux@ec.gc.ca>
 #
 # Copyright (c) 2022 Philippe Theroux
+# Copyright (c) 2023 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -79,7 +79,7 @@ MAPPINGS = {
 SETTINGS = {
     'order': 0,
     'version': 1,
-    'index_patterns': ['{}*'.format(INDEX_BASENAME)],
+    'index_patterns': [INDEX_BASENAME],
     'settings': {'number_of_shards': 1, 'number_of_replicas': 0},
     'mappings': None
 }
@@ -119,9 +119,7 @@ class CumulativeEffectsHSLoader(BaseLoader):
             )
 
             # set ES index name for feature
-            es_index = '{}{}'.format(
-                INDEX_BASENAME, self.datetime.strftime('%Y')
-            )
+            es_index = f"{INDEX_BASENAME}{self.datetime.strftime('%Y')}"
             feature['id'] = feature['properties']['identifier']
 
             # add properties
@@ -148,16 +146,16 @@ class CumulativeEffectsHSLoader(BaseLoader):
 
         self.filepath = Path(filepath)
 
-        LOGGER.debug('Received file {}'.format(self.filepath))
+        LOGGER.debug(f'Received file {self.filepath}')
 
         # generate geojson features
         package = self.generate_geojson_features()
         try:
             r = self.conn.submit_elastic_package(package, request_size=80000)
-            LOGGER.debug('Result: {}'.format(r))
+            LOGGER.debug(f'Result: {r}')
             return True
         except Exception as err:
-            LOGGER.warning('Error indexing: {}'.format(err))
+            LOGGER.warning(f'Error indexing: {err}')
             return False
 
 
@@ -205,7 +203,7 @@ def add(ctx, file_, directory, es, username, password, ignore_certs):
 @click.pass_context
 @cli_options.OPTION_DAYS(
     default=DAYS_TO_KEEP,
-    help='Delete indexes older than n days (default={})'.format(DAYS_TO_KEEP)
+    help=f'Delete indexes older than n days (default={DAYS_TO_KEEP})'
 )
 @cli_options.OPTION_ELASTICSEARCH()
 @cli_options.OPTION_ES_USERNAME()
@@ -220,12 +218,12 @@ def clean_indexes(ctx, days, es, username, password, ignore_certs):
     conn_config = configure_es_connection(es, username, password, ignore_certs)
     conn = ElasticsearchConnector(conn_config)
 
-    indexes = conn.get('{}*'.format(INDEX_BASENAME))
+    indexes = conn.get(f'{INDEX_BASENAME}*')
 
     if indexes:
         indexes_to_delete = check_es_indexes_to_delete(indexes, days)
         if indexes_to_delete:
-            click.echo('Deleting indexes {}'.format(indexes_to_delete))
+            click.echo(f'Deleting indexes {indexes_to_delete}')
             conn.delete(','.join(indexes_to_delete))
 
     click.echo('Done')
@@ -247,13 +245,13 @@ def delete_index(ctx, es, username, password, ignore_certs, index_template):
     conn_config = configure_es_connection(es, username, password, ignore_certs)
     conn = ElasticsearchConnector(conn_config)
 
-    all_indexes = '{}*'.format(INDEX_BASENAME)
+    all_indexes = f'{INDEX_BASENAME}*'
 
-    click.echo('Deleting indexes {}'.format(all_indexes))
+    click.echo(f'Deleting indexes {all_indexes}')
     conn.delete(all_indexes)
 
     if index_template:
-        click.echo('Deleting index template {}'.format(INDEX_BASENAME))
+        click.echo(f'Deleting index template {INDEX_BASENAME}')
         conn.delete_template(INDEX_BASENAME)
 
     click.echo('Done')

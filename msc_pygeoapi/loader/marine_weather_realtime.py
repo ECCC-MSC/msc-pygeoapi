@@ -3,7 +3,7 @@
 # Author: Etienne Pelletier <etienne.pelletier@canada.ca>
 #
 # Copyright (c) 2020 Etienne Pelletier
-# Copyright (c) 2022 Tom Kralidis
+# Copyright (c) 2023 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -423,10 +423,7 @@ class MarineWeatherRealtimeLoader(BaseLoader):
             return True
 
         except exceptions.NotFoundError:
-            LOGGER.warning(
-                "Could not get forecast polygon document with id: "
-                "{}".format(forecast_id)
-            )
+            LOGGER.warning(f'Could not get forecast polygon document with id: {forecast_id}')  # noqa
 
     def generate_warnings(self):
         """
@@ -444,16 +441,12 @@ class MarineWeatherRealtimeLoader(BaseLoader):
 
         feature['geometry'] = self.area['geometry']
 
-        feature['properties']['area_{}'.format(self.language)] = self.area[
-            'name'
-        ]
-        feature['properties']['region_{}'.format(self.language)] = self.area[
-            'region'
-        ]
+        feature['properties'][f'area_{self.language}'] = self.area['name']
+        feature['properties'][f'region_{self.language}'] = self.area['region']
         feature['properties'][
-            'sub_region_{}'.format(self.language)
+            f'sub_region_{self.language}'
         ] = self.area['subRegion']
-        feature['properties']['warnings_{}'.format(self.language)] = []
+        feature['properties'][f'warnings_{self.language}'] = []
 
         if len(warnings) > 0:
             for elem in warnings:
@@ -461,29 +454,15 @@ class MarineWeatherRealtimeLoader(BaseLoader):
                     elem.findall('event/' 'dateTime')
                 )
                 location = {
-                    'location_{}'.format(self.language): elem.attrib['name'],
-                    'issued_datetime_utc_{}'.format(
-                        self.language
-                    ): strftime_rfc3339(datetimes['utc']),
-                    'issued_datetime_local_{}'.format(
-                        self.language
-                    ): strftime_rfc3339(datetimes['local']),
-                    'event_type_{}'.format(self.language): elem.find(
-                        'event'
-                    ).attrib['type'],
-                    'event_category_{}'.format(self.language): elem.find(
-                        'event'
-                    ).attrib['category'],
-                    'event_name_{}'.format(self.language): elem.find(
-                        'event'
-                    ).attrib['name'],
-                    'event_status_{}'.format(self.language): elem.find(
-                        'event'
-                    ).attrib['status'],
+                    f'location_{self.language}': elem.attrib['name'],
+                    f'issued_datetime_utc_{self.language}': strftime_rfc3339(datetimes['utc']),  # noqa
+                    f'issued_datetime_local_{self.language}': strftime_rfc3339(datetimes['local']),  # noqa
+                    f'event_type_{self.language}': elem.find('event').attrib['type'],  # noqa
+                    f'event_category_{self.language}': elem.find('event').attrib['category'],  # noqa
+                    f'event_name_{self.language}': elem.find('event').attrib['name'],  # noqa
+                    f'event_status_{self.language}': elem.find('event').attrib['status']  # noqa
                 }
-                feature['properties'][
-                    'warnings_{}'.format(self.language)
-                ].append(location)
+                feature['properties'][f'warnings_{self.language}'].append(location)  # noqa
 
         self.items.append(feature)
 
@@ -510,16 +489,16 @@ class MarineWeatherRealtimeLoader(BaseLoader):
         feature = {'type': 'Feature', 'geometry': {}, 'properties': {}}
 
         feature['geometry'] = self.area['geometry']
-        feature['properties']['area_{}'.format(self.language)] = self.area[
+        feature['properties'][f'area_{self.language}'] = self.area[
             'name'
         ]
-        feature['properties']['region_{}'.format(self.language)] = self.area[
+        feature['properties'][f'region_{self.language}'] = self.area[
             'region'
         ]
         feature['properties'][
-            'sub_region_{}'.format(self.language)
+            f'sub_region_{self.language}'
         ] = self.area['subRegion']
-        feature['properties']['forecasts_{}'.format(self.language)] = []
+        feature['properties'][f'forecasts_{self.language}'] = []
 
         if len(regular_forecasts) > 0:
             datetimes = self.create_datetime_dict(
@@ -543,49 +522,37 @@ class MarineWeatherRealtimeLoader(BaseLoader):
             ]
             for location in locations:
                 location = {
-                    'location_{}'.format(self.language): location.attrib[
-                        'name'
-                    ]
-                    if 'name' in location.attrib
-                    else self.area['name'],
-                    'period_of_coverage_{}'.format(
-                        self.language
-                    ): location.find('weatherCondition/periodOfCoverage').text
+                    f'location_{self.language}': location.attrib['name']
+                    if 'name' in location.attrib else self.area['name'],
+                    f'period_of_coverage_{self.language}':
+                    location.find('weatherCondition/periodOfCoverage').text
                     if location.find('weatherCondition/periodOfCoverage')
-                    is not None
-                    else None,
-                    'wind_{}'.format(self.language): location.find(
+                    is not None else None,
+                    f'wind_{self.language}': location.find(
                         'weatherCondition/wind'
                     ).text
                     if location.find('weatherCondition/wind') is not None
                     else None,
-                    'weather_visibility_{}'.format(
-                        self.language
-                    ): location.find('weatherCondition/weatherVisibility').text
+                    f'weather_visibility_{self.language}':
+                    location.find('weatherCondition/weatherVisibility').text
                     if location.find('weatherCondition/weatherVisibility')
-                    is not None
-                    else None,
-                    'air_temperature_{}'.format(self.language): location.find(
+                    is not None else None,
+                    f'air_temperature_{self.language}': location.find(
                         'weatherCondition/airTemperature'
                     ).text
                     if location.find('weatherCondition/airTemperature')
-                    is not None
-                    else None,
-                    'freezing_spray_{}'.format(self.language): location.find(
+                    is not None else None,
+                    f'freezing_spray_{self.language}': location.find(
                         'weatherCondition/freezingSpray'
                     ).text
                     if location.find('weatherCondition/freezingSpray')
-                    is not None
-                    else None,
-                    'status_statement_{}'.format(self.language): location.find(
+                    is not None else None,
+                    f'status_statement_{self.language}': location.find(
                         'statusStatement'
                     ).text
-                    if location.find('statusStatement') is not None
-                    else None,
+                    if location.find('statusStatement') is not None else None
                 }
-                feature['properties'][
-                    'forecasts_{}'.format(self.language)
-                ].append(location)
+                feature['properties'][f'forecasts_{self.language}'].append(location)  # noqa
 
         self.items.append(feature)
 
@@ -612,18 +579,10 @@ class MarineWeatherRealtimeLoader(BaseLoader):
         feature = {'type': 'Feature', 'geometry': {}, 'properties': {}}
 
         feature['geometry'] = self.area['geometry']
-        feature['properties']['area_{}'.format(self.language)] = self.area[
-            'name'
-        ]
-        feature['properties']['region_{}'.format(self.language)] = self.area[
-            'region'
-        ]
-        feature['properties'][
-            'sub_region_{}'.format(self.language)
-        ] = self.area['subRegion']
-        feature['properties'][
-            'extended_forecasts_{}'.format(self.language)
-        ] = []
+        feature['properties'][f'area_{self.language}'] = self.area['name']
+        feature['properties'][f'region_{self.language}'] = self.area['region']
+        feature['properties'][f'sub_region_{self.language}'] = self.area['subRegion']  # noqa
+        feature['properties'][f'extended_forecasts_{self.language}'] = []
 
         if len(extended_forecasts) > 0:
             datetimes = self.create_datetime_dict(
@@ -647,34 +606,29 @@ class MarineWeatherRealtimeLoader(BaseLoader):
             ]
             for location in locations:
                 location = {
-                    'location_{}'.format(self.language): location.attrib[
-                        'name'
-                    ]
+                    f'location_{self.language}': location.attrib['name']
                     if 'name' in location.attrib
                     else self.area['name'],
-                    'forecast_periods_{}'.format(self.language): [
+                    f'forecast_periods_{self.language}': [
                         {
-                            'forecast_period_{}'.format(
-                                self.language
-                            ): forecast_period.attrib['name'],
-                            'forecast_{}'.format(
-                                self.language
-                            ): forecast_period.text,
+                            f'forecast_period_{self.language}':
+                            forecast_period.attrib['name'],
+                            f'forecast_{self.language}':
+                            forecast_period.text,
                         }
                         for forecast_period in location.findall(
                             'weatherCondition/'
                         )
                         if location.findall('weatherCondition/') is not None
                     ],
-                    'status_statement_{}'.format(self.language): location.find(
+                    f'status_statement_{self.language}': location.find(
                         'statusStatement'
                     ).text
                     if location.find('statusStatement') is not None
                     else None,
                 }
                 feature['properties'][
-                    'extended_forecasts_{}'.format(self.language)
-                ].append(location)
+                    f'extended_forecasts_{self.language}'].append(location)
 
         self.items.append(feature)
 
@@ -697,7 +651,7 @@ class MarineWeatherRealtimeLoader(BaseLoader):
         self.filepath = Path(filepath)
         self.parse_filename()
 
-        LOGGER.debug('Received file {}'.format(self.filepath))
+        LOGGER.debug(f'Received file {self.filepath}')
 
         self.root = etree.parse(str(self.filepath.resolve())).getroot()
 
@@ -775,7 +729,7 @@ def delete_index(ctx, index_name, es, username, password, ignore_certs):
             ),
             abort=True,
         ):
-            LOGGER.info('Deleting ES index {}'.format(index_name))
+            LOGGER.info(f'Deleting ES index {index_name}')
             conn.delete(index_name)
             return True
     else:

@@ -3,6 +3,7 @@
 # Author: Philippe Theroux <Philippe.Theroux@ec.gc.ca>
 #
 # Copyright (c) 2022 Philippe Theroux
+# Copyright (c) 2023 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -253,7 +254,7 @@ def extract_sounding_data(
         file_name = f"/{date_formatted}T{run_hour}Z_MSC_HRDPS_{{info}}_ISBL_*_RLatLon0.0225_PT{forecast_hour}H.grib2"  # noqa
         first_value = f"/{date_formatted}T{run_hour}Z_MSC_HRDPS_{{info}}_AGL-{{height}}m_RLatLon0.0225_PT{forecast_hour}H.grib2"  # noqa
     else:
-        msg = "Not a valid model: {}".format(model)
+        msg = f'Not a valid model: {model}'
         LOGGER.error(msg)
         raise ValueError(msg)
 
@@ -629,14 +630,14 @@ try:
                     noval_above_100,
                 )
             except ValueError as err:
-                msg = "Process execution error: {}".format(err)
+                msg = f'Process execution error: {err}'
                 LOGGER.error(msg)
                 raise ProcessorExecuteError(msg)
 
             return mimetype, output
 
         def __repr__(self):
-            return "<ExtractSoundingDataProcessor> {}".format(self.name)
+            return f'<ExtractSoundingDataProcessor> {self.name}'
 
 except (ImportError, RuntimeError) as err:
-    LOGGER.warning("Import errors: {}".format(err))
+    LOGGER.warning(f'Import errors: {err}')
