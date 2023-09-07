@@ -611,7 +611,7 @@ class CanGRDProvider(BaseProvider):
 
         if self._data.crs is not None:
             if self._data.crs.is_projected:
-                bbox_crs = f'http://www.opengis.net/def/crs/OGC/1.3/{self._data.crs.to_epsg()'  # noqa
+                bbox_crs = f'http://www.opengis.net/def/crs/OGC/1.3/{self._data.crs.to_epsg()}'  # noqa
                 properties['bbox_crs'] = bbox_crs
 
                 properties['x_axis_label'] = 'x'
