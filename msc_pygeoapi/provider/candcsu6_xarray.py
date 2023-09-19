@@ -200,12 +200,15 @@ class CanDCSU6Provider(XarrayProvider):
             if coord.lower() == 'time':
                 time_var = coord
                 continue
-            if self._data.coords[coord].attrs['units'] == 'degrees_north':
-                y_var = coord
-                continue
-            if self._data.coords[coord].attrs['units'] == 'degrees_east':
-                x_var = coord
-                continue
+            try:
+                if self._data.coords[coord].attrs['units'] == 'degrees_north':
+                    y_var = coord
+                    continue
+                if self._data.coords[coord].attrs['units'] == 'degrees_east':
+                    x_var = coord
+                    continue
+            except KeyError:
+                LOGGER.warning(f'unknown dimension{self._data.coords[coord]}')
 
         if self.x_field is None:
             self.x_field = x_var
@@ -309,7 +312,7 @@ class CanDCSU6Provider(XarrayProvider):
                 value = str(value)
             return value
         except Exception as err:
-            LOGGER.error(err)
+            LOGGER.warning(err)
 
     def query(self, properties=[], subsets={},
               bbox=[], datetime_=None, format_='json'):
