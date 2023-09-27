@@ -228,7 +228,7 @@ def parse_swob(swob_file):
                         properties[f'{last_element}-qa'] = value
                     elif name == 'data_flag':
                         properties[f'{last_element}-data_flag-uom'] = uom
-                        properties[f'{last_element}-data_flag-code-src'] = nest_elem.attrib['code-src']  # noqa
+                        properties[f'{last_element}-data_flag-code_src'] = nest_elem.attrib['code-src']  # noqa
                         properties[f'{last_element}-data_flag-value'] = value
 
             swob_values['properties'] = properties

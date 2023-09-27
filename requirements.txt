@@ -4,6 +4,7 @@ fiona
 gdal
 lxml
 netcdf4
+pandas<2.1
 parse
 pygeometa
 pyproj<3.5
