@@ -111,7 +111,7 @@
       map.addLayer(bbox_layer);
       map.fitBounds(bbox_layer.getBounds(), {maxZoom: 5});
     } else {
-      const warnAlert = '<div class="alert alert-warning mrgn-tp-md">{% trans %}Map extent preview not available{% endtrans %}</div>';
+      const warnAlert = `<div class="alert alert-warning mrgn-tp-md">{% trans %}Map extent preview not available{% endtrans %}</div>`;
       document.getElementById('items-map').insertAdjacentHTML('afterend', warnAlert);
     }
     </script>
