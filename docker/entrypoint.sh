@@ -49,14 +49,18 @@ entry_cmd=${1:-run}
 # Shorthand (bash)
 function error() {
     echo "ERROR: $@"
-    exit -1
 }
 
 echo "Trying to generate OpenAPI document with PYGEOAPI_CONFIG=${PYGEOAPI_CONFIG} and PYGEOAPI_OPENAPI=${PYGEOAPI_OPENAPI}..."
 pygeoapi openapi generate ${PYGEOAPI_CONFIG} --output-file ${PYGEOAPI_OPENAPI}
 # pygeoapi openapi validate ${PYGEOAPI_OPENAPI}
 
-[[ $? -ne 0 ]] && error "OpenAPI document could not be generated ERROR"
+if [ $? -ne 0 ]; then
+    error "OpenAPI document could not be generated ERROR"
+    DEFAULT_PYGEOAPI_OPENAPI=`echo ${PYGEOAPI_OPENAPI} | sed 's|deploy/nightly|deploy/default|'`
+    echo "Using default OpenAPI document with DEFAULT_PYGEOAPI_OPENAPI=${DEFAULT_PYGEOAPI_OPENAPI}"
+    cp ${DEFAULT_PYGEOAPI_OPENAPI} ${PYGEOAPI_OPENAPI}
+fi
 
 echo "OpenAPI document generated. continue to pygeoapi..."
 
