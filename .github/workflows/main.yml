@@ -30,4 +30,6 @@ jobs:
     - name: Install package 📦
       run: python3 setup.py install
     - name: run tests ⚙️
-      run: pytest -k test_loader
+      run: |
+        pytest -k test_loader
+        pytest tests/test_openapi_document.py

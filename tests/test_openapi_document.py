@@ -1,4 +1,3 @@
-#!/bin/sh
 # =================================================================
 #
 # Author: Tom Kralidis <tom.kralidis@ec.gc.ca>
@@ -28,21 +27,21 @@
 #
 # =================================================================
 
-export MSC_PYGEOAPI_ES_TIMEOUT=90
-export MSC_PYGEOAPI_ES_URL=http://localhost:9200
-export MSC_PYGEOAPI_CACHEDIR=/tmp
-export MSC_PYGEOAPI_OGC_API_URL=https://api.wxod-dev.cmc.ec.gc.ca
-export MSC_PYGEOAPI_OGC_API_URL_BASEPATH=/
-export MSC_PYGEOAPI_METPX_EVENT_FILE_PY=/opt/msc-pygeoapi/event/file_.py
-export MSC_PYGEOAPI_METPX_EVENT_MESSAGE_PY=/opt/msc-pygeoapi/event/message.py
+import pytest
 
-export XDG_CACHE_HOME=/tmp/geoadm-sarra-logs
+from util import get_test_file_path
 
-export PYGEOAPI_CONFIG=/opt/msc-pygeoapi/conf/msc-pygeoapi-config.yml
-export PYGEOAPI_OPENAPI=/opt/msc-pygeoapi/conf/msc-pygeoapi-openapi.yml
 
-mkdir -p $XDG_CACHE_HOME
-chown -R geoadm.geoadm $XDG_CACHE_HOME
+@pytest.fixture()
+def openapi_config():
+    openapi_document = '../deploy/default/msc-pygeoapi-openapi.yml'
+    with open(get_test_file_path(openapi_document)) as fh:
+        return fh.read()
 
-# prepare hydrometric realtime
-#msc-pygeoapi data hydrometric_realtime cache-stations
+
+def test_openapi_config(openapi_config):
+    """Test OpenAPI document"""
+
+    assert 'https://api.w' not in openapi_config
+    assert 'url: ${MSC_PYGEOAPI_OGC_API_URL}' in openapi_config
+    assert '$ref: ${MSC_PYGEOAPI_OGC_API_URL}' in openapi_config
