@@ -1501,6 +1501,92 @@ resources:
               data: ${MSC_PYGEOAPI_ES_URL}/aqhi_stations
               id_field: id
 
+    public-forecast-zones-hybrid:
+        type: collection
+        title:
+            en: Public Standard Forecast Zones - Hybrid
+            fr: Zones standards de prévision publiques - Hybride
+        description:
+            en: The Public Standard Forecast Zones layer is a collection of public program forecast location zone polygons that represents bounded measurable locations at the Public program Standard level. The public program standard level is used in most forecasts, warnings, watches, advisories and special weather statement. With the exception of the Manitoba Lakes, the layer is made up of mostly the land kind of polygons. The hybrid product is a mix of cartographic detail and exaggerated coverage (most notably in marine areas).
+            fr: La couche de zones standards de prévision publiques est un ensemble de polygones d'emplacements de prévision des programmes publics qui représentent des emplacements délimités et mesurables au niveau standard du programme public. Le niveau standard du programme public est utilisé dans la majorité des prévisions, avertissements, veilles, avis et bulletins météorologiques spéciaux. À l'exception des lacs du Manitoba, la couche est constituée principalement de polygones de type terrestre. Le produit hybride est un mélange de détails cartographiques et de couverture exagérée (notamment dans les zones maritimes).
+        keywords:
+            en: [polygons, boundaries, shapes, forecast zones, forecast sites, forecast locations, shape files, locations, CLC, public program, standard level]
+            fr: [polygones, limites, forme, de zones de prévision, de sites de prévision, d’emplacements de prévision, shape files, emplacements, CLC, programme public, niveau standard]
+        crs:
+            - CRS84
+        links: []  # TODO
+        extents:
+            spatial:
+                bbox: [-141.001730, 41.713416, -52.497999, 76.655502]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+            temporal:
+                begin: null
+                end: null
+        providers:
+            - type: feature
+              name: Elasticsearch
+              data: ${MSC_PYGEOAPI_ES_URL}/forecast_polygons_land_hybrid
+              id_field: FEATURE_ID
+              properties:
+                - FEATURE_ID
+                - CLC
+                - NAME
+                - NOM
+                - PERIM_KM
+                - AREA_KM2
+                - LAT_DD
+                - LON_DD
+                - KIND
+                - USAGE
+                - DEPICTN
+                - PROVINCE_C
+                - COUNTRY_C
+                - WATRBODY_C
+                - version
+
+    marine-forecast-zones-hybrid:
+        type: collection
+        title:
+            en: Marine Standard Forecast Zones - Hybrid
+            fr: Zones standards de prévision marine - Hybride
+        description:
+            en: The Marine Standard Forecast Zones layer is a collection of forecast location polygons that represents bounded (zone) locations at the Marine Program Standard level. The Marine Program standard level is used in most forecasts, warnings, watches, advisories and special marine weather statements. This layer is comprised mainly of water based Marine regions, Met Areas, Lakes, Great Lakes and many of the larger Inland water bodies. The hybrid product is a mix of cartographic detail and exaggerated coverage (most notably in marine areas).
+            fr: La couche de zones standards de prévision marine est un ensemble de polygones d'emplacements de prévision qui représentent des emplacements délimités (des zones) au niveau standard du programme marine. Le niveau standard du programme marine est utilisé dans la majorité des prévisions, avertissements, veilles, avis et bulletins spéciaux de météo marine. Cette couche est principalement composée de plans d'eau de régions marines, MetAreas, de lacs, des Grands Lacs, ainsi que de nombreux plans d'eau d'envergure situés à l'intérieur des terres. Le produit hybride est un mélange de détails cartographiques et de couverture exagérée (notamment dans les zones maritimes).
+        keywords:
+            en: [polygons, boundaries, shapes, forecast zones, forecast sites, forecast locations, shape files, locations, CLC, marine program, standard level]
+            fr: [polygones, limites, forme, de zones de prévision, de sites de prévision, d’emplacements de prévision, shape files, emplacements, CLC, programme marine, niveau standard]
+        crs:
+            - CRS84
+        links: []  # TODO
+        extents:
+            spatial:
+                bbox: [-141.002517, 39.999923, -46.725124, 87.000000]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+            temporal:
+                begin: null
+                end: null
+        providers:
+            - type: feature
+              name: Elasticsearch
+              data: ${MSC_PYGEOAPI_ES_URL}/forecast_polygons_water_hybrid
+              id_field: FEATURE_ID
+              properties:
+                - FEATURE_ID
+                - CLC
+                - NAME
+                - NOM
+                - PERIM_KM
+                - AREA_KM2
+                - LAT_DD
+                - LON_DD
+                - KIND
+                - USAGE
+                - DEPICTN
+                - PROVINCE_C
+                - COUNTRY_C
+                - WATRBODY_C
+                - version
+
     msc-datamart:
         type: stac-collection
         title:
