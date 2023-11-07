@@ -494,22 +494,21 @@ class AhccdLoader(BaseLoader):
                 record['properties']['identifier__identifiant'] = stn_id
             elif index == 'monthly':
                 index_name = 'ahccd_monthly'
-                record['properties']['date'] = '-'.join([
-                    record['properties']['identifier__identifiant'].split('.')[
-                        1
-                    ],
-                    record['properties']['identifier__identifiant'].split('.')[
-                        2
-                    ],
-                ])
+                date_parts = record['properties'][
+                    'identifier__identifiant'
+                ].split('.')
+                record['properties'][
+                    'date'
+                ] = f"{date_parts[1]}-{date_parts[2]}"
                 del record['properties']['year__annee']
             elif index == 'trends':
                 index_name = 'ahccd_trends'
-                identifier = '.'.join([
+                station_id, period, measurement_type = (
                     record['properties']['station_id__id_station'],
                     record['properties']['period__periode'],
                     record['properties']['measurement_type__type_mesure']
-                ])
+                )
+                identifier = f'{station_id}.{period}.{measurement_type}'
                 record['properties']['identifier__identifiant'] = identifier
 
             action = {

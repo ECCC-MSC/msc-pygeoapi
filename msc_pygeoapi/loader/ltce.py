@@ -554,14 +554,15 @@ class LtceLoader(BaseLoader):
                         else insert_dict[key]
                     )
 
+            virtual_climate_id, element_name, climate_identifier, start, end = (  # noqa
+                insert_dict['VIRTUAL_CLIMATE_ID'],
+                insert_dict['ELEMENT_NAME_E'],
+                insert_dict['CLIMATE_IDENTIFIER'],
+                insert_dict['START_DATE'],
+                insert_dict['END_DATE']
+            )
             es_id = slugify(
-                '-'.join([
-                    insert_dict['VIRTUAL_CLIMATE_ID'],
-                    insert_dict["ELEMENT_NAME_E"],
-                    insert_dict["CLIMATE_IDENTIFIER"],
-                    insert_dict["START_DATE"],
-                    insert_dict["END_DATE"]
-                ])
+                f'{virtual_climate_id}-{element_name}-{climate_identifier}-{start}-{end}'  # noqa
             )
 
             coords = [
@@ -679,13 +680,12 @@ class LtceLoader(BaseLoader):
                         else insert_dict[key]
                     )
 
-            virtual_climate_id = insert_dict['VIRTUAL_CLIMATE_ID']
-            es_id = '-'.join([
+            virtual_climate_id, local_month, local_day = (
                 insert_dict['VIRTUAL_CLIMATE_ID'],
                 insert_dict['LOCAL_MONTH'],
                 insert_dict['LOCAL_DAY']
-            ])
-
+            )
+            es_id = f'{virtual_climate_id}-{local_month}-{local_day}'
             # check if we have station IDs record begin and end. If not
             # retrieve the information and store in stations_dict
             if virtual_climate_id not in stations_dict:
@@ -827,13 +827,12 @@ class LtceLoader(BaseLoader):
                         else insert_dict[key]
                     )
 
-            virtual_climate_id = insert_dict['VIRTUAL_CLIMATE_ID']
-            es_id = '-'.join([
+            virtual_climate_id, local_month, local_day = (
                 insert_dict['VIRTUAL_CLIMATE_ID'],
-                insert_dict["LOCAL_MONTH"],
-                insert_dict["LOCAL_DAY"]
-            ])
-
+                insert_dict['LOCAL_MONTH'],
+                insert_dict['LOCAL_DAY']
+            )
+            es_id = f'{virtual_climate_id}-{local_month}-{local_day}'
             # check if we have station IDs record begin and end if not retrieve
             if virtual_climate_id not in stations_dict:
                 stations_dict[virtual_climate_id] = self.get_stations_info(
@@ -940,12 +939,12 @@ class LtceLoader(BaseLoader):
                         else insert_dict[key]
                     )
 
-            virtual_climate_id = insert_dict['VIRTUAL_CLIMATE_ID']
-            es_id = '-'.join([
+            virtual_climate_id, local_month, local_day = (
                 insert_dict['VIRTUAL_CLIMATE_ID'],
-                insert_dict["LOCAL_MONTH"],
-                insert_dict["LOCAL_DAY"]
-            ])
+                insert_dict['LOCAL_MONTH'],
+                insert_dict['LOCAL_DAY']
+            )
+            es_id = f'{virtual_climate_id}-{local_month}-{local_day}'
 
             # check if we have station IDs record begin and end if not retrieve
             if virtual_climate_id not in stations_dict:

@@ -697,11 +697,12 @@ class ClimateArchiveLoader(BaseLoader):
                         if insert_dict[key] is not None
                         else insert_dict[key]
                     )
-            insert_dict['ID'] = '.'.join([
+            stn_id, normal_id, month = (
                 insert_dict['STN_ID'],
                 insert_dict['NORMAL_ID'],
                 insert_dict['MONTH']
-            ])
+            )
+            insert_dict['ID'] = f'{stn_id}.{normal_id}.{month}'
             if insert_dict['STN_ID'] in stn_dict:
                 coords = stn_dict[insert_dict['STN_ID']]['coordinates']
                 insert_dict['STATION_NAME'] = stn_dict[insert_dict['STN_ID']][
@@ -794,12 +795,12 @@ class ClimateArchiveLoader(BaseLoader):
                 if insert_dict['LAST_UPDATED'] is not None
                 else insert_dict['LAST_UPDATED']
             )
-
-            insert_dict['ID'] = '.'.join([
+            stn_id, local_year, local_month = (
                 insert_dict['STN_ID'],
                 insert_dict['LOCAL_YEAR'],
                 insert_dict['LOCAL_MONTH']
-            ])
+            )
+            insert_dict['ID'] = f'{stn_id}.{local_year}.{local_month}'
             if insert_dict['STN_ID'] in stn_dict:
                 coords = stn_dict[insert_dict['STN_ID']]['coordinates']
                 insert_dict['PROVINCE_CODE'] = stn_dict[insert_dict['STN_ID']][
@@ -877,12 +878,13 @@ class ClimateArchiveLoader(BaseLoader):
                     else insert_dict['LOCAL_DATE']
                 )
 
-                insert_dict['ID'] = '.'.join([
+                climate_identifier, local_year, local_month, local_day = (
                     insert_dict['CLIMATE_IDENTIFIER'],
                     insert_dict['LOCAL_YEAR'],
                     insert_dict['LOCAL_MONTH'],
                     insert_dict['LOCAL_DAY']
-                ])
+                )
+                insert_dict['ID'] = f'{climate_identifier}.{local_year}.{local_month}.{local_day}'  # noqa
                 if insert_dict['STN_ID'] in stn_dict:
                     coords = stn_dict[insert_dict['STN_ID']]['coordinates']
                     insert_dict['PROVINCE_CODE'] = stn_dict[
@@ -962,14 +964,14 @@ class ClimateArchiveLoader(BaseLoader):
                     if insert_dict['LOCAL_DATE'] is not None
                     else insert_dict['LOCAL_DATE']
                 )
-
-                insert_dict['ID'] = '.'.join([
+                climate_identifier, local_year, local_month, local_day, local_hour = (  # noqa
                     insert_dict['CLIMATE_IDENTIFIER'],
                     insert_dict['LOCAL_YEAR'],
                     insert_dict['LOCAL_MONTH'],
                     insert_dict['LOCAL_DAY'],
                     insert_dict['LOCAL_HOUR']
-                ])
+                )
+                insert_dict['ID'] = f'{climate_identifier}.{local_year}.{local_month}.{local_day}.{local_hour}'  # noqa
                 if insert_dict['STN_ID'] in stn_dict:
                     coords = stn_dict[insert_dict['STN_ID']]['coordinates']
                     insert_dict['PROVINCE_CODE'] = stn_dict[

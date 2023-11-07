@@ -476,9 +476,7 @@ class HydatLoader(BaseLoader):
                     word_out: '',
                     'IDENTIFIER': '',
                 }
-                date_ = '-'.join([
-                    str(row[1]), self.zero_pad(row[2]), self.zero_pad(i)
-                ])
+                date_ = f'{row[1]}-{self.zero_pad(row[2])}-{self.zero_pad(i)}'
                 insert_dict['DATE'] = date_
                 insert_dict['IDENTIFIER'] = f'{row[0]}.{date_}'
                 value = row[keys.index(word_in.upper() + str(i))]
@@ -889,18 +887,14 @@ class HydatLoader(BaseLoader):
                     f'Could not find min date for station {station_number}'
                 )
             else:
-                min_date = '-'.join([
-                    year, self.zero_pad(min_month), self.zero_pad(min_day)
-                ])
+                min_date = f'{year}-{self.zero_pad(min_month)}-{self.zero_pad(min_day)}' # noqa
             if max_month is None or max_day is None:
                 max_date = None
                 LOGGER.warning(
                     f'Could not find max date for station {station_number}'
                 )
             else:
-                max_date = '-'.join([
-                    year, self.zero_pad(max_month), self.zero_pad(max_day)
-                ])
+                max_date = f'{year}-{self.zero_pad(max_month)}-{self.zero_pad(max_day)}' # noqa
             symbol_keys = symbol_table.columns.keys()
             if min_symbol is not None and min_symbol.strip():
                 args = {'SYMBOL_ID': min_symbol}
@@ -1036,11 +1030,9 @@ class HydatLoader(BaseLoader):
                     f'Could not find date for station {station_number}'
                 )
             elif hour is None or minute is None:
-                date_ = '-'.join([
-                    year, self.zero_pad(month), self.zero_pad(day)
-                ])
+                date_ = f'{year}-{self.zero_pad(month)}-{self.zero_pad(day)}'
             else:
-                ymd = '-'.join([year, self.zero_pad(month), self.zero_pad(day)])  # noqa
+                ymd = f'{year}-{self.zero_pad(month)}-{self.zero_pad(day)}'
                 hm = ':'.join([self.zero_pad(hour), self.zero_pad(minute)])
                 date_ = f'{ymd}T{hm}'
 
