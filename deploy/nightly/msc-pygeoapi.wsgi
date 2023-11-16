@@ -49,7 +49,7 @@ import sys
 os.environ['PYGEOAPI_CONFIG'] = '/data/web/msc-pygeoapi-nightly/latest/msc-pygeoapi/deploy/nightly/msc-pygeoapi-config.yml'
 os.environ['PYGEOAPI_OPENAPI'] = '/data/web/msc-pygeoapi-nightly/latest/msc-pygeoapi/deploy/nightly/msc-pygeoapi-openapi.yml'
 os.environ['MSC_PYGEOAPI_ES_URL'] = 'http://localhost:9200'
-os.environ['MSC_PYGEOAPI_OGC_API_URL'] = 'https://geomet-dev-21-nightly.cmc.ec.gc.ca/msc-pygeoapi/nightly/latest'
+os.environ['MSC_PYGEOAPI_OGC_API_URL'] = 'https://geomet-dev-22-nightly.cmc.ec.gc.ca/msc-pygeoapi/nightly/latest'
 os.environ['MSC_PYGEOAPI_OGC_API_URL_BASEPATH'] = '/'
 os.environ['MSC_PYGEOAPI_TEMPLATES'] = '/data/web/msc-pygeoapi-nightly/latest/msc-pygeoapi/theme/templates'
 os.environ['MSC_PYGEOAPI_STATIC'] = '/data/web/msc-pygeoapi-nightly/latest/msc-pygeoapi/theme/static'
