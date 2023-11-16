@@ -29,6 +29,8 @@
 #
 # =================================================================
 
+import cftime
+from datetime import datetime
 import logging
 import tempfile
 
@@ -307,6 +309,12 @@ class ClimateProvider(XarrayProvider):
         """
 
         try:
+            if isinstance(datetime_, cftime._cftime.DatetimeNoLeap):
+                cftime_str = datetime_.strftime('%Y-%m-%d %H:%M:%S')
+                python_datetime = datetime.strptime(cftime_str,
+                                                    '%Y-%m-%d %H:%M:%S')
+                datetime_ = np.datetime64(python_datetime)
+
             if any(month in self.data for month in self.monthly_data):
                 month = datetime_.astype('datetime64[M]').astype(int) % 12 + 1
                 year = datetime_.astype('datetime64[Y]').astype(int) + 1970
