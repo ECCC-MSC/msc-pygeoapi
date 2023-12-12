@@ -79,7 +79,7 @@ MAPPINGS = {
 SETTINGS = {
     'order': 0,
     'version': 1,
-    'index_patterns': [INDEX_BASENAME],
+    'index_patterns': [f'{INDEX_BASENAME}*'],
     'settings': {'number_of_shards': 1, 'number_of_replicas': 0},
     'mappings': None
 }
