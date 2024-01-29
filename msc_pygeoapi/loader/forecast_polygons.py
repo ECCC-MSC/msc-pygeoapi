@@ -51,7 +51,7 @@ LOGGER = logging.getLogger(__name__)
 INDEX_NAME = 'forecast_polygons_{}_{}'
 
 FILE_PROPERTIES = {
-    'OBJECT_ID': {
+    'OBJECTID': {
         'type': 'integer',
     },
     'CLC': {
