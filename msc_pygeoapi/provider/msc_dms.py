@@ -144,7 +144,7 @@ class MSCDMSCoreAPIProvider(BaseProvider):
             elif isinstance(v, dict):
                 type_ = 'object'
 
-            fields_[k] = {'type': type_}
+            fields_[k] = {'type': type_, 'title': k}
             fields_ = dict(sorted(fields_.items()))
 
         return fields_
@@ -401,9 +401,7 @@ class MSCDMSCoreAPIEDRProvider(BaseEDRProvider, MSCDMSCoreAPIProvider):
         MSCDMSCoreAPIProvider.__init__(self, provider_def)
 
     def get_fields(self):
-        new_fields = {
-            'field': []
-        }
+        new_fields = {}
 
         fields_ = MSCDMSCoreAPIProvider.get_fields(self)
 
@@ -412,6 +410,7 @@ class MSCDMSCoreAPIEDRProvider(BaseEDRProvider, MSCDMSCoreAPIProvider):
                 continue
 
             uom = None
+            units = None
             unit_field = f'{key}-uom'
 
             if unit_field in fields_:
@@ -426,6 +425,8 @@ class MSCDMSCoreAPIEDRProvider(BaseEDRProvider, MSCDMSCoreAPIProvider):
             field_def = {
                 'id': key,
                 'name': key,
+                'title': key,
+                'x-ogc-unit': units,
                 'type': 'Quantity',
                 'encodingInfo': {
                     'dataType': f"http://www.opengis.net/def/dataType/OGC/0/{value['type']}"  # noqa
@@ -435,7 +436,7 @@ class MSCDMSCoreAPIEDRProvider(BaseEDRProvider, MSCDMSCoreAPIProvider):
             if uom is not None:
                 field_def['uom'] = uom
 
-            new_fields['field'].append(field_def)
+            new_fields[key] = field_def
 
         return new_fields
 
