@@ -1,6 +1,6 @@
 click
 elasticsearch>=8,<9
-fiona
+fiona<1.10
 gdal
 lxml
 netcdf4
@@ -10,7 +10,7 @@ pygeometa
 pyproj<3.5
 python-slugify
 pyyaml
-rasterio
+rasterio<1.4
 requests
 sqlalchemy
 unicodecsv
