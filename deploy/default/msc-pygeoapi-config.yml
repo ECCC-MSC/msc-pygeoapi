@@ -1501,6 +1501,84 @@ resources:
               data: ${MSC_PYGEOAPI_ES_URL}/aqhi_stations
               id_field: id
 
+    umos-gdps-realtime:
+        type: collection
+        title:
+            en: UMOS statistically post-processed Forecast of the Global Deterministic Prediction System (GDPS-UMOS-MLR)
+            fr: Prévision du système global de prévision déterministe statistiquement post-traité par UMOS (SGPD-UMOS-RLM)
+        description:
+                en: "Statistical post-processing of weather and environmental forecasts issued by numerical models, including the Global Deterministic Prediction System (GDPS), reduces systematic bias and error variance of raw numerical forecasts. This is achieved by establishing an optimal relationship between observations recorded at stations and co-located numerical model outputs. The Updatable Model Output Statistics (UMOS) system at Environment Canada carries out this task. The statistical relationships are built using the Model Output Statistics (MOS) method and a multiple linear regression (MLR) technic. The weather and environmental variable being statistically post-processed by UMOS consists of air temperature at approximately 1.5 meters above ground. The absence of a statistically post-processed forecast can be caused by a missing statistical model due to insufficient observation data quality or quantity. Geographical coverage includes weather stations across Canada. Statistically post-processed forecasts are available at the same frequency of emission as the numerical model producing the raw forecasts and at 3-hourly lead times up to 144 hours (6 days) for the GDPS."
+                fr: "Le post-traitement statistique des prévisions des modèles numériques du temps et de l'environnement, incluant le système global de prévision déterministe (SGPD), permet de réduire le biais systématique et la variance de l'erreur des prévisions numériques brutes. Pour ce faire, des relations statistiques optimisées entre les observations enregistrées aux stations et les sorties des modèles numériques aux points de grilles à proximité sont établies. Le système Updatable Model Output Statistics (UMOS) est un progiciel développé par Environnement et Changement climatique Canada permettant cela. Les relations sont bâties par l'entremise de la méthode Model Output Statistics (MOS) et par régression linéaire multiple (RLM). Les prévisions numériques brutes de la température de l'air à 1.5 mètres au-dessus de la surface de la terre sont post-traitées statistiquement. L'absence de prévisions post-traitées peut être causée par une qualité ou quantité insuffisantes d'observations qui empêche la production d’un modèle statistique. La région géographique couverte par ces données inclut le territoire couvert par les stations météorologiques du Canada. Les prévisions issues du post-traitement statistique sont disponibles à la même fréquence d'émission que les prévisions brutes produites par les modèles numériques et à des échéances de prévision aux 3 heures jusqu’à 144 heures (6 jours) pour le SGPD."
+        keywords:
+            en: [Weather forecasts, Air temperature, Wind]
+            fr: [Prévisions météorologiques, "Température de l'air", Vent]
+        crs:
+            - CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title:
+                  en: Global Deterministic Prediction System (GDPS) data statistically post-processed in GeoJSON format
+                  fr: Données GeoJSON du système global de prévision déterministe (SGPD) statistiquement post-traitées
+              href:
+                  en: https://eccc-msc.github.io/open-data/msc-data/nwp_gdps/readme_gdps-statpostproc-datamart_en/
+                  fr: https://eccc-msc.github.io/open-data/msc-data/nwp_gdps/readme_gdps-statpostproc-datamart_fr/
+              hreflang:
+                  en: en-CA
+                  fr: fr-CA
+        extents:
+            spatial:
+                bbox: [-141, 40, -42, 88]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+            temporal:
+                begin: 2023-07-28T00:00:00Z
+                end: null # or empty
+        providers:
+            - type: feature
+              name: Elasticsearch
+              data: ${MSC_PYGEOAPI_ES_URL}/umos-gdps-realtime.*
+              id_field: id
+              time_field: forecast_datetime
+
+    umos-rdps-realtime:
+        type: collection
+        title:
+            en: UMOS statistically post-processed Forecast of the Regional Deterministic Prediction System (RDPS-UMOS-MLR)
+            fr: Prévision du système régional de prévision déterministe statistiquement post-traité par UMOS (SRPD-UMOS-RLM)
+        description:
+                en: "Statistical post-processing of weather and environmental forecasts issued by numerical models, including the Regional Deterministic Prediction System (RDPS), reduces systematic bias and error variance of raw numerical forecasts. This is achieved by establishing an optimal relationship between observations recorded at stations and co-located numerical model outputs. The Updatable Model Output Statistics (UMOS) system at Environment Canada carries out this task. The statistical relationships are built using the Model Output Statistics (MOS) method and a multiple linear regression (MLR) technic. The weather and environmental variables being statistically post-processed by UMOS include air temperature and dew point temperature at approximately 1.5 meters above ground as well as wind speed and direction at 10 meters above ground or at the anemometer level in the case of a buoy. The absence of a statistically post-processed forecast can be caused by a missing statistical model due to insufficient observation data quality or quantity. In addition, the absence of a post-processed forecast for wind direction could also be due to weak forecasted wind components preventing the calculation of reliable results. The forecasts of wind speed and direction are produced from independent statistical post-processing models. Geographical coverage includes weather stations across Canada. Statistically post-processed forecasts is available at the same frequency of emission as the numerical model producing the raw forecasts and at 3-hourly lead times for the RDPS."
+                fr: "Le post-traitement statistique des prévisions des modèles numériques du temps et de l'environnement, incluant le système régional de prévision déterministe (SRPD), permet de réduire le biais systématique et la variance de l'erreur des prévisions numériques brutes. Pour ce faire, des relations statistiques optimisées entre les observations enregistrées aux stations et les sorties des modèles numériques aux points de grilles à proximité sont établies. Le système Updatable Model Output Statistics (UMOS) est un progiciel développé par Environnement et Changement climatique Canada permettant cela. Les relations sont bâties par l'entremise de la méthode Model Output Statistics (MOS) et par régression linéaire multiple (RLM). Les variables post-traitées statistiquement incluent les températures de l'air et du point de rosée à 1.5 mètres au-dessus de la surface de la terre ainsi que la vitesse et la direction du vent à 10 mètres au-dessus de la surface de la terre ou au niveau de l'anémomètre dans le cas d'une bouée. L'absence de prévisions post-traitées peut être causée par une qualité ou quantité insuffisantes d'observations qui empêche la production d’un modèle statistique. De plus, l'absence de prévision de la direction du vent peut aussi être due à des composantes du vent prévues trop faibles ne permettant pas d'obtenir un résultat fiable. Les prévisions de la direction et de la vitesse du vent sont issues de modèles de post-traitement statistique indépendants. La région géographique couverte par ces données inclut le territoire couvert par les stations météorologiques du Canada. Les prévisions issues du post-traitement statistique sont disponibles à la même fréquence d'émission que les prévisions brutes produites par les modèles numériques et à des échéances de prévision aux 3 heures pour le SRPD."
+        keywords:
+            en: [Weather forecasts, Air temperature, Wind]
+            fr: [Prévisions météorologiques, "Température de l'air", Vent]
+        crs:
+            - CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title:
+                  en: Regional Deterministic Prediction System (RDPS) data statistically post-processed in GeoJSON format
+                  fr: Données GeoJSON du Système régional de prévision déterministe statistiquement post-traitées
+              href:
+                  en: https://eccc-msc.github.io/open-data/msc-data/nwp_rdps/readme_rdps-statpostproc-datamart_en/
+                  fr: https://eccc-msc.github.io/open-data/msc-data/nwp_rdps/readme_rdps-statpostproc-datamart_fr/
+              hreflang:
+                  en: en-CA
+                  fr: fr-CA
+        extents:
+            spatial:
+                bbox: [-141, 40, -42, 88]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+            temporal:
+                begin: 2023-07-28T00:00:00Z
+                end: null # or empty
+        providers:
+            - type: feature
+              name: Elasticsearch
+              data: ${MSC_PYGEOAPI_ES_URL}/umos-rdps-realtime.*
+              id_field: id
+              time_field: forecast_datetime
+
     public-forecast-zones-hybrid:
         type: collection
         title:

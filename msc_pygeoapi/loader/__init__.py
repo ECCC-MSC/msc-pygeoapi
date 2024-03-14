@@ -69,7 +69,8 @@ commands = (
     ('msc_pygeoapi.loader.metnotes', 'metnotes'),
     ('msc_pygeoapi.loader.cumulative_effects_hs', 'cumulative_effects_hs'),
     ('msc_pygeoapi.loader.radar_coverage_realtime', 'radar_coverage_realtime'),
-    ('msc_pygeoapi.loader.nwp_dataset_footprints', 'nwp_dataset_footprints')
+    ('msc_pygeoapi.loader.nwp_dataset_footprints', 'nwp_dataset_footprints'),
+    ('msc_pygeoapi.loader.umos_realtime', 'umos_realtime')
 )
 
 for module, name in commands:
