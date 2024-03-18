@@ -185,7 +185,7 @@
       import useItems from '{{ config['server']['url'] }}/static/js/composables/useItems.js?v={{ version }}'
       import useTableFilter from '{{ config['server']['url'] }}/static/js/composables/useTableFilter.js?v={{ version }}'
       import useMap from '{{ config['server']['url'] }}/static/js/composables/useMap.js?v={{ version }}'
-      import { createApp, ref, computed, onBeforeMount, onMounted, watch } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.7/vue.esm-browser.prod.js'
+      import { createApp, ref, computed, onBeforeMount, onMounted, watch } from 'vue'
 
       const app = createApp({
         delimiters: ['[%', '%]'],
