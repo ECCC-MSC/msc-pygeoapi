@@ -70,6 +70,12 @@ RUN cd msc-pygeoapi && \
     pip3 install -U elasticsearch && \
     # ensure cors enabled in config
     sed -i 's^# cors: true^cors: true^' $BASEDIR/msc-pygeoapi/deploy/default/msc-pygeoapi-config.yml && \
+    # GCWeb theme files
+    curl -L https://github.com/wet-boew/GCWeb/releases/download/v14.6.0/themes-dist-14.6.0-gcweb.1.zip -o ./themes-gcweb.zip && \
+    unzip -o ./themes-gcweb.zip "*/GCWeb/*" -d theme/static && \
+    unzip -o ./themes-gcweb.zip "*/wet-boew/*" -d theme/static && \
+    mv ./theme/static/themes-dist-14.6.0-gcweb ./theme/static/themes-gcweb && \
+    rm -f ./themes-gcweb.zip && \
     # install msc-pygeoapi
     python3 setup.py install && \
     # show version

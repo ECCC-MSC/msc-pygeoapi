@@ -11,7 +11,7 @@
 
     <!-- GCWeb theme -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_32/css/theme.min.css">
+    <link rel="stylesheet" href="{{ config['server']['url'] }}/static/themes-gcweb/GCWeb/css/theme.min.css">
 
     <link rel="stylesheet" href="{{ config['server']['url'] }}/static/css/default.css">
     <!--[if lt IE 9]>
@@ -24,6 +24,15 @@
       <link rel="{{ link['rel'] }}" type="{{ link['type'] }}" title="{{ link['title'] }}" href="{{ link['href'] }}?lang={{ (locale|lower)[:2] }}"/>
       {% endif %}
     {% endfor %}
+
+    <!-- ESM import map -->
+    <script type="importmap">
+      {
+        "imports": {
+          "vue": "https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.7/vue.esm-browser.prod.js"
+        }
+      }
+    </script>
     {% block extrahead %}
     {% endblock %}
   </head>
@@ -166,7 +175,7 @@
               <a href="#wb-cont">{% trans %}Top of page{% endtrans %} <span class="glyphicon glyphicon-chevron-up"></span></a>
             </div>
             <div class="col-xs-6 col-md-3 col-lg-2 text-right">
-              <img src="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_32/assets/wmms-blk.svg" alt="{% trans %}Symbol of the Government of Canada{% endtrans %}" />
+              <img src="{{ config['server']['url'] }}/static/themes-gcweb/GCWeb/assets/wmms-blk.svg" alt="{% trans %}Symbol of the Government of Canada{% endtrans %}" />
             </div>
           </div>
         </div>

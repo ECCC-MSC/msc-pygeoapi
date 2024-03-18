@@ -64,7 +64,7 @@
     <script type="module">
       import useCollections from '{{ config['server']['url'] }}/static/js/composables/useCollections.js?v={{ version }}'
       import useTableFilter from '{{ config['server']['url'] }}/static/js/composables/useTableFilter.js?v={{ version }}'
-      import { createApp, ref, computed } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.7/vue.esm-browser.prod.js'
+      import { createApp, ref, computed } from 'vue'
 
       const app = createApp({
         delimiters: ['[%', '%]'],
