@@ -1,0 +1,15 @@
+{
+  "name": "gcweb-compiled",
+  "version": "14.6.0",
+  "description": "gcweb theme compiled",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wet-boew/themes-cdn.git"
+  },
+  "author": "wet-boew-bot",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wet-boew/gcweb/issues"
+  },
+  "homepage": "https://github.com/wet-boew/themes-cdn#readme"
+}
