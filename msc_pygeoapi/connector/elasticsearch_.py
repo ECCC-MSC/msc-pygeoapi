@@ -30,7 +30,11 @@
 
 import logging
 
-from elasticsearch import Elasticsearch, logger as elastic_logger
+from elasticsearch import (
+    Elasticsearch,
+    NotFoundError,
+    logger as elastic_logger
+)
 from elasticsearch.helpers import streaming_bulk, BulkIndexError
 
 from msc_pygeoapi.connector.base import BaseConnector
@@ -146,7 +150,7 @@ class ElasticsearchConnector(BaseConnector):
 
         :param index: index name
 
-        :return: `bool` of result
+        :returns: `bool` of result
         """
 
         return self.Elasticsearch.indices.exists(index=index_name)
@@ -183,7 +187,7 @@ class ElasticsearchConnector(BaseConnector):
         :param name: `str` index template name
         :param settings: `dict` settings dictionnary for index template
 
-        :return: `bool` of index template creation status
+        :returns: `bool` of index template creation status
         """
 
         if not self.Elasticsearch.indices.exists_template(name=name):
@@ -197,7 +201,7 @@ class ElasticsearchConnector(BaseConnector):
 
         :param name: `str` index template name
 
-        :return: `bool` of index template deletion status
+        :returns: `bool` of index template deletion status
         """
 
         if self.Elasticsearch.indices.exists_template(name=name):
@@ -214,7 +218,7 @@ class ElasticsearchConnector(BaseConnector):
         :param overwrite: `bool` indicating whether to overwrite alias if it
                            already exists
 
-        :return: `bool` of index alias creation status
+        :returns: `bool` of index alias creation status
         """
 
         if not self.Elasticsearch.indices.exists_alias(name=alias):
@@ -233,6 +237,25 @@ class ElasticsearchConnector(BaseConnector):
             return False
 
         return True
+
+    def get_alias_indices(self, alias):
+        """
+        get index(es) associated with an alias
+
+        :param alias: `str` alias name
+
+        :returns: `list` of index names associated with alias
+        """
+
+        try:
+            index_list = list(
+                self.Elasticsearch.indices.get_alias(name=alias).keys()
+            )
+        except NotFoundError:
+            LOGGER.warning(f'Alias {alias} not found')
+            return None
+
+        return index_list
 
     def submit_elastic_package(
         self, package, request_size=10000, refresh=False
@@ -302,7 +325,7 @@ class ElasticsearchConnector(BaseConnector):
         :param query: `str` query template
         :param name: `str` index name
 
-        :return: `bool` of index update status
+        :returns: `bool` of index update status
         """
 
         self.Elasticsearch.update_by_query(

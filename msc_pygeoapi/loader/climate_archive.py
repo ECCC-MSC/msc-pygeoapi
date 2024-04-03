@@ -32,6 +32,7 @@
 # =================================================================
 
 import collections
+from datetime import datetime
 import logging
 
 import click
@@ -48,6 +49,7 @@ LOGGER = logging.getLogger(__name__)
 HTTP_OK = 200
 POST_OK = 201
 HEADERS = {'Content-type': 'application/json'}
+TODAY = datetime.now().strftime('%Y-%m-%d')
 
 
 class ClimateArchiveLoader(BaseLoader):
@@ -77,6 +79,7 @@ class ClimateArchiveLoader(BaseLoader):
         created.
 
         :param index: the index to be created.
+        :returns: the name of the index created.
         """
 
         if index == 'stations':
@@ -285,7 +288,7 @@ class ClimateArchiveLoader(BaseLoader):
                 },
             }
 
-            index_name = 'climate_normals_data'
+            index_name = f'climate_normals_data.{TODAY}'
             self.conn.create(index_name, mapping, overwrite=True)
 
         if index == 'monthly_summary':
@@ -372,7 +375,7 @@ class ClimateArchiveLoader(BaseLoader):
                 },
             }
 
-            index_name = 'climate_public_climate_summary'
+            index_name = f'climate_public_climate_summary.{TODAY}'
             self.conn.create(index_name, mapping, overwrite=True)
 
         if index == 'daily_summary':
@@ -487,7 +490,7 @@ class ClimateArchiveLoader(BaseLoader):
                 },
             }
 
-            index_name = 'climate_public_daily_data'
+            index_name = f'climate_public_daily_data.{TODAY}'
             self.conn.create(index_name, mapping, overwrite=True)
 
         if index == 'hourly_summary':
@@ -598,10 +601,12 @@ class ClimateArchiveLoader(BaseLoader):
                 },
             }
 
-            index_name = 'climate_public_hourly_data'
+            index_name = f'climate_public_hourly_data.{TODAY}'
             self.conn.create(index_name, mapping, overwrite=True)
 
-    def generate_stations(self):
+        return index_name
+
+    def generate_stations(self, index_name):
         """
         Queries stations data from the db, and reformats
         data so it can be inserted into Elasticsearch.
@@ -609,7 +614,7 @@ class ClimateArchiveLoader(BaseLoader):
         Returns a generator of dictionaries that represent upsert actions
         into Elasticsearch's bulk API.
 
-        :param cur: oracle cursor to perform queries against.
+        :param index_name: name of the index to insert data into.
         :returns: generator of bulk API upsert actions.
         """
 
@@ -656,14 +661,16 @@ class ClimateArchiveLoader(BaseLoader):
 
             action = {
                 '_id': climate_identifier,
-                '_index': 'climate_station_information',
+                '_index': index_name,
                 '_op_type': 'update',
                 'doc': wrapper,
                 'doc_as_upsert': True,
             }
             yield action
 
-    def generate_normals(self, stn_dict, normals_dict, periods_dict):
+    def generate_normals(
+        self, stn_dict, normals_dict, periods_dict, index_name
+    ):
         """
         Queries normals data from the db, and reformats
         data so it can be inserted into Elasticsearch.
@@ -676,6 +683,7 @@ class ClimateArchiveLoader(BaseLoader):
         :param normals_dict: mapping of normal IDs to normals information.
         :param periods_dict: mapping of normal period IDs to
                             normal period information.
+        :param index_name: name of the index to insert data into.
         :returns: generator of bulk API upsert actions.
         """
 
@@ -738,7 +746,7 @@ class ClimateArchiveLoader(BaseLoader):
                 }
                 action = {
                     '_id': insert_dict['ID'],
-                    '_index': 'climate_normals_data',
+                    '_index': index_name,
                     '_op_type': 'update',
                     'doc': wrapper,
                     'doc_as_upsert': True,
@@ -750,7 +758,7 @@ class ClimateArchiveLoader(BaseLoader):
                     f" records for this station"
                 )
 
-    def generate_monthly_data(self, stn_dict, date=None):
+    def generate_monthly_data(self, stn_dict, index_name, date=None):
         """
         Queries monthly data from the db, and reformats
         data so it can be inserted into Elasticsearch.
@@ -760,6 +768,7 @@ class ClimateArchiveLoader(BaseLoader):
 
         :param cur: oracle cursor to perform queries against.
         :param stn_dict: mapping of station IDs to station information.
+        :param index_name: name of the index to insert data into.
         :param date: date to start fetching data from.
         :returns: generator of bulk API upsert actions.
         """
@@ -813,7 +822,7 @@ class ClimateArchiveLoader(BaseLoader):
                 }
                 action = {
                     '_id': insert_dict['ID'],
-                    '_index': 'climate_public_climate_summary',
+                    '_index': index_name,
                     '_op_type': 'update',
                     'doc': wrapper,
                     'doc_as_upsert': True,
@@ -825,7 +834,7 @@ class ClimateArchiveLoader(BaseLoader):
                     f" records for this station"
                 )
 
-    def generate_daily_data(self, stn_dict, date=None):
+    def generate_daily_data(self, stn_dict, index_name, date=None):
         """
         Queries daily data from the db, and reformats
         data so it can be inserted into Elasticsearch.
@@ -835,6 +844,7 @@ class ClimateArchiveLoader(BaseLoader):
 
         :param cur: oracle cursor to perform queries against.
         :param stn_dict: mapping of station IDs to station information.
+        :param index_name: name of the index to insert data into.
         :param date: date to start fetching data from.
         :returns: generator of bulk API upsert actions.
         """
@@ -900,7 +910,7 @@ class ClimateArchiveLoader(BaseLoader):
                     }
                     action = {
                         '_id': insert_dict['ID'],
-                        '_index': 'climate_public_daily_data',
+                        '_index': index_name,
                         '_op_type': 'update',
                         'doc': wrapper,
                         'doc_as_upsert': True,
@@ -912,7 +922,7 @@ class ClimateArchiveLoader(BaseLoader):
                         f" records for this station"
                     )
 
-    def generate_hourly_data(self, stn_dict, date=None):
+    def generate_hourly_data(self, stn_dict, index_name, date=None):
         """
         Queries hourly data from the db, and reformats
         data so it can be inserted into Elasticsearch.
@@ -922,6 +932,7 @@ class ClimateArchiveLoader(BaseLoader):
 
         :param cur: oracle cursor to perform queries against.
         :param stn_dict: mapping of station IDs to station information.
+        :param index_name: name of the index to insert data into.
         :param date: date to start fetching data from.
         :returns: generator of bulk API upsert actions.
         """
@@ -987,7 +998,7 @@ class ClimateArchiveLoader(BaseLoader):
                     }
                     action = {
                         '_id': insert_dict['ID'],
-                        '_index': 'climate_public_hourly_data',
+                        '_index': index_name,
                         '_op_type': 'update',
                         'doc': wrapper,
                         'doc_as_upsert': True,
@@ -1164,7 +1175,7 @@ def add(
     dataset,
     batch_size,
     station=None,
-    starting_from=False,
+    starting_from=None,
     date=None,
 ):
     """Loads MSC Climate Archive data from Oracle into Elasticsearch"""
@@ -1184,13 +1195,17 @@ def add(
     else:
         datasets_to_process = [dataset]
 
+    # if no date, station and starting_from are not provided, then it is
+    # a full reindexing
+    full_reindex = all([date is None, station is None, starting_from is None])
+
     click.echo(f'Processing dataset(s): {datasets_to_process}')
 
     if 'stations' in datasets_to_process:
         try:
             click.echo('Populating stations index')
-            loader.create_index('stations')
-            stations = loader.generate_stations()
+            index_name = loader.create_index('stations')
+            stations = loader.generate_stations(index_name)
             loader.conn.submit_elastic_package(stations, batch_size)
         except Exception as err:
             msg = f'Could not populate stations index: {err}'
@@ -1202,11 +1217,20 @@ def add(
             stn_dict = loader.get_station_data(station, starting_from)
             normals_dict = loader.get_normals_data()
             periods_dict = loader.get_normals_periods()
-            loader.create_index('normals')
+
+            index_name = loader.create_index('normals')
+
             normals = loader.generate_normals(
-                stn_dict, normals_dict, periods_dict
+                stn_dict, normals_dict, periods_dict, index_name
             )
-            loader.conn.submit_elastic_package(normals, batch_size)
+            indexing_succesful = loader.conn.submit_elastic_package(
+                normals, batch_size
+            )
+
+            if indexing_succesful and full_reindex:
+                loader.conn.create_alias(
+                    'climate_normals_data', index_name, overwrite=True
+                )
         except Exception as err:
             msg = f'Could not populate normals index: {err}'
             raise click.ClickException(msg)
@@ -1215,10 +1239,29 @@ def add(
         try:
             click.echo('Populating monthly index')
             stn_dict = loader.get_station_data(station, starting_from)
-            if not (date or station or starting_from):
-                loader.create_index('monthly_summary')
-            monthlies = loader.generate_monthly_data(stn_dict, date)
-            loader.conn.submit_elastic_package(monthlies, batch_size)
+
+            if full_reindex:
+                index_name = loader.create_index('monthly_summary')
+            else:
+                index_name = loader.conn.get_alias_indices('climate_public_climate_summary')[0]  # noqa
+                if index_name is None:
+                    raise click.ClickException(
+                        'No associated index found for alias climate_public_climate_summary.'  # noqa
+                    )
+
+            monthlies = loader.generate_monthly_data(
+                stn_dict, index_name, date
+            )
+            indexing_succesful = loader.conn.submit_elastic_package(
+                monthlies, batch_size
+            )
+
+            if indexing_succesful and full_reindex:
+                loader.conn.create_alias(
+                    'climate_public_climate_summary',
+                    index_name,
+                    overwrite=True
+                )
         except Exception as err:
             msg = f'Could not populate montly index: {err}'
             raise click.ClickException(msg)
@@ -1227,10 +1270,26 @@ def add(
         try:
             click.echo('Populating daily index')
             stn_dict = loader.get_station_data(station, starting_from)
-            if not (date or station or starting_from):
-                loader.create_index('daily_summary')
-            dailies = loader.generate_daily_data(stn_dict, date)
-            loader.conn.submit_elastic_package(dailies, batch_size)
+
+            if full_reindex:
+                index_name = loader.create_index('daily_summary')
+            else:
+                index_name = loader.conn.get_alias_indices('climate_public_daily_data')[0]  # noqa
+                if index_name is None:
+                    raise click.ClickException(
+                        'No index found for alias climate_public_daily_data.'
+                    )
+
+            dailies = loader.generate_daily_data(stn_dict, index_name, date)
+            indexing_succesful = loader.conn.submit_elastic_package(
+                dailies, batch_size
+            )
+
+            if indexing_succesful and full_reindex:
+                loader.conn.create_alias(
+                    'climate_public_daily_data', index_name, overwrite=True
+                )
+
         except Exception as err:
             msg = f'Could not populate daily index: {err}'
             raise click.ClickException(msg)
@@ -1239,10 +1298,26 @@ def add(
         try:
             click.echo('Populating hourly index')
             stn_dict = loader.get_station_data(station, starting_from)
-            if not (date or station or starting_from):
+
+            if full_reindex:
                 loader.create_index('hourly_summary')
-            hourlies = loader.generate_hourly_data(stn_dict, date)
-            loader.conn.submit_elastic_package(hourlies, batch_size)
+            else:
+                index_name = loader.conn.get_alias_indices('climate_public_hourly_data')[0]  # noqa
+                if index_name is None:
+                    raise click.ClickException(
+                        'No index found for alias climate_public_hourly_data.'
+                    )
+
+            hourlies = loader.generate_hourly_data(stn_dict, index_name, date)
+            indexing_succesful = loader.conn.submit_elastic_package(
+                hourlies, batch_size
+            )
+
+            if indexing_succesful and full_reindex:
+                loader.conn.create_alias(
+                    'climate_public_hourly_data', index_name, overwrite=True
+                )
+
         except Exception as err:
             msg = f'Could not populate hourly index: {err}'
             raise click.ClickException(msg)
