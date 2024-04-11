@@ -214,9 +214,9 @@ class SPEIProvider(ClimateProvider):
                     data.coords[self.time_field].values[-1])
             ],
             "driver": "xarray",
-            "height": data.dims[self.y_field],
-            "width": data.dims[self.x_field],
-            "time_steps": data.dims[self.time_field],
+            "height": data.sizes[self.y_field],
+            "width": data.sizes[self.x_field],
+            "time_steps": data.sizes[self.time_field],
             "variables": {var_name: var.attrs
                           for var_name, var in data.variables.items()}
         }

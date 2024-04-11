@@ -231,8 +231,8 @@ class CanDCSU6Provider(XarrayProvider):
             'crs_type': 'GeographicCRS',
             'x_axis_label': self.x_field,
             'y_axis_label': self.y_field,
-            'width': self._data.dims[self.x_field],
-            'height': self._data.dims[self.y_field],
+            'width': self._data.sizes[self.x_field],
+            'height': self._data.sizes[self.y_field],
             'bbox_units': 'degrees',
             'resx': np.abs(self._data.coords[self.x_field].values[1]
                            - self._data.coords[self.x_field].values[0]),
@@ -266,7 +266,7 @@ class CanDCSU6Provider(XarrayProvider):
                     self._data.coords[self.time_field].values[-1]
                 )
             ]
-            properties['time'] = self._data.dims[self.time_field]
+            properties['time'] = self._data.sizes[self.time_field]
 
         properties['fields'] = [name for name in self._data.variables
                                 if len(self._data.variables[name].shape) >= 3]
@@ -490,8 +490,8 @@ class CanDCSU6Provider(XarrayProvider):
             ],
             'time': [None, None],
             "driver": "xarray",
-            "height": data.dims[self.y_field],
-            "width": data.dims[self.x_field],
+            "height": data.sizes[self.y_field],
+            "width": data.sizes[self.x_field],
             "time_steps": 1,
             "variables": {var_name: var.attrs
                           for var_name, var in data.variables.items()}
@@ -504,7 +504,7 @@ class CanDCSU6Provider(XarrayProvider):
                 self._to_datetime_string(
                     data.coords[self.time_field].values[-1])
             ]
-            out_meta['time_steps'] = data.dims[self.time_field]
+            out_meta['time_steps'] = data.sizes[self.time_field]
 
         self.filename = self.data.split('/')[-1].replace(
             '*', '-'.join(properties))
