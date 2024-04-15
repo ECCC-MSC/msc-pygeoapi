@@ -7,3 +7,4 @@ dist
 node_modules
 schemas.opengis.net
 .pot
+theme/static/themes-gcweb

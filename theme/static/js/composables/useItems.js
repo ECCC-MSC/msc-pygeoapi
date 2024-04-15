@@ -1,4 +1,4 @@
-import { ref, computed } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.7/vue.esm-browser.prod.js'
+import { ref, computed } from 'vue'
 
 export default function useItems(itemsi18n) {
   // Items results

@@ -1,4 +1,4 @@
-import { ref, computed } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.7/vue.esm-browser.prod.js'
+import { ref, computed } from 'vue'
 
 export default function useTableFilter(rows, keyColumns, defaultSortCol, tableTexti18n) {
   // sort and filtering

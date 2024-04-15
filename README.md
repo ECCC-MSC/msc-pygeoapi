@@ -29,9 +29,18 @@ python3 -m venv --system-site-packages msc-pygeoapi
 cd msc-pygeoapi
 source bin/activate
 
-# clone codebase and install
+# clone codebase
 git clone https://github.com/ECCC-MSC/msc-pygeoapi.git
 cd msc-pygeoapi
+
+# add GCWeb theme files
+curl -L https://github.com/wet-boew/GCWeb/releases/download/v14.6.0/themes-dist-14.6.0-gcweb.1.zip -o ./themes-gcweb.zip 
+unzip -o ./themes-gcweb.zip "*/GCWeb/*" -d theme/static
+unzip -o ./themes-gcweb.zip "*/wet-boew/*" -d theme/static
+mv ./theme/static/themes-dist-14.6.0-gcweb ./theme/static/themes-gcweb
+rm -f ./themes-gcweb.zip
+
+# install codebase
 python setup.py build
 python setup.py install
 
