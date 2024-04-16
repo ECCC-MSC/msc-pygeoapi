@@ -2359,7 +2359,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.candcsu6_xarray.CanDCSU6Provider
-              data: /data/geomet/feeds/dd/climate/CanDCSU6/10km/scenarios/ssp126/2015-2100_ECCC_CanDCSU6-SSP126_*-Pct50_Sfc_LatLon0.86_P1Y.nc
+              data: /data/geomet/feeds/dd/climate/candcsu6/10km/scenarios/ssp126/2015-2100_ECCC_CanDCSU6-SSP126_*-Pct50_Sfc_LatLon0.86_P1Y.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -2397,7 +2397,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.candcsu6_xarray.CanDCSU6Provider
-              data: /data/geomet/feeds/dd/climate/CanDCSU6/10km/scenarios/ssp126/2015-2100_ECCC_CanDCSU6-SSP126_*-Pct50_Sfc_LatLon0.86_P1Y-DJF.nc
+              data: /data/geomet/feeds/dd/climate/candcsu6/10km/scenarios/ssp126/2015-2100_ECCC_CanDCSU6-SSP126_*-Pct50_Sfc_LatLon0.86_P1Y-DJF.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -2435,7 +2435,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.candcsu6_xarray.CanDCSU6Provider
-              data: /data/geomet/feeds/dd/climate/CanDCSU6/10km/scenarios/ssp126/2015-2100_ECCC_CanDCSU6-SSP126_*-Pct50_Sfc_LatLon0.86_P1M.nc
+              data: /data/geomet/feeds/dd/climate/candcsu6/10km/scenarios/ssp126/2015-2100_ECCC_CanDCSU6-SSP126_*-Pct50_Sfc_LatLon0.86_P1M.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -2473,7 +2473,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.candcsu6_xarray.CanDCSU6Provider
-              data: /data/geomet/feeds/dd/climate/CanDCSU6/10km/scenarios/ssp126/2021-2050_ECCC_CanDCSU6-SSP126_*-Pct50_Sfc_LatLon0.86_P0Y.nc
+              data: /data/geomet/feeds/dd/climate/candcsu6/10km/scenarios/ssp126/2021-2050_ECCC_CanDCSU6-SSP126_*-Pct50_Sfc_LatLon0.86_P0Y.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -2511,7 +2511,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.candcsu6_xarray.CanDCSU6Provider
-              data: /data/geomet/feeds/dd/climate/CanDCSU6/10km/scenarios/ssp126/2021-2050_ECCC_CanDCSU6-SSP126_*-Pct50_Sfc_LatLon0.86_P0Y-DJF.nc
+              data: /data/geomet/feeds/dd/climate/candcsu6/10km/scenarios/ssp126/2021-2050_ECCC_CanDCSU6-SSP126_*-Pct50_Sfc_LatLon0.86_P0Y-DJF.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -2549,7 +2549,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.candcsu6_xarray.CanDCSU6Provider
-              data: /data/geomet/feeds/dd/climate/CanDCSU6/10km/historical/1950-2014_ECCC_CanDCSU6_*-Pct50_Sfc_LatLon0.86_P1Y.nc
+              data: /data/geomet/feeds/dd/climate/candcsu6/10km/historical/1950-2014_ECCC_CanDCSU6_*-Pct50_Sfc_LatLon0.86_P1Y.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -2587,7 +2587,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.candcsu6_xarray.CanDCSU6Provider
-              data: /data/geomet/feeds/dd/climate/CanDCSU6/10km/historical/1950-2014_ECCC_CanDCSU6_*-Pct50_Sfc_LatLon0.86_P1Y-DJF.nc
+              data: /data/geomet/feeds/dd/climate/candcsu6/10km/historical/1950-2014_ECCC_CanDCSU6_*-Pct50_Sfc_LatLon0.86_P1Y-DJF.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -2625,7 +2625,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.candcsu6_xarray.CanDCSU6Provider
-              data: /data/geomet/feeds/dd/climate/CanDCSU6/10km/historical/1950-2014_ECCC_CanDCSU6_*-Pct50_Sfc_LatLon0.86_P1M.nc
+              data: /data/geomet/feeds/dd/climate/candcsu6/10km/historical/1950-2014_ECCC_CanDCSU6_*-Pct50_Sfc_LatLon0.86_P1M.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -2663,7 +2663,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.candcsu6_xarray.CanDCSU6Provider
-              data: /data/geomet/feeds/dd/climate/CanDCSU6/10km/historical/1971-2000_ECCC_CanDCSU6-SSP585_*-Pct50_Sfc_LatLon0.86_P0Y.nc
+              data: /data/geomet/feeds/dd/climate/candcsu6/10km/historical/1971-2000_ECCC_CanDCSU6-SSP585_*-Pct50_Sfc_LatLon0.86_P0Y.nc
               x_field: lon
               y_field: lat
               time_field: time
@@ -2701,7 +2701,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.candcsu6_xarray.CanDCSU6Provider
-              data: /data/geomet/feeds/dd/climate/CanDCSU6/10km/historical/1971-2000_ECCC_CanDCSU6-SSP585_*-Pct50_Sfc_LatLon0.86_P0Y-DJF.nc
+              data: /data/geomet/feeds/dd/climate/candcsu6/10km/historical/1971-2000_ECCC_CanDCSU6-SSP585_*-Pct50_Sfc_LatLon0.86_P0Y-DJF.nc
               x_field: lon
               y_field: lat
               time_field: time
