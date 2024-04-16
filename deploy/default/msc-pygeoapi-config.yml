@@ -3823,7 +3823,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.rdpa_rasterio.RDPAProvider
-              data: /data/geomet/feeds/hpfx/analysis/precip/rdpa/grib2/polar_stereographic/24/CMC_RDPA_APCP-024-0100cutoff_SFC_0_ps10km_*_000.grib2
+              data: /data/geomet/feeds/cmoi-science/analysis/precip/rdpa/grib2/polar_stereographic/24/CMC_RDPA_APCP-024-0100cutoff_SFC_0_ps10km_*_000.grib2
               options:
                   DATA_ENCODING: COMPLEX_PACKING
               format:
@@ -3860,7 +3860,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.rdpa_rasterio.RDPAProvider
-              data: /data/geomet/feeds/hpfx/analysis/precip/rdpa/grib2/polar_stereographic/06/CMC_RDPA_APCP-006-0100cutoff_SFC_0_ps10km_*_000.grib2
+              data: /data/geomet/feeds/cmoi-science/analysis/precip/rdpa/grib2/polar_stereographic/06/CMC_RDPA_APCP-006-0100cutoff_SFC_0_ps10km_*_000.grib2
               options:
                   DATA_ENCODING: COMPLEX_PACKING
               format:
