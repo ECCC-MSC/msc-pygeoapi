@@ -681,47 +681,45 @@ resources:
                   - DAYS_WITH_VALID_SUNSHINE
                   - COOLING_DEGREE_DAYS
                   - HEATING_DEGREE_DAYS
-
-    # current-conditions:
-    #     type: collection
-    #     title:
-    #         en: Current Weather Conditions - City Page Weather [experimental]
-    #         fr: Conditions météorologiques actuelles - Prévisions météorologiques par ville [experimentale]
-    #     description:
-    #         en: Current conditions for select Canadian cities
-    #         fr: Conditions actuelles pour une sélection de villes canadiennes
-    #     keywords:
-    #         en: [Meteorology, Weather]
-    #         fr: [Météorologie, Temps]
-    #     crs:
-    #         - CRS84
-    #     links:
-    #         - type: text/html
-    #           rel: canonical
-    #           title:
-    #             en: Weather forecast files by city
-    #             fr: Prévisions météorologiques par ville
-    #           href:
-    #             en: https://eccc-msc.github.io/open-data/msc-data/citypage-weather/readme_citypageweather_en/
-    #             fr: https://eccc-msc.github.io/open-data/msc-data/citypage-weather/readme_citypageweather_fr/
-    #           hreflang:
-    #             en: en-CA
-    #             fr: fr-CA
-    #     extents:
-    #         spatial:
-    #             bbox: [-145.27, 37.3, -48.11, 87.61]
-    #             crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-    #         temporal:
-    #             begin: null
-    #             end: null # or empty
-    #     providers:
-    #         - type: feature
-    #           default: true
-    #           name: Elasticsearch
-    #           data: ${MSC_PYGEOAPI_ES_URL}/current_conditions
-    #           id_field: identifier
-    #           time_field: timestamp
-
+    citypageweather:
+        type: collection
+        title:
+            en: City Page Weather [experimental]
+            fr: Prévisions météorologiques par ville [expérimentale]
+        description:
+            en: Provides current conditions, forecasts, warnings and regional normals for a selection of Canadian cities.
+            fr: Fournit les conditions actuelles, les prévisions, les avertissements et les normales régionales pour une sélection de villes canadiennes.
+        keywords:
+            en: [Meteorology, Weather]
+            fr: [Météorologie, Temps]
+        crs:
+            - CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title:
+                en: Weather forecast files by city
+                fr: Prévisions météorologiques par ville
+              href:
+                en: https://eccc-msc.github.io/open-data/msc-data/citypage-weather/readme_citypageweather_en/
+                fr: https://eccc-msc.github.io/open-data/msc-data/citypage-weather/readme_citypageweather_fr/
+              hreflang:
+                en: en-CA
+                fr: fr-CA
+        extents:
+            spatial:
+                bbox: [-145.27, 37.3, -48.11, 87.61]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+            temporal:
+                begin: null
+                end: null # or empty
+        providers:
+            - type: feature
+              default: true
+              name: msc_pygeoapi.provider.cpw_elasticsearch.CPWElasticsearchProvider
+              data: ${MSC_PYGEOAPI_ES_URL}/citypageweather_realtime
+              id_field: identifier
+              time_field: lastUpdated
     climate-daily:
         type: collection
         title:
