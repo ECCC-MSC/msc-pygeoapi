@@ -260,17 +260,19 @@ class CitypageweatherRealtimeLoader(BaseLoader):
 
         data = self.xml2json_cpw(wxo_lookup, filepath)
 
-        try:
-            r = self.conn.Elasticsearch.index(
-                index=INDEX_NAME,
-                id=data['properties']['identifier'],
-                body=data
-            )
-            LOGGER.debug(f'Result: {r}')
-            return True
-        except Exception as err:
-            LOGGER.warning(f'Error indexing: {err}')
-            return False
+        if data:
+            try:
+                r = self.conn.Elasticsearch.update(
+                    index=INDEX_NAME,
+                    id=data['properties']['identifier'],
+                    doc_as_upsert=True,
+                    doc=data
+                )
+                LOGGER.debug(f'Result: {r}')
+                return True
+            except Exception as err:
+                LOGGER.warning(f'Error indexing: {err}')
+                return False
 
     def _get_element(self, node, path, attrib=None):
         """
@@ -301,10 +303,13 @@ class CitypageweatherRealtimeLoader(BaseLoader):
         :returns: converted variable
         """
 
-        if type_ == 'f':
-            variable = float(value) if value else 'null'
-        elif type_ == 'i':
-            variable = int(value) if value else 'null'
+        try:
+            if type_ == 'f':
+                variable = float(value) if value else 'null'
+            elif type_ == 'i':
+                variable = int(value) if value else 'null'
+        except ValueError:
+            variable = value
 
         return variable
 
@@ -328,6 +333,7 @@ class CitypageweatherRealtimeLoader(BaseLoader):
             root = etree.parse(xml).getroot()
         except Exception as err:
             LOGGER.error(f'ERROR: cannot process data: {err}')
+            return None
 
         if root.findall("currentConditions/"):
             sitecode = os.path.basename(xml)[:-6]
@@ -416,7 +422,7 @@ class CitypageweatherRealtimeLoader(BaseLoader):
                         'rel_hum': self.if_none('i', row['rel_hum']),
                         'speed': self.if_none('i', row['speed']),
                         'gust': self.if_none('i', row['gust']),
-                        'direction': row['direction'],
+                        'direction_en': row['direction'],
                         'bearing': self.if_none('f', row['bearing']),
                         'timestamp': row['timestamp'],
                         'url_en': row['url_en'],
@@ -467,7 +473,7 @@ class CitypageweatherRealtimeLoader(BaseLoader):
                         'rel_hum': self.if_none('i', row['rel_hum']),
                         'speed': self.if_none('i', row['speed']),
                         'gust': self.if_none('i', row['gust']),
-                        'direction': row['direction'],
+                        'direction_fr': row['direction'],
                         'bearing': self.if_none('f', row['bearing']),
                         'timestamp': row['timestamp'],
                         'url_fr': row['url_fr'],
@@ -481,11 +487,50 @@ class CitypageweatherRealtimeLoader(BaseLoader):
             conditions['properties'] = {key:val for key, val in conditions['properties'].items() if val != 'null'} # noqa
             return conditions
 
+        else:
+            LOGGER.warning(
+                f'No current conditions found. Skippping file {xml}.'
+            )
+            return None
+
 
 @click.group()
 def citypageweather():
     """Manages current conditions index"""
     pass
+
+
+@click.command()
+@click.pass_context
+@cli_options.OPTION_FILE()
+@cli_options.OPTION_DIRECTORY()
+@cli_options.OPTION_ELASTICSEARCH()
+@cli_options.OPTION_ES_USERNAME()
+@cli_options.OPTION_ES_PASSWORD()
+@cli_options.OPTION_ES_IGNORE_CERTS()
+def add(ctx, file_, directory, es, username, password, ignore_certs):
+    """adds data to system"""
+
+    if all([file_ is None, directory is None]):
+        raise click.ClickException('Missing --file/-f or --dir/-d option')
+
+    conn_config = configure_es_connection(es, username, password, ignore_certs)
+
+    files_to_process = []
+
+    if file_ is not None:
+        files_to_process = [file_]
+    elif directory is not None:
+        for root, dirs, files in os.walk(directory):
+            for f in [file for file in files if file.endswith('.xml')]:
+                files_to_process.append(os.path.join(root, f))
+        files_to_process.sort(key=os.path.getmtime)
+
+    for file_to_process in files_to_process:
+        loader = CitypageweatherRealtimeLoader(conn_config)
+        loader.load_data(file_to_process)
+
+    click.echo('Done')
 
 
 @click.command()
@@ -542,5 +587,6 @@ def delete_index(ctx, es, username, password, ignore_certs):
     conn.delete(INDEX_NAME)
 
 
+citypageweather.add_command(add)
 citypageweather.add_command(clean_records)
 citypageweather.add_command(delete_index)
