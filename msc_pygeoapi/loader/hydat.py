@@ -1203,9 +1203,8 @@ def add(
     conn_config = configure_es_connection(es, username, password, ignore_certs)
     loader = HydatLoader(db, conn_config)
 
-    click.echo(f'Accessing SQLite database {db}')
     try:
-        click.echo('Accessing SQLite database {db}')
+        click.echo(f'Accessing SQLite database {db}')
         discharge_var = level_var = station_table = None
 
         level_var = loader.get_table_var('DLY_LEVELS')
