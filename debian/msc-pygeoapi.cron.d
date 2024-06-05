@@ -51,3 +51,6 @@ MAILTO=""
 
 # every day at 0800h, clean umos realtime data older than 7 days
 0 8 * * * geoadm . /local/home/geoadm/.profile && msc-pygeoapi data umos-realtime clean-indexes --dataset all --days 7 --yes
+
+# every hour at 00h, clean expired thunderstorm outlooks
+0 * * * * geoadm . /local/home/geoadm/.profile && msc-pygeoapi data thunderstorm-outlook clean-outlooks --yes
