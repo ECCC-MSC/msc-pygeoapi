@@ -83,6 +83,10 @@ PLUGINS = {
         'umos_realtime': {
             'filename_pattern': 'stat-post-processing',
             'handler': 'msc_pygeoapi.loader.umos_realtime.UMOSRealtimeLoader'
+        },
+        'thunderstorm_outlook': {
+            'filename_pattern': 'ThunderstormOutlook',
+            'handler': 'msc_pygeoapi.loader.thunderstorm_outlook.ThunderstormOutlookLoader' # noqa
         }
     }
 }
