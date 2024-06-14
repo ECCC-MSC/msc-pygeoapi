@@ -184,7 +184,12 @@ SETTINGS = {
                         "type": "integer"
                     },
                     'speed': {
-                        "type": "integer"
+                        'type': 'text',
+                        'fields': {
+                            'raw': {
+                                'type': 'keyword'
+                            }
+                        }
                     },
                     'gust': {
                         "type": "integer"
@@ -305,9 +310,9 @@ class CitypageweatherRealtimeLoader(BaseLoader):
 
         try:
             if type_ == 'f':
-                variable = float(value) if value else 'null'
+                variable = float(value) if value else None
             elif type_ == 'i':
-                variable = int(value) if value else 'null'
+                variable = int(value) if value else None
         except ValueError:
             variable = value
 
@@ -484,7 +489,7 @@ class CitypageweatherRealtimeLoader(BaseLoader):
                     }
                 }
 
-            conditions['properties'] = {key:val for key, val in conditions['properties'].items() if val != 'null'} # noqa
+            conditions['properties'] = {key:val for key, val in conditions['properties'].items() if val is not None} # noqa
             return conditions
 
         else:

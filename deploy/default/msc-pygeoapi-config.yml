@@ -719,30 +719,6 @@ resources:
               data: ${MSC_PYGEOAPI_ES_URL}/current_conditions
               id_field: identifier
               time_field: timestamp
-              properties:
-                  - identifier
-                  - name
-                  - station_en
-                  - station_fr
-                  - icon
-                  - cond_en
-                  - cond_fr
-                  - temp
-                  - dewpoint
-                  - pres_en
-                  - pres_fr
-                  - prestnd_en
-                  - prestnd_fr
-                  - rel_hum
-                  - speed
-                  - direction_en
-                  - direction_fr
-                  - bearing
-                  - timestamp
-                  - url_en
-                  - url_fr
-                  - national
-                  - nom
 
     climate-daily:
         type: collection
