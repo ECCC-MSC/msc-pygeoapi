@@ -1,8 +1,9 @@
-import * as L from 'https://unpkg.com/leaflet@1.7.1/dist/leaflet-src.esm.js'
-import { ref, computed, watch, onMounted } from 'vue'
+import 'leaflet-non-esm' 
+import 'leaflet.markercluster'
+import { ref, computed, watch, onMounted, onBeforeMount } from 'vue'
 
 export default function useMap(mapElemId, geoJsonData, itemsPath, tileLayerUrl, tileLayerAttr, bboxPermalink, locale) {
-  let map, layerItems
+  let map, layerItems, markers
   const maxZoom = 15
   const bbox = ref('')
   // Leaflet LatLngBounds simple array format
@@ -16,6 +17,16 @@ export default function useMap(mapElemId, geoJsonData, itemsPath, tileLayerUrl, 
         [bboxSplit[3], bboxSplit[2]]
       ]
     }
+  })
+  const geoJsonIsPointGeometry = computed(() => {
+    if (Object.prototype.hasOwnProperty.call(geoJsonData.value, 'features')) {
+      if (geoJsonData.value.features.length > 0 ) {
+        if (geoJsonData.value.features[0]['geometry']['type'] === 'Point') {
+          return true
+        }
+      }
+    }
+    return false
   })
   const updateBboxEvent = function(evt) {
     const bboxString = evt.sourceTarget.getBounds().toBBoxString()
@@ -54,7 +65,21 @@ export default function useMap(mapElemId, geoJsonData, itemsPath, tileLayerUrl, 
       }
     ))
     layerItems = new L.GeoJSON({type: 'FeatureCollection', features: []})
-    map.addLayer(layerItems)
+    // Initialize MarkerClusterGroup
+    markers = L.markerClusterGroup({
+      disableClusteringAtZoom: 9,
+      chunkedLoading: true,
+      chunkInterval: 500,
+    })
+    map.addLayer(markers)
+    
+    if (geoJsonIsPointGeometry.value) {
+      markers.clearLayers().addLayer(layerItems)
+    } else {
+      // Initialize without MarkerClusterGroup
+      map.addLayer(layerItems)
+    }
+
     // update bbox for permalink feature
     map.on('moveend', updateBboxEvent)
   }
@@ -62,7 +87,7 @@ export default function useMap(mapElemId, geoJsonData, itemsPath, tileLayerUrl, 
 
   // update map with new geoJson data
   watch(geoJsonData, (newData, oldData) => {
-    if (map.hasLayer(layerItems)) {
+    if (map.hasLayer(layerItems) && geoJsonIsPointGeometry.value === false) {
       map.removeLayer(layerItems)
     }
     
@@ -86,7 +111,14 @@ export default function useMap(mapElemId, geoJsonData, itemsPath, tileLayerUrl, 
         layer.bindPopup(html)
       }
     })
-    map.addLayer(layerItems)
+
+    // Add layer back depending on point vs other geometry
+    if (geoJsonIsPointGeometry.value) {
+      markers.clearLayers().addLayer(layerItems) // with MarkerClusterGroup
+    } else {
+      map.addLayer(layerItems) // without MarkerClusterGroup
+    }
+
     if (bbox.value === '' || !bboxPermalink.value) { // no bbox
       map.fitBounds(layerItems.getBounds(), {maxZoom: 5})
     } else if (Object.keys(oldData).length === 0) { // first time load
