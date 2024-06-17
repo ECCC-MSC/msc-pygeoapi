@@ -3,7 +3,7 @@ elasticsearch>=8,<9
 fiona<1.10
 gdal
 lxml
-netcdf4
+netcdf4==1.6.5
 pandas<2.1
 parse
 pygeometa
