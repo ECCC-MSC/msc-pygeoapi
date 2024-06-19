@@ -177,6 +177,8 @@ SETTINGS = {
     'mappings': None
 }
 
+MODEL_LIST = ['gdps', 'rdps', 'hrdps', 'raqdps']
+
 
 class UMOSRealtimeLoader(BaseLoader):
     """UMOS Real-time loader"""
@@ -257,10 +259,7 @@ class UMOSRealtimeLoader(BaseLoader):
         # set class variables from filename
         self.parse_filename(filename)
 
-        if self.model == 'rdps':
-            template_name = INDEX_BASENAME.format('rdps')
-        elif self.model == 'gdps':
-            template_name = INDEX_BASENAME.format('gdps')
+        template_name = INDEX_BASENAME.format(self.model)
 
         SETTINGS['index_patterns'] = [f'{template_name}*']
         SETTINGS['mappings'] = MAPPINGS
@@ -322,7 +321,7 @@ def add(ctx, file_, directory, es, username, password, ignore_certs):
 )
 @cli_options.OPTION_DATASET(
     help='UMOS dataset indexes to delete.',
-    type=click.Choice(['all', 'gdps', 'rdps']),
+    type=click.Choice(MODEL_LIST + ['all']),
 )
 @cli_options.OPTION_ELASTICSEARCH()
 @cli_options.OPTION_ES_USERNAME()
@@ -355,7 +354,7 @@ def clean_indexes(ctx, days, dataset, es, username, password, ignore_certs):
 @click.pass_context
 @cli_options.OPTION_DATASET(
     help='UMOS dataset indexes to delete.',
-    type=click.Choice(['all', 'gdps', 'rdps']),
+    type=click.Choice(MODEL_LIST + ['all']),
 )
 @cli_options.OPTION_ELASTICSEARCH()
 @cli_options.OPTION_ES_USERNAME()
@@ -379,7 +378,7 @@ def delete_indexes(ctx, dataset, es, username, password, ignore_certs,
     conn.delete(indexes)
 
     if index_template:
-        for type_ in ('gdps', 'rdps'):
+        for type_ in MODEL_LIST:
             index_name = INDEX_BASENAME.format(type_)
             click.echo(f'Deleting index template {index_name}')
             conn.delete_template(index_name)
