@@ -1,3 +1,22 @@
+msc-pygeoapi (0.12.0) focal; urgency=medium
+
+  * update string interpolation to f-strings
+  * new CanDCSU6 provider
+  * UI JS syntax fixes
+  * use MSC_PYGEOAPI_OGC_API_URL in OpenAPI document
+  * update support for cftime in climate NetCDF
+  * add aliasing functionality for climate archive loader
+  * remove warnings for Xarray based backends
+  * add UMOS loaders
+  * Serve GCWeb theme (css/image/fonts) locally
+  * update sarra configurations to use MSC-GEOMET user
+  * ensure properties and ids contain ISO8601-compliant datetime
+  * citypage loader updates
+  * collection title/abstract updates
+  * new land and marine forecast zones loaders
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Thu, 20 Jun 2024 19:33:52 +0000
+
 msc-pygeoapi (0.11.0) focal; urgency=medium
 
   * fix Leaflet attribution
