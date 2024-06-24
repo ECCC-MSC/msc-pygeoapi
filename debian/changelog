@@ -1,3 +1,9 @@
+msc-pygeoapi (0.12.1) focal; urgency=medium
+
+  * packaging: fix GCWeb deployment
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Mon, 24 Jun 2024 19:04:24 +0000
+
 msc-pygeoapi (0.12.0) focal; urgency=medium
 
   * update string interpolation to f-strings
