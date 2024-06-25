@@ -79,6 +79,10 @@ PLUGINS = {
         'cumulative_effects_hs': {
             'filename_pattern': 'model_raqdps-fw/cumulative_effects/json',
             'handler': 'msc_pygeoapi.loader.cumulative_effects_hs.CumulativeEffectsHSLoader'  # noqa
+        },
+        'umos_realtime': {
+            'filename_pattern': 'stat-post-processing',
+            'handler': 'msc_pygeoapi.loader.umos_realtime.UMOSRealtimeLoader'
         }
     }
 }
