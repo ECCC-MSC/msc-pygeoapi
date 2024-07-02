@@ -4076,6 +4076,41 @@ resources:
     #           data: ${MSC_PYGEOAPI_ES_URL}/discovery-metadata
     #           id_field: identifier
 
+    thunderstorm_outlook:
+        type: collection
+        title:
+            en: Thunderstorm Outlook
+            fr: Potentiel orageux
+        description:
+            en: The Thunderstorm Outlook is a graphical or GeoJSON forecast product, which depicts the expected geographic areas of thunderstorms in Canada. Thunderstorm Outlooks are issued by storm prediction centres across Canada during the convective season (May to October) each year. Both the graphical and GeoJSON products use the same source data that forecasters enter through the Ninjo software. Thunderstorm Outlooks are issued once per day at around 12:00 pm regional local time. Since each office has their own standards of procedure, the forecasters are not required to send it at 12:00 pm. Nonetheless, the timestamp in the data is preconfigured to say it is issued at 12:00 pm in the GeoJSON product. Subsequent amendments to existing Thunderstorm Outlooks are issued on an as-needed basis during the day. Each amendment generates a new GeoJSON file and graphical product. The Thunderstorm Outlook may not be updated with active severe weather alerts. Users are asked to check with the latest watches and warnings for the most current conditions.
+            fr: Le Potentiel orageux est un produit de prévision graphique ou en GeoJSON qui décrit les zones géographiques prévues pour les orages au Canada. Les Potentiels orageux sont émis par les centres de prévision des intempéries à travers le Canada pendant la saison convective (mai à octobre) chaque année. Les produits graphiques et en GeoJSON utilisent les mêmes données sources que les prévisionnistes entrent dans le logiciel Ninjo. Les Potentiels orageux sont émis une fois par jour vers 12h00, heure locale régionale. Puisque chaque bureau a ses propres normes de procédure, les prévisionnistes ne sont pas tenus de l'envoyer à 12h00. Néanmoins, l'horodatage des données est préconfiguré pour indiquer qu'elles sont émises à 12h00 dans le produit GeoJSON. Les amendements ultérieures des Potentiels orageux existants sont émis selon les besoins au cours de la journée. Chaque amendement génère un nouveau fichier GeoJSON et un nouveau produit graphique. Le Potentiel orageux pourrait ne pas être à jour avec les alertes de temps violent en cours. Les utilisateurs sont priés de consulter les dernières veilles et avertissements pour connaître les conditions les plus récentes.
+        keywords:
+            en: [Thunderstorm, Outlook, Rain, Tornado, Hail, Gust, Severity, Atmospheric Conditions]
+            fr: [Orage, Potentiel, Pluie, Tornade, Grêle, Rafale, Sévérité, Conditions atmosphériques]
+        crs:
+            - CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title:
+                en: Meteorological Service of Canada open data
+                fr: Données ouvertes du Service météorologique du Canada
+              href:
+                en: https://eccc-msc.github.io/open-data/msc-data/readme_en
+                fr: https://eccc-msc.github.io/open-data/msc-data/readme_fr
+              hreflang:
+                en: en-CA
+                fr: fr-CA
+        extents:
+            spatial:
+                bbox: [-145.27, 37.3, -48.11, 87.61]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        providers:
+            - type: feature
+              name: Elasticsearch
+              data: ${MSC_PYGEOAPI_ES_URL}/thunderstorm_outlook
+              id_field: id
+
     wis2-discovery-metadata:
         type: collection
         title: WMO WIS2 discovery metadata (experimental)
