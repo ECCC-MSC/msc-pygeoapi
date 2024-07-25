@@ -36,7 +36,7 @@ import json
 import logging
 import os
 from pathlib import Path
-
+from fnmatch import fnmatch
 import click
 from osgeo import ogr, osr
 import yaml
@@ -47,6 +47,11 @@ from msc_pygeoapi.loader.base import BaseLoader
 from msc_pygeoapi.util import configure_es_connection
 
 LOGGER = logging.getLogger(__name__)
+
+MCFS_TO_IGNORE = [
+    "msc_lightning.yml",
+    "msc_radar-*.yml"
+]
 
 # index settings
 INDEX_NAME = 'msc_dataset_footprints'
@@ -333,10 +338,19 @@ def add(ctx, file_, directory, es, username, password, ignore_certs):
         files_to_process.sort(key=os.path.getmtime)
 
     for file_to_process in files_to_process:
-        loader = DatasetFootprintLoader(conn_config)
-        result = loader.load_data(file_to_process)
-        if not result:
-            click.echo(f'features not generated: {file_to_process}')
+        ignore_file = False
+        filename = os.path.basename(file_to_process)
+        for pattern in MCFS_TO_IGNORE:
+            if fnmatch(filename, pattern):
+                LOGGER.debug(f'Ignoring {filename}...')
+                ignore_file = True
+                break
+            
+        if not ignore_file:
+            loader = DatasetFootprintLoader(conn_config)
+            result = loader.load_data(file_to_process)
+            if not result:
+                click.echo(f'features not generated: {file_to_process}')
 
 
 @click.command()
