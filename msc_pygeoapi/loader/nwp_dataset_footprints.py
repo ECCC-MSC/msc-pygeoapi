@@ -32,11 +32,12 @@
 #
 # =================================================================
 
+from fnmatch import fnmatch
 import json
 import logging
 import os
 from pathlib import Path
-from fnmatch import fnmatch
+
 import click
 from osgeo import ogr, osr
 import yaml
@@ -49,8 +50,8 @@ from msc_pygeoapi.util import configure_es_connection
 LOGGER = logging.getLogger(__name__)
 
 MCFS_TO_IGNORE = [
-    "msc_lightning.yml",
-    "msc_radar-*.yml"
+    'msc_lightning.yml',
+    'msc_radar-*.yml'
 ]
 
 # index settings
@@ -340,8 +341,8 @@ def add(ctx, file_, directory, es, username, password, ignore_certs):
     for file_to_process in files_to_process:
         ignore_file = False
         filename = os.path.basename(file_to_process)
-        for pattern in MCFS_TO_IGNORE:
-            if fnmatch(filename, pattern):
+        for mcf_to_ignore in MCFS_TO_IGNORE:
+            if fnmatch(filename, mcf_to_ignore):
                 LOGGER.debug(f'Ignoring {filename}...')
                 ignore_file = True
                 break
