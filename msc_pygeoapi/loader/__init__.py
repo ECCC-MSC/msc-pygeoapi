@@ -71,7 +71,9 @@ commands = (
     ('msc_pygeoapi.loader.radar_coverage_realtime', 'radar_coverage_realtime'),
     ('msc_pygeoapi.loader.nwp_dataset_footprints', 'nwp_dataset_footprints'),
     ('msc_pygeoapi.loader.umos_realtime', 'umos_realtime'),
-    ('msc_pygeoapi.loader.thunderstorm_outlook', 'thunderstorm_outlook')
+    ('msc_pygeoapi.loader.thunderstorm_outlook', 'thunderstorm_outlook'),
+    ('msc_pygeoapi.loader.coastal_flood_risk_index',
+     'coastal_flood_risk_index')
 )
 
 for module, name in commands:
