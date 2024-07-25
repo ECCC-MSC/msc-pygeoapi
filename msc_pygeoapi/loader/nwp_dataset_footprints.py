@@ -345,7 +345,6 @@ def add(ctx, file_, directory, es, username, password, ignore_certs):
                 LOGGER.debug(f'Ignoring {filename}...')
                 ignore_file = True
                 break
-            
         if not ignore_file:
             loader = DatasetFootprintLoader(conn_config)
             result = loader.load_data(file_to_process)
