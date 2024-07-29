@@ -87,6 +87,10 @@ PLUGINS = {
         'thunderstorm_outlook': {
             'filename_pattern': 'ThunderstormOutlook',
             'handler': 'msc_pygeoapi.loader.thunderstorm_outlook.ThunderstormOutlookLoader' # noqa
+        },
+        'coastal_flood_risk_index': {
+            'filename_pattern': 'CoastalFloodRiskIndex',
+            'handler': 'msc_pygeoapi.loader.coastal_flood_risk_index.CoastalFloodRiskIndexLoader' # noqa
         }
     }
 }
