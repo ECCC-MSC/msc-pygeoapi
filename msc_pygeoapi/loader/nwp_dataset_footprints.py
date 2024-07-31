@@ -51,7 +51,8 @@ LOGGER = logging.getLogger(__name__)
 
 MCFS_TO_IGNORE = [
     'msc_lightning.yml',
-    'msc_radar-*.yml'
+    'msc_radar-*.yml',
+    'msc-mcf-template.yml'
 ]
 
 # index settings
