@@ -1541,6 +1541,162 @@ resources:
               data: ${MSC_PYGEOAPI_ES_URL}/aqhi_stations
               id_field: id
 
+    hurricanes-cyclone-realtime:
+        type: collection
+        title:
+            en: Hurricane Tracks - cyclone
+            fr: Trajectoires d'ouragans - cyclone
+        description:
+            en: "Hurricane tracks and response zone are issued by the Canadian Hurricane Centre as part of the regular hurricane season forecast."
+            fr: "Les trajectoires d'ouragans et la zone de réaction aux ouragans sont émises par le Centre canadien de prévision des ouragans, dans le cadre des prévisions régulières lors de la saison des ouragans."
+        keywords:
+            en: [Weather warnings, Precipitation, Wind, Storms, Floods]
+            fr: [Alerte météorologique, Précipitation, Vent, Tempête, Inondation]
+        crs:
+            - CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title:
+                  en: Hurricane prediction data and products
+                  fr: Données et produits de prévision des ouragans
+              href:
+                  en: https://eccc-msc.github.io/open-data/msc-data/hurricanes/readme_hurricanes_en/
+                  fr: https://eccc-msc.github.io/open-data/msc-data/hurricanes/readme_hurricanes_fr/
+              hreflang:
+                  en: en-CA
+                  fr: fr-CA
+        extents:
+            spatial:
+                bbox: [-180, -90, 180, 90]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+            temporal:
+                begin: 2011-06-01T00:00:00Z
+                end: null # or empty
+        providers:
+            - type: feature
+              name: Elasticsearch
+              data: ${MSC_PYGEOAPI_ES_URL}/hurricanes-cyclone.*
+              id_field: id
+              time_field: validity_datetime
+
+    hurricanes-track-realtime:
+        type: collection
+        title:
+            en: Hurricane Tracks - track
+            fr: Trajectoires d'ouragans - trajectoire
+        description:
+            en: "Hurricane tracks and response zone are issued by the Canadian Hurricane Centre as part of the regular hurricane season forecast."
+            fr: "Les trajectoires d'ouragans et la zone de réaction aux ouragans sont émises par le Centre canadien de prévision des ouragans, dans le cadre des prévisions régulières lors de la saison des ouragans."
+        keywords:
+            en: [Weather warnings, Precipitation, Wind, Storms, Floods]
+            fr: [Alerte météorologique, Précipitation, Vent, Tempête, Inondation]
+        crs:
+            - CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title:
+                  en: Hurricane prediction data and products
+                  fr: Données et produits de prévision des ouragans
+              href:
+                  en: https://eccc-msc.github.io/open-data/msc-data/hurricanes/readme_hurricanes_en/
+                  fr: https://eccc-msc.github.io/open-data/msc-data/hurricanes/readme_hurricanes_fr/
+              hreflang:
+                  en: en-CA
+                  fr: fr-CA
+        extents:
+            spatial:
+                bbox: [-180, -90, 180, 90]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+            temporal:
+                begin: 2011-06-01T00:00:00Z
+                end: null # or empty
+        providers:
+            - type: feature
+              name: Elasticsearch
+              data: ${MSC_PYGEOAPI_ES_URL}/hurricanes-track.*
+              id_field: id
+              time_field: validity_datetime
+
+    hurricanes-error_cone-realtime:
+        type: collection
+        title:
+            en: Hurricane Tracks - error cone
+            fr: Trajectoires d'ouragans - cone d'erreur
+        description:
+            en: "Hurricane tracks and response zone are issued by the Canadian Hurricane Centre as part of the regular hurricane season forecast."
+            fr: "Les trajectoires d'ouragans et la zone de réaction aux ouragans sont émises par le Centre canadien de prévision des ouragans, dans le cadre des prévisions régulières lors de la saison des ouragans."
+        keywords:
+            en: [Weather warnings, Precipitation, Wind, Storms, Floods]
+            fr: [Alerte météorologique, Précipitation, Vent, Tempête, Inondation]
+        crs:
+            - CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title:
+                  en: Hurricane prediction data and products
+                  fr: Données et produits de prévision des ouragans
+              href:
+                  en: https://eccc-msc.github.io/open-data/msc-data/hurricanes/readme_hurricanes_en/
+                  fr: https://eccc-msc.github.io/open-data/msc-data/hurricanes/readme_hurricanes_fr/
+              hreflang:
+                  en: en-CA
+                  fr: fr-CA
+        extents:
+            spatial:
+                bbox: [-180, -90, 180, 90]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+            temporal:
+                begin: 2011-06-01T00:00:00Z
+                end: null # or empty
+        providers:
+            - type: feature
+              name: Elasticsearch
+              data: ${MSC_PYGEOAPI_ES_URL}/hurricanes-error_cone.*
+              id_field: id
+              time_field: validity_datetime
+
+    hurricanes-wind_radii-realtime:
+        type: collection
+        title:
+            en: Hurricane Tracks - wind raddi
+            fr: Trajectoires d'ouragans - radius de vent
+        description:
+            en: "Hurricane tracks and response zone are issued by the Canadian Hurricane Centre as part of the regular hurricane season forecast."
+            fr: "Les trajectoires d'ouragans et la zone de réaction aux ouragans sont émises par le Centre canadien de prévision des ouragans, dans le cadre des prévisions régulières lors de la saison des ouragans."
+        keywords:
+            en: [Weather warnings, Precipitation, Wind, Storms, Floods]
+            fr: [Alerte météorologique, Précipitation, Vent, Tempête, Inondation]
+        crs:
+            - CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title:
+                  en: Hurricane prediction data and products
+                  fr: Données et produits de prévision des ouragans
+              href:
+                  en: https://eccc-msc.github.io/open-data/msc-data/hurricanes/readme_hurricanes_en/
+                  fr: https://eccc-msc.github.io/open-data/msc-data/hurricanes/readme_hurricanes_fr/
+              hreflang:
+                  en: en-CA
+                  fr: fr-CA
+        extents:
+            spatial:
+                bbox: [-180, -90, 180, 90]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+            temporal:
+                begin: 2011-06-01T00:00:00Z
+                end: null # or empty
+        providers:
+            - type: feature
+              name: Elasticsearch
+              data: ${MSC_PYGEOAPI_ES_URL}/hurricanes-wind_radii.*
+              id_field: id
+              time_field: validity_datetime
+
     umos-gdps-realtime:
         type: collection
         title:
