@@ -46,6 +46,9 @@ MAILTO=""
 # every day at 0700h, clean metnotes data older than 7 days
 0 7 * * * geoadm . /local/home/geoadm/.profile && msc-pygeoapi data metnotes clean-indexes --days 7 --yes
 
+# every day at 0800h clean hurricanes data older than 7 days
+0 8 * * * geoadm . /local/home/geoadm/.profile && msc-pygeoapi data hurricanes clean-indexes --days 7 --dataset all --yes
+
 # every day at 0300h, clean out empty MetPX directories
 0 3 * * * geoadm . /local/home/geoadm/.profile && /usr/bin/find $MSC_PYGEOAPI_CACHEDIR -type d -empty -delete > /dev/null 2>&1
 
