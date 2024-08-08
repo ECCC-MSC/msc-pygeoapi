@@ -28,7 +28,7 @@
 #
 # =================================================================
 
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 import logging
 import os
@@ -47,7 +47,8 @@ from msc_pygeoapi.util import (
 LOGGER = logging.getLogger(__name__)
 
 # cleanup settings
-DAYS_TO_KEEP = 7
+DAYS_TO_KEEP = 30
+ACTIVE_HOURS = 48
 
 # Mapping for indexes
 TEMPLATE_MAPPINGS = ['cyclone', 'track', 'error_cone', 'wind_radii']
@@ -73,6 +74,24 @@ MAPPINGS = {
                 'validity_datetime': {
                     'type': 'date',
                     'format': 'strict_date_time_no_millis'
+                },
+                'latest_publication': {
+                    'type': 'boolean'
+                },
+                'active': {
+                    'type': 'boolean'
+                },
+                'id': {
+                    'type': 'text',
+                    'fields': {'raw': {'type': 'keyword'}}
+                },
+                'storm_name': {
+                    'type': 'text',
+                    'fields': {'raw': {'type': 'keyword'}}
+                },
+                'file_name': {
+                    'type': 'text',
+                    'fields': {'raw': {'type': 'keyword'}}
                 }
             }
         }
@@ -99,6 +118,9 @@ class HurricanesRealtimeLoader(BaseLoader):
         self.filepath = None
         self.datetime = None
         self.es_index = None
+        self.storm_name = None
+        self.file_id = None
+        self.newer = None
         self.conn = ElasticsearchConnector(conn_config)
 
         for hurricane_type in TEMPLATE_MAPPINGS:
@@ -142,8 +164,13 @@ class HurricanesRealtimeLoader(BaseLoader):
 
                 # check if id is already in ES and if amendment is +=1
                 amendment = feature['properties']['amendment']
-                file_id = feature['id']
-                is_newer = self.check_if_newer(file_id, amendment)
+                self.file_id = filename
+                feature['properties']['file_name'] = self.file_id
+
+                # set default status ti inactive
+                # activate status will be set later with a ES request
+                feature['properties']['active'] = False
+                feature['properties']['latest_publication'] = False
 
                 type_ = feature['properties']['type']
                 date_ = datetime.strptime(
@@ -154,20 +181,40 @@ class HurricanesRealtimeLoader(BaseLoader):
                 index_date = date_.strftime('%Y-%m-%d')
                 self.es_index = f'{index_name}{index_date}'
 
+                is_newer = self.check_if_newer(self.file_id, amendment)
+
                 if is_newer['update']:
-                    action = {
-                        '_id': feature['properties']['id'],
-                        '_index': self.es_index,
-                        '_op_type': 'update',
-                        'doc': feature,
-                        'doc_as_upsert': True
-                    }
+                    self.newer = True
+                    feature['properties']['latest_publication'] = True
 
-                    yield action
+                    now = datetime.utcnow()
+                    gte = (now - timedelta(hours=48)).strftime(DATETIME_FORMAT)
+                    if feature['properties']['validity_datetime'] >= gte:
+                        feature['properties']['active'] = True
 
-                    for id_ in is_newer['id_list']:
-                        self.conn.Elasticsearch.delete(index=self.es_index,
-                                                       id=id_)
+                    # if this file is newer
+                    # set all previous forecast publication latest
+                    # to False for this hurricane storm name
+                    # before adding the latest file with status latest = True
+                    self.storm_name = feature['properties']['storm_name']
+
+                action = {
+                    '_id': feature['properties']['id'],
+                    '_index': self.es_index,
+                    '_op_type': 'update',
+                    'doc': feature,
+                    'doc_as_upsert': True
+                }
+
+                yield action
+
+                for id_ in is_newer['id_list']:
+                    self.conn.Elasticsearch.delete(index=self.es_index,
+                                                   id=id_)
+
+                # update active hurricane status
+                # self.update_active_status(type_)
+
             else:
                 LOGGER.warning(f'empty hurricane json in {filename}')
 
@@ -201,8 +248,8 @@ class HurricanesRealtimeLoader(BaseLoader):
 
         query = {
             'query': {
-                'match': {
-                    'properties.id': file_id
+                'term': {
+                    'properties.file_name.keyword': file_id
                 }
             }
         }
@@ -224,6 +271,88 @@ class HurricanesRealtimeLoader(BaseLoader):
 
         return {'update': upt_, 'id_list': id_list}
 
+    def update_latest_status(self, storm_name, file_id):
+        """
+        update latest status for the latest hurricane publication
+
+        :return `bool` of update status
+        """
+
+        query = {'script': {
+                    'source': '''
+                        ctx._source.properties.latest_publication = false;
+                        ctx._source.properties.active = false;
+                    ''',
+                    'lang': 'painless'
+                },
+                'query': {
+                        'bool': {
+                            'must': [{
+                                'match': {
+                                    'properties.storm_name': storm_name
+                                }
+                            }],
+                            'must_not': [{
+                                'match': {
+                                    'properties.file_name': file_id
+                                    }
+                            }]
+                        }
+                    }
+                }
+
+        # create list of today and yesterday index
+        wildcard = '*'
+        index_ = f'{INDEX_BASENAME.format(wildcard)}*'
+        try:
+            self.conn.update_by_query(query, index_)
+        except Exception as err:
+            LOGGER.warning(f'Failed to update ES index: {err}')
+
+        return True
+
+    def update_active_status(self, in_hours):
+        """
+        update active status for the latest hurricane
+
+        :return `bool` of update status
+        """
+
+        now = datetime.utcnow()
+        lt_date = (now - timedelta(hours=in_hours)).strftime(DATETIME_FORMAT)
+
+        query = {'script': {
+            'source': 'ctx._source.properties.active=false',
+            'lang': 'painless'
+            },
+            'query': {
+                    'bool': {
+                        'must': [{
+                            'match': {
+                                'properties.active': 'true'
+                            }
+                        }, {
+                            'range': {
+                                'properties.validity_datetime': {
+                                    'lt': lt_date
+                                }
+                            }
+                        }]
+                    }
+                }
+            }
+
+        # create list of today and yesterday index
+        wildcard = '*'
+        index_ = f'{INDEX_BASENAME.format(wildcard)}*'
+
+        try:
+            self.conn.update_by_query(query, index_)
+        except Exception as err:
+            LOGGER.warning(f'Failed to update ES index: {err}')
+
+        return True
+
     def load_data(self, filepath):
         """
         loads data from event to target
@@ -240,6 +369,10 @@ class HurricanesRealtimeLoader(BaseLoader):
         try:
             r = self.conn.submit_elastic_package(package)
             LOGGER.debug(f'Result: {r}')
+            if self.newer:
+                self.update_latest_status(self.storm_name, self.file_id)
+                msg = f'Update active and latest status: {self.storm_name} {self.file_id}' # noqa
+                LOGGER.debug(msg)
             return True
         except Exception as err:
             LOGGER.warning(f'Error indexing: {err}')
@@ -290,11 +423,11 @@ def add(ctx, file_, directory, es, username, password, ignore_certs):
 @click.pass_context
 @cli_options.OPTION_DAYS(
     default=DAYS_TO_KEEP,
-    help=f'Delete indexes older than n days (default={DAYS_TO_KEEP})',
+    help=f'Delete indexes older than n days (default={DAYS_TO_KEEP})'
 )
 @cli_options.OPTION_DATASET(
     help='Hurricane dataset indexes to delete.',
-    type=click.Choice(TEMPLATE_MAPPINGS + ['all']),
+    type=click.Choice(TEMPLATE_MAPPINGS + ['all'])
 )
 @cli_options.OPTION_ELASTICSEARCH()
 @cli_options.OPTION_ES_USERNAME()
@@ -326,9 +459,31 @@ def clean_indexes(ctx, es, username, password, dataset, days, ignore_certs):
 
 @click.command()
 @click.pass_context
+@cli_options.OPTION_HOURS(
+    default=ACTIVE_HOURS,
+    help=f'Change activate status older than n hours (default={ACTIVE_HOURS})'
+)
+@cli_options.OPTION_ELASTICSEARCH()
+@cli_options.OPTION_ES_USERNAME()
+@cli_options.OPTION_ES_PASSWORD()
+@cli_options.OPTION_ES_IGNORE_CERTS()
+def update_active_status(ctx, es, username, password, hours, ignore_certs):
+    """Set inactive hurricane documents"""
+
+    conn_config = configure_es_connection(es, username, password, ignore_certs)
+
+    loader = HurricanesRealtimeLoader(conn_config)
+    result = loader.update_active_status(hours)
+
+    if result:
+        click.echo('active status updated')
+
+
+@click.command()
+@click.pass_context
 @cli_options.OPTION_DATASET(
     help='Hurricane dataset indexes to delete.',
-    type=click.Choice(TEMPLATE_MAPPINGS + ['all']),
+    type=click.Choice(TEMPLATE_MAPPINGS + ['all'])
 )
 @cli_options.OPTION_ELASTICSEARCH()
 @cli_options.OPTION_ES_USERNAME()
@@ -362,5 +517,6 @@ def delete_indexes(ctx, dataset, es, username, password, ignore_certs,
 
 
 hurricanes.add_command(add)
+hurricanes.add_command(update_active_status)
 hurricanes.add_command(clean_indexes)
 hurricanes.add_command(delete_indexes)
