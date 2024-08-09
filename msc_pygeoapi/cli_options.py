@@ -38,7 +38,7 @@ def OPTION_DATASET(*args, **kwargs):
 
     default_kwargs = {
         'required': True,
-        'help': 'Dataset to load, or all if loading everything',
+        'help': 'Dataset to load, or all if loading everything'
     }
 
     if not args:
@@ -52,7 +52,7 @@ def OPTION_DATASET(*args, **kwargs):
 def OPTION_DAYS(**kwargs):
 
     default_kwargs = {
-        'type': int,
+        'type': int
     }
 
     kwargs = {**default_kwargs, **kwargs} if kwargs else default_kwargs
@@ -66,7 +66,7 @@ def OPTION_DB(*args, **kwargs):
 
     default_kwargs = {
         'required': True,
-        'help': 'Database connection string',
+        'help': 'Database connection string'
     }
 
     if not args:
@@ -84,7 +84,7 @@ def OPTION_DIRECTORY(*args, **kwargs):
     default_kwargs = {
         'type': click.Path(exists=True, resolve_path=True),
         'required': False,
-        'help': 'Path to directory',
+        'help': 'Path to directory'
     }
 
     if not args:
@@ -100,7 +100,7 @@ def OPTION_ELASTICSEARCH(*args, **kwargs):
     default_args = ['--es']
 
     default_kwargs = {
-        'help': 'URL to Elasticsearch',
+        'help': 'URL to Elasticsearch'
     }
 
     if not args:
@@ -116,7 +116,7 @@ def OPTION_ES_PASSWORD(*args, **kwargs):
     default_args = ['--password']
 
     default_kwargs = {
-        'help': 'Password to connect to Elasticsearch',
+        'help': 'Password to connect to Elasticsearch'
     }
 
     if not args:
@@ -132,7 +132,7 @@ def OPTION_ES_USERNAME(*args, **kwargs):
     default_args = ['--username']
 
     default_kwargs = {
-        'help': 'Username to connect to Elasticsearch',
+        'help': 'Username to connect to Elasticsearch'
     }
 
     if not args:
@@ -162,7 +162,7 @@ def OPTION_FILE(*args, **kwargs):
     default_kwargs = {
         'type': click.Path(exists=True, resolve_path=True),
         'required': False,
-        'help': 'Path to file',
+        'help': 'Path to file'
     }
 
     if not args:
@@ -173,12 +173,23 @@ def OPTION_FILE(*args, **kwargs):
     return click.option(*args, **kwargs)
 
 
+def OPTION_HOURS(**kwargs):
+
+    default_kwargs = {
+        'type': int
+    }
+
+    kwargs = {**default_kwargs, **kwargs} if kwargs else default_kwargs
+
+    return click.option('--hours', '-h', **kwargs)
+
+
 def OPTION_INDEX_NAME(*args, **kwargs):
 
     default_args = ['--index-name', '-i']
 
     default_kwargs = {
-        'help': 'Elasticsearch index name to delete',
+        'help': 'Elasticsearch index name to delete'
     }
 
     if not args:
@@ -214,7 +225,7 @@ def OPTION_BATCH_SIZE(*args, **kwargs):
         'default': 10000,
         'type': click.IntRange(1, 100000),
         'required': False,
-        'help': 'Number of documents to upload at a time to ES index',
+        'help': 'Number of documents to upload at a time to ES index'
     }
 
     if not args:
@@ -230,7 +241,7 @@ def OPTION_YES(**kwargs):
     default_kwargs = {
         'is_flag': True,
         'callback': click_abort_if_false,
-        'expose_value': False,
+        'expose_value': False
     }
 
     kwargs = {**default_kwargs, **kwargs} if kwargs else default_kwargs
