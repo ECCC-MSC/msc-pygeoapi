@@ -1,9 +1,9 @@
 {% extends "_base.html" %}
 {% block title %}{{ super() }} {{ data['title'] }} {% endblock %}
 {% block crumbs %}{{ super() }}
-<li><a href="../../collections?lang={{ (locale|lower)[:2] }}">{% trans %}Collections{% endtrans %}</a></li>
-<li><a href="./{{ data['id'] }}?lang={{ (locale|lower)[:2] }}">{{ data['title'] }}</a></li>
-<li><a href="./{{ data['id'] }}queryables?lang={{ (locale|lower)[:2] }}">{% trans %}Queryables{% endtrans %}</a></li>
+<li><a href="{{ data['collections_path'] }}?lang={{ (locale|lower)[:2] }}">{% trans %}Collections{% endtrans %}</a></li>
+<li><a href="./?lang={{ (locale|lower)[:2] }}">{{ data['title'] | truncate( 25 ) }}</a></li>
+<li><a href="./queryables?lang={{ (locale|lower)[:2] }}">{% trans %}Queryables{% endtrans %}</a></li>
 {% endblock %}
 {% block body %}
     <section id="collection">

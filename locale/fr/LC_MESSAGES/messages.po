@@ -7,170 +7,170 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-06-13 13:54+0000\n"
+"POT-Creation-Date: 2024-08-12 17:10+0000\n"
 "PO-Revision-Date: 2022-07-05 09:20-0700\n"
 "Last-Translator: \n"
 "Language: fr_CA\n"
 "Language-Team: \n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.10.3\n"
+"Generated-By: Babel 2.7.0\n"
 
-#: theme/templates/_base.html:34
+#: theme/templates/_base.html:46
 msgid "Skip to main content"
 msgstr "Passer au contenu principal"
 
-#: theme/templates/_base.html:37
+#: theme/templates/_base.html:49
 msgid "Skip to \"About government\""
 msgstr "Passer à «&#160;À propos de ce site&#160;»"
 
-#: theme/templates/_base.html:46
+#: theme/templates/_base.html:58
 msgid "Format and language selection"
 msgstr "Sélection du format et de la langue"
 
-#: theme/templates/_base.html:103 theme/templates/_base.html:105
+#: theme/templates/_base.html:115 theme/templates/_base.html:117
 msgid "Environment & Climate Change Canada"
 msgstr "Environnement et Changement climatique Canada"
 
-#: theme/templates/_base.html:113
+#: theme/templates/_base.html:125
 msgid "You are here:"
 msgstr "Vous êtes ici :"
 
-#: theme/templates/_base.html:117 theme/templates/landing_page.html:2
+#: theme/templates/_base.html:129 theme/templates/landing_page.html:2
 msgid "Home"
 msgstr "Accueil"
 
-#: theme/templates/_base.html:128
+#: theme/templates/_base.html:140
 msgid "Powered by"
 msgstr "Propulsé par"
 
-#: theme/templates/_base.html:138
+#: theme/templates/_base.html:150
 msgid "About government"
 msgstr "Au sujet du gouvernement"
 
-#: theme/templates/_base.html:140
+#: theme/templates/_base.html:152
 msgid "https://www.canada.ca/en/contact.html"
 msgstr "https://www.canada.ca/fr/contact.html"
 
-#: theme/templates/_base.html:140
+#: theme/templates/_base.html:152
 msgid "Contact us"
 msgstr "Contactez-nous"
 
-#: theme/templates/_base.html:141
+#: theme/templates/_base.html:153
 msgid "https://www.canada.ca/en/government/dept.html"
 msgstr "https://www.canada.ca/fr/gouvernement/min.html"
 
-#: theme/templates/_base.html:141
+#: theme/templates/_base.html:153
 msgid "Departments and agencies"
 msgstr "Ministères et agences"
 
-#: theme/templates/_base.html:142
+#: theme/templates/_base.html:154
 msgid "https://www.canada.ca/en/government/publicservice.html"
 msgstr "https://www.canada.ca/fr/gouvernement/fonctionpublique.html"
 
-#: theme/templates/_base.html:142
+#: theme/templates/_base.html:154
 msgid "Public service and military"
 msgstr "Fonction publique et force militaire"
 
-#: theme/templates/_base.html:143
+#: theme/templates/_base.html:155
 msgid "https://www.canada.ca/en/news.html"
 msgstr "https://www.canada.ca/fr/nouvelles.html"
 
-#: theme/templates/_base.html:143
+#: theme/templates/_base.html:155
 msgid "News"
 msgstr "Nouvelles"
 
-#: theme/templates/_base.html:144
+#: theme/templates/_base.html:156
 msgid "https://www.canada.ca/en/government/system/laws.html"
 msgstr "https://www.canada.ca/fr/gouvernement/systeme/lois.html"
 
-#: theme/templates/_base.html:144
+#: theme/templates/_base.html:156
 msgid "Treaties, laws and regulations"
 msgstr "Traités, lois et règlements"
 
-#: theme/templates/_base.html:145
+#: theme/templates/_base.html:157
 msgid "https://www.canada.ca/en/transparency/reporting.html"
 msgstr "https://www.canada.ca/fr/transparence/rapports.html"
 
-#: theme/templates/_base.html:145
+#: theme/templates/_base.html:157
 msgid "Government-wide reporting"
 msgstr "Rapports à l'échelle du gouvernement"
 
-#: theme/templates/_base.html:146
+#: theme/templates/_base.html:158
 msgid "https://pm.gc.ca/eng"
 msgstr "https://pm.gc.ca/fra"
 
-#: theme/templates/_base.html:146
+#: theme/templates/_base.html:158
 msgid "Prime Minister"
 msgstr "Premier ministre"
 
-#: theme/templates/_base.html:147
+#: theme/templates/_base.html:159
 msgid "https://www.canada.ca/en/government/system.html"
 msgstr "https://www.canada.ca/fr/gouvernement/systeme.html"
 
-#: theme/templates/_base.html:147
+#: theme/templates/_base.html:159
 msgid "How government works"
 msgstr "Comment le gouvernement fonctionne"
 
-#: theme/templates/_base.html:148
+#: theme/templates/_base.html:160
 msgid "https://open.canada.ca/en/"
 msgstr "https://ouvert.canada.ca/"
 
-#: theme/templates/_base.html:148
+#: theme/templates/_base.html:160
 msgid "Open government"
 msgstr "Gouvernement ouvert"
 
-#: theme/templates/_base.html:156
+#: theme/templates/_base.html:168
 msgid "About this site"
 msgstr "À propos de ce site"
 
-#: theme/templates/_base.html:158
+#: theme/templates/_base.html:170
 msgid "https://www.canada.ca/en/social.html"
 msgstr "https://www.canada.ca/fr/sociaux.html"
 
-#: theme/templates/_base.html:158
+#: theme/templates/_base.html:170
 msgid "Social media"
 msgstr "Médias sociaux"
 
-#: theme/templates/_base.html:159
+#: theme/templates/_base.html:171
 msgid "https://www.canada.ca/en/mobile.html"
 msgstr "https://www.canada.ca/fr/mobile.html"
 
-#: theme/templates/_base.html:159
+#: theme/templates/_base.html:171
 msgid "Mobile applications"
 msgstr "Applications mobiles"
 
-#: theme/templates/_base.html:160
+#: theme/templates/_base.html:172
 msgid "https://www1.canada.ca/en/newsite.html"
 msgstr "https://www1.canada.ca/fr/nouveausite.html"
 
-#: theme/templates/_base.html:160
+#: theme/templates/_base.html:172
 msgid "About Canada.ca"
 msgstr "À propos de Canada.ca"
 
-#: theme/templates/_base.html:161
+#: theme/templates/_base.html:173
 msgid "https://www.canada.ca/en/transparency/terms.html"
 msgstr "https://www.canada.ca/fr/transparence/avis.html"
 
-#: theme/templates/_base.html:161
+#: theme/templates/_base.html:173
 msgid "Terms and conditions"
 msgstr "Termes et conditions"
 
-#: theme/templates/_base.html:162
+#: theme/templates/_base.html:174
 msgid "https://www.canada.ca/en/transparency/privacy.html"
 msgstr "https://www.canada.ca/fr/transparence/confidentialite.html"
 
-#: theme/templates/_base.html:162
+#: theme/templates/_base.html:174
 msgid "Privacy"
 msgstr "Confidentialité"
 
-#: theme/templates/_base.html:166
+#: theme/templates/_base.html:178
 msgid "Top of page"
 msgstr "Haut de la page"
 
-#: theme/templates/_base.html:169
+#: theme/templates/_base.html:181
 msgid "Symbol of the Government of Canada"
 msgstr "Symbole du gouvernement du Canada"
 
@@ -195,6 +195,7 @@ msgstr "Documentation utilisateur de la plateforme GeoMet du SMC"
 #: theme/templates/collections/items/index.html:16
 #: theme/templates/collections/items/item.html:25
 #: theme/templates/collections/queryables.html:4
+#: theme/templates/collections/schema.html:4
 #: theme/templates/collections/tiles/index.html:4
 #: theme/templates/collections/tiles/metadata.html:4
 #: theme/templates/landing_page.html:32 theme/templates/stac/collection.html:13
@@ -344,6 +345,7 @@ msgstr "Collections dans ce service"
 
 #: theme/templates/collections/index.html:23
 #: theme/templates/collections/index.html:79
+#: theme/templates/collections/schema.html:19
 #: theme/templates/collections/tiles/index.html:109
 #: theme/templates/processes/index.html:14 theme/templates/stac/catalog.html:29
 #: theme/templates/stac/catalog.html:101
@@ -353,6 +355,7 @@ msgstr "Nom"
 
 #: theme/templates/collections/index.html:29
 #: theme/templates/collections/index.html:83
+#: theme/templates/collections/schema.html:21
 msgid "Type"
 msgstr "Type"
 
@@ -364,6 +367,25 @@ msgstr "Type"
 #: theme/templates/stac/collection.html:18
 msgid "Description"
 msgstr "Description"
+
+#: theme/templates/collections/schema.html:6
+#: theme/templates/collections/schema.html:17
+msgid "Schema"
+msgstr "Schéma"
+
+#: theme/templates/collections/schema.html:20
+#: theme/templates/processes/process.html:23
+#: theme/templates/processes/process.html:54
+msgid "Title"
+msgstr "Titre"
+
+#: theme/templates/collections/schema.html:22
+msgid "Units"
+msgstr "Unités"
+
+#: theme/templates/collections/schema.html:23
+msgid "Values"
+msgstr "Valeurs"
 
 #: theme/templates/collections/coverage/domainset.html:11
 msgid "Coverage domain set"
@@ -446,15 +468,15 @@ msgstr "CSV"
 msgid "Items"
 msgstr "Items"
 
-#: theme/templates/collections/items/index.html:32
+#: theme/templates/collections/items/index.html:34
 msgid "Items in this collection."
 msgstr "Items dans cette collection."
 
-#: theme/templates/collections/items/index.html:47
+#: theme/templates/collections/items/index.html:49
 msgid "Only show items by map view"
 msgstr "Afficher les items uniquement par la vue de la carte"
 
-#: theme/templates/collections/items/index.html:51
+#: theme/templates/collections/items/index.html:53
 msgid ""
 "No results. Please modify your search query or <button\n"
 "            :title=\"txt.reset\"  \n"
@@ -466,62 +488,62 @@ msgstr ""
 "            class=\"btn btn-warning btn-sm\" \n"
 "            @click=\"clearSearch\">remettre</button> le tableau."
 
-#: theme/templates/collections/items/index.html:58
-#: theme/templates/collections/items/index.html:63
+#: theme/templates/collections/items/index.html:60
+#: theme/templates/collections/items/index.html:65
 msgid "Filter table content"
 msgstr "Filtrer le contenu du tableau"
 
-#: theme/templates/collections/items/index.html:73
+#: theme/templates/collections/items/index.html:75
 msgid "Reset"
 msgstr "Remettre"
 
-#: theme/templates/collections/items/index.html:75
+#: theme/templates/collections/items/index.html:77
 msgid "Apply column keyword search queries to the entire collection"
 msgstr ""
 "Appliquer des requêtes de recherche par mots-clés en colonnes à "
 "l'ensemble de la collection"
 
-#: theme/templates/collections/items/index.html:79
+#: theme/templates/collections/items/index.html:81
 msgid "Search by keywords"
 msgstr "Recherche par mots-clés"
 
-#: theme/templates/collections/items/index.html:97
+#: theme/templates/collections/items/index.html:99
 msgid "Keyword search for: [% th.key %]"
 msgstr "Recherche de mots-clés pour : [% th.key %]"
 
-#: theme/templates/collections/items/index.html:101
+#: theme/templates/collections/items/index.html:103
 msgid ""
 "eg. &quot;BC QC ON&quot; will search for &quot;BC&quot; or &quot;ON&quot;"
 " or &quot;QC&quot;"
 msgstr "Par exemple, « BC QC ON » recherchera « BC » ou « ON » ou « QC »"
 
-#: theme/templates/collections/items/index.html:103
+#: theme/templates/collections/items/index.html:105
 msgid "Keyword"
 msgstr "Mot clé"
 
-#: theme/templates/collections/items/index.html:142
+#: theme/templates/collections/items/index.html:144
 msgid "Limit:"
 msgstr "Limite :"
 
-#: theme/templates/collections/items/index.html:160
+#: theme/templates/collections/items/index.html:162
 msgid "Higher limits are not recommended"
 msgstr "Des limites plus élevées ne sont pas recommandées"
 
-#: theme/templates/collections/items/index.html:164
+#: theme/templates/collections/items/index.html:166
 msgid "Previous"
 msgstr "Précédent"
 
-#: theme/templates/collections/items/index.html:166
+#: theme/templates/collections/items/index.html:168
 #, python-format
 msgid "Page [% currentPage %] / [% maxPages %]"
 msgstr "Page [% currentPage %] / [% maxPages %]"
 
-#: theme/templates/collections/items/index.html:168
+#: theme/templates/collections/items/index.html:170
 #: theme/templates/collections/items/item.html:62
 msgid "Next"
 msgstr "Suivant"
 
-#: theme/templates/collections/items/index.html:196
+#: theme/templates/collections/items/index.html:198
 msgid ""
 "Clear column keyword search queries and reset to display the default "
 "results"
@@ -529,23 +551,23 @@ msgstr ""
 "Effacer les requêtes de recherche par mots-clés des colonnes et "
 "réinitialiser pour afficher les résultats par défaut"
 
-#: theme/templates/collections/items/index.html:201
+#: theme/templates/collections/items/index.html:203
 msgid "Showing $firstPage to $upper of $itemsTotal"
 msgstr "Affichage de $firstPage jusqu'à $upper de $itemsTotal"
 
-#: theme/templates/collections/items/index.html:202
+#: theme/templates/collections/items/index.html:204
 msgid "Showing 0 results"
 msgstr "Affichage de 0 résultats"
 
-#: theme/templates/collections/items/index.html:246
+#: theme/templates/collections/items/index.html:248
 msgid "filtered from $totalSize total entry"
 msgstr "filtré de $totalSize entrée au total"
 
-#: theme/templates/collections/items/index.html:247
+#: theme/templates/collections/items/index.html:249
 msgid "filtered from $totalSize total entries"
 msgstr "filtrées de $totalSize entrées au total"
 
-#: theme/templates/collections/items/index.html:248
+#: theme/templates/collections/items/index.html:250
 msgid "Showing $startEntryOfPage to $lastEntryOfPage of $filteredNumEntries"
 msgstr ""
 "Affichage de $startEntryOfPage jusqu'à $lastEntryOfPage de "
@@ -688,11 +710,6 @@ msgstr "Entrées"
 #: theme/templates/processes/process.html:53
 msgid "ID"
 msgstr "ID"
-
-#: theme/templates/processes/process.html:23
-#: theme/templates/processes/process.html:54
-msgid "Title"
-msgstr "Titre"
 
 #: theme/templates/processes/process.html:24
 msgid "Data type"

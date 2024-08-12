@@ -22,10 +22,10 @@
 {%- endmacro %}
 {% block title %}{{ super() }} {{ data['title'] }} - {{ data['id'] }}{% endblock %}
 {% block crumbs %}{{ super() }}
-<li><a href="../../../collections?lang={{ (locale|lower)[:2] }}">{% trans %}Collections{% endtrans %}</a></li>
+<li><a href="{{ data['collections_path'] }}?lang={{ (locale|lower)[:2] }}">{% trans %}Collections{% endtrans %}</a></li>
 {% for link in data['links'] %}
   {% if link.rel == 'collection' %}
-  <li><a href="{{ link['href'] }}?lang={{ (locale|lower)[:2] }}">{{ link['title'] }}</a></li>
+  <li><a href="{{ link['href'] }}?lang={{ (locale|lower)[:2] }}">{{ link['title'] | truncate( 25 ) }}</a></li>
   {% endif %}
 {% endfor %}
 <li><a href="../items?lang={{ (locale|lower)[:2] }}">{% trans %}Items{% endtrans %}</a></li>

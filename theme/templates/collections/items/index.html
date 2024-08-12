@@ -16,7 +16,7 @@
 <li><a href="{{ data['collections_path'] }}?lang={{ (locale|lower)[:2] }}">{% trans %}Collections{% endtrans %}</a></li>
 {% for link in data['links'] %}
   {% if link.rel == 'collection' %}
-    <li><a href="{{ data['dataset_path'] }}?lang={{ (locale|lower)[:2] }}">{{ link['title'] }}</a></li>
+    <li><a href="{{ data['dataset_path'] }}?lang={{ (locale|lower)[:2] }}">{{ link['title'] | truncate( 25 ) }}</a></li>
     {% set col_title = link['title'] %}
   {% endif %}
 {% endfor %}
