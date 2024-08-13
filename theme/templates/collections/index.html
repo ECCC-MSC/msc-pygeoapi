@@ -1,7 +1,7 @@
 {% extends "_base.html" %}
 {% block title %}{{ super() }} {% trans %}Collections{% endtrans %} {% endblock %}
 {% block crumbs %}{{ super() }}
-<li><a href="./collections?lang={{ (locale|lower)[:2] }}">{% trans %}Collections{% endtrans %}</a></li>
+<li><a href="{{ data['collections_path'] }}?lang={{ (locale|lower)[:2] }}">{% trans %}Collections{% endtrans %}</a></li>
 {% endblock %}
 {% block body %}
     <section id="collections">
