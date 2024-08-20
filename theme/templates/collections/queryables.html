@@ -2,7 +2,11 @@
 {% block title %}{{ super() }} {{ data['title'] }} {% endblock %}
 {% block crumbs %}{{ super() }}
 <li><a href="{{ data['collections_path'] }}?lang={{ (locale|lower)[:2] }}">{% trans %}Collections{% endtrans %}</a></li>
+{% if 'id' in data %}
+<li><a href="{{ data['collections_path'] }}/{{ data['id'] }}?lang={{ (locale|lower)[:2] }}">{{ data['title'] | truncate( 25 ) }}</a></li>
+{% else %}
 <li><a href="./?lang={{ (locale|lower)[:2] }}">{{ data['title'] | truncate( 25 ) }}</a></li>
+{% endif %}
 <li><a href="./queryables?lang={{ (locale|lower)[:2] }}">{% trans %}Queryables{% endtrans %}</a></li>
 {% endblock %}
 {% block body %}
