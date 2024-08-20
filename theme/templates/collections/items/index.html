@@ -51,8 +51,8 @@
         </div>
         <div v-if="items.length === 0" class="alert alert-warning">
           <p>{% trans %}No results. Please modify your search query or <button
-            :title="txt.reset"  
-            class="btn btn-warning btn-sm" 
+            :title="txt.reset"
+            class="btn btn-warning btn-sm"
             @click="clearSearch">reset</button> the table.{% endtrans %}</p>
         </div>
         <div class="form-inline row" aria-controls="items-table">
@@ -67,15 +67,15 @@
           </div>
           <div class="col-xs-7 text-right">
             <div class="btn-group btn-group-sm inline-block">
-              <button 
-                :title="txt.reset" 
-                class="btn btn-warning" 
+              <button
+                :title="txt.reset"
+                class="btn btn-warning"
                 @click="clearSearch"
                 :disabled="queryColsIsEmpty">
                 <span class="glyphicon glyphicon-remove"></span> {% trans %}Reset{% endtrans %}</button>
-              <button 
-                title="{% trans %}Apply column keyword search queries to the entire collection{% endtrans %}" 
-                class="btn btn-primary" 
+              <button
+                title="{% trans %}Apply column keyword search queries to the entire collection{% endtrans %}"
+                class="btn btn-primary"
                 @click="applyKeywordSearch()"
                 :disabled="queryColsIsEmpty">
                 <span class="glyphicon glyphicon-search"></span> {% trans %}Search by keywords{% endtrans %}</button>
@@ -97,7 +97,7 @@
                   </div>
                   <div v-if="th.key !== 'id'">
                     <label class="wb-inv" :for="'search-'+th.key">{% trans %}Keyword search for: [% th.key %]{% endtrans %}</label>
-                    <input 
+                    <input
                       type="text"
                       class="form-control input-sm keyword-search-input"
                       title="{% trans %}eg. &quot;BC QC ON&quot; will search for &quot;BC&quot; or &quot;ON&quot; or &quot;QC&quot;{% endtrans %}"
@@ -147,9 +147,11 @@
                     class="input-sm form-control inline-block"
                     v-model="limit"
                     :disabled="itemsLoading"
+                    aria-describedby="limit-warning"
                     @change="limitChange()">
                       <option v-for="value of limitOptions" :value="value" v-text="value"></option>
                   </select>
+                  <span id="limit-warning" class="label label-warning mrgn-lft-sm" role="status" aria-live="polite">{% trans %}Higher limits are not recommended{% endtrans %}</span>
                 </div>
               </div>
             </div>
@@ -158,10 +160,7 @@
               <span v-show="showingFilteredFromText !== ''" v-text="' (' + showingFilteredFromText + ')'"></span>
             </div>
           </div>
-          <div class="alert alert-warning padding-tb-5 mrgn-bttm-0 mrgn-tp-sm">
-            <p><small>{% trans %}Higher limits are not recommended{% endtrans %}</small></p>
-          </div>
-          <ul class="pagination pagination-sm clearfix">
+          <ul class="pagination pagination-sm clearfix mrgn-tp-sm">
             <li>
               <button class="btn btn-sm btn-default" @click="prevPageItems" rel="prev" :disabled="itemsLoading || currentPage === 1">{% trans %}Previous{% endtrans %}</button>
             </li>
@@ -206,7 +205,7 @@
           const { items, itemsJson, itemProps, getItems, getTableHeaders, itemsTotal, itemsLoading,
             currentPage, maxPages, prevPage, nextPage, limit, showingLimitText, calcOffset,
             queryCols, clearQueryCols, queryColsIsEmpty } = useItems(itemsi18n)
-          
+
           /* Table columns */
           const tableFields = computed(() => {
             const fields = []
@@ -223,7 +222,7 @@
                 // avoid duplicate column id case that matches root id
                 if (prop.toLowerCase() === 'id') {
                   return // skip
-                } 
+                }
                 // avoid duplicate columns if root id and ID_FIELD are the same
                 if (prop.toLowerCase() === ID_FIELD.toLowerCase()) {
                   return // skip
@@ -255,7 +254,7 @@
             sortDir(col)
             getItemsSorted()
           }
-          
+
           /* Collection searching */
           const clearSearch = function() {
             clearQueryCols()
@@ -300,7 +299,7 @@
           const nonQueryColumns = ['sortby', 'offset', 'limit', 'f', 'bbox']
           let params = Object.fromEntries(queryParams.entries())
           let historyState = 1 // internal state handling for back/forward
-          // update JSON and JSONLD href 
+          // update JSON and JSONLD href
           const updateJsonLinks = function() {
             let jsonLink = document.getElementById('json-format-url')
             jsonLink.href = '?' + queryParams.toString() + '&f=json'
