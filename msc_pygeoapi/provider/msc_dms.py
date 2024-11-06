@@ -98,7 +98,7 @@ class MSCDMSCoreAPIProvider(BaseProvider):
             raise ProviderConnectionError(msg)
 
         LOGGER.debug('Grabbing field information')
-        self.fields = self.get_fields()
+        self._fields = self.get_fields()
 
         self.sortables = ['obs_date_tm', 'processed_date_tm']
 
