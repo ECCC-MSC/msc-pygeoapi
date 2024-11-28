@@ -91,6 +91,10 @@ PLUGINS = {
         'coastal_flood_risk_index': {
             'filename_pattern': 'CoastalFloodRiskIndex',
             'handler': 'msc_pygeoapi.loader.coastal_flood_risk_index.CoastalFloodRiskIndexLoader' # noqa
+        },
+        'weatherstories': {
+            'filename_pattern': 'wxstory_',
+            'handler': 'msc_pygeoapi.loader.weatherstories_realtime.WeatherStoriesRealtimeLoader' # noqa
         }
     }
 }
