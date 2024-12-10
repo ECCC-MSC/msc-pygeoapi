@@ -28,8 +28,8 @@ MAILTO=""
 #
 # =================================================================
 
-# every day at 0300h, clean bulletin records from ES
-0 3 * * * geoadm . /local/home/geoadm/.profile && msc-pygeoapi data bulletins-realtime clean-indexes --days 140 --yes
+# every day at 0300h, clean bulletin records from ES older than 30 days
+0 3 * * * geoadm . /local/home/geoadm/.profile && msc-pygeoapi data bulletins-realtime clean-indexes --days 30 --yes
 
 # every day at 0400h, clean hydrometric realtime data older than 30 days
 0 4 * * * geoadm . /local/home/geoadm/.profile && msc-pygeoapi data hydrometric-realtime clean-indexes --days 30 --yes
