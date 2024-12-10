@@ -28,7 +28,7 @@ jobs:
         pip3 install numpy gdal==`gdal-config --version`
         pip3 install -r requirements-dev.txt
     - name: Install package 📦
-      run: python3 setup.py install
+      run: pip install .
     - name: run tests ⚙️
       run: |
         pytest -k test_loader
