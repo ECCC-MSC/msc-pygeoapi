@@ -658,7 +658,7 @@ class HydatLoader(BaseLoader):
         :returns: generator of bulk API upsert actions.
         """
 
-        url = MSC_PYGEOAPI_OGC_API_URL
+        url = MSC_PYGEOAPI_OGC_API_URL.rstrip('/')
 
         station_codes = [
             x[0]
@@ -745,54 +745,54 @@ class HydatLoader(BaseLoader):
                     'STATUS_FR': status_fr,
                     'CONTRIBUTOR_EN': agency_en,
                     'CONTRIBUTOR_FR': agency_fr,
-                    'VERTICAL_DATUM': datum_en,
-                    'links': [
-                        {
-                            'type': 'text/html',
-                            'rel': 'related',
-                            'title': f'Station Information for {station_name} ({station})',  # noqa
-                            'href': f'{url}/collections/hydrometric-stations/items?STATION_NUMBER={station}&f=html',  # noqa
-                        },
-                        {
-                            'type': 'application/json',
-                            'rel': 'related',
-                            'title': f'Daily Mean of Water Level or Discharge for {station_name} ({station})',  # noqa
-                            'href': f'{url}/collections/hydrometric-daily-mean/items?STATION_NUMBER={station}',  # noqa
-                        },
-                        {
-                            'type': 'application/json',
-                            'rel': 'related',
-                            'title': f'Monthly Mean of Water Level or Discharge for {station_name} ({station})',  # noqa
-                            'href': f'{url}/collections/hydrometric-monthly-mean/items?STATION_NUMBER={station}',  # noqa
-                        },
-                        {
-                            'type': 'text/html',
-                            'rel': 'alternate',
-                            'title': f'Station Information for {station_name} ({station})',  # noqa
-                            'href': f'https://wateroffice.ec.gc.ca/report/historical_e.html?stn={station}',  # noqa
-                            'hreflang': 'en-CA',
-                        },
-                        {
-                            'type': 'text/html',
-                            'rel': 'alternate',
-                            'title': f'Informations pour la station {station_name} ({station})',  # noqa
-                            'href': f'https://wateroffice.ec.gc.ca/report/historical_f.html?stn={station}',  # noqa
-                            'hreflang': 'fr-CA',
-                        },
-                    ],
+                    'VERTICAL_DATUM': datum_en
                 },
+                'links': [
+                    {
+                        'type': 'text/html',
+                        'rel': 'related',
+                        'title': f'Station Information for {station_name} ({station})',  # noqa
+                        'href': f'{url}/collections/hydrometric-stations/items?STATION_NUMBER={station}&f=html',  # noqa
+                    },
+                    {
+                        'type': 'application/json',
+                        'rel': 'related',
+                        'title': f'Daily Mean of Water Level or Discharge for {station_name} ({station})',  # noqa
+                        'href': f'{url}/collections/hydrometric-daily-mean/items?STATION_NUMBER={station}',  # noqa
+                    },
+                    {
+                        'type': 'application/json',
+                        'rel': 'related',
+                        'title': f'Monthly Mean of Water Level or Discharge for {station_name} ({station})',  # noqa
+                        'href': f'{url}/collections/hydrometric-monthly-mean/items?STATION_NUMBER={station}',  # noqa
+                    },
+                    {
+                        'type': 'text/html',
+                        'rel': 'alternate',
+                        'title': f'Station Information for {station_name} ({station})',  # noqa
+                        'href': f'https://wateroffice.ec.gc.ca/report/historical_e.html?stn={station}',  # noqa
+                        'hreflang': 'en-CA',
+                    },
+                    {
+                        'type': 'text/html',
+                        'rel': 'alternate',
+                        'title': f'Informations pour la station {station_name} ({station})',  # noqa
+                        'href': f'https://wateroffice.ec.gc.ca/report/historical_f.html?stn={station}',  # noqa
+                        'hreflang': 'fr-CA',
+                    },
+                ],
                 'geometry': {'type': 'Point', 'coordinates': station_coords},
             }
 
             if len(peaks) > 0:
-                insert_dict['properties']['links'].append({
+                insert_dict['links'].append({
                     'type': 'application/json',
                     'rel': 'related',
                     'title': f'Annual Maximum and Minimum Instantaneous Water Level or Discharge for {station_name} ({station})',  # noqa
                     'href': f'{url}/collections/hydrometric-annual-peaks/items?STATION_NUMBER={station}',  # noqa
                 })
             if len(stats) > 0:
-                insert_dict['properties']['links'].append({
+                insert_dict['links'].append({
                     'type': 'application/json',
                     'rel': 'related',
                     'title': f'Annual Maximum and Minimum Daily Water Level or Discharge for {station_name} ({station})',  # noqa
