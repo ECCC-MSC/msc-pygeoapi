@@ -283,15 +283,17 @@ class HydrometricRealtimeLoader(BaseLoader):
             next(reader)
 
             for row in reader:
-                if len(row) > 10:
-                    LOGGER.warning(f'Data row in {filepath} has too many values:'  # noqa
-                                   f' {row} (using only first 10)')
-                elif len(row) < 10:
+                if len(row) < 10:
                     LOGGER.error(f'Data row in {filepath} has too few values: {row}')  # noqa
                     continue
 
-                station, date_, level, _, level_symbol, _, \
-                    discharge, _, discharge_symbol, _ = row
+                try:
+                    station, date_, level, _, level_symbol, _, \
+                        discharge, _, discharge_symbol, _ = row[:10]
+                except ValueError as err:
+                    LOGGER.error(err)
+                    LOGGER.error(f'Row: {row}')
+                    continue
 
                 if station in self.stations:
                     stn_info = self.stations[station]
