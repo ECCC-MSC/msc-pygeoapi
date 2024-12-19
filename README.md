@@ -158,6 +158,22 @@ pytest test/test_hydat.py --url https://example.org/dev
 pytest -k 'not api'
 ```
 
+### Multilingual Updates
+
+```bash
+# Extract from latest code the keys to be translated
+pybabel extract -F babel-mapping.ini -o locale/messages.pot ./
+
+# Update the existing .po language file with new/updated keys:
+pybabel update -d locale -l fr -i locale/messages.pot
+
+# Open the relevant .po file and contribute your translations
+vi locale/fr/LC_MESSAGES/messages.po
+
+# Then compile a .mo file to be used by the application
+pybabel compile -d locale -l fr
+```
+
 ## Releasing
 
 ```bash

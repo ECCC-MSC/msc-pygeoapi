@@ -1,0 +1,24 @@
+{% extends "_base.html" %}
+{% block title %}{{ super() }} {{ data['title'] }} {% endblock %}
+{% block crumbs %}{{ super() }}
+<li><a href="{{ data['collections_path'] }}?lang={{ (locale|lower)[:2] }}">{% trans %}Collections{% endtrans %}</a></li>
+<li><a href="{{ data['dataset_path'] }}?lang={{ (locale|lower)[:2] }}">{{ data['title'][(locale|lower)[:2]] | truncate( 25 ) }}</a></li>
+<li><a href="{{ data['dataset_path'] }}/instances?lang={{ (locale|lower)[:2] }}">{% trans %}Instances{% endtrans %}</a></li>
+{% endblock %}
+{% block body %}
+    <section id="collection">
+      <h1>{{ data['title'][(locale|lower)[:2]] }}</h1>
+      <p>{{ data['description'][(locale|lower)[:2]] }}</p>
+      <ul class="list-inline">
+        {% for kw in data['keywords'][(locale|lower)[:2]] %}
+          <li><span class="label label-info">{{ kw }}</span></li>
+        {% endfor %}
+      </ul>
+      <h3>{% trans %}Instances{% endtrans %}</h3>
+      <ul>
+      {% for instance in data['instances'] %}
+        <li><a href="./instances/{{ instance['id'] }}">{{ instance['id'] }} </a></li>
+      {% endfor %}
+      </ul>
+    </section>
+{% endblock %}

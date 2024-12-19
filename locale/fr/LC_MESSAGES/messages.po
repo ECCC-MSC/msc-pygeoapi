@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2024-08-12 17:10+0000\n"
+"POT-Creation-Date: 2025-01-10 18:46+0000\n"
 "PO-Revision-Date: 2022-07-05 09:20-0700\n"
 "Last-Translator: \n"
 "Language: fr_CA\n"
 "Language-Team: \n"
-"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.7.0\n"
+"Generated-By: Babel 2.16.0\n"
 
 #: theme/templates/_base.html:46
 msgid "Skip to main content"
@@ -187,9 +187,12 @@ msgstr "Exception"
 msgid "MSC GeoMet User Documentation"
 msgstr "Documentation utilisateur de la plateforme GeoMet du SMC"
 
-#: theme/templates/collections/collection.html:4
+#: theme/templates/collections/collection.html:6
 #: theme/templates/collections/coverage/domainset.html:4
 #: theme/templates/collections/coverage/rangetype.html:4
+#: theme/templates/collections/edr/instance.html:4
+#: theme/templates/collections/edr/instances.html:4
+#: theme/templates/collections/edr/query.html:4
 #: theme/templates/collections/index.html:2
 #: theme/templates/collections/index.html:4
 #: theme/templates/collections/items/index.html:16
@@ -292,6 +295,7 @@ msgstr "Instructions de contact"
 msgid "Use of service"
 msgstr "Utilisation du service"
 
+#: theme/templates/collections/collection.html:38
 #: theme/templates/landing_page.html:139
 msgid "License"
 msgstr "Licence"
@@ -300,49 +304,80 @@ msgstr "Licence"
 msgid "Terms of service"
 msgstr "Conditions d'utilisation"
 
-#: theme/templates/collections/collection.html:32
+#: theme/templates/collections/collection.html:51
 msgid "Browse"
 msgstr "Parcourir"
 
-#: theme/templates/collections/collection.html:37
-#, python-format
-msgid "Browse through the items of \"%(data_title)s\""
+#: theme/templates/collections/collection.html:55
+#, fuzzy
+msgid "Browse items"
+msgstr "Aucun items"
+
+#: theme/templates/collections/collection.html:56
+#, fuzzy
+msgid "Browse through the items of"
 msgstr "Parcourez les items de « %(data_title)s »"
 
-#: theme/templates/collections/collection.html:40
+#: theme/templates/collections/collection.html:59
 #: theme/templates/collections/queryables.html:6
 #: theme/templates/collections/queryables.html:17
 msgid "Queryables"
 msgstr "Interrogeables"
 
-#: theme/templates/collections/collection.html:44
+#: theme/templates/collections/collection.html:63
 msgid "Display queryables"
 msgstr "Afficher les tables de requêtes"
 
-#: theme/templates/collections/collection.html:45
-#, python-format
-msgid "Display queryables of \"%(data_title)s\""
-msgstr "Afficher les tables de requêtes de \"%(data_title)s\""
+#: theme/templates/collections/collection.html:64
+#, fuzzy
+msgid "Display queryables of"
+msgstr "Afficher les tables de requêtes"
 
-#: theme/templates/collections/collection.html:54
-#, python-format
-msgid "Display tiles of \"%(title)s\""
-msgstr "Afficher les tuiles de \"%(title)s\"."
+#: theme/templates/collections/collection.html:67
+#: theme/templates/collections/schema.html:6
+#: theme/templates/collections/schema.html:17
+msgid "Schema"
+msgstr "Schéma"
 
-#: theme/templates/collections/collection.html:61
-msgid "Output Formats"
-msgstr "Formats de fichiers"
+#: theme/templates/collections/collection.html:71
+#, fuzzy
+msgid "Display schema"
+msgstr "Afficher le schéma"
+
+#: theme/templates/collections/collection.html:72
+#, fuzzy
+msgid "Display schema of"
+msgstr "Afficher le schéma de"
 
 #: theme/templates/collections/collection.html:77
-#: theme/templates/jobs/job.html:49 theme/templates/processes/process.html:77
-#: theme/templates/stac/catalog.html:13
-msgid "Links"
-msgstr "Liens"
+#: theme/templates/collections/tiles/index.html:6
+#: theme/templates/collections/tiles/index.html:29
+#: theme/templates/collections/tiles/metadata.html:6
+msgid "Tiles"
+msgstr "Tuiles"
 
-#: theme/templates/collections/index.html:8
-msgid "Collections in this service"
-msgstr "Collections dans ce service"
+#: theme/templates/collections/collection.html:81
+#, fuzzy
+msgid "Display tiles"
+msgstr "Afficher les tables de requêtes"
 
+#: theme/templates/collections/collection.html:81
+#, fuzzy
+msgid "Display Tiles of"
+msgstr "Afficher les tuiles de \"%(title)s\"."
+
+#: theme/templates/collections/collection.html:90
+#: theme/templates/jobs/job.html:26
+msgid "Parameters"
+msgstr "Paramètres"
+
+#: theme/templates/collections/collection.html:93
+#: theme/templates/processes/process.html:22
+#: theme/templates/processes/process.html:53
+msgid "ID"
+msgstr "ID"
+
+#: theme/templates/collections/collection.html:94
 #: theme/templates/collections/index.html:23
 #: theme/templates/collections/index.html:79
 #: theme/templates/collections/schema.html:19
@@ -352,6 +387,38 @@ msgstr "Collections dans ce service"
 #: theme/templates/stac/collection.html:17
 msgid "Name"
 msgstr "Nom"
+
+#: theme/templates/collections/collection.html:95
+#: theme/templates/collections/schema.html:22
+msgid "Units"
+msgstr "Unités"
+
+#: theme/templates/collections/collection.html:107
+#: theme/templates/collections/edr/instance.html:25
+#: theme/templates/jobs/job.html:49 theme/templates/processes/process.html:77
+#: theme/templates/stac/catalog.html:13
+msgid "Links"
+msgstr "Liens"
+
+#: theme/templates/collections/collection.html:118
+msgid "Reference Systems"
+msgstr "Systèmes de référence"
+
+#: theme/templates/collections/collection.html:126
+msgid "Storage CRS"
+msgstr "Stockage SRC"
+
+#: theme/templates/collections/collection.html:129
+msgid "CRS"
+msgstr "SRC"
+
+#: theme/templates/collections/collection.html:132
+msgid "Epoch"
+msgstr "Époque"
+
+#: theme/templates/collections/index.html:8
+msgid "Collections in this service"
+msgstr "Collections dans ce service"
 
 #: theme/templates/collections/index.html:29
 #: theme/templates/collections/index.html:83
@@ -368,20 +435,11 @@ msgstr "Type"
 msgid "Description"
 msgstr "Description"
 
-#: theme/templates/collections/schema.html:6
-#: theme/templates/collections/schema.html:17
-msgid "Schema"
-msgstr "Schéma"
-
 #: theme/templates/collections/schema.html:20
 #: theme/templates/processes/process.html:23
 #: theme/templates/processes/process.html:54
 msgid "Title"
 msgstr "Titre"
-
-#: theme/templates/collections/schema.html:22
-msgid "Units"
-msgstr "Unités"
 
 #: theme/templates/collections/schema.html:23
 msgid "Values"
@@ -420,6 +478,7 @@ msgid "Coordinate reference system:"
 msgstr "Système de référence des coordonnées :"
 
 #: theme/templates/collections/coverage/domainset.html:26
+#: theme/templates/collections/map/metadata.html:13
 #: theme/templates/stac/catalog.html:36 theme/templates/stac/catalog.html:114
 #: theme/templates/stac/item.html:34
 msgid "Size"
@@ -458,6 +517,25 @@ msgstr "Champs"
 msgid "%(id)s: %(name)s (%(definition)s)"
 msgstr "%(id)s : %(name)s (%(definition)s)"
 
+#: theme/templates/collections/edr/instance.html:11
+#: theme/templates/collections/edr/instances.html:6
+#: theme/templates/collections/edr/instances.html:17
+msgid "Instances"
+msgstr "Instances"
+
+#: theme/templates/collections/edr/instance.html:23
+msgid "Instance"
+msgstr "Instance"
+
+#: theme/templates/collections/edr/query.html:11
+#, python-format
+msgid "%(query_type)s"
+msgstr "%(query_type)s"
+
+#: theme/templates/collections/edr/query.html:38
+msgid "No items"
+msgstr "Aucun items"
+
 #: theme/templates/collections/items/index.html:8
 #: theme/templates/collections/items/index.html:9
 msgid "CSV"
@@ -479,8 +557,8 @@ msgstr "Afficher les items uniquement par la vue de la carte"
 #: theme/templates/collections/items/index.html:53
 msgid ""
 "No results. Please modify your search query or <button\n"
-"            :title=\"txt.reset\"  \n"
-"            class=\"btn btn-warning btn-sm\" \n"
+"            :title=\"txt.reset\"\n"
+"            class=\"btn btn-warning btn-sm\"\n"
 "            @click=\"clearSearch\">reset</button> the table."
 msgstr ""
 "Aucun résultat. Veuillez modifier votre requête de recherche ou <button\n"
@@ -525,25 +603,25 @@ msgstr "Mot clé"
 msgid "Limit:"
 msgstr "Limite :"
 
-#: theme/templates/collections/items/index.html:162
+#: theme/templates/collections/items/index.html:154
 msgid "Higher limits are not recommended"
 msgstr "Des limites plus élevées ne sont pas recommandées"
 
-#: theme/templates/collections/items/index.html:166
+#: theme/templates/collections/items/index.html:165
 msgid "Previous"
 msgstr "Précédent"
 
-#: theme/templates/collections/items/index.html:168
+#: theme/templates/collections/items/index.html:167
 #, python-format
 msgid "Page [% currentPage %] / [% maxPages %]"
 msgstr "Page [% currentPage %] / [% maxPages %]"
 
-#: theme/templates/collections/items/index.html:170
+#: theme/templates/collections/items/index.html:169
 #: theme/templates/collections/items/item.html:62
 msgid "Next"
 msgstr "Suivant"
 
-#: theme/templates/collections/items/index.html:198
+#: theme/templates/collections/items/index.html:197
 msgid ""
 "Clear column keyword search queries and reset to display the default "
 "results"
@@ -551,23 +629,23 @@ msgstr ""
 "Effacer les requêtes de recherche par mots-clés des colonnes et "
 "réinitialiser pour afficher les résultats par défaut"
 
-#: theme/templates/collections/items/index.html:203
+#: theme/templates/collections/items/index.html:202
 msgid "Showing $firstPage to $upper of $itemsTotal"
 msgstr "Affichage de $firstPage jusqu'à $upper de $itemsTotal"
 
-#: theme/templates/collections/items/index.html:204
+#: theme/templates/collections/items/index.html:203
 msgid "Showing 0 results"
 msgstr "Affichage de 0 résultats"
 
-#: theme/templates/collections/items/index.html:248
+#: theme/templates/collections/items/index.html:247
 msgid "filtered from $totalSize total entry"
 msgstr "filtré de $totalSize entrée au total"
 
-#: theme/templates/collections/items/index.html:249
+#: theme/templates/collections/items/index.html:248
 msgid "filtered from $totalSize total entries"
 msgstr "filtrées de $totalSize entrées au total"
 
-#: theme/templates/collections/items/index.html:250
+#: theme/templates/collections/items/index.html:249
 msgid "Showing $startEntryOfPage to $lastEntryOfPage of $filteredNumEntries"
 msgstr ""
 "Affichage de $startEntryOfPage jusqu'à $lastEntryOfPage de "
@@ -587,11 +665,68 @@ msgstr "Propriété"
 msgid "Value"
 msgstr "Valeur"
 
-#: theme/templates/collections/tiles/index.html:6
-#: theme/templates/collections/tiles/index.html:29
-#: theme/templates/collections/tiles/metadata.html:6
-msgid "Tiles"
-msgstr "Tuiles"
+#: theme/templates/collections/map/metadata.html:12
+#, fuzzy
+msgid "Map metadata"
+msgstr "Métadonnées"
+
+#: theme/templates/collections/map/metadata.html:15
+#, fuzzy
+msgid "Width:"
+msgstr "largeur :"
+
+#: theme/templates/collections/map/metadata.html:16
+#, fuzzy
+msgid "Height:"
+msgstr "hauteur :"
+
+#: theme/templates/collections/map/metadata.html:18
+#, fuzzy
+msgid "Extents"
+msgstr "Étendue"
+
+#: theme/templates/collections/map/metadata.html:19
+msgid "Spatial"
+msgstr "Spatial"
+
+#: theme/templates/collections/map/metadata.html:21
+#, fuzzy
+msgid "Minx:"
+msgstr "Minx :"
+
+#: theme/templates/collections/map/metadata.html:22
+#, fuzzy
+msgid "Miny:"
+msgstr "Miny :"
+
+#: theme/templates/collections/map/metadata.html:23
+#, fuzzy
+msgid "Maxx:"
+msgstr "Maxx :"
+
+#: theme/templates/collections/map/metadata.html:24
+#, fuzzy
+msgid "Maxy:"
+msgstr "Maxy :"
+
+#: theme/templates/collections/map/metadata.html:25
+#, fuzzy
+msgid "CRS:"
+msgstr "SRC :"
+
+#: theme/templates/collections/map/metadata.html:28
+#, fuzzy
+msgid "Temporal"
+msgstr "Courriel"
+
+#: theme/templates/collections/map/metadata.html:30
+#: theme/templates/collections/map/metadata.html:31
+msgid "Begin:"
+msgstr "Début :"
+
+#: theme/templates/collections/map/metadata.html:33
+msgid "Recommended format"
+msgstr "Format recommandé"
 
 #: theme/templates/collections/tiles/index.html:31
 msgid "Tile matrix set"
@@ -668,10 +803,6 @@ msgstr "Statut :"
 msgid "Progress:"
 msgstr "Progrès :"
 
-#: theme/templates/jobs/job.html:26
-msgid "Parameters"
-msgstr "Paramètres"
-
 #: theme/templates/jobs/job.html:44
 msgid "Started processing"
 msgstr "Début du traitement"
@@ -705,11 +836,6 @@ msgstr "Processus dans ce service"
 #: theme/templates/processes/process.html:19
 msgid "Inputs"
 msgstr "Entrées"
-
-#: theme/templates/processes/process.html:22
-#: theme/templates/processes/process.html:53
-msgid "ID"
-msgstr "ID"
 
 #: theme/templates/processes/process.html:24
 msgid "Data type"
@@ -775,4 +901,22 @@ msgstr "URL"
 #: theme/templates/stac/item.html:114
 msgid "Map extent preview not available"
 msgstr "Aperçu de l'étendue de la carte n'est pas disponible"
+
+#~ msgid ""
+#~ "No results. Please modify your search query or <button\n"
+#~ "            :title=\"txt.reset\"  \n"
+#~ "            class=\"btn btn-warning btn-sm\" \n"
+#~ "            @click=\"clearSearch\">reset</button> the table."
+#~ msgstr ""
+#~ "Aucun résultat. Veuillez modifier votre "
+#~ "requête de recherche ou <button\n"
+#~ "            :title=\"txt.reset\"  \n"
+#~ "            class=\"btn btn-warning btn-sm\" \n"
+#~ "            @click=\"clearSearch\">remettre</button> le tableau."
+
+#~ msgid "Display queryables of \"%(data_title)s\""
+#~ msgstr "Afficher les tables de requêtes de \"%(data_title)s\""
+
+#~ msgid "Output Formats"
+#~ msgstr "Formats de fichiers"
 
