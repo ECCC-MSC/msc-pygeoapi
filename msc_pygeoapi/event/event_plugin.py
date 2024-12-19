@@ -1,8 +1,13 @@
 # =================================================================
 #
 # Author: Tom Kralidis <tom.kralidis@ec.gc.ca>
+#         Louis-Philippe Rousseau-Lambert
+#             <louis-philippe.rousseaulambert@ec.gc.ca>
+#         Etienne Pelletier <etienne.pelletier@ec.gc.ca>
 #
 # Copyright (c) 2023 Tom Kralidis
+# Copyright (c) 2024 Louis-Philippe Rousseau-Lambert
+# Copyright (c) 2024 Etienne Pelletier
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -26,39 +31,43 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 #
 # =================================================================
+import logging
+
+from sarracenia.flowcb import FlowCB
+
+LOGGER = logging.getLogger(__name__)
 
 
-class MessageEvent:
-    """core event"""
+class Event(FlowCB):
+    """sr3 plugin callback"""
 
-    def __init__(self, parent):
-        """initialize"""
-        pass
-
-    def on_message(self, parent):
+    # replace the previous sr2 on_file event
+    def after_work(self, worklist) -> None:
         """
         sarracenia dispatcher
 
-        :param parent: `sarra.sr_subscribe.sr_subscribe`
+        :param worklist: `sarracenia.flowcb`
 
-        :returns: `bool` of dispatch result
+        :returns: None
         """
 
-        try:
-            from msc_pygeoapi.handler.core import CoreHandler
+        for msg in worklist.incoming:
 
-            filepath = parent.msg.local_file
-            parent.logger.debug(f'Filepath: {filepath}')
-            handler = CoreHandler(filepath)
-            result = handler.handle()
-            parent.logger.debug(f'Result: {result}')
-            return True
-        except Exception as err:
-            parent.logger.warning(err)
-            return False
+            try:
+                from msc_pygeoapi.handler.core import CoreHandler
+
+                filepath = f"{msg['new_dir']}/{msg['new_file']}"
+                LOGGER.debug(f'Filepath: {filepath}')
+                handler = CoreHandler(filepath)
+                result = handler.handle()
+                LOGGER.debug(f'Result: {result}')
+            except Exception as err:
+                LOGGER.error(f'Error handling message: {err}')
+                worklist.failed.append(msg)
+                return False
+
+    # replace the previous sr2 on_message event
+    after_accept = after_work
 
     def __repr__(self):
         return '<Event>'
-
-
-self.plugin = 'MessageEvent'  # noqa
