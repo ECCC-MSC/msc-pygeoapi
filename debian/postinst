@@ -33,8 +33,8 @@ export MSC_PYGEOAPI_ES_URL=http://localhost:9200
 export MSC_PYGEOAPI_CACHEDIR=/tmp
 export MSC_PYGEOAPI_OGC_API_URL=https://api.wxod-dev.cmc.ec.gc.ca
 export MSC_PYGEOAPI_OGC_API_URL_BASEPATH=/
-export MSC_PYGEOAPI_METPX_EVENT_FILE_PY=/opt/msc-pygeoapi/event/file_.py
-export MSC_PYGEOAPI_METPX_EVENT_MESSAGE_PY=/opt/msc-pygeoapi/event/message.py
+export MSC_PYGEOAPI_METPX_EVENT_FILE_PY=msc_pygeoapi.event.EventAfterWork
+export MSC_PYGEOAPI_METPX_EVENT_MESSAGE_PY=msc_pygeoapi.event.EventAfterAccept
 
 export XDG_CACHE_HOME=/tmp/geoadm-sarra-logs
 

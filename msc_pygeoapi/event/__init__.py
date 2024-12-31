@@ -1,8 +1,13 @@
 # =================================================================
 #
 # Author: Tom Kralidis <tom.kralidis@ec.gc.ca>
+#         Louis-Philippe Rousseau-Lambert
+#             <louis-philippe.rousseaulambert@ec.gc.ca>
+#         Etienne Pelletier <etienne.pelletier@ec.gc.ca>
 #
 # Copyright (c) 2021 Tom Kralidis
+# Copyright (c) 2024 Louis-Philippe Rousseau-Lambert
+# Copyright (c) 2024 Etienne Pelletier
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -26,3 +31,63 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 #
 # =================================================================
+import logging
+
+from sarracenia.flowcb import FlowCB
+
+LOGGER = logging.getLogger(__name__)
+
+
+class EventBase(FlowCB):
+
+    def process_messages(self, worklist) -> bool:
+        """
+        Process messages from the worklist
+
+        :param worklist: `sarracenia.flow.worklist`
+
+        :returns: `bool`
+        """
+
+        for msg in worklist.incoming:
+
+            try:
+                from msc_pygeoapi.handler.core import CoreHandler
+
+                filepath = f"{msg['new_dir']}/{msg['new_file']}"
+                LOGGER.debug(f'Filepath: {filepath}')
+                handler = CoreHandler(filepath)
+                result = handler.handle()
+                LOGGER.debug(f'Result: {result}')
+            except Exception as err:
+                LOGGER.error(f'Error handling message: {err}')
+                worklist.failed.append(msg)
+                return False
+
+        return True
+
+
+class EventAfterWork(EventBase):
+
+    def after_work(self, worklist) -> None:
+        """
+        sarracenia after_work dispatcher
+
+        :param worklist: `sarracenia.flow.worklist`
+
+        :returns: `bool`
+        """
+        return self.process_messages(worklist)
+
+
+class EventAfterAccept(EventBase):
+
+    def after_accept(self, worklist) -> None:
+        """
+        sarracenia after_accept dispatcher
+
+        :param worklist: `sarracenia.flow.worklist`
+
+        :returns: `bool`
+        """
+        return self.process_messages(worklist)
