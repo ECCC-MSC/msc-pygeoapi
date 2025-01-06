@@ -30,10 +30,7 @@
 from datetime import datetime
 import logging
 
-from pygeoapi.provider.elasticsearch_ import (
-    ElasticsearchProvider,
-    ElasticsearchCatalogueProvider
-)
+from pygeoapi.provider.elasticsearch_ import ElasticsearchProvider
 
 from msc_pygeoapi.util import DATETIME_RFC3339_FMT
 
