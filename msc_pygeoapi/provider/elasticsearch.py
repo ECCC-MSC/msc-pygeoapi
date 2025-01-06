@@ -30,10 +30,7 @@
 from datetime import datetime
 import logging
 
-from pygeoapi.provider.elasticsearch_ import (
-    ElasticsearchProvider,
-    ElasticsearchCatalogueProvider
-)
+from pygeoapi.provider.elasticsearch_ import ElasticsearchProvider
 
 from msc_pygeoapi.util import DATETIME_RFC3339_FMT
 
@@ -156,34 +153,3 @@ class MSCElasticsearchProvider(ElasticsearchProvider):
 
     def __repr__(self):
         return f'<MSCElasticsearchProvider> {self.data}'
-
-
-class ElasticsearchCatalogueWMOWIS2GDCProvider(ElasticsearchCatalogueProvider):
-    """Elasticsearch Provider for WMO WIS2 Global Discovery Catalogue"""
-
-    def __init__(self, provider_def):
-        super().__init__(provider_def)
-
-    def mask_prop(self, property_name):
-        """
-        generate property name based on ES backend setup
-
-        :param property_name: property name
-
-        :returns: masked property name
-        """
-
-        return property_name
-
-    def __repr__(self):
-        return f'<ElasticsearchCatalogueWMOWIS2GDCProvider> {self.data}'
-
-
-class ElasticsearchWMOWIS2BrokerMessagesProvider(ElasticsearchCatalogueWMOWIS2GDCProvider):  # noqa
-    """Elasticsearch Provider for WMO WIS2 Notification Messages"""
-
-    def __init__(self, provider_def):
-        super().__init__(provider_def)
-
-    def __repr__(self):
-        return f'<ElasticsearchWMOWIS2BrokerMessagesProvider> {self.data}'
