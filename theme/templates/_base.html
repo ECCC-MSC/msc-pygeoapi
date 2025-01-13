@@ -187,20 +187,32 @@
     {% block extrafoot %}
     {% endblock %}
     <script>
-      // Requests and embeds JSON-LD representation of current page
+      // Requests and embeds JSON-LD representation of the current page
       var xhr = new XMLHttpRequest();
-      var path = window.location.protocol + "//" + window.location.host + window.location.pathname + "?f=jsonld";
+
+      // Get the current URL's search parameters
+      var currentParams = new URLSearchParams(window.location.search);
+
+      // Add the new parameter for JSON-LD representation
+      currentParams.set('f', 'jsonld');
+
+      // Check if the pathname matches /items and add a limit parameter
       if (window.location.pathname.match(/\/items(#)*/gi)) { // reduce load on /items page
-        path += '&limit=10';
+        currentParams.set('limit', '10');
       }
+
+      // Construct the full path with updated query parameters
+      var path = window.location.protocol + "//" + window.location.host + window.location.pathname + "?" + currentParams.toString();
+
+      // Make the request
       xhr.open('GET', path);
       xhr.onload = function() {
         if (xhr.status === 200) {
           var head = document.getElementsByTagName('head')[0];
           var jsonld_datablock = document.createElement('script');
           jsonld_datablock.type = "application/ld+json";
-          // remove full context path, because search engines don't expect it here, pyld requires it.
-          jsonld_datablock.textContent = xhr.responseText.replace('docs/jsonldcontext.jsonld','');
+          // Remove full context path, because search engines don't expect it here, pyld requires it
+          jsonld_datablock.textContent = xhr.responseText.replace('docs/jsonldcontext.jsonld', '');
           head.appendChild(jsonld_datablock);
         }
       };

@@ -3,7 +3,7 @@
 {% block crumbs %}{{ super() }}
 <li><a href="{{ data['collections_path'] }}?lang={{ (locale|lower)[:2] }}">{% trans %}Collections{% endtrans %}</a></li>
 {% for link in data['links'] %}
-  {% if link.rel == 'collection' %} /
+  {% if link.rel == 'collection' %}
     <li><a href="{{ data['dataset_path'] }}">{{ link['title'][(locale|lower)[:2]] | truncate( 25 ) }}</a></li>
     {% set col_title = link['title'][(locale|lower)[:2]] %}
   {% endif %}
