@@ -1,8 +1,8 @@
 {% extends "_base.html" %}
 {% block title %}{{ super() }} {{ data['title'] }} {% endblock %}
 {% block crumbs %}{{ super() }}
-<li><a href="../../?lang={{ (locale|lower)[:2] }}">{% trans %}Collections{% endtrans %}</a></li>
-<li><a href="../../../collections/{{ data['id'] }}?lang={{ (locale|lower)[:2] }}">{{ data['title'] }}</a></li>
+<li><a href="{{ data['collections_path'] }}?lang={{ (locale|lower)[:2] }}">{% trans %}Collections{% endtrans %}</a></li>
+<li><a href="{{ data['dataset_path'] }}?lang={{ (locale|lower)[:2] }}">{{ data['title'] }}</a></li>
 {% endblock %}
 {% block body %}
     <section id="collection">
