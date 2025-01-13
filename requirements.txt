@@ -1,10 +1,12 @@
 click
+dask
 elasticsearch>=8,<9
 fiona<1.10
-gdal
+fsspec
+gdal<=3.6.4
 lxml
-netcdf4==1.6.5
-pandas<2.1
+netcdf4
+pandas
 parse
 pygeometa
 pyproj<3.5
@@ -14,5 +16,4 @@ rasterio<1.4
 requests
 sqlalchemy
 unicodecsv
-urllib3>=1.26.2,<2
-xarray<2023.2.0
+xarray

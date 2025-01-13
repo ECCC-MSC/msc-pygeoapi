@@ -55,7 +55,7 @@ Fifth start pygeoapi
 ```bash
 pygeoapi serve
 ```
-Visit http://geomet-dev-22.cmc.ec.gc.ca:5000
+Visit http://geomet-dev-31.edc-mtl.ec.gc.ca:5000
 
 Note: port 5000 is default port. Check `/deploy/default/msc-pygeoapi-config.yml` to double check port
 

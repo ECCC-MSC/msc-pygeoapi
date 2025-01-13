@@ -1,0 +1,39 @@
+{% extends "_base.html" %}
+{% block title %}{{ super() }} {{ data['title'] }} {% endblock %}
+{% block crumbs %}{{ super() }}
+<li><a href="{{ data['collections_path'] }}?lang={{ (locale|lower)[:2] }}">Collections</a></li>
+<li><a href="{{ data['dataset_path'] }}?lang={{ (locale|lower)[:2] }}">{{ data['title'] | truncate( 25 ) }}</a></li>
+<li><a href="{{ data['dataset_path'] }}/map?lang={{ (locale|lower)[:2] }}">Map</a></li>
+<li><a href="{{ data['dataset_path'] }}/map/metadata?lang={{ (locale|lower)[:2] }}">Metadata</a></li>
+{% endblock %}
+{% block body %}
+    <section id="map-metadata">
+      <h1>{{ data['title'] }}</h1>
+      <h3>{% trans %}Map metadata{% endtrans %}</h3>
+      <h4>{% trans %}Size{% endtrans %}</h4>
+      <ul>
+        <li>{% trans %}Width:{% endtrans %} {{ data['maxWidth'] }}</li>
+        <li>{% trans %}Height:{% endtrans %} {{ data['maxHeight'] }}</li>
+      </ul>
+      <h4>{% trans %}Extents{% endtrans %}</h4>
+      <h5>{% trans %}Spatial{% endtrans %}</h5>
+      <ul>
+        <li>{% trans %}Minx:{% endtrans %} {{ data['extent']['spatial']['bbox'][0] }}</li>
+        <li>{% trans %}Miny:{% endtrans %} {{ data['extent']['spatial']['bbox'][1] }}</li>
+        <li>{% trans %}Maxx:{% endtrans %} {{ data['extent']['spatial']['bbox'][2] }}</li>
+        <li>{% trans %}Maxy:{% endtrans %} {{ data['extent']['spatial']['bbox'][3] }}</li>
+        <li>{% trans %}CRS:{% endtrans %} {{ data['extent']['spatial']['crs'] }}</li>
+      </ul>
+      {% if data['extent']['temporal'] %}
+      <h5>{% trans %}Temporal{% endtrans %}</h5>
+      <ul>
+        <li>{% trans %}Begin:{% endtrans %} {{ data['extent']['temporal']['begin'] }}</li>
+        <li>{% trans %}Begin:{% endtrans %} {{ data['extent']['temporal']['end'] }}</li>
+      </ul>
+      <h4>{% trans %}Recommended format{% endtrans %}</h4>
+      <ul>
+        <li>{{ data['recommendedFormat'] }}</li>
+      </ul>
+      {% endif %}
+    </section>
+{% endblock %}

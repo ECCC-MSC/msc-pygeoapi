@@ -4306,8 +4306,3 @@ resources:
         type: process
         processor:
             name: msc_pygeoapi.process.cccs.raster_drill.RasterDrillProcessor
-
-    extract-sounding-data:
-        type: process
-        processor:
-            name: msc_pygeoapi.process.weather.extract_sounding_data.ExtractSoundingDataProcessor

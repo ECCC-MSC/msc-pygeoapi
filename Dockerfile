@@ -27,28 +27,29 @@
 #
 ###################################################################
 
-FROM ubuntu:focal
+FROM ubuntu:jammy
 
 ARG PYGEOAPI_GITREPO=https://github.com/geopython/pygeoapi.git
 
 ENV BASEDIR=/data/web/msc-pygeoapi-nightly
+ENV DEBIAN_FRONTEND=noninteractive
 
 WORKDIR $BASEDIR
 
 # Install system deps
 RUN sed -i 's/http:\/\/archive.ubuntu.com\/ubuntu\//mirror:\/\/mirrors.ubuntu.com\/mirrors.txt/g' /etc/apt/sources.list
 RUN apt-get update && \
-    apt-get install -y software-properties-common  && \
-    add-apt-repository ppa:gcpp-kalxas/wmo && \
-    add-apt-repository ppa:ubuntugis/ppa && apt update && \
-    apt-get install -y python3 python3-setuptools python3-pip git curl unzip python3-click python3-fiona python3-gdal python3-lxml python3-parse python3-pyproj python3-rasterio python3-requests python3-slugify python3-sqlalchemy python3-unicodecsv python3-xarray python3-yaml
+    apt-get install -y software-properties-common && \
+    add-apt-repository ppa:gcpp-kalxas/wmo-staging && \
+    add-apt-repository ppa:ubuntugis/ppa && apt update
+RUN apt-get install -y python3 python3-setuptools python3-pip git curl unzip python3-click python3-fiona python3-gdal python3-lxml python3-parse python3-pyproj python3-rasterio python3-requests python3-slugify python3-sqlalchemy python3-unicodecsv python3-xarray python3-yaml
 
 # install pygeoapi
-RUN git clone $PYGEOAPI_GITREPO -b 0.16.1 && \
+RUN git clone $PYGEOAPI_GITREPO -b 0.19.0 && \
     cd pygeoapi && \
     pip3 install -r requirements.txt && \
     pip3 install flask_cors gunicorn gevent greenlet && \
-    python3 setup.py install && \
+    pip3 install . && \
     cd ..
 
 # requirement of GEOMET_CLIMATE_CONFIG file
@@ -63,11 +64,8 @@ RUN mkdir schemas.opengis.net && \
 # install msc-pygeoapi
 COPY . $BASEDIR/msc-pygeoapi
 RUN cd msc-pygeoapi && \
-    # requirements.txt includes elasticsearch<8
     pip3 install -r requirements.txt && \
     pip3 install elasticsearch_dsl && \
-    pip3 install -U elasticsearch_dsl && \
-    pip3 install -U elasticsearch && \
     # ensure cors enabled in config
     sed -i 's^# cors: true^cors: true^' $BASEDIR/msc-pygeoapi/deploy/default/msc-pygeoapi-config.yml && \
     # GCWeb theme files
@@ -77,7 +75,7 @@ RUN cd msc-pygeoapi && \
     mv ./theme/static/themes-dist-14.6.0-gcweb ./theme/static/themes-gcweb && \
     rm -f ./themes-gcweb.zip && \
     # install msc-pygeoapi
-    python3 setup.py install && \
+    pip3 install . && \
     # show version
     MSC_PYGEOAPI_VERSION=$(dpkg-parsechangelog -SVersion) && \
     sed -i "s/MSC_PYGEOAPI_VERSION/$MSC_PYGEOAPI_VERSION/" theme/templates/_base.html && \
