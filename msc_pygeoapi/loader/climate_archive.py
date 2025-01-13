@@ -1300,7 +1300,7 @@ def add(
             stn_dict = loader.get_station_data(station, starting_from)
 
             if full_reindex:
-                loader.create_index('hourly_summary')
+                index_name = loader.create_index('hourly_summary')
             else:
                 index_name = loader.conn.get_alias_indices('climate_public_hourly_data')[0]  # noqa
                 if index_name is None:
