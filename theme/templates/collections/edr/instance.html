@@ -4,8 +4,8 @@
 <li><a href="{{ data['collections_path'] }}?lang={{ (locale|lower)[:2] }}">{% trans %}Collections{% endtrans %}</a></li>
 {% for link in data['links'] %}
   {% if link.rel == 'collection' %}
-    <li><a href="{{ data['dataset_path'] }}?lang={{ (locale|lower)[:2] }}">{{ link['title'] | truncate( 25 ) }}</a></li>
-    {% set col_title = link['title'] %}
+    <li><a href="{{ data['dataset_path'] }}?lang={{ (locale|lower)[:2] }}">{{ link['title'][(locale|lower)[:2]] | truncate( 25 ) }}</a></li>
+    {% set col_title = link['title'][(locale|lower)[:2]] %}
   {% endif %}
 {% endfor %}
 <li><a href="{{ data['dataset_path'] }}/instances?lang={{ (locale|lower)[:2] }}">{% trans %}Instances{% endtrans %}</a></li>
@@ -13,10 +13,10 @@
 {% endblock %}
 {% block body %}
     <section id="collection">
-      <h1>{{ data['title'] }}</h1>
-      <p>{{ data['description'] }}</p>
+      <h1>{{ data['title'][(locale|lower)[:2]] }}</h1>
+      <p>{{ data['description'][(locale|lower)[:2]] }}</p>
       <ul class="list-inline">
-        {% for kw in data['keywords'] %}
+        {% for kw in data['keywords'][(locale|lower)[:2]] %}
           <li><span class="label label-info">{{ kw }}</span></li>
         {% endfor %}
       </ul>
@@ -34,7 +34,14 @@
     {% for link in data['links'] %}
         <li>
           <a title="{{ link['rel'] }}" href="{{ link['href'] }}">
-          <span>{{ link['title'] }}</span> (<span>{{ link['type'] }}</span>)
+          <span>
+            {% if (locale|lower)[:2] in link['title'] %}
+              {{ link['title'][(locale|lower)[:2]] }}
+            {% else %}
+              {{ link['title'] }}
+            {% endif %}
+          </span>
+          (<span>{{ link['type'] }}</span>)
           </a>
         </li>
    {% endfor %}
