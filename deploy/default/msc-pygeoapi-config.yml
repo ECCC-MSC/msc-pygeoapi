@@ -90,6 +90,36 @@ metadata:
         role: pointOfContact
 
 resources:
+    world:
+        type: collection
+        visibility: hidden
+        title:
+            en: World countries and US states and Canadian provinces and territories
+            fr: Pays du monde et états des États-Unis et provinces et territoires du Canada
+        description:
+            en: A simple collection of world countries and US states and Canadian provinces and territories created from data provided by NaturalEarthData.com.
+            fr: Une collection simple de pays du monde et d'états des États-Unis et de provinces et territoires du Canada créée à partir des données fournies par NaturalEarthData.com.
+        keywords:
+            en: [countries, states, provinces, territories, overlay]
+            fr: [pays, états, provinces, territoires, superposition]
+        crs:
+            - EPSG:3857
+        extents:
+            spatial:
+                bbox: [-20026376.39, -20048966.10, 20026376.39, 20048966.10]
+                crs: https://www.opengis.net/def/crs/EPSG/0/3857
+        providers:
+            - type: tile
+              name: MVT-elastic
+              data: ${MSC_PYGEOAPI_ES_URL}/naturalearth_data/_mvt/geometry/{z}/{x}/{y}?grid_precision=0
+              options:
+                zoom:
+                    min: 0
+                    max: 20
+              format:
+                    name: pbf
+                    mimetype: application/vnd.mapbox-vector-tile
+
     hydrometric-stations:
         type: collection
         title:
@@ -4126,6 +4156,16 @@ resources:
               name: Elasticsearch
               data: ${MSC_PYGEOAPI_ES_URL}/forecast_polygons_land_hybrid
               id_field: id
+            - type: tile
+              name: MVT-elastic
+              data: ${MSC_PYGEOAPI_ES_URL}/forecast_polygons_land_hybrid/_mvt/geometry/{z}/{x}/{y}?grid_precision=0
+              options:
+                zoom:
+                    min: 0
+                    max: 20
+              format:
+                    name: pbf
+                    mimetype: application/vnd.mapbox-vector-tile
 
     marine-standard-forecast-zones:
         type: collection
@@ -4161,6 +4201,16 @@ resources:
               name: Elasticsearch
               data: ${MSC_PYGEOAPI_ES_URL}/forecast_polygons_water_hybrid
               id_field: id
+            - type: tile
+              name: MVT-elastic
+              data: ${MSC_PYGEOAPI_ES_URL}/forecast_polygons_water_hybrid/_mvt/geometry/{z}/{x}/{y}?grid_precision=0
+              options:
+                zoom:
+                    min: 0
+                    max: 20
+              format:
+                    name: pbf
+                    mimetype: application/vnd.mapbox-vector-tile
 
     datasets-footprints:
         type: collection

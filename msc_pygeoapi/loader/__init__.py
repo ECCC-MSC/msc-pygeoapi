@@ -73,7 +73,8 @@ commands = (
     ('msc_pygeoapi.loader.umos_realtime', 'umos_realtime'),
     ('msc_pygeoapi.loader.thunderstorm_outlook', 'thunderstorm_outlook'),
     ('msc_pygeoapi.loader.coastal_flood_risk_index',
-     'coastal_flood_risk_index')
+     'coastal_flood_risk_index'),
+    ('msc_pygeoapi.loader.naturalearth', 'naturalearth')
 )
 
 for module, name in commands:
