@@ -3,8 +3,8 @@
 # Authors: Louis-Philippe Rousseau-Lambert
 #          <louis-philippe.rousseaulambert@ec.gc.ca>
 #
-# Copyright (c) 2022 Louis-Philippe Rousseau-Lambert
 # Copyright (c) 2023 Tom Kralidis
+# Copyright (c) 2025 Louis-Philippe Rousseau-Lambert
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -77,84 +77,19 @@ class ClimateProvider(XarrayProvider):
             else:
                 self.axes.append('P20Y-Avg')
 
-            self.fields = self._coverage_properties['fields']
+            self.get_fields()
 
         except Exception as err:
             LOGGER.warning(err)
             raise ProviderConnectionError(err)
 
-    def get_coverage_domainset(self):
+    def get_fields(self):
+
         """
-        Provide coverage domainset
-
-        :returns: CIS JSON object of domainset metadata
-        """
-
-        c_props = self._coverage_properties
-
-        domainset = super().get_coverage_domainset(self)
-
-        new_axis_name = []
-        new_axis = []
-
-        if 'avg_20years' not in self.data:
-            new_axis_name.extend(['percentile'])
-            new_axis.extend([{
-                             'type': 'IrregularAxis',
-                             'axisLabel': 'percentile',
-                             'coordinate': [5, 25, 50, 75, 95],
-                             'lowerBound': 5,
-                             'upperBound': 95,
-                             'uomLabel': '%',
-                             }])
-            time_resolution = c_props['restime']['value']
-            time_period = c_props['restime']['period']
-            domainset['generalGrid']['axis'][2]['uomLabel'] = time_period
-            domainset['generalGrid']['axis'][2]['resolution'] = time_resolution
-        else:
-            new_axis_name.extend(['P20Y-Avg'])
-            new_axis.extend([{
-                             'type': 'IrregularAxis',
-                             'axisLabel': 'P20Y-Avg',
-                             'coordinate': ['2021-2040', '2041-2060',
-                                            '2061-2080', '2081-2100'],
-                             }])
-
-            domainset['generalGrid']['axis'].pop(2)
-            domainset['generalGrid']['axisLabels'].pop(-1)
-
-        if 'RCP' in self.data:
-            new_axis.extend([{
-                             'type': 'IrregularAxis',
-                             'axisLabel': 'scenario',
-                             'coordinate': ['RCP2.6', 'RCP4.5', 'RCP8.5']
-                             }])
-            new_axis_name.append('scenario')
-
-        if 'season' in self.data:
-            new_axis.extend([{
-                             'type': 'IrregularAxis',
-                             'axisLabel': 'season',
-                             'coordinate': ['DJF', 'MAM', 'JJA', 'SON']
-                             }])
-            new_axis_name.append('season')
-
-        domainset['generalGrid']['axisLabels'].extend(new_axis_name)
-        domainset['generalGrid']['axis'].extend(new_axis)
-
-        return domainset
-
-    def get_coverage_rangetype(self):
-        """
-        Provide coverage rangetype
+        Provide coverage fields
 
         :returns: CIS JSON object of rangetype metadata
         """
-
-        rangetype = {
-            'type': 'DataRecord',
-            'field': []
-        }
 
         for name, var in self._data.variables.items():
             LOGGER.debug(f'Determining rangetype for {name}')
@@ -163,37 +98,79 @@ class ClimateProvider(XarrayProvider):
             if len(var.shape) >= 2:
                 parameter = self._get_parameter_metadata(
                     name, var.attrs)
-                desc = parameter['description']
-                units = parameter['unit_label']
+                if name != 'time_bnds':
+                    desc = parameter['description']
+                    units = parameter['unit_label']
 
-                if 'dcs' in self.data:
-                    if 'monthly' not in self.data:
-                        name = name[:2]
-                    else:
-                        dcs = {'pr': 'pr', 'tasmax': 'tx',
-                               'tmean': 'tm', 'tasmin': 'tn',
-                               'time_bnds': 'time_bnds'}
-                        name = dcs[name]
+                    if 'dcs' in self.data:
+                        if 'monthly' not in self.data:
+                            name = name[:2]
+                        else:
+                            dcs = {'pr': 'pr', 'tasmax': 'tx',
+                                   'tmean': 'tm', 'tasmin': 'tn'}
+                            name = dcs[name]
 
-                rangetype['field'].append({
-                    'id': name,
-                    'type': 'Quantity',
-                    'name': var.attrs.get('long_name') or desc,
-                    'encodingInfo': {
-                        'dataType': f'http://www.opengis.net/def/dataType/OGC/0/{var.dtype}'  # noqa
-                    },
-                    'nodata': 'null',
-                    'uom': {
-                        'id': f'http://www.opengis.net/def/uom/UCUM/{units}',
-                        'type': 'UnitReference',
-                        'code': units
-                    },
-                    '_meta': {
-                        'tags': var.attrs
+                    dtype = var.dtype
+                    if dtype.name.startswith('float'):
+                        dtype = 'number'
+                    elif dtype.name.startswith('int'):
+                        dtype = 'integer'
+
+                    self._fields[name] = {
+                        'title': var.attrs.get('long_name') or desc,
+                        'type': dtype,
+                        'x-ogc-unit': units,
+                        '_meta': {
+                            'tags': var.attrs,
+                            'uom': {
+                                'id': f'http://www.opengis.net/def/uom/UCUM/{units}', # noqa
+                                'type': 'UnitReference',
+                                'code': units
+                            },
+                            'encodingInfo': {
+                                'dataType': f'http://www.opengis.net/def/dataType/OGC/0/{var.dtype}' # noqa
+                            },
+                            'nodata': 'null',
+                        }
                     }
-                })
 
-        return rangetype
+        return self._fields
+
+    def get_coverage_domainset(self):
+        """
+        Provide coverage domainset
+
+        :returns: CIS JSON object of domainset metadata
+        """
+
+        domainset = {}
+
+        if 'avg_20years' not in self.data:
+            domainset['percentile'] = {
+                'definition': 'Percentiles - IrregularAxis',
+                'interval': [[5, 25, 50, 75, 95]],
+                'unit': '%',
+                }
+        else:
+            domainset['P20Y-Avg'] = {
+                'definition': 'P20Y-Avg - IrregularAxis',
+                'interval': [['2021-2040', '2041-2060',
+                              '2061-2080', '2081-2100']],
+                }
+
+        if 'RCP' in self.data:
+            domainset['scenario'] = {
+                'definition': 'Scenarios - IrregularAxis',
+                'interval': [['RCP2.6', 'RCP4.5', 'RCP8.5']]
+                }
+
+        if 'season' in self.data:
+            domainset['season'] = {
+                'definition': 'Seasons - IrregularAxis',
+                'interval': [['DJF', 'MAM', 'JJA', 'SON']]
+                }
+
+        return domainset
 
     def _get_coverage_properties(self):
         """
@@ -228,8 +205,6 @@ class ClimateProvider(XarrayProvider):
                 self._data.coords[self.x_field].values[-1],
                 self._data.coords[self.y_field].values[-1],
             ],
-            'time_range': [0, 0],
-            'restime': 0,
             'time_axis_label': self.time_field,
             'bbox_crs': 'http://www.opengis.net/def/crs/OGC/1.3/CRS84',
             'crs_type': 'GeographicCRS',
@@ -237,30 +212,19 @@ class ClimateProvider(XarrayProvider):
             'y_axis_label': self.y_field,
             'width': self._data.sizes[self.x_field],
             'height': self._data.sizes[self.y_field],
-            'bbox_units': 'degrees',
             'resx': np.abs(self._data.coords[self.x_field].values[1]
                            - self._data.coords[self.x_field].values[0]),
             'resy': np.abs(self._data.coords[self.y_field].values[1]
-                           - self._data.coords[self.y_field].values[0]),
+                           - self._data.coords[self.y_field].values[0])
         }
 
         if 'crs' in self._data.variables.keys():
             bbox_crs = f'http://www.opengis.net/def/crs/OGC/1.3/{self._data.crs.epsg_code}'  # noqa
             properties['bbox_crs'] = bbox_crs
 
-            properties['inverse_flattening'] = self._data.crs.\
-                inverse_flattening
-
             properties['crs_type'] = 'ProjectedCRS'
 
-        properties['axes'] = [
-            properties['x_axis_label'],
-            properties['y_axis_label']
-        ]
-
         if 'avg_20years' not in self.data:
-            properties['axes'].append(properties['time_axis_label'])
-            properties['time_duration'] = self.get_time_coverage_duration()
             properties['restime'] = self.get_time_resolution()
             properties['time_range'] = [
                 self._to_datetime_string(
@@ -270,12 +234,8 @@ class ClimateProvider(XarrayProvider):
                     self._data.coords[self.time_field].values[-1]
                 )
             ]
-            properties['time'] = self._data.sizes[self.time_field]
 
-        properties['fields'] = [name for name in self._data.variables
-                                if len(self._data.variables[name].shape) >= 3]
-        if 'dcs' in self.data:
-            properties['fields'].extend(('tx', 'tm', 'tn', 'pr'))
+        properties['uad'] = self.get_coverage_domainset()
 
         return properties
 
@@ -309,7 +269,8 @@ class ClimateProvider(XarrayProvider):
         """
 
         try:
-            if isinstance(datetime_, cftime._cftime.DatetimeNoLeap):
+            if isinstance(datetime_, (cftime._cftime.DatetimeNoLeap,
+                                      cftime._cftime.DatetimeGregorian)):
                 cftime_str = datetime_.strftime('%Y-%m-%d %H:%M:%S')
                 python_datetime = datetime.strptime(cftime_str,
                                                     '%Y-%m-%d %H:%M:%S')
@@ -449,21 +410,11 @@ class ClimateProvider(XarrayProvider):
         else:
             data = self._data[[*properties_]]
 
-        if any([self._coverage_properties['x_axis_label'] in subsets,
-                self._coverage_properties['y_axis_label'] in subsets,
-                self._coverage_properties['time_axis_label'] in subsets,
-                bbox,
-                datetime_ is not None]):
+        if any([bbox, datetime_ is not None]):
 
             LOGGER.debug('Creating spatio-temporal subset')
 
             query_params = {}
-            for key, val in subsets.items():
-                if data.coords[key].values[0] > data.coords[key].values[-1]:
-                    LOGGER.debug('Reversing slicing low/high')
-                    query_params[key] = slice(val[1], val[0])
-                else:
-                    query_params[key] = slice(val[0], val[1])
 
             if bbox:
                 if all([self._coverage_properties['x_axis_label'] in subsets,
@@ -511,6 +462,7 @@ class ClimateProvider(XarrayProvider):
 
             LOGGER.debug(f'Query parameters: {query_params}')
             try:
+                data[self.time_field] = data.indexes["time"].to_datetimeindex()
                 data = data.loc[query_params]
             except Exception as err:
                 LOGGER.warning(err)
@@ -579,6 +531,111 @@ class ClimateProvider(XarrayProvider):
                 fp.seek(0)
                 return fp.read()
 
+    def gen_covjson(self, metadata, data, range_type):
+        """
+        Generate coverage as CoverageJSON representation
+
+        :param metadata: coverage metadata
+        :param data: rasterio DatasetReader object
+        :param range_type: range type list
+
+        :returns: dict of CoverageJSON representation
+        """
+
+        LOGGER.debug('Creating CoverageJSON domain')
+        minx, miny, maxx, maxy = metadata['bbox']
+        mint, maxt = metadata['time']
+
+        try:
+            tmp_min = data.coords[self.y_field].values[0]
+        except IndexError:
+            tmp_min = data.coords[self.y_field].values
+        try:
+            tmp_max = data.coords[self.y_field].values[-1]
+        except IndexError:
+            tmp_max = data.coords[self.y_field].values
+
+        if tmp_min > tmp_max:
+            LOGGER.debug(f'Reversing direction of {self.y_field}')
+            miny = tmp_max
+            maxy = tmp_min
+
+        cj = {
+            'type': 'Coverage',
+            'domain': {
+                'type': 'Domain',
+                'domainType': 'Grid',
+                'axes': {
+                    'x': {
+                        'start': minx,
+                        'stop': maxx,
+                        'num': metadata['width']
+                    },
+                    'y': {
+                        'start': maxy,
+                        'stop': miny,
+                        'num': metadata['height']
+                    },
+                    self.time_field: {
+                        'start': mint,
+                        'stop': maxt,
+                        'num': metadata['time_steps']
+                    }
+                },
+                'referencing': [{
+                    'coordinates': ['x', 'y'],
+                    'system': {
+                        'type': self._coverage_properties['crs_type'],
+                        'id': self._coverage_properties['bbox_crs']
+                    }
+                }]
+            },
+            'parameters': {},
+            'ranges': {}
+        }
+
+        for variable in range_type:
+            pm = self._get_parameter_metadata(
+                variable, self._data[variable].attrs)
+
+            parameter = {
+                'type': 'Parameter',
+                'description': pm['description'],
+                'unit': {
+                    'symbol': pm['unit_label']
+                },
+                'observedProperty': {
+                    'id': pm['observed_property_id'],
+                    'label': {
+                        'en': pm['observed_property_name']
+                    }
+                }
+            }
+
+            cj['parameters'][pm['id']] = parameter
+
+        data = data.fillna(None)
+        data = _convert_float32_to_float64(data)
+
+        try:
+            for key in cj['parameters'].keys():
+                cj['ranges'][key] = {
+                    'type': 'NdArray',
+                    'dataType': str(self._data[variable].dtype),
+                    'axisNames': [
+                        'y', 'x', self._coverage_properties['time_axis_label']
+                    ],
+                    'shape': [metadata['height'],
+                              metadata['width'],
+                              metadata['time_steps']]
+                }
+                cj['ranges'][key]['values'] = data[key].values.flatten().tolist()  # noqa
+        except IndexError as err:
+            LOGGER.warning(err)
+            raise ProviderQueryError('Invalid query parameter')
+
+        return cj
+
 
 def open_data(data):
     """
@@ -590,7 +647,13 @@ def open_data(data):
 
     try:
         open_func = xarray.open_mfdataset
-        _data = open_func(data)
+        try:
+            _data = open_func(data)
+        except ValueError:
+            _data = open_func(data, decode_times=False)
+            _data['time'] = cftime.num2date(_data['time'].values,
+                                            units='hours since 0001-01-01',
+                                            calendar='standard')
         _data = _convert_float32_to_float64(_data)
 
         return _data
