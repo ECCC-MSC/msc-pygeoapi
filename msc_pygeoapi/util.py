@@ -119,6 +119,27 @@ def _get_element(node, path, attrib=None):
     return None
 
 
+def safe_cast_to_number(value):
+    """
+    helper function to safely cast a value to a number
+
+    :param value: value to cast
+
+    :returns: value cast to int/float or original value if not castable
+    """
+
+    if value is None:
+        return value
+
+    try:
+        return int(value)
+    except ValueError:
+        try:
+            return float(value)
+        except ValueError:
+            return value
+
+
 def strftime_rfc3339(datetimeobj):
     """
     helper function to convert datetime object to RFC3393 compliant string.
