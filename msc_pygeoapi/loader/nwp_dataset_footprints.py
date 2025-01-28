@@ -39,10 +39,11 @@ import os
 from pathlib import Path
 
 import click
-from osgeo import ogr, osr
+from osgeo import gdal, ogr, osr
 import yaml
 
 from msc_pygeoapi import cli_options
+from msc_pygeoapi.env import GEOMET_HPFX_BASEPATH
 from msc_pygeoapi.connector.elasticsearch_ import ElasticsearchConnector
 from msc_pygeoapi.loader.base import BaseLoader
 from msc_pygeoapi.util import configure_es_connection
@@ -102,6 +103,33 @@ SETTINGS = {
     'index_patterns': [f'{INDEX_NAME}*'],
     'settings': {'number_of_shards': 1, 'number_of_replicas': 0},
     'mappings': None
+}
+
+# Footprint Polygon Directory Paths mcf files
+MCF_FOOTPRINT_PATHS = {
+    'msc_nwp_rdwps_ontario.yml': {
+        'directory': f'{GEOMET_HPFX_BASEPATH}/model_rdwps/ontario/1km/00',
+        'file_': '*VGRD_AGL-10m*'
+    },
+    'msc_nwp_rdwps_superior.yml': {
+        'directory': f'{GEOMET_HPFX_BASEPATH}/model_rdwps/superior/1km/00',
+        'file_': '*VGRD_AGL-10m*'
+    },
+    'msc_nwp_rdwps_erie.yml': {
+        'directory': f'{GEOMET_HPFX_BASEPATH}/model_rdwps/erie/1km/00',
+        'file_': '*VGRD_AGL-10m*'
+    },
+    'msc_nwp_rdwps_huron-michigan.yml': {
+        'directory': (
+            f'{GEOMET_HPFX_BASEPATH}'
+            '/model_rdwps/huron-michigan/1km/00'
+        ),
+        'file_': '*VGRD_AGL-10m*'
+    },
+    'msc_nwp_rdwps_atlantic-nw.yml': {
+        'directory': f'{GEOMET_HPFX_BASEPATH}/model_resps/atlantic-nw/9km/00',
+        'file_': '*ETAS_Sfc*'
+    }
 }
 
 
@@ -254,6 +282,45 @@ class DatasetFootprintLoader(BaseLoader):
             )
         return dict_
 
+    def get_file(self, dirpath, file_variable):
+        '''
+        get filepath containing `file_variable` from the provided directory
+
+        :param dirpath: directory path to data on disk
+        :param file_variable: variable of the file to return
+
+        :returns: filepath inside 'dirpath' containing 'file_variable'
+        '''
+
+        # Search for matching files
+        files = list(Path(dirpath).rglob(file_variable))
+
+        try:
+            file_ = files[0]
+            return file_
+        except IndexError:
+            LOGGER.error(f'{file_variable} files not found in {dirpath}')
+            return None
+
+    def get_footprint_from_file(self, filename):
+        '''
+        creates a footprint polygon given a mcf file
+
+        :param filename: filename of the mcf file
+
+        :returns: footprint polygon in json format
+        '''
+
+        # Create the footprint polygon of the provided `filename`
+        file_ = self.get_file(MCF_FOOTPRINT_PATHS[filename]['directory'],
+                              MCF_FOOTPRINT_PATHS[filename]['file_'])
+
+        polygon = gdal.Footprint(None, file_, format='GeoJSON',
+                                 layerCreationOptions=['RFC7946=YES'])
+
+        feature = polygon['features'][0]
+        return feature['geometry']
+
     def load_data(self, filepath):
         '''
         loads data from event to target
@@ -264,6 +331,9 @@ class DatasetFootprintLoader(BaseLoader):
         '''
 
         self.filepath = Path(filepath)
+
+        # Obtain the basename of the mcf `filepath`
+        filename = os.path.basename(filepath)
 
         LOGGER.debug(f'Received file {self.filepath}')
 
@@ -282,8 +352,11 @@ class DatasetFootprintLoader(BaseLoader):
 
             # Get the reprojected polygon and stock it in the dict
             try:
-                polygon = self.get_reprojected_polygon()
-                data['geometry'] = json.loads(polygon)
+                if filename in MCF_FOOTPRINT_PATHS:
+                    data['geometry'] = self.get_footprint_from_file(filename)
+                else:
+                    polygon = self.get_reprojected_polygon()
+                    data['geometry'] = json.loads(polygon)
             except AttributeError as err:
                 msg = f'Error generating footprint polygon: {err}'
                 LOGGER.warning(msg)
