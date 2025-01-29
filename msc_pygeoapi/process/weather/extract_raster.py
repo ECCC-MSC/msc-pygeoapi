@@ -594,7 +594,7 @@ try:
 
             BaseProcessor.__init__(self, provider_def, PROCESS_METADATA)
 
-        def execute(self, data):
+        def execute(self, data), outputs=None):
             model = data["model"]
             forecast_hours_ = data["forecast_hours_"]
             model_run = data["model_run"]
