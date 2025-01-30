@@ -3,8 +3,8 @@
 # Authors: Louis-Philippe Rousseau-Lambert
 #          <louis-philippe.rousseaulambert@ec.gc.ca>
 #
-# Copyright (c) 2022 Louis-Philippe Rousseau-Lambert
 # Copyright (c) 2023 Tom Kralidis
+# Copyright (c) 2025 Louis-Philippe Rousseau-Lambert
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -67,7 +67,8 @@ class SPEIProvider(ClimateProvider):
             if 'RCP' in self.data:
                 self.axes.append('scenario')
 
-            self.fields = self._coverage_properties['fields']
+            self.get_fields()
+
         except Exception as err:
             LOGGER.warning(err)
             raise ProviderConnectionError(err)
@@ -81,13 +82,12 @@ class SPEIProvider(ClimateProvider):
 
         domainset = super().get_coverage_domainset()
 
-        for axis in domainset['generalGrid']['axis']:
-            if axis['axisLabel'] == 'percentile':
-                domainset['generalGrid']['axis'][3]['coordinate'] = [25,
-                                                                     50,
-                                                                     75]
-                domainset['generalGrid']['axis'][3]['lowerBound'] = 25
-                domainset['generalGrid']['axis'][3]['upperBound'] = 75
+        if 'percentile' in domainset:
+            domainset['percentile'] = {
+                'definition': 'Percentiles - IrregularAxis',
+                'interval': [[25, 50, 75]],
+                'unit': '%',
+                }
 
         return domainset
 
@@ -189,7 +189,8 @@ class SPEIProvider(ClimateProvider):
 
             LOGGER.debug(f'Query parameters: {query_params}')
             try:
-                data = self._data.loc[query_params]
+                data[self.time_field] = data.indexes["time"].to_datetimeindex()
+                data = data.loc[query_params]
             except Exception as err:
                 LOGGER.warning(err)
                 raise ProviderQueryError(err)
