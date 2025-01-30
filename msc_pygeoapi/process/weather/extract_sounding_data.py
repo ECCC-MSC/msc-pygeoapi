@@ -593,7 +593,7 @@ try:
 
             BaseProcessor.__init__(self, provider_def, PROCESS_METADATA)
 
-        def execute(self, data):
+        def execute(self, data, outputs=None):
             mimetype = "application/json"
 
             required = ["model", "model_run", "forecast_hour", "lon", "lat"]
