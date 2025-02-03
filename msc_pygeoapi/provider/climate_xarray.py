@@ -230,7 +230,7 @@ class ClimateProvider(XarrayProvider):
 
             properties['crs_type'] = 'ProjectedCRS'
 
-        #if 'avg_20years' not in self.data:
+        # if 'avg_20years' not in self.data:
         if time_enabled:
             properties['restime'] = self.get_time_resolution()
             properties['time_range'] = [
