@@ -98,11 +98,11 @@ class ClimateProvider(XarrayProvider):
             if len(var.shape) >= 2:
                 parameter = self._get_parameter_metadata(
                     name, var.attrs)
-                if name != 'time_bnds':
+                if name not in ['time_bnds', 'spatial_ref']:
                     desc = parameter['description']
                     units = parameter['unit_label']
 
-                    if 'dcs' in self.data:
+                    if 'dcs/' in self.data:
                         if 'monthly' not in self.data:
                             name = name[:2]
                         else:
@@ -179,17 +179,23 @@ class ClimateProvider(XarrayProvider):
         :returns: `dict` of coverage properties
         """
 
+        time_enabled = False
         time_var, y_var, x_var = [None, None, None]
         for coord in self._data.coords:
-            if coord.lower() == 'time':
-                time_var = coord
-                continue
-            if self._data.coords[coord].attrs['units'] == 'degrees_north':
-                y_var = coord
-                continue
-            if self._data.coords[coord].attrs['units'] == 'degrees_east':
-                x_var = coord
-                continue
+            try:
+                if coord.lower() == 'time':
+                    time_var = coord
+                    if len(self._data.coords[coord]) > 1:
+                        time_enabled = True
+                    continue
+                if self._data.coords[coord].attrs['units'] == 'degrees_north':
+                    y_var = coord
+                    continue
+                if self._data.coords[coord].attrs['units'] == 'degrees_east':
+                    x_var = coord
+                    continue
+            except KeyError as err:
+                LOGGER.debug(f'Unknown coords in {self.data}: {err}')
 
         if self.x_field is None:
             self.x_field = x_var
@@ -224,7 +230,8 @@ class ClimateProvider(XarrayProvider):
 
             properties['crs_type'] = 'ProjectedCRS'
 
-        if 'avg_20years' not in self.data:
+        #if 'avg_20years' not in self.data:
+        if time_enabled:
             properties['restime'] = self.get_time_resolution()
             properties['time_range'] = [
                 self._to_datetime_string(
@@ -247,7 +254,7 @@ class ClimateProvider(XarrayProvider):
 
         if self._data[self.time_field].size > 1:
 
-            self.monthly_data = ['monthly_ens', 'SPEI']
+            self.monthly_data = ['monthly_ens', 'SPEI', '_P1M']
 
             if any(month in self.data for month in self.monthly_data):
                 period = 'month'

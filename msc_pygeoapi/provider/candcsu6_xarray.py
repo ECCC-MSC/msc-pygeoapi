@@ -3,7 +3,7 @@
 # Authors: Louis-Philippe Rousseau-Lambert
 #          <louis-philippe.rousseaulambert@ec.gc.ca>
 #
-# Copyright (c) 2023 Louis-Philippe Rousseau-Lambert
+# Copyright (c) 2025 Louis-Philippe Rousseau-Lambert
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -31,19 +31,17 @@
 import logging
 import tempfile
 
-import numpy as np
-
 from pygeoapi.provider.base import (BaseProvider,
                                     ProviderConnectionError,
                                     ProviderNoDataError,
                                     ProviderQueryError)
-from pygeoapi.provider.xarray_ import XarrayProvider
-from msc_pygeoapi.provider.climate_xarray import open_data
+from msc_pygeoapi.provider.climate_xarray import (ClimateProvider,
+                                                  open_data)
 
 LOGGER = logging.getLogger(__name__)
 
 
-class CanDCSU6Provider(XarrayProvider):
+class CanDCSU6Provider(ClimateProvider):
     """CanDCSU6 Provider"""
 
     def __init__(self, provider_def):
@@ -75,7 +73,7 @@ class CanDCSU6Provider(XarrayProvider):
             else:
                 self.axes.append('P30Y-Avg')
 
-            self.fields = self._coverage_properties['fields']
+            self.get_fields()
 
         except Exception as err:
             LOGGER.warning(err)
@@ -88,231 +86,33 @@ class CanDCSU6Provider(XarrayProvider):
         :returns: CIS JSON object of domainset metadata
         """
 
-        c_props = self._coverage_properties
-
         domainset = super().get_coverage_domainset()
 
-        new_axis_name = []
-        new_axis = []
+        if any(item in self.data for item in
+               ['2021-2050', '2041-2070', '2071-2100']):
+            domainset['P30Y-Avg'] = {
+                'definition': 'P30Y-Avg - IrregularAxis',
+                'interval': [['2021-2050', '2041-2070', '2071-2100']]
+                }
 
-        new_axis_name.extend(['percentile'])
-        new_axis.extend([{
-                            'type': 'IrregularAxis',
-                            'axisLabel': 'percentile',
-                            'coordinate': [10, 50, 90],
-                            'lowerBound': 10,
-                            'upperBound': 90,
-                            'uomLabel': '%'
-                            }])
-
-        if all(item not in self.data for item in
-               ['1971-2000', '2021-2050', '2041-2070', '2071-2100']):
-            time_resolution = c_props['restime']['value']
-            time_period = c_props['restime']['period']
-            domainset['generalGrid']['axis'][2]['uomLabel'] = time_period
-            domainset['generalGrid']['axis'][2]['resolution'] = time_resolution
-        elif '1971-2000' not in self.data:
-            new_axis_name.extend(['P30Y-Avg'])
-            new_axis.extend([{
-                             'type': 'IrregularAxis',
-                             'axisLabel': 'P30Y-Avg',
-                             'coordinate': ['2021-2050', '2041-2070',
-                                            '2071-2100'],
-                             }])
-            domainset['generalGrid']['axis'].pop(2)
-            domainset['generalGrid']['axisLabels'].pop(-1)
-        else:
-            domainset['generalGrid']['axis'].pop(2)
-            domainset['generalGrid']['axisLabels'].pop(-1)
-
+        if 'percentile' in domainset:
+            domainset['percentile'] = {
+                'definition': 'Percentiles - IrregularAxis',
+                'interval': [[10, 50, 90]],
+                'unit': '%',
+                }
         if 'SSP' in self.data:
-            new_axis.extend([{
-                             'type': 'IrregularAxis',
-                             'axisLabel': 'scenario',
-                             'coordinate': ['SSP126', 'SSP245', 'SSP585']
-                             }])
-            new_axis_name.append('scenario')
-
+            domainset['scenario'] = {
+                'definition': 'Scenarios - IrregularAxis',
+                'interval': [['SSP126', 'SSP245', 'SSP585']]
+                }
         if any(item in self.data for item in ['DJF', 'MAM', 'JJA', 'SON']):
-            new_axis.extend([{
-                             'type': 'IrregularAxis',
-                             'axisLabel': 'season',
-                             'coordinate': ['DJF', 'MAM', 'JJA', 'SON']
-                             }])
-            new_axis_name.append('season')
-
-        domainset['generalGrid']['axisLabels'].extend(new_axis_name)
-        domainset['generalGrid']['axis'].extend(new_axis)
+            domainset['season'] = {
+                'definition': 'Seasons - IrregularAxis',
+                'interval': [['DJF', 'MAM', 'JJA', 'SON']]
+                }
 
         return domainset
-
-    def get_coverage_rangetype(self):
-        """
-        Provide coverage rangetype
-
-        :returns: CIS JSON object of rangetype metadata
-        """
-
-        rangetype = {
-            'type': 'DataRecord',
-            'field': []
-        }
-
-        for name, var in self._data.variables.items():
-            LOGGER.debug(f'Determining rangetype for {name}')
-
-            desc, units = None, None
-            if len(var.shape) >= 2:
-                parameter = self._get_parameter_metadata(
-                    name, var.attrs)
-                desc = parameter['description']
-                units = parameter['unit_label']
-
-                rangetype['field'].append({
-                    'id': name,
-                    'type': 'Quantity',
-                    'name': var.attrs.get('long_name') or desc,
-                    'encodingInfo': {
-                        'dataType': f'http://www.opengis.net/def/dataType/OGC/0/{var.dtype}'  # noqa
-                    },
-                    'nodata': 'null',
-                    'uom': {
-                        'id': f'http://www.opengis.net/def/uom/UCUM/{units}',
-                        'type': 'UnitReference',
-                        'code': units
-                    },
-                    '_meta': {
-                        'tags': var.attrs
-                    }
-                })
-
-        return rangetype
-
-    def _get_coverage_properties(self):
-        """
-        Helper function to normalize coverage properties
-
-        :returns: `dict` of coverage properties
-        """
-
-        time_var, y_var, x_var = [None, None, None]
-        for coord in self._data.coords:
-            if coord.lower() == 'time':
-                time_var = coord
-                continue
-            try:
-                if self._data.coords[coord].attrs['units'] == 'degrees_north':
-                    y_var = coord
-                    continue
-                if self._data.coords[coord].attrs['units'] == 'degrees_east':
-                    x_var = coord
-                    continue
-            except KeyError:
-                LOGGER.warning(f'unknown dimension{self._data.coords[coord]}')
-
-        if self.x_field is None:
-            self.x_field = x_var
-        if self.y_field is None:
-            self.y_field = y_var
-        if self.time_field is None:
-            self.time_field = time_var
-
-        properties = {
-            'bbox': [
-                self._data.coords[self.x_field].values[0],
-                self._data.coords[self.y_field].values[0],
-                self._data.coords[self.x_field].values[-1],
-                self._data.coords[self.y_field].values[-1],
-            ],
-            'time_range': [0, 0],
-            'restime': 0,
-            'time_axis_label': self.time_field,
-            'bbox_crs': 'http://www.opengis.net/def/crs/OGC/1.3/CRS84',
-            'crs_type': 'GeographicCRS',
-            'x_axis_label': self.x_field,
-            'y_axis_label': self.y_field,
-            'width': self._data.sizes[self.x_field],
-            'height': self._data.sizes[self.y_field],
-            'bbox_units': 'degrees',
-            'resx': np.abs(self._data.coords[self.x_field].values[1]
-                           - self._data.coords[self.x_field].values[0]),
-            'resy': np.abs(self._data.coords[self.y_field].values[1]
-                           - self._data.coords[self.y_field].values[0])
-        }
-
-        if 'crs' in self._data.variables.keys():
-            bbox_crs = f'http://www.opengis.net/def/crs/OGC/1.3/{self._data.crs.epsg_code}'  # noqa
-            properties['bbox_crs'] = bbox_crs
-
-            properties['inverse_flattening'] = self._data.crs.\
-                inverse_flattening
-
-            properties['crs_type'] = 'ProjectedCRS'
-
-        properties['axes'] = [
-            properties['x_axis_label'],
-            properties['y_axis_label']
-        ]
-
-        if 'avg_30years' not in self.data:
-            properties['axes'].append(properties['time_axis_label'])
-            properties['time_duration'] = self.get_time_coverage_duration()
-            properties['restime'] = self.get_time_resolution()
-            properties['time_range'] = [
-                self._to_datetime_string(
-                    self._data.coords[self.time_field].values[0]
-                ),
-                self._to_datetime_string(
-                    self._data.coords[self.time_field].values[-1]
-                )
-            ]
-            properties['time'] = self._data.sizes[self.time_field]
-
-        properties['fields'] = [name for name in self._data.variables
-                                if len(self._data.variables[name].shape) >= 3]
-
-        return properties
-
-    def get_time_resolution(self):
-        """
-        Helper function to derive time resolution
-        :returns: time resolution string
-        """
-
-        if self._data[self.time_field].size > 1:
-
-            self.monthly_data = ['P1M']
-
-            if any(month in self.data for month in self.monthly_data):
-                period = 'month'
-            else:
-                period = 'year'
-
-            return {'value': 1, 'period': period}
-
-        else:
-            return None
-
-    def _to_datetime_string(self, datetime_):
-        """
-        Convenience function to formulate string from various datetime objects
-
-        :param datetime_obj: datetime object (native datetime, cftime)
-
-        :returns: str representation of datetime
-        """
-
-        try:
-            if any(month in self.data for month in self.monthly_data):
-                month = datetime_.astype('datetime64[M]').astype(int) % 12 + 1
-                year = datetime_.astype('datetime64[Y]').astype(int) + 1970
-                value = f'{year}-{month:02}'
-            else:
-                value = datetime_.astype('datetime64[Y]').astype(int) + 1970
-                value = str(value)
-            return value
-        except Exception as err:
-            LOGGER.warning(err)
 
     def query(self, properties=[], subsets={},
               bbox=[], datetime_=None, format_='json'):
