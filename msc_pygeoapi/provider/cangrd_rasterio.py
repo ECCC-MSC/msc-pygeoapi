@@ -4,8 +4,8 @@
 #          <louis-philippe.rousseaulambert@ec.gc.ca>
 #          Tom Kralidis <tom.kralidis@ec.gc.ca>
 #
-# Copyright (c) 2022 Louis-Philippe Rousseau-Lambert
 # Copyright (c) 2023 Tom Kralidis
+# Copyright (c) 2025 Louis-Philippe Rousseau-Lambert
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -41,14 +41,16 @@ from rasterio.crs import CRS
 from rasterio.io import MemoryFile
 import rasterio.mask
 
-from pygeoapi.provider.base import (BaseProvider, ProviderConnectionError,
+from pygeoapi.provider.base import (ProviderConnectionError,
                                     ProviderQueryError)
+
+from pygeoapi.provider.rasterio_ import (RasterioProvider)
 
 LOGGER = logging.getLogger(__name__)
 
 
 # TODO: use RasterioProvider once pyproj is updated on bionic
-class CanGRDProvider(BaseProvider):
+class CanGRDProvider(RasterioProvider):
     """CanGRD Provider"""
 
     def __init__(self, provider_def):
@@ -70,14 +72,12 @@ class CanGRDProvider(BaseProvider):
             self.num_bands = self._coverage_properties['num_bands']
             # list of variables are not in metadata
             # we need to have them in the code
-            self.fields = ['tmean', 'tmax', 'tmin', 'pcp']
             self.native_format = provider_def['format']['name']
+            self.get_fields()
         except Exception as err:
             LOGGER.warning(err)
             raise ProviderConnectionError(err)
 
-    # TODO: update domainset initialization with super
-    # once pyproj is updated on bionic
     def get_coverage_domainset(self):
         """
         Provide coverage domainset
@@ -85,113 +85,24 @@ class CanGRDProvider(BaseProvider):
         :returns: CIS JSON object of domainset metadata
         """
 
-        domainset = {
-            'type': 'DomainSet',
-            'generalGrid': {
-                'type': 'GeneralGridCoverage',
-                'srsName': self._coverage_properties['bbox_crs'],
-                'axisLabels': [
-                    self._coverage_properties['x_axis_label'],
-                    self._coverage_properties['y_axis_label']
-                ],
-                'axis': [{
-                    'type': 'RegularAxis',
-                    'axisLabel': self._coverage_properties['x_axis_label'],
-                    'lowerBound': self._coverage_properties['bbox'][0],
-                    'upperBound': self._coverage_properties['bbox'][2],
-                    'uomLabel': self._coverage_properties['bbox_units'],
-                    'resolution': self._coverage_properties['resx']
-                }, {
-                    'type': 'RegularAxis',
-                    'axisLabel': self._coverage_properties['y_axis_label'],
-                    'lowerBound': self._coverage_properties['bbox'][1],
-                    'upperBound': self._coverage_properties['bbox'][3],
-                    'uomLabel': self._coverage_properties['bbox_units'],
-                    'resolution': self._coverage_properties['resy']
-                }],
-                'gridLimits': {
-                    'type': 'GridLimits',
-                    'srsName': 'http://www.opengis.net/def/crs/OGC/0/Index2D',
-                    'axisLabels': ['i', 'j'],
-                    'axis': [{
-                        'type': 'IndexAxis',
-                        'axisLabel': 'i',
-                        'lowerBound': 0,
-                        'upperBound': self._coverage_properties['width']
-                    }, {
-                        'type': 'IndexAxis',
-                        'axisLabel': 'j',
-                        'lowerBound': 0,
-                        'upperBound': self._coverage_properties['height']
-                    }]
-                }
-            },
-            '_meta': {
-                'tags': self._coverage_properties['tags']
-            }
-        }
-
-        new_axis_name = []
-        new_axis = []
-
-        time_axis = {
-                'type': 'RegularAxis',
-                'axisLabel': 'time',
-                'lowerBound': '',
-                'upperBound': '',
-                'uomLabel': '',
-                'resolution': 1
-            }
-
-        if 'trend' not in self.data:
-            file_path = pathlib.Path(self.data).parent.resolve()
-            file_path_ = glob.glob(os.path.join(file_path, '*TMEAN*'))
-            file_path_.sort()
-            begin_file, end_file = file_path_[0], file_path_[-1]
-
-            if 'monthly' not in self.data:
-                begin = search('_{:d}.tif', begin_file)[0]
-                end = search('_{:d}.tif', end_file)[0]
-                time_axis['uomLabel'] = 'year'
-            else:
-                begin = search('_{:d}-{:d}.tif', begin_file)
-                begin = f'{begin[0]}-{begin[1]:02}'
-
-                end = search('_{:d}-{:d}.tif', end_file)
-                end = f'{end[0]}-{end[1]:02}'
-                time_axis['uomLabel'] = 'month'
-
-            time_axis['lowerBound'] = begin
-            time_axis['upperBound'] = end
-            new_axis_name.append('time')
-            new_axis.extend([time_axis])
+        domainset = {}
 
         if 'season' in self.data:
-            new_axis.extend([{
-                             'type': 'IrregularAxis',
-                             'axisLabel': 'season',
-                             'coordinate': ['DJF', 'MAM', 'JJA', 'SON']
-                             }])
-            new_axis_name.append('season')
-
-        domainset['generalGrid']['axisLabels'].extend(new_axis_name)
-        domainset['generalGrid']['axis'].extend(new_axis)
+            domainset['season'] = {
+                'definition': 'Seasons - IrregularAxis',
+                'interval': [['DJF', 'MAM', 'JJA', 'SON']]
+                }
 
         return domainset
 
-    def get_coverage_rangetype(self, *args, **kwargs):
+    def get_fields(self):
         """
         Provide coverage rangetype
         :returns: CIS JSON object of rangetype metadata
         """
 
-        rangetype = {
-            'type': 'DataRecord',
-            'field': []
-        }
-
-        dtype = self._data.dtypes[0]
-        nodataval = self._data.nodatavals[0]
+        # parameter = _get_parameter_metadata(
+        #             self._data.profile['driver'], self._data.tags(i))
 
         var_dict = {'TMEAN': {'units': '[C]',
                               'name': 'Mean temperature [C]',
@@ -213,28 +124,34 @@ class CanGRDProvider(BaseProvider):
             var_key = var_dict.keys()
 
         for var in var_key:
-            units = var_dict[var]['units']
-            rangetype['field'].append({
-                'id': var_dict[var]['id'],
-                'type': 'Quantity',
-                'name': var_dict[var]['name'],
-                'encodingInfo': {
-                    'dataType': f'http://www.opengis.net/def/dataType/OGC/0/{dtype}'  # noqa
-                },
-                'nodata': nodataval,
-                'uom': {
-                    'id': 'http://www.opengis.net/def/uom/UCUM/{units}',
-                    'type': 'UnitReference',
-                    'code': units
-                },
-                '_meta': {
-                    'tags': {
-                        'long_name': var_dict[var]['name']
+            self.data = self.data.replace('TMEAN*', f'{var}*')
+            with rasterio.open(self.data) as _data:
+
+                units = var_dict[var]['units']
+                dtype = self._data.dtypes[0]
+                nodataval = self._data.nodatavals[0]
+                dtype2 = dtype
+
+                if dtype.startswith('float'):
+                    dtype2 = 'number'
+                elif dtype.startswith('int'):
+                    dtype2 = 'integer'
+                self._fields[var_dict[var]['id']] = {
+                    'title': var_dict[var]['name'],
+                    'type': dtype2,
+                    "x-ogc-unit": units,
+                    '_meta': {
+                        'tags': _data.tags(1),
+                        'uom': {
+                            'id': 'http://www.opengis.net/def/uom/UCUM/{units}', # noqa
+                            'type': 'UnitReference',
+                            'code': units
+                        },
+                        'nodata': nodataval,
                     }
                 }
-            })
 
-        return rangetype
+        self._fields
 
     def query(self, properties=['TMEAN'], subsets={}, bbox=[],
               datetime_=None, format_='json', **kwargs):
@@ -253,8 +170,11 @@ class CanGRDProvider(BaseProvider):
         }
         shapes = []
 
-        if all([self._coverage_properties['x_axis_label'] in subsets,
-                self._coverage_properties['y_axis_label'] in subsets,
+        x = self._coverage_properties['x_axis_label']
+        y = self._coverage_properties['y_axis_label']
+
+        if all([x in subsets,
+                y in subsets,
                 len(bbox) > 0]):
             msg = 'bbox and subsetting by coordinates are exclusive'
             LOGGER.warning(msg)
@@ -306,24 +226,6 @@ class CanGRDProvider(BaseProvider):
                        [minx2, miny2],
                    ]]
                 }]
-
-        elif (self._coverage_properties['x_axis_label'] in subsets and
-                self._coverage_properties['y_axis_label'] in subsets):
-            LOGGER.debug('Creating spatial subset')
-
-            x = self._coverage_properties['x_axis_label']
-            y = self._coverage_properties['y_axis_label']
-
-            shapes = [{
-               'type': 'Polygon',
-               'coordinates': [[
-                   [subsets[x][0], subsets[y][0]],
-                   [subsets[x][0], subsets[y][1]],
-                   [subsets[x][1], subsets[y][1]],
-                   [subsets[x][1], subsets[y][0]],
-                   [subsets[x][0], subsets[y][0]]
-               ]]
-            }]
 
         if properties[0].upper() != 'TMEAN':
             var = properties[0].upper()
@@ -408,11 +310,6 @@ class CanGRDProvider(BaseProvider):
 
             if bbox:
                 out_meta['bbox'] = [bbox[0], bbox[1], bbox[2], bbox[3]]
-            elif shapes:
-                out_meta['bbox'] = [
-                    subsets[x][0], subsets[y][0],
-                    subsets[x][1], subsets[y][1]
-                ]
             else:
                 out_meta['bbox'] = [
                     _data.bounds.left,
@@ -439,7 +336,12 @@ class CanGRDProvider(BaseProvider):
                 else:
                     LOGGER.debug('Creating output in CoverageJSON')
                     out_meta['bands'] = args['indexes']
-                    return self.gen_covjson(out_meta, shapes, out_image)
+                    if len(bbox) > 0:
+                        out_meta['bbox'] = [minx2,
+                                            miny2,
+                                            maxx2,
+                                            maxy2]
+                    return self.gen_covjson(out_meta, out_image)
             else:
                 if date_file_list:
                     LOGGER.debug('Serializing data in memory')
@@ -481,147 +383,36 @@ class CanGRDProvider(BaseProvider):
                         LOGGER.debug('Returning data in native format')
                         return memfile.read()
 
-    # TODO: remove once pyproj is updated on bionic
-    def gen_covjson(self, metadata, shapes, data):
-        """
-        Generate coverage as CoverageJSON representation
-        :param metadata: coverage metadata
-        :param shapes: bbox in the data projection
-        :param data: rasterio DatasetReader object
-        :returns: dict of CoverageJSON representation
-        """
-
-        LOGGER.debug('Creating CoverageJSON domain')
-
-        # in the file we have http://www.opengis.net/def/crs/OGC/1.3//3995
-        # which is not valid, but we can update it to
-        # http://www.opengis.net/def/crs/EPSG/0/3995
-        self._coverage_properties['bbox_crs'] = \
-            'http://www.opengis.net/def/crs/EPSG/0/3995'
-
-        if shapes:
-            coordinates = shapes[0]['coordinates'][0]
-            minx = coordinates[0][0]
-            maxy = coordinates[0][1]
-            maxx = coordinates[2][0]
-            miny = coordinates[2][1]
-        else:
-            minx, miny, maxx, maxy = metadata['bbox']
-
-        cj = {
-            'type': 'Coverage',
-            'domain': {
-                'type': 'Domain',
-                'domainType': 'Grid',
-                'axes': {
-                    'x': {
-                        'start': minx,
-                        'stop': maxx,
-                        'num': metadata['width']
-                    },
-                    'y': {
-                        'start': maxy,
-                        'stop': miny,
-                        'num': metadata['height']
-                    }
-                },
-                'referencing': [{
-                    'coordinates': ['x', 'y'],
-                    'system': {
-                        'type': self._coverage_properties['crs_type'],
-                        'id': self._coverage_properties['bbox_crs']
-                    }
-                }]
-            },
-            'parameters': {},
-            'ranges': {}
-        }
-
-        if metadata['bands'] is None:  # all bands
-            bands_select = range(1, len(self._data.dtypes) + 1)
-        else:
-            bands_select = metadata['bands']
-
-        LOGGER.debug(f'bands selected: {bands_select}')
-        for bs in bands_select:
-            pm = _get_parameter_metadata(
-                self._data.profile['driver'], self._data.tags(bs))
-
-            parameter = {
-                'type': 'Parameter',
-                'description': {
-                    'en': str(pm['description'])
-                },
-                'unit': {
-                    'symbol': str(pm['unit_label'])
-                },
-                'observedProperty': {
-                    'id': str(pm['observed_property_id']),
-                    'label': {
-                        'en': str(pm['observed_property_name'])
-                    }
-                }
-            }
-
-            cj['parameters'][pm['id']] = parameter
-
-        try:
-            for key in cj['parameters'].keys():
-                cj['ranges'][key] = {
-                    'type': 'NdArray',
-                    # 'dataType': metadata.dtypes[0],
-                    'dataType': 'float',
-                    'axisNames': ['y', 'x'],
-                    'shape': [metadata['height'], metadata['width']],
-                }
-                # TODO: deal with multi-band value output
-                cj['ranges'][key]['values'] = data.flatten().tolist()
-        except IndexError as err:
-            LOGGER.warning(err)
-            raise ProviderQueryError('Invalid query parameter')
-
-        return cj
-
-    # TODO: remove once pyproj is updated on bionic
     def _get_coverage_properties(self):
         """
         Helper function to normalize coverage properties
         :returns: `dict` of coverage properties
         """
 
-        properties = {
-            'bbox': [
-                self._data.bounds.left,
-                self._data.bounds.bottom,
-                self._data.bounds.right,
-                self._data.bounds.top
-            ],
-            'bbox_crs': 'http://www.opengis.net/def/crs/OGC/1.3/CRS84',
-            'crs_type': 'GeographicCRS',
-            'bbox_units': 'deg',
-            'x_axis_label': 'Long',
-            'y_axis_label': 'Lat',
-            'width': self._data.width,
-            'height': self._data.height,
-            'resx': self._data.res[0],
-            'resy': self._data.res[1],
-            'num_bands': self._data.count,
-            'tags': self._data.tags()
-        }
+        properties = super()._get_coverage_properties()
 
-        if self._data.crs is not None:
-            if self._data.crs.is_projected:
-                bbox_crs = f'http://www.opengis.net/def/crs/OGC/1.3/{self._data.crs.to_epsg()}'  # noqa
-                properties['bbox_crs'] = bbox_crs
+        if 'trend' not in self.data:
+            file_path = pathlib.Path(self.data).parent.resolve()
+            file_path_ = glob.glob(os.path.join(file_path, '*TMEAN*'))
+            file_path_.sort()
+            begin_file, end_file = file_path_[0], file_path_[-1]
 
-                properties['x_axis_label'] = 'x'
-                properties['y_axis_label'] = 'y'
-                properties['bbox_units'] = self._data.crs.linear_units
-                properties['crs_type'] = 'ProjectedCRS'
+            if 'monthly' not in self.data:
+                begin = search('_{:d}.tif', begin_file)[0]
+                end = search('_{:d}.tif', end_file)[0]
+                period = 'year'
+            else:
+                begin = search('_{:d}-{:d}.tif', begin_file)
+                begin = f'{begin[0]}-{begin[1]:02}'
 
-        properties['axes'] = [
-            properties['x_axis_label'], properties['y_axis_label']
-        ]
+                end = search('_{:d}-{:d}.tif', end_file)
+                end = f'{end[0]}-{end[1]:02}'
+                period = 'month'
+
+            properties['restime'] = {'value': 1, 'period': period}
+            properties['time_range'] = [begin, end]
+
+        properties['uad'] = self.get_coverage_domainset()
 
         return properties
 
@@ -652,32 +443,3 @@ class CanGRDProvider(BaseProvider):
             return query_file
         else:
             return file_path_
-
-
-# TODO: remove once pyproj is updated on bionic
-def _get_parameter_metadata(driver, band):
-    """
-    Helper function to derive parameter name and units
-    :param driver: rasterio/GDAL driver name
-    :param band: int of band number
-    :returns: dict of parameter metadata
-    """
-
-    parameter = {
-        'id': None,
-        'description': None,
-        'unit_label': None,
-        'unit_symbol': None,
-        'observed_property_id': None,
-        'observed_property_name': None
-    }
-
-    if driver == 'GRIB':
-        parameter['id'] = band['GRIB_ELEMENT']
-        parameter['description'] = band['GRIB_COMMENT']
-        parameter['unit_label'] = band['GRIB_UNIT']
-        parameter['unit_symbol'] = band['GRIB_UNIT']
-        parameter['observed_property_id'] = band['GRIB_SHORT_NAME']
-        parameter['observed_property_name'] = band['GRIB_COMMENT']
-
-    return parameter
