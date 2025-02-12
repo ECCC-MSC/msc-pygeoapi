@@ -88,9 +88,9 @@ class WeatherStoriesRealtimeLoader(BaseLoader):
         for feature in features:
             properties = feature.get('properties')
             if 'subregion_name' in properties:
-                id_ = f"{str(properties['prov_name_en'][0])}-{properties['subregion_name']}"  # noqa
+                id_ = f"{str(properties['province_territory_name_en'])}-{properties['subregion_name_en']}"  # noqa
             else:
-                id_ = f"{str(properties['prov_name_en'][0])}"
+                id_ = f"{str(properties['province_territory_name_en'])}"
 
             self.conn.Elasticsearch.index(
                 index="weatherstories",
