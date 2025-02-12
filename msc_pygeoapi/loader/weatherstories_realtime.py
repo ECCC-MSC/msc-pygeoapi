@@ -87,7 +87,7 @@ class WeatherStoriesRealtimeLoader(BaseLoader):
 
         for feature in features:
             properties = feature.get('properties')
-            if 'subregion_name' in properties:
+            if 'subregion_name_en' in properties:
                 id_ = f"{str(properties['province_territory_name_en'])}-{properties['subregion_name_en']}"  # noqa
             else:
                 id_ = f"{str(properties['province_territory_name_en'])}"
