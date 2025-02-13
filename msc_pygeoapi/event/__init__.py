@@ -40,7 +40,7 @@ LOGGER = logging.getLogger(__name__)
 
 class EventBase(FlowCB):
 
-    def process_messages(self, worklist) -> bool:
+    def process_messages(self, worklist, worklist_type: str) -> bool:
         """
         Process messages from the worklist
 
@@ -49,7 +49,7 @@ class EventBase(FlowCB):
         :returns: `bool`
         """
 
-        for msg in worklist.incoming:
+        for msg in getattr(worklist, worklist_type):
 
             try:
                 from msc_pygeoapi.handler.core import CoreHandler
@@ -77,7 +77,8 @@ class EventAfterWork(EventBase):
 
         :returns: `bool`
         """
-        return self.process_messages(worklist)
+
+        return self.process_messages(worklist, worklist_type='ok')
 
 
 class EventAfterAccept(EventBase):
@@ -90,4 +91,5 @@ class EventAfterAccept(EventBase):
 
         :returns: `bool`
         """
-        return self.process_messages(worklist)
+
+        return self.process_messages(worklist, worklist_type='incoming')
