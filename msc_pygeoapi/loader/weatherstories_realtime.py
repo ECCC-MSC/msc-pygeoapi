@@ -40,15 +40,7 @@ INDEX_BASENAME = 'weatherstories'
 MAPPINGS = {
     "properties": {
         "geometry": {
-            "properties": {
-                "coordinates": {"type": "float"},
-                "type": {
-                    "type": "text",
-                    "fields": {
-                        "keyword": {"type": "keyword", "ignore_above": 256}
-                    }
-                }
-            }
+            "type": "geo_shape"
         }
     }
 }
