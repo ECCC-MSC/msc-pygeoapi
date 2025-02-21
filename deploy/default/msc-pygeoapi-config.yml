@@ -4243,6 +4243,80 @@ resources:
                   name: GRIB
                   mimetype: application/x-grib2
 
+    weather:cansips:100km:forecast:seasonal-products:
+        type: collection
+        title:
+            en: CanSIPS - Seasonal forecast probabilities for temperatures and precipitations at 100km resolution
+            fr: SPISCan -  Prévisions probabilistes par saison des températures et des précipitations à 100km de résolution
+        description:
+            en: The Canadian Seasonal to Inter-annual Prediction System (CanSIPS) carries out physics calculations to arrive at probabilistic predictions of atmospheric elements from the beginning of a month out to up to 12 months into the future, resulting in seasonal forecasts. Atmospheric elements include temperature, precipitation, wind speed and direction and others. This product contains raw numerical results of these calculations. Geographical coverage is global. Data is available on a grid at a horizontal resolution of 2.5 degrees and 1 degree and for a few selected vertical levels. In addition, forecast probabilities for below, near, and above normal temperature and precipitation are available at both resolutions. Predictions and corresponding hindcast are made available monthly.
+            fr: Le Système de Prévision Interannuelle et Saisonnière Canadien (SPISCan) procède à des calculs physiques afin de produire des prévisions probabilistes d'éléments de l'atmosphère du début d'un mois jusqu'à 12 mois dans le futur. Ceci permet d'établir des prévisions saisonnières. Les éléments de l'atmosphère incluent notamment la température, la précipitation, la vitesse et direction des vents. Ce produit contient les résultats numériques bruts de ces calculs. La couverture géographique est mondiale. Les données sont disponibles pour quelques niveaux verticaux choisis et sur une grille de résolution spatiale de 2.5 degrées et 1 degrée. De plus, les prévisions probabilistes des températures et des précipitations sous la normale, près de la normale, et au-dessus de la normale sont disponibles aux deux résolutions. Ces prévisions ainsi que les rétro-prévision correspondantes sont disponibles mensuellement.
+        keywords:
+            en: [Weather forecasts, Precipitation, Air temperature, Meteorological data]
+            fr: [Prévisions météorologiques, Précipitations, Température de l'air, Données météorologiques]
+        extents:
+            spatial:
+                bbox: [-180.5,-90.5,179.5,90.5]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title:
+                  en: Data and Products of the Canadian Seasonal to Inter-annual Prediction System (CanSIPS) - Meteorological Service of Canada open data documentation
+                  fr: Données et Produits du Système de Prévision Interannuelle et Saisonnière Canadien (SPISCan) - Documentation des données ouvertes du Service météorologique du Canada
+              href:
+                  en: https://eccc-msc.github.io/open-data/msc-data/nwp_cansips/readme_cansips_en/
+                  fr: https://eccc-msc.github.io/open-data/msc-data/nwp_cansips/readme_cansips_fr/
+              hreflang:
+                  en: en-CA
+                  fr: fr-CA
+        providers:
+            - type: coverage
+              name: msc_pygeoapi.provider.cansips_products_rasterio.CanSIPSProductsProvider
+              data: /datasan/geomet/local/cansips-archives/100km/forecast/2023/10/202310_MSC_CanSIPS_AirTemp-ProbAboveNormal_AGL-2m_LatLon1.0_P00M-P02M.grib2
+              options:
+                  DATA_ENCODING: COMPLEX_PACKING
+              format:
+                  name: GRIB
+                  mimetype: application/x-grib2
+
+    weather:cansips:100km:forecast:monthly-products:
+        type: collection
+        title:
+            en: CanSIPS - Monthly forecast probabilities for temperatures and precipitations at 100km resolution
+            fr: SPISCan -  Prévisions probabilistes mensuelles des températures et des précipitations à 100km de résolution
+        description:
+            en: The Canadian Seasonal to Inter-annual Prediction System (CanSIPS) carries out physics calculations to arrive at probabilistic predictions of atmospheric elements from the beginning of a month out to up to 12 months into the future, resulting in seasonal forecasts. Atmospheric elements include temperature, precipitation, wind speed and direction and others. This product contains raw numerical results of these calculations. Geographical coverage is global. Data is available on a grid at a horizontal resolution of 2.5 degrees and 1 degree and for a few selected vertical levels. In addition, forecast probabilities for below, near, and above normal temperature and precipitation are available at both resolutions. Predictions and corresponding hindcast are made available monthly.
+            fr: Le Système de Prévision Interannuelle et Saisonnière Canadien (SPISCan) procède à des calculs physiques afin de produire des prévisions probabilistes d'éléments de l'atmosphère du début d'un mois jusqu'à 12 mois dans le futur. Ceci permet d'établir des prévisions saisonnières. Les éléments de l'atmosphère incluent notamment la température, la précipitation, la vitesse et direction des vents. Ce produit contient les résultats numériques bruts de ces calculs. La couverture géographique est mondiale. Les données sont disponibles pour quelques niveaux verticaux choisis et sur une grille de résolution spatiale de 2.5 degrées et 1 degrée. De plus, les prévisions probabilistes des températures et des précipitations sous la normale, près de la normale, et au-dessus de la normale sont disponibles aux deux résolutions. Ces prévisions ainsi que les rétro-prévision correspondantes sont disponibles mensuellement.
+        keywords:
+            en: [Weather forecasts, Precipitation, Air temperature, Meteorological data]
+            fr: [Prévisions météorologiques, Précipitations, Température de l'air, Données météorologiques]
+        extents:
+            spatial:
+                bbox: [-180.5,-90.5,179.5,90.5]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title:
+                  en: Data and Products of the Canadian Seasonal to Inter-annual Prediction System (CanSIPS) - Meteorological Service of Canada open data documentation
+                  fr: Données et Produits du Système de Prévision Interannuelle et Saisonnière Canadien (SPISCan) - Documentation des données ouvertes du Service météorologique du Canada
+              href:
+                  en: https://eccc-msc.github.io/open-data/msc-data/nwp_cansips/readme_cansips_en/
+                  fr: https://eccc-msc.github.io/open-data/msc-data/nwp_cansips/readme_cansips_fr/
+              hreflang:
+                  en: en-CA
+                  fr: fr-CA
+        providers:
+            - type: coverage
+              name: msc_pygeoapi.provider.cansips_products_rasterio.CanSIPSProductsProvider
+              data: /datasan/geomet/local/cansips-archives/100km/forecast/2025/03/202503_MSC_CanSIPS_AirTemp-ProbAboveNormal_AGL-2m_LatLon1.0_P00M.grib2
+              options:
+                  DATA_ENCODING: COMPLEX_PACKING
+              format:
+                  name: GRIB
+                  mimetype: application/x-grib2
+
     public-standard-forecast-zones:
         type: collection
         title:
