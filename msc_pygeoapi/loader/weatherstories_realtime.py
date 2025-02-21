@@ -78,15 +78,9 @@ class WeatherStoriesRealtimeLoader(BaseLoader):
         features = json_data.get('features')
 
         for feature in features:
-            properties = feature.get('properties')
-            if 'subregion_name_en' in properties:
-                id_ = f"{str(properties['province_territory_name_en'])}-{properties['subregion_name_en']}"  # noqa
-            else:
-                id_ = f"{str(properties['province_territory_name_en'])}"
-
             self.conn.Elasticsearch.index(
                 index="weatherstories",
-                id=id_,
+                id=feature['id'],
                 body=feature
             )
 
