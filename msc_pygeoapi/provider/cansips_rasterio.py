@@ -3,8 +3,8 @@
 # Authors: Louis-Philippe Rousseau-Lambert
 #           <louis-philippe.rousseaulambert@ec.gc.ca>
 #
-# Copyright (c) 2022 Louis-Philippe Rousseau-Lambert
 # Copyright (c) 2023 Tom Kralidis
+# Copyright (c) 2025 Louis-Philippe Rousseau-Lambert
 #
 #
 # Permission is hereby granted, free of charge, to any person
@@ -38,18 +38,21 @@ from parse import search
 import pathlib
 
 from dateutil.relativedelta import relativedelta
+import numpy as np
 import rasterio
 from rasterio.io import MemoryFile
 import rasterio.mask
+from rasterio.transform import from_bounds
 
 from pygeoapi.provider.base import (BaseProvider, ProviderConnectionError,
                                     ProviderQueryError)
+from pygeoapi.provider.rasterio_ import (RasterioProvider,
+                                         _get_parameter_metadata)
 
 LOGGER = logging.getLogger(__name__)
 
 
-# TODO: use RasterioProvider once pyproj is updated on bionic
-class CanSIPSProvider(BaseProvider):
+class CanSIPSProvider(RasterioProvider):
     """RDPA Provider"""
 
     def __init__(self, provider_def):
@@ -59,42 +62,38 @@ class CanSIPSProvider(BaseProvider):
         :returns: pygeoapi.provider.cansips_rasterio.CanSIPSProvider
         """
 
-        super().__init__(provider_def)
+        BaseProvider.__init__(self, provider_def)
 
         try:
             self.file_list = []
             self.member = []
+            self.parameter = ''
 
-            self.var = 'cansips_forecast_raw_latlon2.5x2.5_TMP_TGL_2m_'
+            self.var = 'TMP_TGL_2m_'
             self.get_file_list(self.var)
 
             self.data = self.file_list[0]
 
-            self.var_list = ['cansips_forecast_raw_latlon2.5x2.5_TMP_TGL_2m',
-                             'cansips_forecast_raw_latlon2.5x2.5_HGT_ISBL_0500', # noqa
-                             'cansips_forecast_raw_latlon2.5x2.5_PRATE_SFC_0',
-                             'cansips_forecast_raw_latlon2.5x2.5_PRMSL_MSL_0',
-                             'cansips_forecast_raw_latlon2.5x2.5_TMP_ISBL_0850', # noqa
-                             'cansips_forecast_raw_latlon2.5x2.5_WTMP_SFC_0']
+            self.var_list = ['TMP_TGL_2m',
+                             'HGT_ISBL_0500', # noqa
+                             'PRATE_SFC_0',
+                             'PRMSL_MSL_0',
+                             'TMP_ISBL_0850', # noqa
+                             'WTMP_SFC_0']
 
             self._data = rasterio.open(self.data)
             self._coverage_properties = self._get_coverage_properties()
             self.axes = self._coverage_properties['axes']
-            self.axes.extend(['time', 'dim_reference_time', 'member'])
+            self.axes.extend(['time', 'reference_time', 'member'])
             self.num_bands = self._coverage_properties['num_bands']
             self.crs = self._coverage_properties['bbox_crs']
-            self.fields = [str(num) for num in range(1, self.num_bands+1)]
+            self.get_fields()
             self.native_format = provider_def['format']['name']
 
-            # Needed to set the variable for each collection
-            # We intialize the collection matadata through this function
-            self.coverage = self.get_coverage_domainset()
         except Exception as err:
             LOGGER.warning(err)
             raise ProviderConnectionError(err)
 
-    # TODO: update domainset initialization with super
-    # once pyproj is updated on bionic
     def get_coverage_domainset(self):
         """
         Provide coverage domainset
@@ -102,159 +101,65 @@ class CanSIPSProvider(BaseProvider):
         :returns: CIS JSON object of domainset metadata
         """
 
-        domainset = {
-            'type': 'DomainSet',
-            'generalGrid': {
-                'type': 'GeneralGridCoverage',
-                'srsName': self._coverage_properties['bbox_crs'],
-                'axisLabels': [
-                    self._coverage_properties['x_axis_label'],
-                    self._coverage_properties['y_axis_label']
-                ],
-                'axis': [{
-                    'type': 'RegularAxis',
-                    'axisLabel': self._coverage_properties['x_axis_label'],
-                    'lowerBound': self._coverage_properties['bbox'][0],
-                    'upperBound': self._coverage_properties['bbox'][2],
-                    'uomLabel': self._coverage_properties['bbox_units'],
-                    'resolution': self._coverage_properties['resx']
-                }, {
-                    'type': 'RegularAxis',
-                    'axisLabel': self._coverage_properties['y_axis_label'],
-                    'lowerBound': self._coverage_properties['bbox'][1],
-                    'upperBound': self._coverage_properties['bbox'][3],
-                    'uomLabel': self._coverage_properties['bbox_units'],
-                    'resolution': self._coverage_properties['resy']
-                }],
-                'gridLimits': {
-                    'type': 'GridLimits',
-                    'srsName': 'http://www.opengis.net/def/crs/OGC/0/Index2D',
-                    'axisLabels': ['i', 'j'],
-                    'axis': [{
-                        'type': 'IndexAxis',
-                        'axisLabel': 'i',
-                        'lowerBound': 0,
-                        'upperBound': self._coverage_properties['width']
-                    }, {
-                        'type': 'IndexAxis',
-                        'axisLabel': 'j',
-                        'lowerBound': 0,
-                        'upperBound': self._coverage_properties['height']
-                    }]
+        domainset = {}
+        domainset['member'] = {
+                'definition': 'Members - RegularAxis',
+                'interval': [[1, 20]],
+                'grid': {
+                    'resolution': 1
                 }
-            },
-            '_meta': {
-                'tags': self._coverage_properties['tags']
             }
-        }
-
-        new_axis_name = []
-        new_axis = []
-
-        time_axis = {
-                'type': 'RegularAxis',
-                'axisLabel': 'time',
-                'lowerBound': '',
-                'upperBound': '',
-                'uomLabel': 'month',
-                'resolution': 1
-            }
-
-        dim_ref_time_axis = {
-                'type': 'RegularAxis',
-                'axisLabel': 'dim_reference_time',
-                'lowerBound': '2013-04',
-                'upperBound': '',
-                'uomLabel': 'month',
-                'resolution': 1
-            }
-
-        member_axis = {
-                'type': 'RegularAxis',
-                'axisLabel': 'member',
-                'lowerBound': 20,
-                'upperBound': 1,
-                'uomLabel': '',
-                'resolution': 1
-            }
-
-        _, end = self.get_end_time_from_file()
-        dim_ref_time_axis['upperBound'] = end
-
-        time_axis['lowerBound'] = self.get_time_from_dim(end, 1)
-        time_axis['upperBound'] = self.get_time_from_dim(end, 13)
-
-        new_axis_name.extend(['time', 'dim_reference_time', 'member'])
-        new_axis.extend([time_axis, dim_ref_time_axis, member_axis])
-
-        domainset['generalGrid']['axisLabels'].extend(new_axis_name)
-        domainset['generalGrid']['axis'].extend(new_axis)
 
         return domainset
 
-    # TODO: remove once pyproj is updated on bionic
-    def get_coverage_rangetype(self, *args, **kwargs):
+    def get_fields(self):
         """
-        Provide coverage rangetype
-        :returns: CIS JSON object of rangetype metadata
+        Provide coverage schema
+
+        :returns: CIS JSON object of schema metadata
         """
 
-        rangetype = {
-            'type': 'DataRecord',
-            'field': []
-        }
+        self._fields = {}
 
         for var in self.var_list:
-
             self._data = rasterio.open(self.data.replace(
-                'cansips_forecast_raw_latlon2.5x2.5_TMP_TGL_2m', var))
+                'TMP_TGL_2m', var))
 
-            i, dtype, nodataval = self._data.indexes[0], \
+            i, dtype, _ = self._data.indexes[0], \
                 self._data.dtypes[0], self._data.nodatavals[0]
 
             LOGGER.debug(f'Determing rangetype for band {i}')
 
             tags = self._data.tags(i)
-            keys_to_remove = ['GRIB_FORECAST_SECONDS',
-                              'GRIB_IDS',
-                              'GRIB_PDS_TEMPLATE_ASSEMBLED_VALUES',
-                              'GRIB_REF_TIME',
-                              'GRIB_VALID_TIME']
-
-            for keys in keys_to_remove:
-                tags.pop(keys)
 
             name, units = None, None
             if self._data.units[i-1] is None:
-                parameter = _get_parameter_metadata(
+                self.parameter = _get_parameter_metadata(
                     self._data.profile['driver'], self._data.tags(i))
-                name = parameter['description']
-                units = parameter['unit_label']
+                name = self.parameter['description']
+                units = self.parameter['unit_label']
 
             if 'TMP_ISBL_0850' in var:
                 name = 'Temperature [C] at 850 mb'
 
-            rangetype['field'].append({
-                'id': self.var_list.index(var) + 1,
-                'type': 'Quantity',
-                'name': name,
-                'encodingInfo': {
-                    'dataType': f'http://www.opengis.net/def/dataType/OGC/0/{dtype}'  # noqa
-                },
-                'nodata': nodataval,
-                'uom': {
-                    'id': f'http://www.opengis.net/def/uom/UCUM/{units}',
-                    'type': 'UnitReference',
-                    'code': units
-                },
+            dtype2 = dtype
+            if dtype.startswith('float'):
+                dtype2 = 'number'
+            elif dtype.startswith('int'):
+                dtype2 = 'integer'
+
+            self._fields[var] = {
+                'title': name,
+                'type': dtype2,
                 '_meta': {
                     'tags': tags
-                }
-            })
+                },
+                "x-ogc-unit": units
+            }
 
-        return rangetype
+        return self._fields
 
-    def query(self, properties=[1], subsets={}, bbox=[],
+    def query(self, properties=['TMP_TGL_2m'], subsets={}, bbox=[],
               datetime_=None, format_='json', **kwargs):
         """
         Extract data from collection collection
@@ -273,14 +178,12 @@ class CanSIPSProvider(BaseProvider):
             LOGGER.error(err)
             raise ProviderQueryError(err)
 
-        properties[0] = int(properties[0])
-        try:
-            var_list = self.var_list[properties[0] - 1]
-        except IndexError as err:
+        if properties[0] not in self.var_list:
+            err = 'Not a supported property (variable)'
             LOGGER.error(err)
             raise ProviderQueryError(err)
 
-        self.get_file_list(var_list)
+        self.get_file_list(properties[0])
 
         try:
             self.member = subsets['member']
@@ -290,60 +193,17 @@ class CanSIPSProvider(BaseProvider):
         args = {
             'indexes': None
         }
-        shapes = []
-
-        if all([self._coverage_properties['x_axis_label'] in subsets,
-                self._coverage_properties['y_axis_label'] in subsets,
-                len(bbox) > 0]):
-            msg = 'bbox and subsetting by coordinates are exclusive'
-            LOGGER.warning(msg)
-            raise ProviderQueryError(msg)
-
-        if len(bbox) > 0:
-            minx, miny, maxx, maxy = bbox
-
-            LOGGER.debug(f'Source coordinates: {minx}, {maxy}, {maxx}, {maxy}')
-
-            # because cansips long is from 0 to 360
-            minx += 180
-            maxx += 180
-
-            LOGGER.debug(f'Destination coordinates: {minx}, {maxy}, {maxx}, {maxy}')  # noqa
-
-            shapes = [{
-                'type': 'Polygon',
-                'coordinates': [[
-                    [minx, miny],
-                    [minx, maxy],
-                    [maxx, maxy],
-                    [maxx, miny],
-                    [minx, miny],
-                ]]
-            }]
-
-        elif (self._coverage_properties['x_axis_label'] in subsets and
-                self._coverage_properties['y_axis_label'] in subsets):
-            LOGGER.debug('Creating spatial subset')
-
-            x = self._coverage_properties['x_axis_label']
-            y = self._coverage_properties['y_axis_label']
-
-            shapes = [{
-               'type': 'Polygon',
-               'coordinates': [[
-                   [subsets[x][0], subsets[y][0]],
-                   [subsets[x][0], subsets[y][1]],
-                   [subsets[x][1], subsets[y][1]],
-                   [subsets[x][1], subsets[y][0]],
-                   [subsets[x][0], subsets[y][0]]
-               ]]
-            }]
 
         bands = []
 
+        drt_dict = self._coverage_properties['uad']['reference_time']
+        dt_begin = self._coverage_properties['time_range'][0]
         if datetime_:
-            if 'dim_reference_time' in subsets:
-                year, month = subsets['dim_reference_time'][0].split('-')
+            if 'reference_time' in subsets:
+                year, month = subsets['reference_time'][0].split('-')
+            # check if datetime requested later than the latest default time
+            elif datetime_.split('/')[0] > dt_begin:
+                year, month = drt_dict['interval'][0][-1].split('-')
             else:
                 year, month = datetime_.split('/')[0].split('-')
                 if month == '01':
@@ -353,10 +213,10 @@ class CanSIPSProvider(BaseProvider):
                     month = str(int(month) - 1).zfill(2)
             bands = self.get_band_datetime(datetime_, year, month)
         else:
-            if 'dim_reference_time' in subsets:
-                year, month = subsets['dim_reference_time'][0].split('-')
+            if 'reference_time' in subsets:
+                year, month = subsets['reference_time'][0].split('-')
             else:
-                year, month = self.get_latest_dim_reference_time()
+                year, month = drt_dict['interval'][0][-1].split('-')
             num_months_1 = 1 + 12 * (self.member[0] - 1)
             num_months_2 = 12 + 12 * (self.member[0] - 1)
             bands = list(range(num_months_1, num_months_2 + 1))
@@ -367,9 +227,8 @@ class CanSIPSProvider(BaseProvider):
         LOGGER.debug('Selecting bands')
         args['indexes'] = bands
 
-        var = self.var_list[properties[0] - 1]
         self.data = self.data.replace(
-            'cansips_forecast_raw_latlon2.5x2.5_TMP_TGL_2m', var)
+            'TMP_TGL_2m', properties[0])
 
         if not os.path.isfile(self.data):
             msg = 'No such file'
@@ -377,165 +236,137 @@ class CanSIPSProvider(BaseProvider):
             raise ProviderQueryError(msg)
 
         with rasterio.open(self.data) as self._data:
-            LOGGER.debug('Creating output coverage metadata')
+            # Get original transform and bounds
+            left, bottom, right, top = self._data.bounds
+            width, height = self._data.width, self._data.height
 
-            out_meta = self._data.meta
+            # Read the raster data
+            data = self._data.read()
+            self.parameter = _get_parameter_metadata(self._data.driver,
+                                                     self._data.tags(1))
 
-            if self.options is not None:
-                LOGGER.debug('Adding dataset options')
-                for key, value in self.options.items():
-                    out_meta[key] = value
+            # Shift left half (-180 to 0) and right half (0 to 180)
+            mid_idx = width // 2  # Find the middle pixel column
+            left_half = data[:, :, mid_idx:]
+            right_half = data[:, :, :mid_idx]
 
-            if shapes:  # spatial subset
-                try:
-                    LOGGER.debug('Clipping data with bbox')
-                    out_image, out_transform = rasterio.mask.mask(
-                        self._data,
-                        filled=False,
-                        shapes=shapes,
-                        crop=True,
-                        indexes=args['indexes'])
-                except ValueError as err:
-                    LOGGER.error(err)
-                    raise ProviderQueryError(err)
+            # Pad right_half to match left_half width
+            right_half = np.pad(right_half,
+                                ((0, 0), (0, 0), (0, 1)),
+                                mode='constant',
+                                constant_values=np.nan)
 
-                out_meta.update({'driver': self.native_format,
-                                 'height': out_image.shape[1],
-                                 'width': out_image.shape[2],
-                                 'transform': out_transform})
-            else:  # no spatial subset
-                LOGGER.debug('Creating data in memory with band selection')
-                out_image = self._data.read(indexes=args['indexes'])
+            # Merge both halves
+            data_shifted = np.concatenate((left_half, right_half), axis=2)
+            # **Remove the padding (last column)**
+            # data_shifted = data_shifted[:, :, :-1]  # Trim last column
 
-            if bbox:
-                out_meta['bbox'] = [bbox[0], bbox[1], bbox[2], bbox[3]]
-            elif shapes:
-                out_meta['bbox'] = [
-                    subsets[x][0], subsets[y][0],
-                    subsets[x][1], subsets[y][1]
-                ]
-            else:
-                out_meta['bbox'] = [
-                    self._data.bounds.left,
-                    self._data.bounds.bottom,
-                    self._data.bounds.right,
-                    self._data.bounds.top
-                ]
+            # New longitude bounds
+            new_left, new_right = left - 180, right - 180
 
-            out_meta['units'] = self._data.units
+            # Create new transform
+            new_transform = from_bounds(new_left,
+                                        bottom,
+                                        new_right,
+                                        top,
+                                        width,
+                                        height)
 
-            self.filename = self.data.split('/')[-1]
+            # Update profile for output
+            profile = self._data.profile
+            profile.update(transform=new_transform,
+                           nodata=9999.0)
 
-            # CovJSON output does not support multiple bands yet
-            # Only the first timestep is returned
-            if format_ == 'json':
+            with MemoryFile() as tmp_memfile:
+                with tmp_memfile.open(**profile, nbits=nbits) as mem_data:
+                    mem_data.write(data_shifted)
 
-                if datetime_ and '/' in datetime_:
-                    err = 'Date range not yet supported for CovJSON output'
-                    LOGGER.error(err)
-                    raise ProviderQueryError(err)
-                else:
-                    LOGGER.debug('Creating output in CoverageJSON')
-                    out_meta['bands'] = [1]
-                    return self.gen_covjson(out_meta, out_image)
-            else:
-                LOGGER.debug('Serializing data in memory')
-                out_meta.update(count=len(args['indexes']))
-                with MemoryFile() as memfile:
-                    with memfile.open(**out_meta, nbits=nbits) as dest:
-                        dest.write(out_image)
+                # TODO: uncomment, fix indentation once we have rasterio 1.3.11
+                # with rasterio.open(self.data) as src:
+                #     LOGGER.debug('Creating output coverage metadata')
+                #     #dst_crs = "EPSG:4326"
+                #     dst_crs = CRS.from_epsg(4326)
+                #     left, bottom, right, top = transform_bounds(src.crs,
+                #                                                 dst_crs,
+                #                                                 *src.bounds)
+                #     dst_bounds=(left, bottom, right, top)
 
-                    # return data in native format
-                    LOGGER.debug('Returning data in native format')
-                    return memfile.read()
+                    out_meta = mem_data.meta
 
-    # TODO: remove once pyproj is updated on bionic
-    def gen_covjson(self, metadata, data):
-        """
-        Generate coverage as CoverageJSON representation
-        :param metadata: coverage metadata
-        :param data: rasterio DatasetReader object
-        :returns: dict of CoverageJSON representation
-        """
+                    if len(bbox) > 0:
+                        minx, miny, maxx, maxy = bbox
+                    else:
+                        minx, miny, maxx, maxy = (-178.75,
+                                                  -91.25,
+                                                  181.25,
+                                                  91.25)
+                    shapes = [{
+                        'type': 'Polygon',
+                        'coordinates': [[
+                            [minx, miny],
+                            [minx, maxy],
+                            [maxx, maxy],
+                            [maxx, miny],
+                            [minx, miny]
+                        ]]
+                    }]
+                    out_meta['bbox'] = [minx, miny, maxx, maxy]
 
-        LOGGER.debug('Creating CoverageJSON domain')
-        minx, miny, maxx, maxy = metadata['bbox']
+                    # TODO: uncomment, fix indentation
+                    # once we have rasterio 1.3.11
+                    # reprojection of the original file from 0,360 to -180,180
+                    # with WarpedVRT(src,
+                    #                crs=dst_crs,
+                    #                dst_bounds=dst_bounds) as self._data:
 
-        cj = {
-            'type': 'Coverage',
-            'domain': {
-                'type': 'Domain',
-                'domainType': 'Grid',
-                'axes': {
-                    'x': {
-                        'start': minx,
-                        'stop': maxx,
-                        'num': metadata['width']
-                    },
-                    'y': {
-                        'start': maxy,
-                        'stop': miny,
-                        'num': metadata['height']
-                    }
-                },
-                'referencing': [{
-                    'coordinates': ['x', 'y'],
-                    'system': {
-                        'type': self._coverage_properties['crs_type'],
-                        'id': self._coverage_properties['bbox_crs']
-                    }
-                }]
-            },
-            'parameters': {},
-            'ranges': {}
-        }
+                    if self.options is not None:
+                        LOGGER.debug('Adding dataset options')
+                        for key, value in self.options.items():
+                            out_meta[key] = value
 
-        if metadata['bands'] is None:  # all bands
-            bands_select = range(1, len(self._data.dtypes) + 1)
-        else:
-            bands_select = metadata['bands']
+                    try:
+                        LOGGER.debug('Clipping data with bbox')
+                        out_image, out_transform = rasterio.mask.mask(
+                            mem_data,
+                            filled=False,
+                            shapes=shapes,
+                            crop=True,
+                            nodata=9999.0,
+                            indexes=args['indexes'])
+                    except ValueError as err:
+                        LOGGER.error(err)
+                        raise ProviderQueryError(err)
 
-        LOGGER.debug(f'bands selected: {bands_select}')
-        for bs in bands_select:
-            pm = _get_parameter_metadata(
-                self._data.profile['driver'], self._data.tags(bs))
+                    out_meta.update({'driver': self.native_format,
+                                     'height': out_image.shape[1],
+                                     'width': out_image.shape[2],
+                                     'transform': out_transform})
 
-            parameter = {
-                'type': 'Parameter',
-                'description': {
-                    'en': pm['description']
-                },
-                'unit': {
-                    'symbol': pm['unit_label']
-                },
-                'observedProperty': {
-                    'id': pm['observed_property_id'],
-                    'label': {
-                        'en': pm['observed_property_name']
-                    }
-                }
-            }
+                    # CovJSON output does not support multiple bands yet
+                    # Only the first timestep is returned
+                    if format_ == 'json':
 
-            cj['parameters'][pm['id']] = parameter
+                        if datetime_ and '/' in datetime_:
+                            err = 'Date range not yet supported for CovJSON'
+                            LOGGER.error(err)
+                            raise ProviderQueryError(err)
+                        else:
+                            LOGGER.debug('Creating output in CoverageJSON')
+                            out_meta['bands'] = [1]
+                            return self.gen_covjson(out_meta, out_image)
+                    else:
+                        LOGGER.debug('Serializing data in memory')
+                        out_meta.update(count=len(args['indexes']))
+                        out_meta[''] = ''
+                        self.filename = self.data.split('/')[-1]
+                        with MemoryFile() as _memfile:
+                            with _memfile.open(**out_meta, nbits=nbits) as dst:
+                                dst.write(out_image)
 
-        try:
-            for key in cj['parameters'].keys():
-                cj['ranges'][key] = {
-                    'type': 'NdArray',
-                    # 'dataType': metadata.dtypes[0],
-                    'dataType': 'float',
-                    'axisNames': ['y', 'x'],
-                    'shape': [metadata['height'], metadata['width']],
-                }
-                # TODO: deal with multi-band value output
-                cj['ranges'][key]['values'] = data.flatten().tolist()
-        except IndexError as err:
-            LOGGER.warning(err)
-            raise ProviderQueryError('Invalid query parameter')
+                            # return data in native format
+                            LOGGER.debug('Returning data in native format')
+                            return _memfile.read()
 
-        return cj
-
-    # TODO: remove once pyproj is updated on bionic
     def _get_coverage_properties(self):
         """
         Helper function to normalize coverage properties
@@ -543,41 +374,60 @@ class CanSIPSProvider(BaseProvider):
         :returns: `dict` of coverage properties
         """
 
-        properties = {
-            'bbox': [
-                self._data.bounds.left,
-                self._data.bounds.bottom,
-                self._data.bounds.right,
-                self._data.bounds.top
-            ],
-            'bbox_crs': 'http://www.opengis.net/def/crs/OGC/1.3/CRS84',
-            'crs_type': 'GeographicCRS',
-            'bbox_units': 'deg',
-            'x_axis_label': 'Long',
-            'y_axis_label': 'Lat',
-            'width': self._data.width,
-            'height': self._data.height,
-            'resx': self._data.res[0],
-            'resy': self._data.res[1],
-            'num_bands': self._data.count,
-            'tags': self._data.tags()
+        properties = super()._get_coverage_properties()
+        domainset = self.get_coverage_domainset()
+
+        restime = 'P1M'
+
+        _, end = self.get_end_time_from_file()
+
+        domainset['reference_time'] = {
+            'definition': 'reference_time - Temporal',
+            'interval': [['2013-04', end]],
+            'grid': {
+                'resolution': restime
+                }
         }
 
-        if self._data.crs is not None:
-            if self._data.crs.is_projected:
-                bbox_crs = f'http://www.opengis.net/def/crs/OGC/1.3/{self._data.crs.to_epsg()}',  # noqa
+        properties['uad'] = domainset
 
-                properties['bbox_crs'] = bbox_crs
-                properties['x_axis_label'] = 'x'
-                properties['y_axis_label'] = 'y'
-                properties['bbox_units'] = self._data.crs.linear_units
-                properties['crs_type'] = 'ProjectedCRS'
+        begin = self.get_time_from_dim(end, 1)
+        end = self.get_time_from_dim(end, 13)
 
-        properties['axes'] = [
-            properties['x_axis_label'], properties['y_axis_label']
-        ]
+        properties['time_range'] = [begin, end]
+        properties['restime'] = restime
 
         return properties
+
+    def gen_covjson(self, metadata, data):
+        """
+        Helper function to normalize coverage properties
+
+        :returns: `dict` of coverage properties
+        """
+
+        cj = super().gen_covjson(metadata, data)
+
+        pm = self.parameter
+        parameter = {}
+
+        parameter[pm['id']] = {
+            'type': 'Parameter',
+            'description': pm['description'],
+            'unit': {
+                'symbol': pm['unit_label']
+            },
+            'observedProperty': {
+                'id': pm['observed_property_id'],
+                'label': {
+                    'en': pm['observed_property_name']
+                }
+            }
+        }
+
+        cj['parameters'] = parameter
+
+        return cj
 
     def get_file_list(self, variable, datetime_=None):
         """
@@ -596,8 +446,8 @@ class CanSIPSProvider(BaseProvider):
             file_path[-1] = '*'
             file_path[-2] = '*'
 
-            file_path_ = glob.glob(os.path.join('/'.join(file_path),
-                                                f'{variable}*'))
+            file_ = f'cansips_forecast_raw_latlon2.5x2.5_{variable}*'
+            file_path_ = glob.glob(os.path.join('/'.join(file_path), file_))
             file_path_.sort()
 
             if datetime_:
@@ -637,7 +487,7 @@ class CanSIPSProvider(BaseProvider):
         """
         Get last file of list and set end time from file name
 
-        :param ref_time: dim_reference_time as string (yyyy-mm)
+        :param ref_time: reference_time as string (yyyy-mm)
         :param months: number of months to add to ref_time
 
         :returns: relative time as string
@@ -654,7 +504,7 @@ class CanSIPSProvider(BaseProvider):
     def get_months_number(self, possible_time, year, month, datetime_):
         """
         Get the difference in number of months between
-        dim_reference_time (year, month) and datetime_
+        reference_time (year, month) and datetime_
 
         :param possible_time: list of possible time from dim_refenrence_time
         :param year: year from dim_refenrence_time
@@ -683,8 +533,8 @@ class CanSIPSProvider(BaseProvider):
         generate list of bands from dim_refenrece_time and datetime_
 
         :param datetime_: forecast time from the query
-        :param year: year from dim_reference_time
-        :param month: month from dim_reference_time
+        :param year: year from reference_time
+        :param month: month from reference_time
 
         :returns: list of bands
         """
@@ -719,49 +569,3 @@ class CanSIPSProvider(BaseProvider):
             num_months_1 = num_months_1 + 12 * (self.member[0] - 1)
             num_months_2 = num_months_2 + 12 * (self.member[0] - 1)
             return (list(range(num_months_1, num_months_2 + 1)))
-
-    def get_latest_dim_reference_time(self):
-        """
-        Get year and month for latests available
-        dim_reference_time
-
-        :returns: [year, month] as string
-        """
-
-        dict = self.coverage['generalGrid']['axis']
-
-        drt_dict = next(item for item in dict if item[
-            "axisLabel"] == "dim_reference_time")
-
-        return drt_dict['upperBound'].split('-')
-
-
-# TODO: remove once pyproj is updated on bionic
-def _get_parameter_metadata(driver, band):
-    """
-    Helper function to derive parameter name and units
-
-    :param driver: rasterio/GDAL driver name
-    :param band: int of band number
-
-    :returns: dict of parameter metadata
-    """
-
-    parameter = {
-        'id': None,
-        'description': None,
-        'unit_label': None,
-        'unit_symbol': None,
-        'observed_property_id': None,
-        'observed_property_name': None
-    }
-
-    if driver == 'GRIB':
-        parameter['id'] = band['GRIB_ELEMENT']
-        parameter['description'] = band['GRIB_COMMENT']
-        parameter['unit_label'] = band['GRIB_UNIT']
-        parameter['unit_symbol'] = band['GRIB_UNIT']
-        parameter['observed_property_id'] = band['GRIB_SHORT_NAME']
-        parameter['observed_property_name'] = band['GRIB_COMMENT']
-
-    return parameter
