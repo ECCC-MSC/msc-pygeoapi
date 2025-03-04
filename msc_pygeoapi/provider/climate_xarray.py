@@ -257,11 +257,11 @@ class ClimateProvider(XarrayProvider):
             self.monthly_data = ['monthly_ens', 'SPEI', '_P1M']
 
             if any(month in self.data for month in self.monthly_data):
-                period = 'month'
+                period = 'P1M'
             else:
-                period = 'year'
+                period = 'P1Y'
 
-            return {'value': 1, 'period': period}
+            return period
 
         else:
             return None
@@ -423,28 +423,21 @@ class ClimateProvider(XarrayProvider):
 
             query_params = {}
 
-            if bbox:
-                if all([self._coverage_properties['x_axis_label'] in subsets,
-                        self._coverage_properties['y_axis_label'] in subsets,
-                        len(bbox) > 0]):
-                    msg = 'bbox and subsetting by coordinates are exclusive'
-                    LOGGER.warning(msg)
-                    raise ProviderQueryError(msg)
+            if bbox and len(bbox) > 0:
+                query_params[self._coverage_properties['x_axis_label']] = \
+                    slice(bbox[0], bbox[2])
+
+                self._coverage_properties['time_axis_label']
+
+                lat = self._data.coords[self.y_field]
+                lat_field = self._coverage_properties['y_axis_label']
+
+                if lat.values[1] > lat.values[0]:
+                    query_params[lat_field] = \
+                        slice(bbox[1], bbox[3])
                 else:
-                    query_params[self._coverage_properties['x_axis_label']] = \
-                        slice(bbox[0], bbox[2])
-
-                    self._coverage_properties['time_axis_label']
-
-                    lat = self._data.coords[self.y_field]
-                    lat_field = self._coverage_properties['y_axis_label']
-
-                    if lat.values[1] > lat.values[0]:
-                        query_params[lat_field] = \
-                            slice(bbox[1], bbox[3])
-                    else:
-                        query_params[lat_field] = \
-                            slice(bbox[3], bbox[1])
+                    query_params[lat_field] = \
+                        slice(bbox[3], bbox[1])
 
             if datetime_ is not None:
                 if 'avg_20years' in self.data:

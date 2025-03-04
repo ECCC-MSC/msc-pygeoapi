@@ -208,9 +208,7 @@ class CanDCSU6Provider(ClimateProvider):
 
         data = self._data[[*properties_]]
 
-        if any([self._coverage_properties['x_axis_label'] in subsets,
-                self._coverage_properties['y_axis_label'] in subsets,
-                self._coverage_properties['time_axis_label'] in subsets,
+        if any([self._coverage_properties['time_axis_label'] in subsets,
                 bbox,
                 datetime_ is not None]):
 
@@ -225,27 +223,20 @@ class CanDCSU6Provider(ClimateProvider):
                     query_params[key] = slice(val[0], val[1])
 
             if bbox:
-                if all([self._coverage_properties['x_axis_label'] in subsets,
-                        self._coverage_properties['y_axis_label'] in subsets,
-                        len(bbox) > 0]):
-                    msg = 'bbox and subsetting by coordinates are exclusive'
-                    LOGGER.warning(msg)
-                    raise ProviderQueryError(msg)
+                query_params[self._coverage_properties['x_axis_label']] = \
+                    slice(bbox[0], bbox[2])
+
+                self._coverage_properties['time_axis_label']
+
+                lat = self._data.coords[self.y_field]
+                lat_field = self._coverage_properties['y_axis_label']
+
+                if lat.values[1] > lat.values[0]:
+                    query_params[lat_field] = \
+                        slice(bbox[1], bbox[3])
                 else:
-                    query_params[self._coverage_properties['x_axis_label']] = \
-                        slice(bbox[0], bbox[2])
-
-                    self._coverage_properties['time_axis_label']
-
-                    lat = self._data.coords[self.y_field]
-                    lat_field = self._coverage_properties['y_axis_label']
-
-                    if lat.values[1] > lat.values[0]:
-                        query_params[lat_field] = \
-                            slice(bbox[1], bbox[3])
-                    else:
-                        query_params[lat_field] = \
-                            slice(bbox[3], bbox[1])
+                    query_params[lat_field] = \
+                        slice(bbox[3], bbox[1])
 
             if datetime_ is not None:
                 if 'avg_30years' in self.data:

@@ -139,9 +139,7 @@ class SPEIProvider(ClimateProvider):
 
         data = self._data[[*properties]]
 
-        if any([self._coverage_properties['x_axis_label'] in subsets,
-                self._coverage_properties['y_axis_label'] in subsets,
-                self._coverage_properties['time_axis_label'] in subsets,
+        if any([self._coverage_properties['time_axis_label'] in subsets,
                 bbox,
                 datetime_ is not None]):
 
@@ -158,17 +156,10 @@ class SPEIProvider(ClimateProvider):
                     query_params[key] = slice(val[0], val[1])
 
             if bbox:
-                if all([self._coverage_properties['x_axis_label'] in subsets,
-                        self._coverage_properties['y_axis_label'] in subsets,
-                        len(bbox) > 0]):
-                    msg = 'bbox and subsetting by coordinates are exclusive'
-                    LOGGER.warning(msg)
-                    raise ProviderQueryError(msg)
-                else:
-                    query_params[self._coverage_properties['x_axis_label']] = \
-                        slice(bbox[0], bbox[2])
-                    query_params[self._coverage_properties['y_axis_label']] = \
-                        slice(bbox[3], bbox[1])
+                query_params[self._coverage_properties['x_axis_label']] = \
+                    slice(bbox[0], bbox[2])
+                query_params[self._coverage_properties['y_axis_label']] = \
+                    slice(bbox[3], bbox[1])
 
             if datetime_ is not None:
                 if self._coverage_properties['time_axis_label'] in subsets:

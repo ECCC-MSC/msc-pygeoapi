@@ -44,7 +44,7 @@ import rasterio.mask
 from pygeoapi.provider.base import (ProviderConnectionError,
                                     ProviderQueryError)
 
-from pygeoapi.provider.rasterio_ import (RasterioProvider)
+from pygeoapi.provider.rasterio_ import RasterioProvider
 
 LOGGER = logging.getLogger(__name__)
 
@@ -101,33 +101,30 @@ class CanGRDProvider(RasterioProvider):
         :returns: CIS JSON object of rangetype metadata
         """
 
-        # parameter = _get_parameter_metadata(
-        #             self._data.profile['driver'], self._data.tags(i))
-
-        var_dict = {'TMEAN': {'units': '[C]',
-                              'name': 'Mean temperature [C]',
-                              'id': 'tmean'},
-                    'TMAX': {'units': '[C]',
-                             'name': 'Maximum temperature [C]',
-                             'id': 'tmax'},
-                    'TMIN': {'units': '[C]',
-                             'name': 'Minimum temperature [C]',
-                             'id': 'tmin'},
-                    'PCP': {'units': '[%]',
-                            'name': 'Total precipitation [%]',
-                            'id': 'pcp'},
-                    }
+        self.var_dict = {'TMEAN': {'units': '[C]',
+                                   'name': 'Mean temperature [C]',
+                                   'id': 'tmean'},
+                         'TMAX': {'units': '[C]',
+                                  'name': 'Maximum temperature [C]',
+                                  'id': 'tmax'},
+                         'TMIN': {'units': '[C]',
+                                  'name': 'Minimum temperature [C]',
+                                  'id': 'tmin'},
+                         'PCP': {'units': '[%]',
+                                 'name': 'Total precipitation [%]',
+                                 'id': 'pcp'},
+                         }
 
         if 'trend' in self.data:
             var_key = ['TMEAN', 'PCP']
         else:
-            var_key = var_dict.keys()
+            var_key = self.var_dict.keys()
 
         for var in var_key:
             self.data = self.data.replace('TMEAN*', f'{var}*')
             with rasterio.open(self.data) as _data:
 
-                units = var_dict[var]['units']
+                units = self.var_dict[var]['units']
                 dtype = self._data.dtypes[0]
                 nodataval = self._data.nodatavals[0]
                 dtype2 = dtype
@@ -136,8 +133,8 @@ class CanGRDProvider(RasterioProvider):
                     dtype2 = 'number'
                 elif dtype.startswith('int'):
                     dtype2 = 'integer'
-                self._fields[var_dict[var]['id']] = {
-                    'title': var_dict[var]['name'],
+                self._fields[self.var_dict[var]['id']] = {
+                    'title': self.var_dict[var]['name'],
                     'type': dtype2,
                     "x-ogc-unit": units,
                     '_meta': {
@@ -169,16 +166,6 @@ class CanGRDProvider(RasterioProvider):
             'indexes': None
         }
         shapes = []
-
-        x = self._coverage_properties['x_axis_label']
-        y = self._coverage_properties['y_axis_label']
-
-        if all([x in subsets,
-                y in subsets,
-                len(bbox) > 0]):
-            msg = 'bbox and subsetting by coordinates are exclusive'
-            LOGGER.warning(msg)
-            raise ProviderQueryError(msg)
 
         if len(bbox) > 0:
             minx, miny, maxx, maxy = bbox
@@ -227,13 +214,12 @@ class CanGRDProvider(RasterioProvider):
                    ]]
                 }]
 
-        if properties[0].upper() != 'TMEAN':
-            var = properties[0].upper()
-            try:
-                self.data = self.get_file_list(var)[-1]
-            except IndexError as err:
-                LOGGER.error(err)
-                raise ProviderQueryError(err)
+        var = properties[0].upper()
+        try:
+            self.data = self.get_file_list(var)[-1]
+        except IndexError as err:
+            LOGGER.error(err)
+            raise ProviderQueryError(err)
 
         if 'season' in subsets:
             seasonal = subsets['season']
@@ -341,7 +327,7 @@ class CanGRDProvider(RasterioProvider):
                                             miny2,
                                             maxx2,
                                             maxy2]
-                    return self.gen_covjson(out_meta, out_image)
+                    return self.gen_covjson(out_meta, out_image, var)
             else:
                 if date_file_list:
                     LOGGER.debug('Serializing data in memory')
@@ -400,16 +386,16 @@ class CanGRDProvider(RasterioProvider):
             if 'monthly' not in self.data:
                 begin = search('_{:d}.tif', begin_file)[0]
                 end = search('_{:d}.tif', end_file)[0]
-                period = 'year'
+                period = 'P1Y'
             else:
                 begin = search('_{:d}-{:d}.tif', begin_file)
                 begin = f'{begin[0]}-{begin[1]:02}'
 
                 end = search('_{:d}-{:d}.tif', end_file)
                 end = f'{end[0]}-{end[1]:02}'
-                period = 'month'
+                period = 'P1M'
 
-            properties['restime'] = {'value': 1, 'period': period}
+            properties['restime'] = period
             properties['time_range'] = [begin, end]
 
         properties['uad'] = self.get_coverage_domainset()
@@ -443,3 +429,27 @@ class CanGRDProvider(RasterioProvider):
             return query_file
         else:
             return file_path_
+
+    def gen_covjson(self, metadata, data, var):
+        """
+        Helper function to normalize coverage properties
+
+        :returns: `dict` of coverage properties
+        """
+
+        cj = super().gen_covjson(metadata, data)
+
+        pm = self.var_dict[var]
+        parameter = {}
+
+        parameter[pm['id']] = {
+            'type': 'Parameter',
+            'description': pm['name'],
+            'unit': {
+                'symbol': pm['units']
+            }
+        }
+
+        cj['parameters'] = parameter
+
+        return cj
