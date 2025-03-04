@@ -1,10 +1,16 @@
+msc-pygeoapi (0.13.2) jammy; urgency=medium
+
+  * Fix syntax error in debian/changelog
+
+ -- Kevin Ngai <kevin.ngai@ec.gc.ca>  Fri, 4 Mar 2025 19:36:00 +0000
+
 msc-pygeoapi (0.13.1) jammy; urgency=medium
 
   * fix sr3 env var
   * fix sr3 event handling
 
  -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Fri, 21 Feb 2025 18:03:34 +0000
-`
+
 msc-pygeoapi (0.13.0) jammy; urgency=medium
 
   * Unstable release for development and testing

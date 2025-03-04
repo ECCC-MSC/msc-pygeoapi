@@ -42,7 +42,7 @@ from msc_pygeoapi.loader import metadata  # noqa
 from msc_pygeoapi.process import process  # noqa
 
 
-__version__ = '0.13.1'
+__version__ = '0.13.2'
 
 
 @click.group()
