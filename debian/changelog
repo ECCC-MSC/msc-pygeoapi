@@ -2,7 +2,7 @@ msc-pygeoapi (0.13.2) jammy; urgency=medium
 
   * Fix syntax error in debian/changelog
 
- -- Kevin Ngai <kevin.ngai@ec.gc.ca>  Fri, 4 Mar 2025 19:36:00 +0000
+ -- Kevin Ngai <kevin.ngai@ec.gc.ca>  Tue, 04 Mar 2025 19:53:00 +0000
 
 msc-pygeoapi (0.13.1) jammy; urgency=medium
 
