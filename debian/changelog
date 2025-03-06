@@ -1,3 +1,9 @@
+msc-pygeoapi (0.13.3) jammy; urgency=medium
+
+  * implement sr3 discard workaround
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Thu, 06 Mar 2025 20:52:33 +0000
+
 msc-pygeoapi (0.13.2) jammy; urgency=medium
 
   * Fix syntax error in debian/changelog
