@@ -15,5 +15,4 @@ pyyaml
 rasterio<1.4
 requests
 sqlalchemy
-unicodecsv
 xarray
