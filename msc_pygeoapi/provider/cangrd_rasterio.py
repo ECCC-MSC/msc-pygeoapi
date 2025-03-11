@@ -444,9 +444,15 @@ class CanGRDProvider(RasterioProvider):
 
         parameter[pm['id']] = {
             'type': 'Parameter',
-            'description': pm['name'],
+            'description': {'en': pm['name']},
             'unit': {
                 'symbol': pm['units']
+            },
+            'observedProperty': {
+                'id': pm['id'],
+                'label': {
+                    'en': pm['name']
+                }
             }
         }
 
