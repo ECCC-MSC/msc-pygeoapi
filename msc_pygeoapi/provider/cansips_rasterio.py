@@ -413,7 +413,9 @@ class CanSIPSProvider(RasterioProvider):
 
         parameter[pm['id']] = {
             'type': 'Parameter',
-            'description': pm['description'],
+            'description': {
+                'en': pm['description']
+                },
             'unit': {
                 'symbol': pm['unit_label']
             },
