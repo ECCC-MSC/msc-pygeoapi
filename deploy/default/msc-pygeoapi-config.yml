@@ -93,8 +93,8 @@ resources:
     hydrometric-stations:
         type: collection
         title:
-            en: Hydrometric Monitoring Stations
-            fr: Stations de surveillance hydrométrique
+            en: Hydrometric Data - Monitoring Stations
+            fr: Données hydrométriques - Stations de surveillance
         description:
             en: A station is a site on a river or lake where water quantity (water level and flow) are collected and recorded.
             fr: Une station est un site sur une rivière ou un lac où les quantités d'eau (niveau et débit) sont collectées et enregistrées.
@@ -154,8 +154,8 @@ resources:
     hydrometric-daily-mean:
         type: collection
         title:
-            en: Daily Mean of Water Level or Flow
-            fr: Moyenne quotidienne des niveaux ou débits d'eau
+            en: Hydrometric Historical Data (HYDAT) - Daily Mean of Water Level or Flow
+            fr: Données hydrométriques historiques (HYDAT) - Moyenne quotidienne des niveaux ou débits d'eau
         description:
             en: The daily mean is the average of all unit values for a given day.
             fr: La moyenne quotidienne est la moyenne de toutes les valeurs unitaires pour un jour donné.
@@ -228,8 +228,8 @@ resources:
     hydrometric-monthly-mean:
         type: collection
         title:
-            en: Monthly Mean of Water Level or Flow
-            fr: Moyenne mensuelle des niveaux ou débits d'eau
+            en: Hydrometric Historical Data (HYDAT) - Monthly Mean of Water Level or Flow
+            fr: Données hydrométriques historiques (HYDAT) - Moyenne mensuelle des niveaux ou débits d'eau
         description:
             en: The monthly mean is the average of daily mean values for a given month.
             fr: La moyenne mensuelle est la moyenne des valeurs moyennes quotidiennes pour un mois donné.
@@ -298,8 +298,8 @@ resources:
     hydrometric-annual-statistics:
         type: collection
         title:
-            en: Annual Maximum and Minimum Daily Water Level or Flow
-            fr: Maximum et minimum annuels des moyennes quotiennes des niveaux ou débits d'eau
+            en: Hydrometric Historical Data (HYDAT) - Annual Maximum and Minimum Daily Water Level or Flow
+            fr: Données hydrométriques historiques (HYDAT) - Maximum et minimum annuels des moyennes quotiennes des niveaux ou débits d'eau
         description:
             en: The annual maximum and minimum daily data are the maximum and minimum daily mean values for a given year.
             fr: Les données de maximum et minimum annuels des moyennes quotiennes sont le maximum et le minimum des valeurs de moyennes quotidiennes pour une année précise.
@@ -375,8 +375,8 @@ resources:
     hydrometric-annual-peaks:
         type: collection
         title:
-            en: Annual Maximum and Minimum Instantaneous Water Level or Flow
-            fr: Maximum et minimum annuels des niveaux ou débits d'eau instantanés
+            en: Hydrometric Historical Data (HYDAT) - Annual Maximum and Minimum Instantaneous Water Level or Flow
+            fr: Données hydrométriques historiques (HYDAT) - Maximum et minimum annuels des niveaux ou débits d'eau instantanés
         description:
             en: The annual maximum and minimum instantaneous data are the maximum and minimum instantaneous values for a given year.
             fr: Les données de maximum et minimum annuels sont le maximum et le minimum des valeurs instantanées pour une année précise.
@@ -453,8 +453,8 @@ resources:
     hydrometric-realtime:
         type: collection
         title:
-            en: Real-time hydrometric data
-            fr: Données hydrométriques en temps réel
+            en: Hydrometric Data - Real-time
+            fr: Données hydrométriques - Temps réel
         description:
             en: Real-time water level and flow (discharge) data collected at over 2100 hydrometric stations across Canada (last 30 days).
             fr: Données en temps réel sur les niveaux d'eau et les débits (décharge) recueillies dans plus de 2100 stations hydrométriques au Canada (30 derniers jours).
@@ -504,8 +504,8 @@ resources:
     climate-normals:
         type: collection
         title:
-            en: 1981-2010 Climate Normals
-            fr: Normales climatiques 1981-2010
+            en: Climate - Normals 1981-2010
+            fr: Climat - Normales 1981-2010
         description:
             en: Climate Normals are used to summarize or describe the average climatic conditions of a particular location. At the completion of each decade, Environment and Climate Change Canada updates its climate normals for as many locations and as many climatic characteristics as possible. The climate normals offered here are based on Canadian climate stations with at least 15 years of data between 1981 to 2010.
             fr: Les normales et moyennes climatiques servent à résumer ou à décrire les conditions climatiques moyennes d'un endroit donné. À la fin de chaque décennie, Environnement et Changement climatique Canada met à jour ses normales climatiques pour le plus grand nombre possible de stations et de caractéristiques climatiques. Les normales climatiques, moyennes et extrêmes climatiques, offertes ici reposent sur les stations climatologiques canadiennes ayant au moins 15 années de données entre 1981 à 2010.
@@ -571,8 +571,8 @@ resources:
     climate-stations:
         type: collection
         title:
-            en: Climate Stations
-            fr: Stations climatologiques
+            en: Climate - Stations
+            fr: Climat - Stations
         description:
             en: Climate observations are derived from two sources of data. The first are Daily Climate Stations producing one or two observations per day of temperature, precipitation. The second are hourly stations that typically produce more weather elements e.g. wind or snow on ground.
             fr: Les observations climatiques quotidiennes sont dérivées de deux sources de données. La première étant les stations climatiques quotidiennes qui produisent une ou deux observations quotidiennes de température et précipitation. La deuxième étant les stations qui typiquement produisent des données horaires pour plusieurs éléments météorologiques tels que le vent et la neige au sol
@@ -610,8 +610,8 @@ resources:
     climate-monthly:
         type: collection
         title:
-            en: Monthly Climate Observation Summaries
-            fr: Sommaires climatologiques mensuels des observations
+            en: Climate - Monthly Observation Summaries
+            fr: Climat - Sommaires mensuels des observations
         description:
             en: A cross-country summary of the averages and extremes for the month, including precipitation totals, max-min temperatures, and degree days. This data is available from stations that produce daily data.
             fr: Un sommaire transcanadien des moyennes et des extrêmes pour le mois, y compris les précipitations totales, les températures maximales et minimales et les degrés-jours. Cette donnée est disponible pour les stations qui produisent des données quotidiennes.
@@ -723,8 +723,8 @@ resources:
     climate-daily:
         type: collection
         title:
-            en: Daily Climate Observations
-            fr: Observations climatiques quotidiennes
+            en: Climate - Daily Observations
+            fr: Climat - Observations quotidiennes
         description:
             en: "Daily climate observations are derived from two sources of data. The first are Daily Climate Stations producing one or two observations per day of temperature, precipitation. The second are hourly stations that typically produce more weather elements e.g. wind or snow on ground. Only a subset of the total stations is shown due to size limitations. The criteria for station selection are listed as below. The priorities for inclusion are as follows: (1) Station is currently operational, (2) Stations with long periods of record, (3) Stations that are co-located with the categories above and supplement the period of record"
             fr: "Les observations climatiques quotidiennes sont dérivées de deux sources de données. La première étant les stations climatiques quotidiennes qui produisent une ou deux observations quotidiennes de température et précipitation. La deuxième étant les stations qui typiquement produisent des données horaires pour plusieurs éléments météorologiques tels que le vent et la neige au sol. Seul un sous-ensemble du total des stations est disponible à cause des contraintes de volume. Les critères de sélection des stations sont les suivants : (1) la station est présentement opérationnelle, (2) les stations enregistrent des données depuis une longue période temporelle, et (3) les stations sont co-localisées avec les stations répondant aux deux premiers critères et possèdent une période d'enregistrements plus longue."
@@ -798,8 +798,8 @@ resources:
     climate-hourly:
         type: collection
         title:
-            en: Hourly Climate Observations
-            fr: Observations climatiques horaires
+            en: Climate - Hourly Observations
+            fr: Climat - Observations horaires
         description:
             en: "Canadian hourly climate data are available for public access from the ECCC/MSC's National Climate Archive. These are surface weather stations that produce hourly meteorological observations, taken each hour of the day. Only a subset of the total stations found on Environment and Climate Change Canada’s Historical Climate Data Page is shown due to size limitations.The priorities for inclusion are as follows: stations in cities with populations of 10000+, stations that are Regional Basic Climatological Network status and stations with 30+ years of data."
             fr: "Les données climatiques horaires canadiennes sont accessibles au public à partir des Archives climatiques nationales du ECCC/SMC. Il s'agit de stations météorologiques de surface qui produisent des observations météorologiques horaires, prises à chaque heure de la journée. En raison des limites de taille, seul un sous-ensemble des stations trouvées sur la page des données climatiques historiques d'Environnement et Changement climatique Canada est présenté. Les priorités d'inclusion sont les suivantes: Les stations situées dans des villes de plus de 10 000 habitants, les stations qui ont le statut de réseau climatologique régional de base, stations ayant plus de 30 ans de données."
@@ -874,8 +874,8 @@ resources:
     ahccd-stations:
         type: collection
         title:
-            en: Adjusted and Homogenized Canadian Climate Data (AHCCD) Stations
-            fr: Stations des données climatiques canadiennes ajustées et homogénéisées (DCCAH)
+            en: AHCCD - Stations
+            fr: DCCAH - Stations
         description:
             en: Climate station datasets that incorporate adjustments (derived from statistical procedures) to the original historical station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation.
             fr: Ensembles de données sur les stations climatiques qui intègrent des ajustements (dérivés de procédures statistiques) aux données historiques originales des stations pour tenir compte des discontinuités dues à des facteurs non climatiques, tels que les changements d'instruments ou le déplacement des stations.
@@ -910,8 +910,8 @@ resources:
     ahccd-annual:
         type: collection
         title:
-            en: Adjusted and Homogenized Canadian Climate Data (AHCCD) Annual
-            fr: Données climatiques canadiennes ajustées et homogénéisées (DCCAH) annuelles
+            en: AHCCD - Annual
+            fr: DCCAH - Annuelles
         description:
             en: Adjusted and Homogenized Canadian Climate Data (AHCCD) are climate station datasets that incorporate adjustments (derived from statistical procedures) to the original historical station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation. Data are provided for temperature, precipitation, pressure and wind speed. Station trend data are provided when available. Trends are calculated using the Theil-Sen method using the station's full period of available data. The availability of trends will vary by station; if more than 5 consecutive years are missing data or more than 10% of the data within the time series is missing, a trend was not calculated.
             fr: Les données climatiques canadiennes ajustées et homogénéisées (DCCAH) sont des ensembles de données de stations climatiques qui incorporent des ajustements (dérivés de procédures statistiques) aux données historiques originales des stations pour tenir compte des discontinuités dues à des facteurs non climatiques, tels que des changements d'instruments ou le déplacement de stations. Les données sont fournies pour la température, les précipitations, la pression et la vitesse du vent. Les données sur les tendances des stations sont fournies lorsqu'elles sont disponibles. Les tendances sont calculées selon la méthode Theil-Sen en utilisant toute la période de données disponibles de la station. La disponibilité des tendances varie d'une station à l'autre; s'il manque des données pour plus de 5 années consécutives ou pour plus de 10 % des données de la série chronologique, une tendance n'a pas été calculée.
@@ -977,8 +977,8 @@ resources:
     ahccd-seasonal:
         type: collection
         title:
-            en: Adjusted and Homogenized Canadian Climate Data (AHCCD) Seasonal
-            fr: Données climatiques canadiennes ajustées et homogénéisées (DCCAH) saisonnières
+            en: AHCCD - Seasonal
+            fr: DCCAH - Saisonnières
         description:
             en: Adjusted and Homogenized Canadian Climate Data (AHCCD) are climate station datasets that incorporate adjustments (derived from statistical procedures) to the original historical station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation. Data are provided for temperature, precipitation, pressure and wind speed. Station trend data are provided when available. Trends are calculated using the Theil-Sen method using the station's full period of available data. The availability of trends will vary by station; if more than 5 consecutive years are missing data or more than 10% of the data within the time series is missing, a trend was not calculated.
             fr: Les données climatiques canadiennes ajustées et homogénéisées (DCCAH) sont des ensembles de données de stations climatiques qui incorporent des ajustements (dérivés de procédures statistiques) aux données historiques originales des stations pour tenir compte des discontinuités dues à des facteurs non climatiques, tels que des changements d'instruments ou le déplacement de stations. Les données sont fournies pour la température, les précipitations, la pression et la vitesse du vent. Les données sur les tendances des stations sont fournies lorsqu'elles sont disponibles. Les tendances sont calculées selon la méthode Theil-Sen en utilisant toute la période de données disponibles de la station. La disponibilité des tendances varie d'une station à l'autre; s'il manque des données pour plus de 5 années consécutives ou pour plus de 10 % des données de la série chronologique, une tendance n'a pas été calculée.
@@ -1044,8 +1044,8 @@ resources:
     ahccd-monthly:
         type: collection
         title:
-            en: Adjusted and Homogenized Canadian Climate Data (AHCCD) Monthly
-            fr: Données climatiques canadiennes ajustées et homogénéisées (DCCAH) mensuelles
+            en: AHCCD - Monthly
+            fr: DCCAH - Mensuelles
         description:
             en: Adjusted and Homogenized Canadian Climate Data (AHCCD) are climate station datasets that incorporate adjustments (derived from statistical procedures) to the original historical station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation. Data are provided for temperature, precipitation, pressure and wind speed. Station trend data are provided when available. Trends are calculated using the Theil-Sen method using the station's full period of available data. The availability of trends will vary by station; if more than 5 consecutive years are missing data or more than 10% of the data within the time series is missing, a trend was not calculated.
             fr: Les données climatiques canadiennes ajustées et homogénéisées (DCCAH) sont des ensembles de données de stations climatiques qui incorporent des ajustements (dérivés de procédures statistiques) aux données historiques originales des stations pour tenir compte des discontinuités dues à des facteurs non climatiques, tels que des changements d'instruments ou le déplacement de stations. Les données sont fournies pour la température, les précipitations, la pression et la vitesse du vent. Les données sur les tendances des stations sont fournies lorsqu'elles sont disponibles. Les tendances sont calculées selon la méthode Theil-Sen en utilisant toute la période de données disponibles de la station. La disponibilité des tendances varie d'une station à l'autre; s'il manque des données pour plus de 5 années consécutives ou pour plus de 10 % des données de la série chronologique, une tendance n'a pas été calculée.
@@ -1111,8 +1111,8 @@ resources:
     ahccd-trends:
         type: collection
         title:
-            en: Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends
-            fr: Tendances des données climatiques canadiennes ajustées et homogénéisées (DCCAH)
+            en: AHCCD - Trends
+            fr: DCCAH - Tendances
         description:
             en: Adjusted and Homogenized Canadian Climate Data (AHCCD) are climate station datasets that incorporate adjustments (derived from statistical procedures) to the original historical station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation. Data are provided for temperature, precipitation, pressure and wind speed. Station trend data are provided when available. Trends are calculated using the Theil-Sen method using the station's full period of available data. The availability of trends will vary by station; if more than 5 consecutive years are missing data or more than 10% of the data within the time series is missing, a trend was not calculated.
             fr: Les données climatiques canadiennes ajustées et homogénéisées (DCCAH) sont des ensembles de données de stations climatiques qui incorporent des ajustements (dérivés de procédures statistiques) aux données historiques originales des stations pour tenir compte des discontinuités dues à des facteurs non climatiques, tels que des changements d'instruments ou le déplacement de stations. Les données sont fournies pour la température, les précipitations, la pression et la vitesse du vent. Les données sur les tendances des stations sont fournies lorsqu'elles sont disponibles. Les tendances sont calculées selon la méthode Theil-Sen en utilisant toute la période de données disponibles de la station. La disponibilité des tendances varie d'une station à l'autre; s'il manque des données pour plus de 5 années consécutives ou pour plus de 10 % des données de la série chronologique, une tendance n'a pas été calculée.
@@ -1161,8 +1161,8 @@ resources:
     swob-realtime:
         type: collection
         title:
-            en: Surface Weather Observations
-            fr: Observations météorologiques à la surface
+            en: Surface Weather Observations (SWOB) - Real-Time Data
+            fr: Observations météorologiques à la surface (SWOB) - Données en temps réel
         description:
             en: Surface Observations measured at the automatic and manual stations of the Environment and Climate Change Canada and partners networks, either for a single station, or for the stations of specific provinces and territories (last 30 days).
             fr: Observations de surface mesurées aux stations automatiques et manuelles des réseaux d'Environnement et Changement climatique Canada et de ses partenaires soit pour une seule station, soit pour les stations de provinces et territoires spécifiques (30 derniers jours).
@@ -1200,8 +1200,8 @@ resources:
     ltce-stations:
         type: collection
         title:
-            en: Virtual Climate Stations (LTCE)
-            fr: Stations climatologiques virtuelles (ECLT)
+            en: LTCE - Virtual Climate Stations
+            fr: ECLT - Stations climatologiques virtuelles
         description:
             en: A Virtual Climate station is the result of threading together climate data from proximate current and historical stations to construct a long term threaded data set. For the purpose of identifying and tabulating daily extremes of record for temperature, precipitation and snowfall, the Meteorological Service of Canada has threaded or put together data from closely related stations to compile a long time series of data for about 750 locations in Canada to monitor for record-breaking weather. The length of the time series of virtual stations is often greater than 100 years. A Virtual Climate station is always named for an “Area” rather than a point, e.g. Winnipeg Area, to indicate that the data are drawn from that area(within a 20km radius from the urban center) rather than a single precise location.
             fr: Une station climatologique virtuelle est le résultat du «remaillage» des données provenant de stations actuelles et historiques proches pour construire un ensemble de données «maillées». Afin d'identifier et de tabuler les extrêmes quotidiens des températures, des précipitations et des chutes de neige et de surveiller les records météorologiques, le Service météorologique du Canada a «maillé» les données de stations étroitement liées pour compiler une longue série chronologique de données pour environ 750 endroits au Canada. La durée de la série chronologique de stations virtuelles est souvent plus que 100 ans. Une station climatologique virtuelle est toujours nommée pour une «région» plutôt qu'un point (par exemple la région de Winnipeg) pour indiquer que les données sont tirées d'une région (avec un rayon de 20km du centre urbain) plutôt qu'à un seul emplacement précis.
@@ -1227,8 +1227,8 @@ resources:
     ltce-temperature:
         type: collection
         title:
-            en: Daily Extremes of Records (LTCE) – Temperature
-            fr: Records des extrêmes quotidiens (ECLT) – température
+            en: LTCE – Temperature
+            fr: ECLT – Température
         description:
             en: "The daily climate records database, also known as Long Term Climate Extremes (LTCE), was developed to address the fragmentation of climate information due to station changes (opening, closing, relocation, etc.) over time. For approximately 750 locations in Canada, \"virtual\" climate stations have been developed by joining (threading) climate data for an urban location, from nearby stations to make long-term records. Each long-term record consists of the extremes (record values) of daily maximum/minimum temperatures, total precipitation and snowfall for each day of the year. Many of the longest data sets of extremes date as far back as the 1800s. This data provides the daily extremes of record for Temperature for each day of the year. Daily elements include: High Maximum, Low Maximum, High Minimum, Low Minimum."
             fr: "Les Records des Extrêmes Quotidiens (ECLT) visent à combler les lacunes de la fragmentation de l’information sur le climat en raison de changements apportés aux stations au fil du temps. Dans 750 endroits répartis sur le territoire canadien, des stations climatologiques « virtual » ont été construites en procédant au « remaillage » des données pour un lieu urbain, à partir de stations proches. Ces données fournissent les records des extrêmes quotidiens de la température, la précipitation et la neige pour chaque jour de l'année. La majorité des plus longs ensembles de données des extrêmes datent des années 1800s. Ces données fournissent les extrêmes quotidiens d'enregistrement de la température pour chaque jour de l'année. Les éléments quotidiens comprennent : Maximum le plus élevé, Maximum le plus bas, Minimum le plus élevé, Minimum le plus bas."
@@ -1324,8 +1324,8 @@ resources:
     ltce-precipitation:
         type: collection
         title:
-            en: Daily Extremes of Records (LTCE) – Precipitation
-            fr: Records des extrêmes quotidiens (ECLT) – précipitation
+            en: LTCE – Precipitation
+            fr: ECLT – Précipitation
         description:
             en: "The daily climate records database, also known as Long Term Climate Extremes (LTCE), was developed to address the fragmentation of climate information due to station changes (opening, closing, relocation, etc.) over time. For approximately 750 locations in Canada, \"virtual\" climate stations have been developed by joining (threading) climate data for an urban location, from nearby stations to make long-term records. Each long-term record consists of the extremes (record values) of daily maximum/minimum temperatures, total precipitation and snowfall for each day of the year. Many of the longest data sets of extremes date as far back as the 1800s. This data provides the daily extremes of record for Precipitation for each day of the year. Daily elements include: Greatest Precipitation."
             fr: "Les Records des Extrêmes Quotidiens (ECLT) visent à combler les lacunes de la fragmentation de l’information sur le climat en raison de changements apportés aux stations au fil du temps. Dans 750 endroits répartis sur le territoire canadien, des stations climatologiques « virtual » ont été construites en procédant au « remaillage » des données pour un lieu urbain, à partir de stations proches. Ces données fournissent les records des extrêmes quotidiens de la température, la précipitation et la neige pour chaque jour de l'année. La majorité des plus longs ensembles de données des extrêmes datent des années 1800s. Ces données fournissent les extrêmes quotidiens d'enregistrement de la précipitation pour chaque jour de l'année. Les éléments quotidiens comprennent : Précipitation maximale."
@@ -1376,8 +1376,8 @@ resources:
     ltce-snowfall:
         type: collection
         title:
-            en: Daily Extremes of Records (LTCE) – Snowfall
-            fr: Records des extrêmes quotidien (ECLT) – neige
+            en: LTCE – Snowfall
+            fr: ECLT – Chute de neige
         description:
             en: "The daily climate records database, also known as Long Term Climate Extremes (LTCE), was developed to address the fragmentation of climate information due to station changes (opening, closing, relocation, etc.) over time. For approximately 750 locations in Canada, \"virtual\" climate stations have been developed by joining (threading) climate data for an urban location, from nearby stations to make long-term records. Each long-term record consists of the extremes (record values) of daily maximum/minimum temperatures, total precipitation and snowfall for each day of the year. Many of the longest data sets of extremes date as far back as the 1800s. This data provides the daily extremes of record for Snowfall for each day of the year. Daily elements include: Greatest Snowfall."
             fr: "Les Records des Extrêmes Quotidiens (ECLT) visent à combler les lacunes de la fragmentation de l’information sur le climat en raison de changements apportés aux stations au fil du temps. Dans 750 endroits répartis sur le territoire canadien, des stations climatologiques « virtual » ont été construites en procédant au « remaillage » des données pour un lieu urbain, à partir de stations proches. Ces données fournissent les records des extrêmes quotidiens de la température, la précipitation et la neige pour chaque jour de l'année. La majorité des plus longs ensembles de données des extrêmes datent des années 1800s. Ces données fournissent les extrêmes quotidiens d'enregistrement de la neige pour chaque jour de l'année. Les éléments quotidiens comprennent : Neige maximale."
@@ -1428,8 +1428,8 @@ resources:
     aqhi-forecasts-realtime:
         type: collection
         title:
-            en: Air Quality Health Index – Forecasts
-            fr: Cote air santé - prévisions
+            en: AQHI – Forecasts
+            fr: CAS - Prévisions
         description:
             en: The Air Quality Health Index (AQHI) is a scale designed to help quantify the quality of the air in a certain region on a scale from 1 to 10. When the amount of air pollution is very high, the number is reported as 10+. It also includes a category that describes the health risk associated with the index reading (e.g. Low, Moderate, High, or Very High Health Risk). The AQHI is calculated based on the relative risks of a combination of common air pollutants that are known to harm human health, including ground-level ozone, particulate matter, and nitrogen dioxide. The AQHI formulation captures only the short term or acute health risk (exposure of hour or days at a maximum). The formulation of the AQHI may change over time to reflect new understanding associated with air pollution health effects. The AQHI is calculated from data observed in real time, without being verified (quality control).
             fr: La cote air santé (CAS) est une échelle conçue pour quantifier la qualité de l'air dans une région donnée, sur une échelle de 1 à 10. La cote 10+ indique que la pollution de l'air est très élevée. La cote air santé comprend également une catégorie décrivant le risque pour la santé correspondant au nombre indiqué (risque faible, modéré, élevé ou très élevé) . La cote air santé est calculée en fonction des risques relatifs que représente une combinaison de polluants atmosphériques courants connus pour leurs effets néfastes sur la santé humaine, tels que l'ozone troposphérique, les matières particulaires et le dioxyde d'azote. La formulation de la cote air santé rend uniquement compte du risque pour la santé aigu ou à court terme (Exposition en heures ou en jours au maximum) . Cette formulation pourrait changer avec le temps, pour rendre compte d'une nouvelle compréhension des effets de la pollution atmosphérique sur la santé. La cote air santé est calculée à partir de données observées en temps réel, sans vérification (contrôle de la qualité).
@@ -1467,8 +1467,8 @@ resources:
     aqhi-observations-realtime:
         type: collection
         title:
-            en: Air Quality Health Index – Observations
-            fr: Cote air santé - observations
+            en: AQHI – Observations
+            fr: CAS - Observations
         description:
             en: The Air Quality Health Index (AQHI) is a scale designed to help quantify the quality of the air in a certain region on a scale from 1 to 10. When the amount of air pollution is very high, the number is reported as 10+. It also includes a category that describes the health risk associated with the index reading (e.g. Low, Moderate, High, or Very High Health Risk). The AQHI is calculated based on the relative risks of a combination of common air pollutants that are known to harm human health, including ground-level ozone, particulate matter, and nitrogen dioxide. The AQHI formulation captures only the short term or acute health risk (exposure of hour or days at a maximum). The formulation of the AQHI may change over time to reflect new understanding associated with air pollution health effects. The AQHI is calculated from data observed in real time, without being verified (quality control).
             fr: La cote air santé (CAS) est une échelle conçue pour quantifier la qualité de l'air dans une région donnée, sur une échelle de 1 à 10. La cote 10+ indique que la pollution de l'air est très élevée. La cote air santé comprend également une catégorie décrivant le risque pour la santé correspondant au nombre indiqué (risque faible, modéré, élevé ou très élevé) . La cote air santé est calculée en fonction des risques relatifs que représente une combinaison de polluants atmosphériques courants connus pour leurs effets néfastes sur la santé humaine, tels que l'ozone troposphérique, les matières particulaires et le dioxyde d'azote. La formulation de la cote air santé rend uniquement compte du risque pour la santé aigu ou à court terme (Exposition en heures ou en jours au maximum) . Cette formulation pourrait changer avec le temps, pour rendre compte d'une nouvelle compréhension des effets de la pollution atmosphérique sur la santé. La cote air santé est calculée à partir de données observées en temps réel, sans vérification (contrôle de la qualité).
@@ -1506,8 +1506,8 @@ resources:
     aqhi-stations:
         type: collection
         title:
-            en: Air Quality Health Index – Stations
-            fr: Cote air santé - Stations
+            en: AQHI – Stations
+            fr: CAS - Stations
         description:
             en: The Air Quality Health Index (AQHI) is a scale designed to help quantify the quality of the air in a certain region on a scale from 1 to 10. When the amount of air pollution is very high, the number is reported as 10+. It also includes a category that describes the health risk associated with the index reading (e.g. Low, Moderate, High, or Very High Health Risk). The AQHI is calculated based on the relative risks of a combination of common air pollutants that are known to harm human health, including ground-level ozone, particulate matter, and nitrogen dioxide. The AQHI formulation captures only the short term or acute health risk (exposure of hour or days at a maximum). The formulation of the AQHI may change over time to reflect new understanding associated with air pollution health effects. The AQHI is calculated from data observed in real time, without being verified (quality control).
             fr: La cote air santé (CAS) est une échelle conçue pour quantifier la qualité de l'air dans une région donnée, sur une échelle de 1 à 10. La cote 10+ indique que la pollution de l'air est très élevée. La cote air santé comprend également une catégorie décrivant le risque pour la santé correspondant au nombre indiqué (risque faible, modéré, élevé ou très élevé) . La cote air santé est calculée en fonction des risques relatifs que représente une combinaison de polluants atmosphériques courants connus pour leurs effets néfastes sur la santé humaine, tels que l'ozone troposphérique, les matières particulaires et le dioxyde d'azote. La formulation de la cote air santé rend uniquement compte du risque pour la santé aigu ou à court terme (Exposition en heures ou en jours au maximum) . Cette formulation pourrait changer avec le temps, pour rendre compte d'une nouvelle compréhension des effets de la pollution atmosphérique sur la santé. La cote air santé est calculée à partir de données observées en temps réel, sans vérification (contrôle de la qualité).
@@ -1544,8 +1544,8 @@ resources:
     hurricanes-cyclone-realtime:
         type: collection
         title:
-            en: Hurricane Tracks - cyclone [experimental]
-            fr: Trajectoires d'ouragans - cyclone [expérimental]
+            en: Hurricane Tracks - Cyclone [experimental]
+            fr: Trajectoires d'ouragans - Cyclone [expérimental]
         description:
             en: "Hurricane tracks and response zone are issued by the Canadian Hurricane Centre as part of the regular hurricane season forecast."
             fr: "Les trajectoires d'ouragans et la zone de réaction aux ouragans sont émises par le Centre canadien de prévision des ouragans, dans le cadre des prévisions régulières lors de la saison des ouragans."
@@ -1583,8 +1583,8 @@ resources:
     hurricanes-track-realtime:
         type: collection
         title:
-            en: Hurricane Tracks - track [experimental]
-            fr: Trajectoires d'ouragans - trajectoire [expérimental]
+            en: Hurricane Tracks - Track [experimental]
+            fr: Trajectoires d'ouragans - Trajectoire [expérimental]
         description:
             en: "Hurricane tracks and response zone are issued by the Canadian Hurricane Centre as part of the regular hurricane season forecast."
             fr: "Les trajectoires d'ouragans et la zone de réaction aux ouragans sont émises par le Centre canadien de prévision des ouragans, dans le cadre des prévisions régulières lors de la saison des ouragans."
@@ -1622,8 +1622,8 @@ resources:
     hurricanes-error_cone-realtime:
         type: collection
         title:
-            en: Hurricane Tracks - error cone [experimental]
-            fr: Trajectoires d'ouragans - cone d'erreur [expérimental]
+            en: Hurricane Tracks - Error Cone [experimental]
+            fr: Trajectoires d'ouragans - Cone d'erreur [expérimental]
         description:
             en: "Hurricane tracks and response zone are issued by the Canadian Hurricane Centre as part of the regular hurricane season forecast."
             fr: "Les trajectoires d'ouragans et la zone de réaction aux ouragans sont émises par le Centre canadien de prévision des ouragans, dans le cadre des prévisions régulières lors de la saison des ouragans."
@@ -1661,8 +1661,8 @@ resources:
     hurricanes-wind_radii-realtime:
         type: collection
         title:
-            en: Hurricane Tracks - wind raddi [experimental]
-            fr: Trajectoires d'ouragans - radius de vent [expérimental]
+            en: Hurricane Tracks - Wind Raddi [experimental]
+            fr: Trajectoires d'ouragans - Radius de vent [expérimental]
         description:
             en: "Hurricane tracks and response zone are issued by the Canadian Hurricane Centre as part of the regular hurricane season forecast."
             fr: "Les trajectoires d'ouragans et la zone de réaction aux ouragans sont émises par le Centre canadien de prévision des ouragans, dans le cadre des prévisions régulières lors de la saison des ouragans."
@@ -1700,8 +1700,8 @@ resources:
     umos-gdps-realtime:
         type: collection
         title:
-            en: UMOS statistically post-processed Forecast of the Global Deterministic Prediction System (GDPS-UMOS-MLR)
-            fr: Prévision du système global de prévision déterministe statistiquement post-traité par UMOS (SGPD-UMOS-RLM)
+            en: UMOS - Statistically Post-Processed Forecast of the Global Deterministic Prediction System (GDPS-UMOS-MLR)
+            fr: UMOS - Système global de prévision déterministe statistiquement post-traité (SGPD-UMOS-RLM)
         description:
                 en: "Statistical post-processing of weather and environmental forecasts issued by numerical models, including the Global Deterministic Prediction System (GDPS), reduces systematic bias and error variance of raw numerical forecasts. This is achieved by establishing an optimal relationship between observations recorded at stations and co-located numerical model outputs. The Updatable Model Output Statistics (UMOS) system at Environment Canada carries out this task. The statistical relationships are built using the Model Output Statistics (MOS) method and a multiple linear regression (MLR) technic. The weather and environmental variable being statistically post-processed by UMOS consists of air temperature at approximately 1.5 meters above ground. The absence of a statistically post-processed forecast can be caused by a missing statistical model due to insufficient observation data quality or quantity. Geographical coverage includes weather stations across Canada. Statistically post-processed forecasts are available at the same frequency of emission as the numerical model producing the raw forecasts and at 3-hourly lead times up to 144 hours (6 days) for the GDPS."
                 fr: "Le post-traitement statistique des prévisions des modèles numériques du temps et de l'environnement, incluant le système global de prévision déterministe (SGPD), permet de réduire le biais systématique et la variance de l'erreur des prévisions numériques brutes. Pour ce faire, des relations statistiques optimisées entre les observations enregistrées aux stations et les sorties des modèles numériques aux points de grilles à proximité sont établies. Le système Updatable Model Output Statistics (UMOS) est un progiciel développé par Environnement et Changement climatique Canada permettant cela. Les relations sont bâties par l'entremise de la méthode Model Output Statistics (MOS) et par régression linéaire multiple (RLM). Les prévisions numériques brutes de la température de l'air à 1.5 mètres au-dessus de la surface de la terre sont post-traitées statistiquement. L'absence de prévisions post-traitées peut être causée par une qualité ou quantité insuffisantes d'observations qui empêche la production d’un modèle statistique. La région géographique couverte par ces données inclut le territoire couvert par les stations météorologiques du Canada. Les prévisions issues du post-traitement statistique sont disponibles à la même fréquence d'émission que les prévisions brutes produites par les modèles numériques et à des échéances de prévision aux 3 heures jusqu’à 144 heures (6 jours) pour le SGPD."
@@ -1739,8 +1739,8 @@ resources:
     umos-rdps-realtime:
         type: collection
         title:
-            en: UMOS statistically post-processed Forecast of the Regional Deterministic Prediction System (RDPS-UMOS-MLR)
-            fr: Prévision du système régional de prévision déterministe statistiquement post-traité par UMOS (SRPD-UMOS-RLM)
+            en: UMOS - Statistically Post-Processed Forecast of the Regional Deterministic Prediction System (RDPS-UMOS-MLR)
+            fr: UMOS - Système régional de prévision déterministe statistiquement post-traité (SRPD-UMOS-RLM)
         description:
                 en: "Statistical post-processing of weather and environmental forecasts issued by numerical models, including the Regional Deterministic Prediction System (RDPS), reduces systematic bias and error variance of raw numerical forecasts. This is achieved by establishing an optimal relationship between observations recorded at stations and co-located numerical model outputs. The Updatable Model Output Statistics (UMOS) system at Environment Canada carries out this task. The statistical relationships are built using the Model Output Statistics (MOS) method and a multiple linear regression (MLR) technic. The weather and environmental variables being statistically post-processed by UMOS include air temperature and dew point temperature at approximately 1.5 meters above ground as well as wind speed and direction at 10 meters above ground or at the anemometer level in the case of a buoy. The absence of a statistically post-processed forecast can be caused by a missing statistical model due to insufficient observation data quality or quantity. In addition, the absence of a post-processed forecast for wind direction could also be due to weak forecasted wind components preventing the calculation of reliable results. The forecasts of wind speed and direction are produced from independent statistical post-processing models. Geographical coverage includes weather stations across Canada. Statistically post-processed forecasts is available at the same frequency of emission as the numerical model producing the raw forecasts and at 3-hourly lead times for the RDPS."
                 fr: "Le post-traitement statistique des prévisions des modèles numériques du temps et de l'environnement, incluant le système régional de prévision déterministe (SRPD), permet de réduire le biais systématique et la variance de l'erreur des prévisions numériques brutes. Pour ce faire, des relations statistiques optimisées entre les observations enregistrées aux stations et les sorties des modèles numériques aux points de grilles à proximité sont établies. Le système Updatable Model Output Statistics (UMOS) est un progiciel développé par Environnement et Changement climatique Canada permettant cela. Les relations sont bâties par l'entremise de la méthode Model Output Statistics (MOS) et par régression linéaire multiple (RLM). Les variables post-traitées statistiquement incluent les températures de l'air et du point de rosée à 1.5 mètres au-dessus de la surface de la terre ainsi que la vitesse et la direction du vent à 10 mètres au-dessus de la surface de la terre ou au niveau de l'anémomètre dans le cas d'une bouée. L'absence de prévisions post-traitées peut être causée par une qualité ou quantité insuffisantes d'observations qui empêche la production d’un modèle statistique. De plus, l'absence de prévision de la direction du vent peut aussi être due à des composantes du vent prévues trop faibles ne permettant pas d'obtenir un résultat fiable. Les prévisions de la direction et de la vitesse du vent sont issues de modèles de post-traitement statistique indépendants. La région géographique couverte par ces données inclut le territoire couvert par les stations météorologiques du Canada. Les prévisions issues du post-traitement statistique sont disponibles à la même fréquence d'émission que les prévisions brutes produites par les modèles numériques et à des échéances de prévision aux 3 heures pour le SRPD."
@@ -1894,8 +1894,8 @@ resources:
     bulletins-realtime:
         type: collection
         title:
-            en: Real-time meteorological bulletins
-            fr: Bulletins météorologiques en temps réel
+            en: Meteorological Bulletins
+            fr: Bulletins météorologiques
         description:
             en: Real-time meteorological bulletins (last 140 days)
             fr: Bulletins météorologiques en temps réel (140 derniers jours)
@@ -1988,7 +1988,7 @@ resources:
     climate:cmip5:projected:annual:anomaly:
         type: collection
         title:
-            en: CMIP5 - Projected annual anomaly
+            en: CMIP5 - Projected Annual Anomaly
             fr: CMIP5 - Anomalie annuelle projetée
         description:
             en: The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005.
@@ -2026,7 +2026,7 @@ resources:
     climate:cmip5:projected:seasonal:anomaly:
         type: collection
         title:
-            en: CMIP5 - Projected seasonal anomaly
+            en: CMIP5 - Projected Seasonal Anomaly
             fr: CMIP5 - Anomalie saisonnière projetée
         description:
             en: The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.
@@ -2064,7 +2064,7 @@ resources:
     climate:cmip5:projected:monthly:anomaly:
         type: collection
         title:
-            en: CMIP5 - Projected monthly anomaly
+            en: CMIP5 - Projected Monthly Anomaly
             fr: CMIP5 - Anomalie mensuelle projetée
         description:
             en: The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.
@@ -2102,7 +2102,7 @@ resources:
     climate:cmip5:projected:annual:absolute:
         type: collection
         title:
-            en: CMIP5 - Projected annual
+            en: CMIP5 - Projected Annual
             fr: CMIP5 - Annuelle projetée
         description:
             en: The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.
@@ -2140,7 +2140,7 @@ resources:
     climate:cmip5:projected:seasonal:absolute:
         type: collection
         title:
-            en: CMIP5 - Projected seasonal CMIP5
+            en: CMIP5 - Projected Seasonal
             fr: CMIP5 - Saisonnière projetée
         description:
             en: The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.
@@ -2178,7 +2178,7 @@ resources:
     climate:cmip5:projected:monthly:absolute:
         type: collection
         title:
-            en: CMIP5 - Projected monthly
+            en: CMIP5 - Projected Monthly
             fr: CMIP5 - Mensuelle projetée
         description:
             en: The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.
@@ -2216,7 +2216,7 @@ resources:
     climate:cmip5:projected:annual:P20Y-Avg:
         type: collection
         title:
-            en: CMIP5- Projected annual anomaly for 20 years average
+            en: CMIP5- Projected Annual Anomaly for 20 Years Average
             fr: CMIP5 - Anomalie annuelle projetée pour une moyenne de 20 ans
         description:
             en: The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.
@@ -2254,7 +2254,7 @@ resources:
     climate:cmip5:projected:seasonal:P20Y-Avg:
         type: collection
         title:
-            en: CMIP5 - Projected seasonal anomaly for 20 years average
+            en: CMIP5 - Projected Seasonal Anomaly for 20 Years Average
             fr: CMIP5 - Anomalie saisonnière projetée pour une moyenne de 20 ans
         description:
             en: The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.
@@ -2292,7 +2292,7 @@ resources:
     climate:cmip5:historical:annual:absolute:
         type: collection
         title:
-            en: CMIP5 - Historical annual
+            en: CMIP5 - Historical Annual
             fr: CMIP5 - Annuelle historique
         description:
             en: The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.
@@ -2330,7 +2330,7 @@ resources:
     climate:cmip5:historical:annual:anomaly:
         type: collection
         title:
-            en: CMIP5 - Historical annual anomaly
+            en: CMIP5 - Historical Annual Anomaly
             fr: CMIP5 - Anomalie annuelle historique
         description:
             en: The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.
@@ -2368,8 +2368,8 @@ resources:
     climate:cmip5:historical:seasonal:absolute:
         type: collection
         title:
-            en: Historical seasonal CMIP5
-            fr: Historical seasonal CMIP5
+            en: CMIP5 - Historical Seasonal
+            fr: CMIP5 - Saisonnière historique
         description:
             en: The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.
             fr: Des ensembles multimodèles de sorties de modèles et de changements projetés sur grille sont disponibles pour les simulations historiques et trois scénarios d'émissions, RCP2.6, RCP4.5 et RCP8.5, à une résolution de de 1x1 degré. Les changements projetés sont exprimés sous forme d'anomalies par rapport à la période de référence 1986-2005.
@@ -2406,7 +2406,7 @@ resources:
     climate:cmip5:historical:seasonal:anomaly:
         type: collection
         title:
-            en: CMIP5 - Historical seasonal anomaly
+            en: CMIP5 - Historical Seasonal Anomaly
             fr: CMIP5 - Anomalie saisonnière historique
         description:
             en: The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.
@@ -2444,7 +2444,7 @@ resources:
     climate:cmip5:historical:monthly:absolute:
         type: collection
         title:
-            en: CMIP5 - Historical monthly
+            en: CMIP5 - Historical Monthly
             fr: CMIP5 - Mensuelle historique
         description:
             en: The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.
@@ -2482,7 +2482,7 @@ resources:
     climate:cmip5:historical:monthly:anomaly:
         type: collection
         title:
-            en: CMIP5 - Historical monthly anomaly
+            en: CMIP5 - Historical Monthly Anomaly
             fr: CMIP5 - Anomalie mensuelle historique
         description:
             en: The Global climate model scenarios dataset is based on an ensemble of global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). Multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios at a 1x1 degree grid resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. A range of percentiles across the multi-model ensembles are available for download.
@@ -2520,8 +2520,8 @@ resources:
     climate:candcsu6:projected:annual:absolute:
         type: collection
         title:
-            en: CanDCSU6 Annual projections
-            fr: CanDCSU6 Projections annuelles
+            en: CanDCSU6 - Annual Projections
+            fr: CanDCSU6 - Projections annuelles
         description:
             en: CMIP6 climate projections are based on both updated global climate models and new emissions scenarios called “Shared Socioeconomic Pathways” (SSPs). Statistically downscaled datasets have been produced from 26 CMIP6 Global Climate Models (GCMs) under three different emission scenarios (i.e., SSP1-2.6, SSP2-4.5, and SSP5-8.5) using the same downscaling method (Bias Correction/Constructed Analogues with Quantile mapping (BCCAQv2)) and downscaling target data (NRCANmet) as the CMIP5-based downscaled scenarios. Downscaled daily maximum and minimum temperatures (°C) and daily precipitation (mm) are available across Canada at 6x10km grid spatial resolution for the 1950-2014 historical period and for the 2015-2100 period following each of the three emission scenarios.
             fr: Les projections climatiques du CMIP6 sont fondées à la fois sur des modèles climatiques mondiaux actualisés et sur de nouveaux scénarios d’émissions appelés « trajectoires socioéconomiques partagées » (SSP, pour « Shared Socioeconomic Pathways »). Des ensembles de données mis à l’échelle statistique ont été produits à l’aide de 26 modèles climatiques mondiaux (MCM) du CMIP6 selon trois scénarios d’émissions différents (c.-à-d. SSP1-2.6, SSP2-4.5 et SSP5-8.5) utilisant la même méthode de mise à l’échelle statistique (la méthode des analogues avec correction de biais et cartographie des quantiles (BCCAQv2)) et les mêmes données cibles de réduction d’échelle (NRCANmet) que les scénarios mis à l’échelle statistique du CMIP5. Les températures maximales et minimales quotidiennes (°C) et les précipitations quotidiennes (mm) à échelle réduite sont disponibles partout au Canada à une résolution spatiale de grille de 6x10 km pour la période antérieure 1950 2014 et la période 2015 2100 suivant chacun des trois scénarios d’émissions.
@@ -2558,8 +2558,8 @@ resources:
     climate:candcsu6:projected:seasonal:absolute:
         type: collection
         title:
-            en: CanDCSU6 Seasonal projections
-            fr: CanDCSU6 Projections saisonnières
+            en: CanDCSU6 - Seasonal Projections
+            fr: CanDCSU6 - Projections saisonnières
         description:
             en: CMIP6 climate projections are based on both updated global climate models and new emissions scenarios called “Shared Socioeconomic Pathways” (SSPs). Statistically downscaled datasets have been produced from 26 CMIP6 Global Climate Models (GCMs) under three different emission scenarios (i.e., SSP1-2.6, SSP2-4.5, and SSP5-8.5) using the same downscaling method (Bias Correction/Constructed Analogues with Quantile mapping (BCCAQv2)) and downscaling target data (NRCANmet) as the CMIP5-based downscaled scenarios. Downscaled daily maximum and minimum temperatures (°C) and daily precipitation (mm) are available across Canada at 6x10km grid spatial resolution for the 1950-2014 historical period and for the 2015-2100 period following each of the three emission scenarios.
             fr: Les projections climatiques du CMIP6 sont fondées à la fois sur des modèles climatiques mondiaux actualisés et sur de nouveaux scénarios d’émissions appelés « trajectoires socioéconomiques partagées » (SSP, pour « Shared Socioeconomic Pathways »). Des ensembles de données mis à l’échelle statistique ont été produits à l’aide de 26 modèles climatiques mondiaux (MCM) du CMIP6 selon trois scénarios d’émissions différents (c.-à-d. SSP1-2.6, SSP2-4.5 et SSP5-8.5) utilisant la même méthode de mise à l’échelle statistique (la méthode des analogues avec correction de biais et cartographie des quantiles (BCCAQv2)) et les mêmes données cibles de réduction d’échelle (NRCANmet) que les scénarios mis à l’échelle statistique du CMIP5. Les températures maximales et minimales quotidiennes (°C) et les précipitations quotidiennes (mm) à échelle réduite sont disponibles partout au Canada à une résolution spatiale de grille de 6x10 km pour la période antérieure 1950 2014 et la période 2015 2100 suivant chacun des trois scénarios d’émissions.
@@ -2596,8 +2596,8 @@ resources:
     climate:candcsu6:projected:monthly:absolute:
         type: collection
         title:
-            en: CanDCSU6 Monthly projections
-            fr: CanDCSU6 Projections mensuelles
+            en: CanDCSU6 - Monthly Projections
+            fr: CanDCSU6 - Projections mensuelles
         description:
             en: CMIP6 climate projections are based on both updated global climate models and new emissions scenarios called “Shared Socioeconomic Pathways” (SSPs). Statistically downscaled datasets have been produced from 26 CMIP6 Global Climate Models (GCMs) under three different emission scenarios (i.e., SSP1-2.6, SSP2-4.5, and SSP5-8.5) using the same downscaling method (Bias Correction/Constructed Analogues with Quantile mapping (BCCAQv2)) and downscaling target data (NRCANmet) as the CMIP5-based downscaled scenarios. Downscaled daily maximum and minimum temperatures (°C) and daily precipitation (mm) are available across Canada at 6x10km grid spatial resolution for the 1950-2014 historical period and for the 2015-2100 period following each of the three emission scenarios.
             fr: Les projections climatiques du CMIP6 sont fondées à la fois sur des modèles climatiques mondiaux actualisés et sur de nouveaux scénarios d’émissions appelés « trajectoires socioéconomiques partagées » (SSP, pour « Shared Socioeconomic Pathways »). Des ensembles de données mis à l’échelle statistique ont été produits à l’aide de 26 modèles climatiques mondiaux (MCM) du CMIP6 selon trois scénarios d’émissions différents (c.-à-d. SSP1-2.6, SSP2-4.5 et SSP5-8.5) utilisant la même méthode de mise à l’échelle statistique (la méthode des analogues avec correction de biais et cartographie des quantiles (BCCAQv2)) et les mêmes données cibles de réduction d’échelle (NRCANmet) que les scénarios mis à l’échelle statistique du CMIP5. Les températures maximales et minimales quotidiennes (°C) et les précipitations quotidiennes (mm) à échelle réduite sont disponibles partout au Canada à une résolution spatiale de grille de 6x10 km pour la période antérieure 1950 2014 et la période 2015 2100 suivant chacun des trois scénarios d’émissions.
@@ -2634,8 +2634,8 @@ resources:
     climate:candcsu6:projected:annual:P30Y-Avg:
         type: collection
         title:
-            en: CanDCSU6 30 year averages of projected annual anomalies
-            fr: CanDCSU6 Moyennes sur 30 ans des anomalies annuelles projetées
+            en: CanDCSU6 - 30 Year Averages of Projected Annual Anomalies
+            fr: CanDCSU6 - Moyennes sur 30 ans des anomalies annuelles projetées
         description:
             en: CMIP6 climate projections are based on both updated global climate models and new emissions scenarios called “Shared Socioeconomic Pathways” (SSPs). Statistically downscaled datasets have been produced from 26 CMIP6 Global Climate Models (GCMs) under three different emission scenarios (i.e., SSP1-2.6, SSP2-4.5, and SSP5-8.5) using the same downscaling method (Bias Correction/Constructed Analogues with Quantile mapping (BCCAQv2)) and downscaling target data (NRCANmet) as the CMIP5-based downscaled scenarios. Downscaled daily maximum and minimum temperatures (°C) and daily precipitation (mm) are available across Canada at 6x10km grid spatial resolution for the 1950-2014 historical period and for the 2015-2100 period following each of the three emission scenarios.
             fr: Les projections climatiques du CMIP6 sont fondées à la fois sur des modèles climatiques mondiaux actualisés et sur de nouveaux scénarios d’émissions appelés « trajectoires socioéconomiques partagées » (SSP, pour « Shared Socioeconomic Pathways »). Des ensembles de données mis à l’échelle statistique ont été produits à l’aide de 26 modèles climatiques mondiaux (MCM) du CMIP6 selon trois scénarios d’émissions différents (c.-à-d. SSP1-2.6, SSP2-4.5 et SSP5-8.5) utilisant la même méthode de mise à l’échelle statistique (la méthode des analogues avec correction de biais et cartographie des quantiles (BCCAQv2)) et les mêmes données cibles de réduction d’échelle (NRCANmet) que les scénarios mis à l’échelle statistique du CMIP5. Les températures maximales et minimales quotidiennes (°C) et les précipitations quotidiennes (mm) à échelle réduite sont disponibles partout au Canada à une résolution spatiale de grille de 6x10 km pour la période antérieure 1950 2014 et la période 2015 2100 suivant chacun des trois scénarios d’émissions.
@@ -2672,8 +2672,8 @@ resources:
     climate:candcsu6:projected:seasonal:P30Y-Avg:
         type: collection
         title:
-            en: CanDCSU6 30 year averages of projected annual anomalies
-            fr: CanDCSU6 Moyennes sur 30 ans des anomalies saisonnières projetées
+            en: CanDCSU6 - 30 Year Averages of Projected Annual Anomalies
+            fr: CanDCSU6 - Moyennes sur 30 ans des anomalies saisonnières projetées
         description:
             en: CMIP6 climate projections are based on both updated global climate models and new emissions scenarios called “Shared Socioeconomic Pathways” (SSPs). Statistically downscaled datasets have been produced from 26 CMIP6 Global Climate Models (GCMs) under three different emission scenarios (i.e., SSP1-2.6, SSP2-4.5, and SSP5-8.5) using the same downscaling method (Bias Correction/Constructed Analogues with Quantile mapping (BCCAQv2)) and downscaling target data (NRCANmet) as the CMIP5-based downscaled scenarios. Downscaled daily maximum and minimum temperatures (°C) and daily precipitation (mm) are available across Canada at 6x10km grid spatial resolution for the 1950-2014 historical period and for the 2015-2100 period following each of the three emission scenarios.
             fr: Les projections climatiques du CMIP6 sont fondées à la fois sur des modèles climatiques mondiaux actualisés et sur de nouveaux scénarios d’émissions appelés « trajectoires socioéconomiques partagées » (SSP, pour « Shared Socioeconomic Pathways »). Des ensembles de données mis à l’échelle statistique ont été produits à l’aide de 26 modèles climatiques mondiaux (MCM) du CMIP6 selon trois scénarios d’émissions différents (c.-à-d. SSP1-2.6, SSP2-4.5 et SSP5-8.5) utilisant la même méthode de mise à l’échelle statistique (la méthode des analogues avec correction de biais et cartographie des quantiles (BCCAQv2)) et les mêmes données cibles de réduction d’échelle (NRCANmet) que les scénarios mis à l’échelle statistique du CMIP5. Les températures maximales et minimales quotidiennes (°C) et les précipitations quotidiennes (mm) à échelle réduite sont disponibles partout au Canada à une résolution spatiale de grille de 6x10 km pour la période antérieure 1950 2014 et la période 2015 2100 suivant chacun des trois scénarios d’émissions.
@@ -2710,8 +2710,8 @@ resources:
     climate:candcsu6:historical:annual:absolute:
         type: collection
         title:
-            en: CanDCSU6 Historical annual
-            fr: CanDCSU6 Annuelle historique
+            en: CanDCSU6 - Historical Annual
+            fr: CanDCSU6 - Annuelle historique
         description:
             en: CMIP6 climate projections are based on both updated global climate models and new emissions scenarios called “Shared Socioeconomic Pathways” (SSPs). Statistically downscaled datasets have been produced from 26 CMIP6 Global Climate Models (GCMs) under three different emission scenarios (i.e., SSP1-2.6, SSP2-4.5, and SSP5-8.5) using the same downscaling method (Bias Correction/Constructed Analogues with Quantile mapping (BCCAQv2)) and downscaling target data (NRCANmet) as the CMIP5-based downscaled scenarios. Downscaled daily maximum and minimum temperatures (°C) and daily precipitation (mm) are available across Canada at 6x10km grid spatial resolution for the 1950-2014 historical period and for the 2015-2100 period following each of the three emission scenarios.
             fr: Les projections climatiques du CMIP6 sont fondées à la fois sur des modèles climatiques mondiaux actualisés et sur de nouveaux scénarios d’émissions appelés « trajectoires socioéconomiques partagées » (SSP, pour « Shared Socioeconomic Pathways »). Des ensembles de données mis à l’échelle statistique ont été produits à l’aide de 26 modèles climatiques mondiaux (MCM) du CMIP6 selon trois scénarios d’émissions différents (c.-à-d. SSP1-2.6, SSP2-4.5 et SSP5-8.5) utilisant la même méthode de mise à l’échelle statistique (la méthode des analogues avec correction de biais et cartographie des quantiles (BCCAQv2)) et les mêmes données cibles de réduction d’échelle (NRCANmet) que les scénarios mis à l’échelle statistique du CMIP5. Les températures maximales et minimales quotidiennes (°C) et les précipitations quotidiennes (mm) à échelle réduite sont disponibles partout au Canada à une résolution spatiale de grille de 6x10 km pour la période antérieure 1950 2014 et la période 2015 2100 suivant chacun des trois scénarios d’émissions.
@@ -2748,8 +2748,8 @@ resources:
     climate:candcsu6:historical:seasonal:absolute:
         type: collection
         title:
-            en: CanDCSU6 Historical seasonal
-            fr: CanDCSU6 Saisonnière historique
+            en: CanDCSU6 - Historical Seasonal
+            fr: CanDCSU6 - Saisonnière historique
         description:
             en: CMIP6 climate projections are based on both updated global climate models and new emissions scenarios called “Shared Socioeconomic Pathways” (SSPs). Statistically downscaled datasets have been produced from 26 CMIP6 Global Climate Models (GCMs) under three different emission scenarios (i.e., SSP1-2.6, SSP2-4.5, and SSP5-8.5) using the same downscaling method (Bias Correction/Constructed Analogues with Quantile mapping (BCCAQv2)) and downscaling target data (NRCANmet) as the CMIP5-based downscaled scenarios. Downscaled daily maximum and minimum temperatures (°C) and daily precipitation (mm) are available across Canada at 6x10km grid spatial resolution for the 1950-2014 historical period and for the 2015-2100 period following each of the three emission scenarios.
             fr: Les projections climatiques du CMIP6 sont fondées à la fois sur des modèles climatiques mondiaux actualisés et sur de nouveaux scénarios d’émissions appelés « trajectoires socioéconomiques partagées » (SSP, pour « Shared Socioeconomic Pathways »). Des ensembles de données mis à l’échelle statistique ont été produits à l’aide de 26 modèles climatiques mondiaux (MCM) du CMIP6 selon trois scénarios d’émissions différents (c.-à-d. SSP1-2.6, SSP2-4.5 et SSP5-8.5) utilisant la même méthode de mise à l’échelle statistique (la méthode des analogues avec correction de biais et cartographie des quantiles (BCCAQv2)) et les mêmes données cibles de réduction d’échelle (NRCANmet) que les scénarios mis à l’échelle statistique du CMIP5. Les températures maximales et minimales quotidiennes (°C) et les précipitations quotidiennes (mm) à échelle réduite sont disponibles partout au Canada à une résolution spatiale de grille de 6x10 km pour la période antérieure 1950 2014 et la période 2015 2100 suivant chacun des trois scénarios d’émissions.
@@ -2786,8 +2786,8 @@ resources:
     climate:candcsu6:historical:monthly:absolute:
         type: collection
         title:
-            en: CanDCSU6 Historical monthly
-            fr: CanDCSU6 Mensuelle historique
+            en: CanDCSU6 - Historical Monthly
+            fr: CanDCSU6 - Mensuelle historique
         description:
             en: CMIP6 climate projections are based on both updated global climate models and new emissions scenarios called “Shared Socioeconomic Pathways” (SSPs). Statistically downscaled datasets have been produced from 26 CMIP6 Global Climate Models (GCMs) under three different emission scenarios (i.e., SSP1-2.6, SSP2-4.5, and SSP5-8.5) using the same downscaling method (Bias Correction/Constructed Analogues with Quantile mapping (BCCAQv2)) and downscaling target data (NRCANmet) as the CMIP5-based downscaled scenarios. Downscaled daily maximum and minimum temperatures (°C) and daily precipitation (mm) are available across Canada at 6x10km grid spatial resolution for the 1950-2014 historical period and for the 2015-2100 period following each of the three emission scenarios.
             fr: Les projections climatiques du CMIP6 sont fondées à la fois sur des modèles climatiques mondiaux actualisés et sur de nouveaux scénarios d’émissions appelés « trajectoires socioéconomiques partagées » (SSP, pour « Shared Socioeconomic Pathways »). Des ensembles de données mis à l’échelle statistique ont été produits à l’aide de 26 modèles climatiques mondiaux (MCM) du CMIP6 selon trois scénarios d’émissions différents (c.-à-d. SSP1-2.6, SSP2-4.5 et SSP5-8.5) utilisant la même méthode de mise à l’échelle statistique (la méthode des analogues avec correction de biais et cartographie des quantiles (BCCAQv2)) et les mêmes données cibles de réduction d’échelle (NRCANmet) que les scénarios mis à l’échelle statistique du CMIP5. Les températures maximales et minimales quotidiennes (°C) et les précipitations quotidiennes (mm) à échelle réduite sont disponibles partout au Canada à une résolution spatiale de grille de 6x10 km pour la période antérieure 1950 2014 et la période 2015 2100 suivant chacun des trois scénarios d’émissions.
@@ -2824,8 +2824,8 @@ resources:
     climate:candcsu6:historical:annual:P30Y-Avg:
         type: collection
         title:
-            en: CanDCSU6 30 year averages of historical annual values
-            fr: CanDCSU6 Moyennes sur 30 ans des valeurs historiques annuelles
+            en: CanDCSU6 - 30 Year Averages of Historical Annual Values
+            fr: CanDCSU6 - Moyennes sur 30 ans des valeurs historiques annuelles
         description:
             en: CMIP6 climate projections are based on both updated global climate models and new emissions scenarios called “Shared Socioeconomic Pathways” (SSPs). Statistically downscaled datasets have been produced from 26 CMIP6 Global Climate Models (GCMs) under three different emission scenarios (i.e., SSP1-2.6, SSP2-4.5, and SSP5-8.5) using the same downscaling method (Bias Correction/Constructed Analogues with Quantile mapping (BCCAQv2)) and downscaling target data (NRCANmet) as the CMIP5-based downscaled scenarios. Downscaled daily maximum and minimum temperatures (°C) and daily precipitation (mm) are available across Canada at 6x10km grid spatial resolution for the 1950-2014 historical period and for the 2015-2100 period following each of the three emission scenarios.
             fr: Les projections climatiques du CMIP6 sont fondées à la fois sur des modèles climatiques mondiaux actualisés et sur de nouveaux scénarios d’émissions appelés « trajectoires socioéconomiques partagées » (SSP, pour « Shared Socioeconomic Pathways »). Des ensembles de données mis à l’échelle statistique ont été produits à l’aide de 26 modèles climatiques mondiaux (MCM) du CMIP6 selon trois scénarios d’émissions différents (c.-à-d. SSP1-2.6, SSP2-4.5 et SSP5-8.5) utilisant la même méthode de mise à l’échelle statistique (la méthode des analogues avec correction de biais et cartographie des quantiles (BCCAQv2)) et les mêmes données cibles de réduction d’échelle (NRCANmet) que les scénarios mis à l’échelle statistique du CMIP5. Les températures maximales et minimales quotidiennes (°C) et les précipitations quotidiennes (mm) à échelle réduite sont disponibles partout au Canada à une résolution spatiale de grille de 6x10 km pour la période antérieure 1950 2014 et la période 2015 2100 suivant chacun des trois scénarios d’émissions.
@@ -2862,8 +2862,8 @@ resources:
     climate:candcsu6:historical:seasonal:P30Y-Avg:
         type: collection
         title:
-            en: CanDCSU6 30 year averages of historical seasonal values
-            fr: CanDCSU6 Moyennes sur 30 ans des valeurs historiques saisonnières
+            en: CanDCSU6 - 30 Year Averages of Historical Seasonal Values
+            fr: CanDCSU6 - Moyennes sur 30 ans des valeurs historiques saisonnières
         description:
             en: CMIP6 climate projections are based on both updated global climate models and new emissions scenarios called “Shared Socioeconomic Pathways” (SSPs). Statistically downscaled datasets have been produced from 26 CMIP6 Global Climate Models (GCMs) under three different emission scenarios (i.e., SSP1-2.6, SSP2-4.5, and SSP5-8.5) using the same downscaling method (Bias Correction/Constructed Analogues with Quantile mapping (BCCAQv2)) and downscaling target data (NRCANmet) as the CMIP5-based downscaled scenarios. Downscaled daily maximum and minimum temperatures (°C) and daily precipitation (mm) are available across Canada at 6x10km grid spatial resolution for the 1950-2014 historical period and for the 2015-2100 period following each of the three emission scenarios.
             fr: Les projections climatiques du CMIP6 sont fondées à la fois sur des modèles climatiques mondiaux actualisés et sur de nouveaux scénarios d’émissions appelés « trajectoires socioéconomiques partagées » (SSP, pour « Shared Socioeconomic Pathways »). Des ensembles de données mis à l’échelle statistique ont été produits à l’aide de 26 modèles climatiques mondiaux (MCM) du CMIP6 selon trois scénarios d’émissions différents (c.-à-d. SSP1-2.6, SSP2-4.5 et SSP5-8.5) utilisant la même méthode de mise à l’échelle statistique (la méthode des analogues avec correction de biais et cartographie des quantiles (BCCAQv2)) et les mêmes données cibles de réduction d’échelle (NRCANmet) que les scénarios mis à l’échelle statistique du CMIP5. Les températures maximales et minimales quotidiennes (°C) et les précipitations quotidiennes (mm) à échelle réduite sont disponibles partout au Canada à une résolution spatiale de grille de 6x10 km pour la période antérieure 1950 2014 et la période 2015 2100 suivant chacun des trois scénarios d’émissions.
@@ -2900,7 +2900,7 @@ resources:
     climate:dcs:projected:annual:anomaly:
         type: collection
         title:
-            en: DCS - Projected annual anomaly
+            en: DCS - Projected Annual Anomaly
             fr: DCS - Anomalie annuelle projetée
         description:
             en: The statistically downscaled climate scenarios dataset provides multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). A range of percentiles across the multi-model ensemble are available for download.
@@ -2938,7 +2938,7 @@ resources:
     climate:dcs:projected:seasonal:anomaly:
         type: collection
         title:
-            en: DCS - Projected seasonal anomaly
+            en: DCS - Projected Seasonal Anomaly
             fr: DCS - Anomalie saisonnière projetée
         description:
             en: The statistically downscaled climate scenarios dataset provides multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). A range of percentiles across the multi-model ensemble are available for download.
@@ -2976,7 +2976,7 @@ resources:
     climate:dcs:projected:annual:absolute:
         type: collection
         title:
-            en: DCS - Projected annual
+            en: DCS - Projected Annual
             fr: DCS - Annuelle projetée
         description:
             en: The statistically downscaled climate scenarios dataset provides multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). A range of percentiles across the multi-model ensemble are available for download.
@@ -3014,7 +3014,7 @@ resources:
     climate:dcs:projected:seasonal:absolute:
         type: collection
         title:
-            en: DCS - Projected seasonal
+            en: DCS - Projected Seasonal
             fr: DCS - Saisonnière projetée
         description:
             en: The statistically downscaled climate scenarios dataset provides multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). A range of percentiles across the multi-model ensemble are available for download.
@@ -3052,7 +3052,7 @@ resources:
     climate:dcs:projected:monthly:absolute:
         type: collection
         title:
-            en: DCS - Projected monthly
+            en: DCS - Projected Monthly
             fr: DCS - Mensuelle projetée
         description:
             en: The statistically downscaled climate scenarios dataset provides multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). A range of percentiles across the multi-model ensemble are available for download.
@@ -3090,7 +3090,7 @@ resources:
     climate:dcs:projected:annual:P20Y-Avg:
         type: collection
         title:
-            en: DCS - Projected annual anomaly for 20 years average
+            en: DCS - Projected Annual Anomaly for 20 Years Average
             fr: DCS - Anomalie annuelle projetée pour une moyenne de 20 ans
         description:
             en: The statistically downscaled climate scenarios dataset provides multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). A range of percentiles across the multi-model ensemble are available for download.
@@ -3128,7 +3128,7 @@ resources:
     climate:dcs:projected:seasonal:P20Y-Avg:
         type: collection
         title:
-            en: DCS - Projected seasonal anomaly for 20 years average
+            en: DCS - Projected Seasonal Anomaly for 20 Years Average
             fr: DCS - Anomalie saisonnière projetée pour une moyenne de 20 ans
         description:
             en: The statistically downscaled climate scenarios dataset provides multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). A range of percentiles across the multi-model ensemble are available for download.
@@ -3166,7 +3166,7 @@ resources:
     climate:dcs:historical:annual:absolute:
         type: collection
         title:
-            en: DCS - Historical annual
+            en: DCS - Historical Annual
             fr: DCS - Annuelle historique
         description:
             en: The statistically downscaled climate scenarios dataset provides multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). A range of percentiles across the multi-model ensemble are available for download.
@@ -3204,7 +3204,7 @@ resources:
     climate:dcs:historical:annual:anomaly:
         type: collection
         title:
-            en: DCS - Historical annual anomaly
+            en: DCS - Historical Annual Anomaly
             fr: DCS - Anomalie annuelle historique
         description:
             en: The statistically downscaled climate scenarios dataset provides multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). A range of percentiles across the multi-model ensemble are available for download.
@@ -3242,7 +3242,7 @@ resources:
     climate:dcs:historical:seasonal:absolute:
         type: collection
         title:
-            en: DCS - Historical seasonal
+            en: DCS - Historical Seasonal
             fr: DCS - Saisonnière historique
         description:
             en: The statistically downscaled climate scenarios dataset provides multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). A range of percentiles across the multi-model ensemble are available for download.
@@ -3280,7 +3280,7 @@ resources:
     climate:dcs:historical:seasonal:anomaly:
         type: collection
         title:
-            en: DCS - Historical seasonal anomaly
+            en: DCS - Historical Seasonal Anomaly
             fr: DCS - Anomalie saisonnière historique
         description:
             en: The statistically downscaled climate scenarios dataset provides multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). A range of percentiles across the multi-model ensemble are available for download.
@@ -3318,7 +3318,7 @@ resources:
     climate:dcs:historical:monthly:absolute:
         type: collection
         title:
-            en: DCS - Historical monthly
+            en: DCS - Historical Monthly
             fr: DCS - Mensuelle historique
         description:
             en: The statistically downscaled climate scenarios dataset provides multi-model ensembles of modelled output (actual value) and projected change (anomaly) are available for historical simulations and three emission scenarios, RCP2.6, RCP4.5, RCP8.5, at a 10km resolution. Projected changes are expressed as anomalies with respect to the reference period of 1986-2005. Downscaled data are based on global climate model projections from the Coupled Model Intercomparison Project Phase 5 (CMIP5). A range of percentiles across the multi-model ensemble are available for download.
@@ -3356,8 +3356,8 @@ resources:
     climate:indices:historical:
         type: collection
         title:
-            en: Indices - Historical
-            fr: Indices - Historique
+            en: Statistically Downscaled Climate Indices - Historical
+            fr: Indices climatiques mis à l'échelle de manière statistique - Historique
         description:
             en: High-resolution statistically downscaled climate indices based on model projections from 24 global climate models (GCMs) that participated in the Coupled Model Intercomparison Project Phase 5 (CMIP5) are available. The climate indices are grouped into temperature-related, precipitation-related and agroclimatic categories.
             fr: Ensembles de données des indices climatiques mis à l'échelle de manière statistique fondés sur un ensemble de vingt-quatre projections mises à l'échelle de manière statistique du modèle climatique mondial provenant de la phase 5 du projet d'intercomparaison de modèles couplés (CMIP5). Les indices climatiques sont regroupés en catégories liées à la température, aux précipitations et à l'agroclimat.
@@ -3394,8 +3394,8 @@ resources:
     climate:indices:projected:
         type: collection
         title:
-            en: Indices - Projected
-            fr: Indices - Projeté
+            en: Statistically Downscaled Climate Indices - Projected
+            fr: Indices climatiques mis à l'échelle de manière statistique - Projeté
         description:
             en: High-resolution statistically downscaled climate indices based on model projections from 24 global climate models (GCMs) that participated in the Coupled Model Intercomparison Project Phase 5 (CMIP5) are available. The climate indices are grouped into temperature-related, precipitation-related and agroclimatic categories.
             fr: Ensembles de données des indices climatiques mis à l'échelle de manière statistique fondés sur un ensemble de vingt-quatre projections mises à l'échelle de manière statistique du modèle climatique mondial provenant de la phase 5 du projet d'intercomparaison de modèles couplés (CMIP5). Les indices climatiques sont regroupés en catégories liées à la température, aux précipitations et à l'agroclimat.
@@ -3660,7 +3660,7 @@ resources:
     climate:cangrd:historical:annual:trend:
         type: collection
         title:
-            en: CanGRD - Historical annual trend
+            en: CanGRD - Historical Annual Trend
             fr: CanGRD - Tendance annuelle historique
         description:
             en: CANGRD data are interpolated from adjusted and homogenized climate station data (i.e., AHCCD datasets). Homogenized climate data incorporate adjustments to the original station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation. Annual trends of relative total precipitation change (%) for 1948-2012 based on Canadian gridded data (CANGRD) are available, at a 50km resolution across Canada. The relative trends reflect the percent change in total precipitation over a period from the baseline value (defined as the average over 1961-1990 as the reference period). Annual trends of mean surface air temperature change (degrees Celsius) for 1948-2016 based on Canadian gridded data (CANGRD) are available at a 50km resolution across Canada. Temperature trends represent the departure from a mean reference period (1961-1990).
@@ -3695,7 +3695,7 @@ resources:
     climate:cangrd:historical:annual:anomaly:
         type: collection
         title:
-            en: CanGRD - Historical annual anomaly
+            en: CanGRD - Historical Annual Anomaly
             fr: CanGRD - Anomalie annuelle historique
         description:
             en: Gridded annual mean temperature anomalies derived from daily minimum, maximum and mean surface air temperatures (degrees Celsius) and anomalies derived from daily total precipitation is available at a 50km resolution across Canada. The Canadian gridded data (CANGRD) are interpolated from homogenized temperature (i.e., AHCCD datasets). Homogenized temperatures incorporate adjustments to the original station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation. The anomalies are the difference between the temperature for a given year or season and a baseline value (defined as the average over 1961-1990 as the reference period). The yearly and seasonal temperature anomalies were computed for the years 1948 to 2017. The data will continue to be updated every year. For precipitation, the Canadian gridded data (CANGRD) are interpolated from adjusted precipitation (i.e., AHCCD datasets). Adjusted precipitation data incorporate adjustments to the original station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation. The anomalies are the percentage difference between the value for a given year or season and a baseline value (defined as the average over 1961-1990 as the reference period). The yearly and seasonal relative precipitation anomalies were computed for the years 1948 to 2014. The data will be updated as time permits.
@@ -3730,7 +3730,7 @@ resources:
     climate:cangrd:historical:monthly:anomaly:
         type: collection
         title:
-            en: CanGRD - Historical monthly anomaly
+            en: CanGRD - Historical Monthly Anomaly
             fr: CanGRD - Anomalie mensuelle historique
         description:
             en: Gridded monthly mean temperature anomalies derived from daily minimum, maximum and mean surface air temperatures (degrees Celsius) and anomalies derived from daily total precipitation is available at a 50km resolution across Canada. The Canadian gridded data (CANGRD) are interpolated from homogenized temperature (i.e., AHCCD datasets). Homogenized temperatures incorporate adjustments to the original station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation. The anomalies are the difference between the temperature for a given year or season and a baseline value (defined as the average over 1961-1990 as the reference period). The yearly and seasonal temperature anomalies were computed for the years 1948 to 2017. The data will continue to be updated every year. For precipitation, the Canadian gridded data (CANGRD) are interpolated from adjusted precipitation (i.e., AHCCD datasets). Adjusted precipitation data incorporate adjustments to the original station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation. The anomalies are the percentage difference between the value for a given year or season and a baseline value (defined as the average over 1961-1990 as the reference period). The yearly and seasonal relative precipitation anomalies were computed for the years 1948 to 2014. The data will be updated as time permits.
@@ -3765,7 +3765,7 @@ resources:
     climate:cangrd:historical:seasonal:trend:
         type: collection
         title:
-            en: CanGRD - Historical seasonal trend
+            en: CanGRD - Historical Seasonal Trend
             fr: CanGRD - Tendance saisonnière historique
         description:
             en: CANGRD data are interpolated from adjusted and homogenized climate station data (i.e., AHCCD datasets). Homogenized climate data incorporate adjustments to the original station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation. Seasonal trends of relative total precipitation change (%) for 1948-2012 based on Canadian gridded data (CANGRD) are available, at a 50km resolution across Canada. The relative trends reflect the percent change in total precipitation over a period from the baseline value (defined as the average over 1961-1990 as the reference period). Seasonal trends of mean surface air temperature change (degrees Celsius) for 1948-2016 based on Canadian gridded data (CANGRD) are available at a 50km resolution across Canada. Temperature trends represent the departure from a mean reference period (1961-1990).
@@ -3800,7 +3800,7 @@ resources:
     climate:cangrd:historical:seasonal:anomaly:
         type: collection
         title:
-            en: CanGRD - Historical seasonal anomaly
+            en: CanGRD - Historical Seasonal Anomaly
             fr: CanGRD - Anomalie saisonnière historique
         description:
             en: Gridded seasonal mean temperature anomalies derived from daily minimum, maximum and mean surface air temperatures (degrees Celsius) and anomalies derived from daily total precipitation is available at a 50km resolution across Canada. The Canadian gridded data (CANGRD) are interpolated from homogenized temperature (i.e., AHCCD datasets). Homogenized temperatures incorporate adjustments to the original station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation. The anomalies are the difference between the temperature for a given year or season and a baseline value (defined as the average over 1961-1990 as the reference period). The yearly and seasonal temperature anomalies were computed for the years 1948 to 2017. The data will continue to be updated every year. For precipitation, the Canadian gridded data (CANGRD) are interpolated from adjusted precipitation (i.e., AHCCD datasets). Adjusted precipitation data incorporate adjustments to the original station data to account for discontinuities from non-climatic factors, such as instrument changes or station relocation. The anomalies are the percentage difference between the value for a given year or season and a baseline value (defined as the average over 1961-1990 as the reference period). The yearly and seasonal relative precipitation anomalies were computed for the years 1948 to 2014. The data will be updated as time permits.
@@ -3835,8 +3835,8 @@ resources:
     weather:rdpa:15km:24f:
         type: collection
         title:
-            en: Regional Deterministic Precipitation Analysis (RDPA) - 24 hours accumulation at 15km resolution
-            fr: Analyse régionale déterministe de précipitation (ARPD) - Accumulation de 24 heures à 15km de résolution
+            en: RDPA - 24 Hours Accumulation at 15 km Resolution
+            fr: ARPD - Accumulation de 24 heures à 15 km de résolution
         description:
             en: The Regional Deterministic Precipitation Analysis (RDPA) produces a best estimate of the amount of precipitation that occurred over recent past periods of 24 hours. The estimate integrates data from in situ precipitation gauge measurements, weather radar and numerical weather prediction models. Geographic coverage is North America (Canada, United States and Mexico). Data is available at horizontal resolution of 15 km. Data is only available for the surface level. Analysis data is made available once a day for the 24h intervals. A preliminary estimate is available approximately 1h after the end of the accumulation period, and revised 6h after in order to assimilate gauge data arriving later.
             fr: L'Analyse régionale déterministe de précipitation (ARPD) produit une estimation optimale de la quantité de précipitation qui est survenue au cours de périodes passées récentes de 6h ou 24h. Cet estimé intègre des relevés provenant de capteurs de précipitation, de radar météo et de modèles de prévision numérique du temps. La couverture géographique est l'Amérique du Nord (Canada, États-Unis et le Mexique). Les données sont disponibles à une résolution spatiale horizontale de 15 km. Les données ne sont disponibles qu'au niveau de la surface. Les données d'analyse sont rendues disponible une fois par jour pour l'intervalle de 24h. Un estimé préliminaire est disponible environ 1h après la fin de la période d'accumulation, et révisé 6h plus tard afin d'assimiler les pluviomètres dont les données furent disponibles tardivement.
@@ -3872,8 +3872,8 @@ resources:
     weather:rdpa:15km:6f:
         type: collection
         title:
-            en: Regional Deterministic Precipitation Analysis (RDPA) - 6 hours accumulation at 15 km resolution
-            fr: Analyse régionale déterministe de précipitation (ARPD) - Accumulation de 6 heures à 15km de résolution
+            en: RDPA - 6 Hours Accumulation at 15 km Resolution
+            fr: ARPD - Accumulation de 6 heures à 15 km de résolution
         description:
             en: The Regional Deterministic Precipitation Analysis (RDPA) produces a best estimate of the amount of precipitation that occurred over recent past periods of 24 hours. The estimate integrates data from in situ precipitation gauge measurements, weather radar and numerical weather prediction models. Geographic coverage is North America (Canada, United States and Mexico). Data is available at horizontal resolution of 15 km. Data is only available for the surface level. Analysis data is made available four times a day for 6h intervals. A preliminary estimate is available approximately 1h after the end of the accumulation period, and revised 6h after in order to assimilate gauge data arriving later.
             fr: L'Analyse régionale déterministe de précipitation (ARPD) produit une estimation optimale de la quantité de précipitation qui est survenue au cours de périodes passées récentes de 6h ou 24h. Cet estimé intègre des relevés provenant de capteurs de précipitation, de radar météo et de modèles de prévision numérique du temps. La couverture géographique est l'Amérique du Nord (Canada, États-Unis et le Mexique). Les données sont disponibles à une résolution spatiale horizontale de 15 km. Les données ne sont disponibles qu'au niveau de la surface. Les données d'analyse sont rendues disponibles quatre fois par jour pour les intervalles de 6h. Un estimé préliminaire est disponible environ 1h après la fin de la période d'accumulation, et révisé 6h plus tard afin d'assimiler les pluviomètres dont les données furent disponibles tardivement.
@@ -3909,8 +3909,8 @@ resources:
     weather:rdpa:10km:24f:
         type: collection
         title:
-            en: Regional Deterministic Precipitation Analysis (RDPA) - 24 hours accumulation at 10km resolution
-            fr: Analyse régionale déterministe de précipitation (ARPD) - Accumulation de 24 heures à 10km de résolution
+            en: RDPA - 24 Hours Accumulation at 10 km Resolution
+            fr: ARPD - Accumulation de 24 heures à 10 km de résolution
         description:
             en: The Regional Deterministic Precipitation Analysis (RDPA) produces a best estimate of the amount of precipitation that occurred over recent past periods of 24 hours. The estimate integrates data from in situ precipitation gauge measurements, weather radar and numerical weather prediction models. Geographic coverage is North America (Canada, United States and Mexico). Data is available at horizontal resolution of 10 km. Data is only available for the surface level. Analysis data is made available once a day for the 24h intervals. A preliminary estimate is available approximately 1h after the end of the accumulation period, and revised 6h after in order to assimilate gauge data arriving later.
             fr: L'Analyse régionale déterministe de précipitation (ARPD) produit une estimation optimale de la quantité de précipitation qui est survenue au cours de périodes passées récentes de 6h ou 24h. Cet estimé intègre des relevés provenant de capteurs de précipitation, de radar météo et de modèles de prévision numérique du temps. La couverture géographique est l'Amérique du Nord (Canada, États-Unis et le Mexique). Les données sont disponibles à une résolution spatiale horizontale de 10 km. Les données ne sont disponibles qu'au niveau de la surface. Les données d'analyse sont rendues disponible une fois par jour pour l'intervalle de 24h. Un estimé préliminaire est disponible environ 1h après la fin de la période d'accumulation, et révisé 6h plus tard afin d'assimiler les pluviomètres dont les données furent disponibles tardivement.
@@ -3946,8 +3946,8 @@ resources:
     weather:rdpa:10km:6f:
         type: collection
         title:
-            en: Regional Deterministic Precipitation Analysis (RDPA) - 6 hours accumulation at 10km resolution
-            fr: Analyse régionale déterministe de précipitation (ARPD) - Accumulation de 6 heures à 10km de résolution
+            en: RDPA - 6 Hours Accumulation at 10 km Resolution
+            fr: ARPD - Accumulation de 6 heures à 10 km de résolution
         description:
             en: The Regional Deterministic Precipitation Analysis (RDPA) produces a best estimate of the amount of precipitation that occurred over recent past periods of 6 hours. The estimate integrates data from in situ precipitation gauge measurements, weather radar and numerical weather prediction models. Geographic coverage is North America (Canada, United States and Mexico). Data is available at horizontal resolution of 10 km. Data is only available for the surface level. Analysis data is made available four times a day for 6h intervals. A preliminary estimate is available approximately 1h after the end of the accumulation period, and revised 6h after in order to assimilate gauge data arriving later.
             fr: L'Analyse régionale déterministe de précipitation (ARPD) produit une estimation optimale de la quantité de précipitation qui est survenue au cours de périodes passées récentes de 6h ou 24h. Cet estimé intègre des relevés provenant de capteurs de précipitation, de radar météo et de modèles de prévision numérique du temps. La couverture géographique est l'Amérique du Nord (Canada, États-Unis et le Mexique). Les données sont disponibles à une résolution spatiale horizontale de 10 km. Les données ne sont disponibles qu'au niveau de la surface. Les données d'analyse sont rendues disponibles quatre fois par jour pour les intervalles de 6h. Un estimé préliminaire est disponible environ 1h après la fin de la période d'accumulation, et révisé 6h plus tard afin d'assimiler les pluviomètres dont les données furent disponibles tardivement.
@@ -3983,8 +3983,8 @@ resources:
     weather:rdpa:10km:24p:
         type: collection
         title:
-            en: Regional Deterministic Precipitation Analysis (RDPA) - 24 hours accumulation at 10km resolution (preliminary)
-            fr: Analyse régionale déterministe de précipitation (ARPD) - Accumulation de 24 heures à 10km de résolution (préliminaire)
+            en: RDPA - 24 Hours Accumulation at 10 km Resolution (Preliminary)
+            fr: ARPD - Accumulation de 24 heures à 10 km de résolution (préliminaire)
         description:
             en: The Regional Deterministic Precipitation Analysis (RDPA) produces a best estimate of the amount of precipitation that occurred over recent past periods of 24 hours. The estimate integrates data from in situ precipitation gauge measurements, weather radar and numerical weather prediction models. Geographic coverage is North America (Canada, United States and Mexico). Data is available at horizontal resolution of 10 km. Data is only available for the surface level. Analysis data is made available once a day for the 24h intervals. The preliminary estimate is available approximately 1h after the end of the accumulation period.
             fr: L'Analyse régionale déterministe de précipitation (ARPD) produit une estimation optimale de la quantité de précipitation qui est survenue au cours de périodes passées récentes de 6h ou 24h. Cet estimé intègre des relevés provenant de capteurs de précipitation, de radar météo et de modèles de prévision numérique du temps. La couverture géographique est l'Amérique du Nord (Canada, États-Unis et le Mexique). Les données sont disponibles à une résolution spatiale horizontale de 10 km. Les données ne sont disponibles qu'au niveau de la surface. Les données d'analyse sont rendues disponible une fois par jour pour l'intervalle de 24h. Un estimé préliminaire est disponible environ 1h après la fin de la période d'accumulation.
@@ -4021,8 +4021,8 @@ resources:
     weather:rdpa:10km:6p:
         type: collection
         title:
-            en: Regional Deterministic Precipitation Analysis (RDPA) - 6 hours accumulation at 10km resolution (preliminary)
-            fr: Analyse régionale déterministe de précipitation (ARPD) - Accumulation de 6 heures à 10km de résolution (préliminaire)
+            en: RDPA - 6 Hours Accumulation at 10 km Resolution (Preliminary)
+            fr: ARPD - Accumulation de 6 heures à 10 km de résolution (préliminaire)
         description:
             en: The Regional Deterministic Precipitation Analysis (RDPA) produces a best estimate of the amount of precipitation that occurred over recent past periods of 6 hours. The estimate integrates data from in situ precipitation gauge measurements, weather radar and numerical weather prediction models. Geographic coverage is North America (Canada, United States and Mexico). Data is available at horizontal resolution of 10 km. Data is only available for the surface level. Analysis data is made available four times a day for 6h intervals. The preliminary estimate is available approximately 1h after the end of the accumulation period.
             fr: L'Analyse régionale déterministe de précipitation (ARPD) produit une estimation optimale de la quantité de précipitation qui est survenue au cours de périodes passées récentes de 6h ou 24h. Cet estimé intègre des relevés provenant de capteurs de précipitation, de radar météo et de modèles de prévision numérique du temps. La couverture géographique est l'Amérique du Nord (Canada, États-Unis et le Mexique). Les données sont disponibles à une résolution spatiale horizontale de 10 km. Les données ne sont disponibles qu'au niveau de la surface. Les données d'analyse sont rendues disponibles quatre fois par jour pour les intervalles de 6h. Un estimé préliminaire est disponible environ 1h après la fin de la période d'accumulation.
@@ -4058,8 +4058,8 @@ resources:
     weather:cansips:250km:forecast:members:
         type: collection
         title:
-            en: Canadian Seasonal to Inter-annual Prediction System (CanSIPS) - members at 250km
-            fr: Système de Prévision Interannuelle et Saisonnière Canadien (SPISCan) - membres à 250 km
+            en: CanSIPS - Members at 250 km
+            fr: SPISCan - Membres à 250 km
         description:
             en: The Canadian Seasonal to Inter-annual Prediction System (CanSIPS) carries out physics calculations to arrive at probabilistic predictions of atmospheric elements from the beginning of a month out to up to 12 months into the future, resulting in seasonal forecasts. Atmospheric elements include temperature, precipitation, wind speed and direction and others. This product contains raw numerical results of these calculations. Geographical coverage is global. Data is available on a grid at a horizontal resolution of 2.5 degrees and for a few selected vertical levels.
             fr: Le Système de Prévision Interannuelle et Saisonnière Canadien (SPISCan) procède à des calculs physiques afin de produire des prévisions probabilistes d'éléments de l'atmosphère du début d'un mois jusqu'à 12 mois dans le futur. Ceci permet d'établir des prévisions saisonnières. Les éléments de l'atmosphère incluent notamment la température, la précipitation, la vitesse et direction des vents. Ce produit contient les résultats numériques bruts de ces calculs. La couverture géographique est mondiale. Les données sont disponibles pour quelques niveaux verticaux choisis et sur une grille de résolution spatiale de 2.5 degrées.
@@ -4095,8 +4095,8 @@ resources:
     public-standard-forecast-zones:
         type: collection
         title:
-            en: Public Standard Forecast Zones (hybrid)
-            fr: Zones standards de prévision publique (hybride)
+            en: Standard Forecast Zones - Public (Hybrid)
+            fr: Zones standards de prévision - Publique (hybride)
         description:
             en: "The Public Standard Forecast Zones layer is a collection of public program forecast location zone polygons that represents bounded measurable locations at the Public program Standard level. The public program standard level is used in most forecasts, warnings, watches, advisories and special weather statement. With the exception of the Manitoba Lakes, the layer is made up of mostly the land kind of polygons. The layer is made up of four depictions, cartographic detailed (with proper shorelines and high resolution polygons), cartographic coarse (with generalized shorelines and low resolution polygons), digital exaggerated (with exaggerated shorelines and low resolution polygons) and the hybrid (mix of cartographic detail and exaggerated). The digital layer (exaggerated) is a collection of polygons where shoreline boundaries are stretched offshore for the land polygons and inland for the water polygons. In this \"Exaggerated\" layer, the boundaries are made smooth to reduce the number of polygon vertices. Boundaries of the forecast regions of this hybrid set are derived from the polygon boundaries of both the exaggerated digital, and the cartographic detailed set. Polygon boundaries along the shoreline of this set follow the exaggerated boundaries while the inland boundaries follow the detailed lines. The Public Standard Forecast Zones layer is presented in the polygon package in two coordinate systems, \"Projected\" (Lambert Conformal Conic) and \"Unprojected\" (Geographical Coordinated System)."
             fr: "La couche PubStdZone est un ensemble de polygones d'emplacements de prévision des programmes publics qui représentent des emplacements délimités et mesurables au niveau standard du programme public. Le niveau standard du programme public est utilisé dans la majorité des prévisions, avertissements, veilles, avis et bulletins météorologiques spéciaux. À l'exception des lacs du Manitoba, la couche est constituée principalement de polygones de type terrestre. Elle comprend trois représentations, soit cartographique détaillée (lignes de rivage correctement indiquées et polygones en haute résolution), cartographique grossière (lignes de rivage approximatives et polygones en basse résolution) et numérique exagérée (lignes de rivage exagérées et polygones en basse résolution). La couche numérique (exagérée) est un ensemble de polygones où les limites des lignes de rivage sont étendues au large pour les polygones terrestres et à l'intérieur des terres pour les polygones de type eau. Dans cette couche \"exagérée\", les limites sont arrondies de façon à réduire le nombre de sommets des polygones. La couche PubStdZone est présentée dans le progiciel de polygones en deux systèmes de coordonnées, soit \"projetées\" (projection conique conforme de Lambert) et \"non projetées\" (système géographique coordonné)."
@@ -4130,8 +4130,8 @@ resources:
     marine-standard-forecast-zones:
         type: collection
         title:
-            en: Marine Standard Forecast Zones (hybrid)
-            fr: Zones standards de prévision publiques (hybride)
+            en: Standard Forecast Zones - Marine (Hybrid)
+            fr: Zones standards de prévision - Marine (hybride)
         description:
             en: "The Marine Standard Forecast Zones layer is a collection of forecast location polygons that represents bounded (zone) locations at the Marine Program Standard level. The Marine Program standard level is used in most forecasts, warnings, watches, advisories and special marine weather statements. This layer is comprised mainly of water based Marine regions, Met Areas, Lakes, Great Lakes and many of the larger Inland water bodies. The layer is further comprised of four depictions, cartographic detailed (with proper shorelines and high resolution polygons), cartographic coarse (with generalized shorelines and low resolution polygons), and digital exaggerated (with exaggerated shorelines and low resolution polygons) and the hybrid (mix of cartographic detail and exaggerated). The digital layer (exaggerated) is a collection of polygons where shoreline boundaries are stretched inland. In this \"Exaggerated\" part of the layer, the boundaries are made smooth to reduce the number of polygon vertices. Boundaries of the forecast regions of this hybrid set are derived from the polygon boundaries of both the exaggerated digital, and the cartographic detailed set. Polygon boundaries along the shoreline of this set follow the exaggerated boundaries while the inland boundaries follow the detailed lines. The Marine Standard Forecast Zones layer is also presented in the polygon package in two coordinate systems, \"Projected\" (Lambert Conic Conformal) and \"Unprojected\" (Geographical Coordinated System)."
             fr: "La couche de zones standards de prévision marine est un ensemble de polygones d'emplacements de prévision qui représentent des emplacements délimités (des zones) au niveau standard du programme marine. Le niveau standard du programme marine est utilisé dans la majorité des prévisions, avertissements, veilles, avis et bulletins spéciaux de météo marine. Cette couche est principalement composée de plans d'eau de régions marines, MetAreas, de lacs, des Grands Lacs, ainsi que de nombreux plans d'eau d'envergure situés à l'intérieur des terres. Elle comprend aussi trois représentations : cartographique détaillée (lignes de rivage correctement indiquées et polygones en haute résolution); cartographique grossière (lignes de rivage approximatives et polygones en basse résolution) et numérique exagérée (lignes de rivage exagérées et polygones en basse résolution). La couche numérique (exagérée) est un ensemble de polygones où les limites des lignes de rivage sont étendues vers l'intérieur des terres. Dans cette partie \"exagérée\" de la couche, les limites sont arrondies de façon à réduire le nombre de sommets des polygones. La couche de zones standards de prévision marine est également présentée dans le progiciel de polygones en deux systèmes de coordonnées : \"projetées\" (projection conique conforme de Lambert) et \"non projetées\" (système géographique coordonné)."
