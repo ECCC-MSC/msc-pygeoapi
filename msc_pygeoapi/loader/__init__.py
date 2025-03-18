@@ -64,6 +64,7 @@ commands = (
     ('msc_pygeoapi.loader.swob_realtime', 'swob_realtime'),
     ('msc_pygeoapi.loader.aqhi_realtime', 'aqhi_realtime'),
     ('msc_pygeoapi.loader.aqhi_stations', 'aqhi_stations'),
+    ('msc_pygeoapi.loader.swob_stations', 'swob_stations'),
     ('msc_pygeoapi.loader.ltce', 'ltce'),
     ('msc_pygeoapi.loader.climate_archive', 'climate_archive'),
     ('msc_pygeoapi.loader.metnotes', 'metnotes'),
