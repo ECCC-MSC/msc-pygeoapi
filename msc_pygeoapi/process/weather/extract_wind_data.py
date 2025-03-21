@@ -65,22 +65,22 @@ PROCESS_METADATA = {
         },
         'forecast_start_hour': {
             'title': 'Forecast start hour',
-            'description': 'Forecast start hour in XXX format.',
-            'schema': {'type': 'string'},
+            'description': 'Forecast start hour.',
+            'schema': {'type': 'number'},
             'minOccurs': 1,
             'maxOccurs': 1,
         },
         'forecast_step': {
             'title': 'Forecast time step',
-            'description': 'Forecast time step, usually a multiple of 3',
+            'description': 'Forecast temporal step, e.g. 1, 3, 6, 12 or 24',
             'schema': {'type': 'number'},
             'minOccurs': 1,
             'maxOccurs': 1,
         },
         'forecast_end_hour': {
             'title': 'Forecast end hour',
-            'description': 'Forecast end hour in XXX format.',
-            'schema': {'type': 'string'},
+            'description': 'Forecast end hour.',
+            'schema': {'type': 'number'},
             'minOccurs': 1,
             'maxOccurs': 1,
         },
@@ -309,12 +309,12 @@ def extract_wind_data(
         },
     }
 
-    n = (int(forecast_end_hour) - int(forecast_start_hour)) / forecast_step
+    n = (forecast_end_hour - forecast_start_hour) / forecast_step
     n = int(n) + 1
 
     for i in range(n):
-        forecast_hour = int(forecast_start_hour) + (i * forecast_step)
-        forecast_hour = f'{forecast_hour}'.zfill(3)
+        forecast_hour = forecast_start_hour + (i * forecast_step)
+        forecast_hour = f'{forecast_hour:03}'
         output['properties'][forecast_hour] = get_single_wind_data(model, date_formatted, run_hour, forecast_hour, data_basepath, lon, lat)
 
     return output
