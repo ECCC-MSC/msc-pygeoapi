@@ -54,7 +54,7 @@ PROCESS_METADATA = {
                 'type': 'string',
             },
             'minOccurs': 1,
-            'maxOccurs': 1
+            'maxOccurs': 1,
         },
         'model_run': {
             'title': 'Model run',
@@ -63,9 +63,23 @@ PROCESS_METADATA = {
             'minOccurs': 1,
             'maxOccurs': 1,
         },
-        'forecast_hour': {
-            'title': 'Forecast hour',
-            'description': 'Forecast hour in XXX format.',
+        'forecast_start_hour': {
+            'title': 'Forecast start hour',
+            'description': 'Forecast start hour in XXX format.',
+            'schema': {'type': 'string'},
+            'minOccurs': 1,
+            'maxOccurs': 1,
+        },
+        'forecast_step': {
+            'title': 'Forecast time step',
+            'description': 'Forecast time step, usually a multiple of 3',
+            'schema': {'type': 'number'},
+            'minOccurs': 1,
+            'maxOccurs': 1,
+        },
+        'forecast_end_hour': {
+            'title': 'Forecast end hour',
+            'description': 'Forecast end hour in XXX format.',
             'schema': {'type': 'string'},
             'minOccurs': 1,
             'maxOccurs': 1,
@@ -77,7 +91,7 @@ PROCESS_METADATA = {
                 'type': 'number',
             },
             'minOccurs': 1,
-            'maxOccurs': 1
+            'maxOccurs': 1,
         },
         'lat': {
             'title': 'lat coordinate',
@@ -86,7 +100,7 @@ PROCESS_METADATA = {
                 'type': 'number',
             },
             'minOccurs': 1,
-            'maxOccurs': 1
+            'maxOccurs': 1,
         },
     },
     "outputs": {
@@ -99,7 +113,7 @@ PROCESS_METADATA = {
         'inputs': {
             'model': 'GDWPS',
             'model_run': f'{(datetime.date.today() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")}T12:00:00Z',  # noqa
-            'forecast_hour': '003',
+            'forecast_start_hour': '003',
             'lon': -28.75,
             'lat': 39.25,
         }
@@ -150,10 +164,131 @@ def geo2xy(ds, x, y):
     return (x, y)
 
 
+def get_single_wind_data(model, date_formatted, run_hour, forecast_hour, data_basepath, lon, lat):
+    match(model):
+        case "GDWPS":
+            inter_path = f"/model_gdwps/25km/{run_hour}/"
+            file_name_u = f"{date_formatted}T{run_hour}Z_MSC_GDWPS_UGRD_AGL-10m_LatLon0.25_PT{forecast_hour}H.grib2"
+            file_name_v = f"{date_formatted}T{run_hour}Z_MSC_GDWPS_VGRD_AGL-10m_LatLon0.25_PT{forecast_hour}H.grib2"
+
+        case "GDPS":
+            inter_path = f"/model_gem_global/15km/grib2/lat_lon/{run_hour}/{forecast_hour}/"
+            file_name_u = f"CMC_glb_UGRD_TGL_10_latlon.15x.15_{date_formatted}{run_hour}_P{forecast_hour}.grib2"
+            file_name_v = f"CMC_glb_VGRD_TGL_10_latlon.15x.15_{date_formatted}{run_hour}_P{forecast_hour}.grib2"
+
+        case "GEPS":
+            raise NotImplementedError("GEPS raw data not yet in Geomet HPFX")
+
+        case "RDWPS":
+            # RDWPS grid is rotated so we're using HRDPS instead
+            inter_path = f"/model_hrdps/continental/2.5km/{run_hour}/{forecast_hour}/"
+            file_name_wind = f"{date_formatted}T{run_hour}Z_MSC_HRDPS_WIND_AGL-10m_RLatLon0.0225_PT{forecast_hour}H.grib2"
+            file_name_wdir = f"{date_formatted}T{run_hour}Z_MSC_HRDPS_WDIR_AGL-10m_RLatLon0.0225_PT{forecast_hour}H.grib2"
+
+        case "HRDPS":
+            inter_path = f"/model_hrdps/continental/2.5km/{run_hour}/{forecast_hour}/"
+            file_name_wind = f"{date_formatted}T{run_hour}Z_MSC_HRDPS_WIND_AGL-10m_RLatLon0.0225_PT{forecast_hour}H.grib2"
+            file_name_wdir = f"{date_formatted}T{run_hour}Z_MSC_HRDPS_WDIR_AGL-10m_RLatLon0.0225_PT{forecast_hour}H.grib2"
+
+        case "REPS":
+            inter_path = f"/ensemble/reps/10km/grib2/{run_hour}/{forecast_hour}/"
+            file_name_u = f"{date_formatted}T{run_hour}Z_MSC_REPS_UGRD_AGL-10m_RLatLon0.09x0.09_PT{forecast_hour}H.grib2"
+            file_name_v = f"{date_formatted}T{run_hour}Z_MSC_REPS_VGRD_AGL-10m_RLatLon0.09x0.09_PT{forecast_hour}H.grib2"
+
+        case _:
+            raise ValueError(f"Unknown model: {model}")
+
+    if model in ("GDWPS", "GDPS", "GEPS", "REPS"):
+        full_path_u = f"{data_basepath}{inter_path}{file_name_u}"
+        full_path_v = f"{data_basepath}{inter_path}{file_name_v}"
+
+        ds_u = gdal.Open(full_path_u, gdal.GA_ReadOnly)
+        ds_v = gdal.Open(full_path_v, gdal.GA_ReadOnly)
+
+        if ds_u is None:
+            raise NameError(f"Couldn't open {full_path_u}, check if file exists")
+
+        if ds_v is None:
+            raise NameError(f"Couldn't open {full_path_v}, check if file exists")
+
+        out_proj = ds_u.GetProjection()
+        transformer = Transformer.from_crs("EPSG:4326", out_proj, always_xy=True)
+        _x, _y = transformer.transform(lon, lat)
+        x, y = geo2xy(ds_u, _x, _y)
+
+        band_u = ds_u.GetRasterBand(1)
+        bitmap_u = band_u.GetMaskBand().ReadAsArray()
+
+        try:
+            _ = bitmap_u[y, x]
+        except IndexError:
+            raise IndexError("ERROR: no data at requested latitude and longitude - point outside of model grid")
+
+        if not bitmap_u[y, x]:
+            raise IndexError("ERROR: no data at requested latitude and longitude - data at point is masked")
+
+        band_y = ds_v.GetRasterBand(1)
+
+        data_array_u = band_u.ReadAsArray()
+        data_array_v = band_y.ReadAsArray()
+
+        wind_speed_u = data_array_u[y, x]
+        wind_speed_v = data_array_v[y, x]
+
+        norm = get_norm(wind_speed_u, wind_speed_v) * MS_TO_KNOTS
+        dir = get_dir(wind_speed_u, wind_speed_v)
+
+    else:
+        full_path_wind = f"{data_basepath}{inter_path}{file_name_wind}"
+        full_path_wdir = f"{data_basepath}{inter_path}{file_name_wdir}"
+
+        ds_wind = gdal.Open(full_path_wind, gdal.GA_ReadOnly)
+        ds_wdir = gdal.Open(full_path_wdir, gdal.GA_ReadOnly)
+
+        if ds_wind is None:
+            raise NameError(f"Couldn't open {full_path_wind}, check if file exists")
+
+        if ds_wdir is None:
+            raise NameError(f"Couldn't open {full_path_wdir}, check if file exists")
+
+        out_proj = ds_wind.GetProjection()
+        transformer = Transformer.from_crs("EPSG:4326", out_proj, always_xy=True)
+        _x, _y = transformer.transform(lon, lat)
+        x, y = geo2xy(ds_wind, _x, _y)
+
+        band_wind = ds_wind.GetRasterBand(1)
+        bitmap_wind = band_wind.GetMaskBand().ReadAsArray()
+
+        try:
+            _ = bitmap_wind[y, x]
+        except IndexError:
+            raise IndexError("ERROR: no data at requested latitude and longitude - point outside of model grid")
+
+        if not bitmap_wind[y, x]:
+            raise IndexError("ERROR: no data at requested latitude and longitude - data at point is masked")
+
+        band_wdir = ds_wdir.GetRasterBand(1)
+
+        data_array_wind = band_wind.ReadAsArray()
+        data_array_wdir = band_wdir.ReadAsArray()
+
+        norm = data_array_wind[y, x] * MS_TO_KNOTS
+        dir = data_array_wdir[y, x]
+
+    output = {}
+
+    output['wind_speed'] = norm
+    output['wind_dir'] = dir
+
+    return output
+
+
 def extract_wind_data(
     model,
     model_run,
-    forecast_hour,
+    forecast_start_hour,
+    forecast_step,
+    forecast_end_hour,
     lon,
     lat,
 ):
@@ -165,38 +300,6 @@ def extract_wind_data(
     run_hour = f"{date.hour:02}"
     date_formatted = date.strftime("%Y%m%d")
 
-    match(model):
-        case "GDWPS":
-            inter_path = f"/model_gdwps/25km/{run_hour}/"
-            file_name_x = f"{date_formatted}T{run_hour}Z_MSC_GDWPS_UGRD_AGL-10m_LatLon0.25_PT{forecast_hour}H.grib2"
-            file_name_y = f"{date_formatted}T{run_hour}Z_MSC_GDWPS_VGRD_AGL-10m_LatLon0.25_PT{forecast_hour}H.grib2"
-
-        case "GDPS":
-            inter_path = f"/model_gem_global/15km/grib2/lat_lon/{run_hour}/{forecast_hour}/"
-            file_name_x = f"CMC_glb_UGRD_TGL_10_latlon.15x.15_{date_formatted}{run_hour}_P{forecast_hour}.grib2"
-            file_name_y = f"CMC_glb_VGRD_TGL_10_latlon.15x.15_{date_formatted}{run_hour}_P{forecast_hour}.grib2"
-
-        case "GEPS":
-            raise NotImplementedError("GEPS raw data not yet in Geomet HPFX")
-
-        case "RDWPS":
-            inter_path = f"/model_rdwps/national/2.5km/{run_hour}/"
-            file_name_x = f"{date_formatted}T{run_hour}Z_MSC_RDWPS_UGRD_AGL-10m_RLatLon0.0225_PT{forecast_hour}H.grib2"
-            file_name_y = f"{date_formatted}T{run_hour}Z_MSC_RDWPS_VGRD_AGL-10m_RLatLon0.0225_PT{forecast_hour}H.grib2"
-
-        case "HRDPS":
-            inter_path = f"/model_hrdps/continental/2.5km/{run_hour}/{forecast_hour}/"
-            file_name_x = f"{date_formatted}T{run_hour}Z_MSC_HRDPS_UGRD_AGL-10m_RLatLon0.0225_PT{forecast_hour}H.grib2"
-            file_name_y = f"{date_formatted}T{run_hour}Z_MSC_HRDPS_VGRD_AGL-10m_RLatLon0.0225_PT{forecast_hour}H.grib2"
-
-        case "REPS":
-            inter_path = f"/ensemble/reps/10km/grib2/{run_hour}/{forecast_hour}/"
-            file_name_x = f"{date_formatted}T{run_hour}Z_MSC_REPS_UGRD_AGL-10m_RLatLon0.09x0.09_PT{forecast_hour}H.grib2"
-            file_name_y = f"{date_formatted}T{run_hour}Z_MSC_REPS_VGRD_AGL-10m_RLatLon0.09x0.09_PT{forecast_hour}H.grib2"
-
-        case _:
-            raise ValueError(f"Unknown model: {model}")
-
     output = {
         'type': "Feature",
         'geometry': {"type": "Point", "coordinates": [lon, lat]},
@@ -206,47 +309,13 @@ def extract_wind_data(
         },
     }
 
-    full_path_x = f"{data_basepath}{inter_path}{file_name_x}"
-    full_path_y = f"{data_basepath}{inter_path}{file_name_y}"
+    n = (int(forecast_end_hour) - int(forecast_start_hour)) / forecast_step
+    n = int(n) + 1
 
-    ds_x = gdal.Open(full_path_x, gdal.GA_ReadOnly)
-    ds_y = gdal.Open(full_path_y, gdal.GA_ReadOnly)
-
-    if ds_x is None:
-        raise NameError(f"Couldn't open {full_path_x}, check if file exists")
-
-    if ds_y is None:
-        raise NameError(f"Couldn't open {full_path_y}, check if file exists")
-
-    out_proj = ds_x.GetProjection()
-    transformer = Transformer.from_crs("EPSG:4326", out_proj, always_xy=True)
-    _x, _y = transformer.transform(lon, lat)
-    x, y = geo2xy(ds_x, _x, _y)
-
-    band_x = ds_x.GetRasterBand(1)
-    bitmap_x = band_x.GetMaskBand().ReadAsArray()
-
-    try:
-        _ = bitmap_x[y, x]
-    except IndexError:
-        raise IndexError("ERROR: no data at requested latitude and longitude - point outside of model grid")
-
-    if not bitmap_x[y, x]:
-        raise IndexError("ERROR: no data at requested latitude and longitude - data at point is masked")
-
-    band_y = ds_y.GetRasterBand(1)
-
-    data_array_x = band_x.ReadAsArray()
-    data_array_y = band_y.ReadAsArray()
-
-    wind_speed_x = data_array_x[y, x]
-    wind_speed_y = data_array_y[y, x]
-
-    norm = get_norm(wind_speed_x, wind_speed_y) * MS_TO_KNOTS
-    dir = get_dir(wind_speed_x, wind_speed_y)
-
-    output['properties']['wind_speed'] = norm
-    output['properties']['wind_dir'] = dir
+    for i in range(n):
+        forecast_hour = int(forecast_start_hour) + (i * forecast_step)
+        forecast_hour = f'{forecast_hour}'.zfill(3)
+        output['properties'][forecast_hour] = get_single_wind_data(model, date_formatted, run_hour, forecast_hour, data_basepath, lon, lat)
 
     return output
 
@@ -271,7 +340,7 @@ def extract_wind_data_execute():
 )
 @click.option(
     "-fh",
-    "--forecast_hour",
+    "--forecast_start_hour",
     help="forecast hour 3 digits format",
     required=True
 )
@@ -289,7 +358,7 @@ def extract_wind_data_cli(
     ctx,
     model,
     model_run,
-    forecast_hour,
+    forecast_start_hour,
     lon,
     lat,
 ):
@@ -301,7 +370,7 @@ def extract_wind_data_cli(
         output = extract_wind_data(
             model,
             model_run,
-            forecast_hour,
+            forecast_start_hour,
             float(lon),
             float(lat),
         )
@@ -332,7 +401,7 @@ try:
         def execute(self, data, outputs=None):
             mimetype = "application/json"
 
-            required = ["model", "model_run", "forecast_hour", "lon", "lat"]
+            required = ["model", "model_run", "forecast_start_hour", "forecast_step", "forecast_end_hour", "lon", "lat"]
             if not all([param in data for param in required]):
                 msg = "Missing required parameters."
                 LOGGER.error(msg)
@@ -340,7 +409,9 @@ try:
 
             model = data.get("model")
             mr = data.get("model_run")
-            fh = data.get("forecast_hour")
+            fsh = data.get("forecast_start_hour")
+            fs = data.get("forecast_step")
+            fse = data.get("forecast_end_hour")
             lon = float(data.get("lon"))
             lat = float(data.get("lat"))
 
@@ -348,7 +419,9 @@ try:
                 output = extract_wind_data(
                     model,
                     mr,
-                    fh,
+                    fsh,
+                    fs,
+                    fse,
                     lon,
                     lat,
                 )
