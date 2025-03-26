@@ -176,15 +176,6 @@ def get_single_wind_data(model, date_formatted, run_hour, forecast_hour, data_ba
             file_name_u = f"CMC_glb_UGRD_TGL_10_latlon.15x.15_{date_formatted}{run_hour}_P{forecast_hour}.grib2"
             file_name_v = f"CMC_glb_VGRD_TGL_10_latlon.15x.15_{date_formatted}{run_hour}_P{forecast_hour}.grib2"
 
-        case "GEPS":
-            raise NotImplementedError("GEPS raw data not yet in Geomet HPFX")
-
-        case "RDWPS":
-            # RDWPS grid is rotated so we're using HRDPS instead
-            inter_path = f"/model_hrdps/continental/2.5km/{run_hour}/{forecast_hour}/"
-            file_name_wind = f"{date_formatted}T{run_hour}Z_MSC_HRDPS_WIND_AGL-10m_RLatLon0.0225_PT{forecast_hour}H.grib2"
-            file_name_wdir = f"{date_formatted}T{run_hour}Z_MSC_HRDPS_WDIR_AGL-10m_RLatLon0.0225_PT{forecast_hour}H.grib2"
-
         case "HRDPS":
             inter_path = f"/model_hrdps/continental/2.5km/{run_hour}/{forecast_hour}/"
             file_name_wind = f"{date_formatted}T{run_hour}Z_MSC_HRDPS_WIND_AGL-10m_RLatLon0.0225_PT{forecast_hour}H.grib2"
