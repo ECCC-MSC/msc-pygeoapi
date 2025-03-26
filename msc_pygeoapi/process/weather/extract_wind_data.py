@@ -49,7 +49,7 @@ PROCESS_METADATA = {
     'inputs': {
         'model': {
             'title': 'model name',
-            'description': 'GDWPS, GDPS, GEPS, RDWPS, HRDPS, REPS',
+            'description': 'GDWPS, GDPS, RDWPS, HRDPS, REPS',
             'schema': {
                 'type': 'string',
             },
@@ -176,20 +176,19 @@ def get_single_wind_data(model, date_formatted, run_hour, forecast_hour, data_ba
             file_name_u = f"CMC_glb_UGRD_TGL_10_latlon.15x.15_{date_formatted}{run_hour}_P{forecast_hour}.grib2"
             file_name_v = f"CMC_glb_VGRD_TGL_10_latlon.15x.15_{date_formatted}{run_hour}_P{forecast_hour}.grib2"
 
-        case "HRDPS":
+        case "HRDPS" | "RDWPS":
             inter_path = f"/model_hrdps/continental/2.5km/{run_hour}/{forecast_hour}/"
             file_name_wind = f"{date_formatted}T{run_hour}Z_MSC_HRDPS_WIND_AGL-10m_RLatLon0.0225_PT{forecast_hour}H.grib2"
             file_name_wdir = f"{date_formatted}T{run_hour}Z_MSC_HRDPS_WDIR_AGL-10m_RLatLon0.0225_PT{forecast_hour}H.grib2"
 
         case "REPS":
             inter_path = f"/ensemble/reps/10km/grib2/{run_hour}/{forecast_hour}/"
-            file_name_u = f"{date_formatted}T{run_hour}Z_MSC_REPS_UGRD_AGL-10m_RLatLon0.09x0.09_PT{forecast_hour}H.grib2"
-            file_name_v = f"{date_formatted}T{run_hour}Z_MSC_REPS_VGRD_AGL-10m_RLatLon0.09x0.09_PT{forecast_hour}H.grib2"
+            file_name_wind = f"{date_formatted}T{run_hour}Z_MSC_REPS_WIND_AGL-80m_RLatLon0.09x0.09_PT{forecast_hour}H.grib2"
 
         case _:
             raise ValueError(f"Unknown model: {model}")
 
-    if model in ("GDWPS", "GDPS", "GEPS", "REPS"):
+    if model in ("GDWPS", "GDPS"):
         full_path_u = f"{data_basepath}{inter_path}{file_name_u}"
         full_path_v = f"{data_basepath}{inter_path}{file_name_v}"
 
@@ -229,7 +228,7 @@ def get_single_wind_data(model, date_formatted, run_hour, forecast_hour, data_ba
         norm = get_norm(wind_speed_u, wind_speed_v) * MS_TO_KNOTS
         dir = get_dir(wind_speed_u, wind_speed_v)
 
-    else:
+    elif model in ("HRDPS", "RDWPS"):
         full_path_wind = f"{data_basepath}{inter_path}{file_name_wind}"
         full_path_wdir = f"{data_basepath}{inter_path}{file_name_wdir}"
 
@@ -265,6 +264,35 @@ def get_single_wind_data(model, date_formatted, run_hour, forecast_hour, data_ba
 
         norm = data_array_wind[y, x] * MS_TO_KNOTS
         dir = data_array_wdir[y, x]
+
+    else:
+        full_path_wind = f"{data_basepath}{inter_path}{file_name_wind}"
+
+        ds_wind = gdal.Open(full_path_wind, gdal.GA_ReadOnly)
+
+        if ds_wind is None:
+            raise NameError(f"Couldn't open {full_path_wind}, check if file exists")
+
+        out_proj = ds_wind.GetProjection()
+        transformer = Transformer.from_crs("EPSG:4326", out_proj, always_xy=True)
+        _x, _y = transformer.transform(lon, lat)
+        x, y = geo2xy(ds_wind, _x, _y)
+
+        band_wind = ds_wind.GetRasterBand(1)
+        bitmap_wind = band_wind.GetMaskBand().ReadAsArray()
+
+        try:
+            _ = bitmap_wind[y, x]
+        except IndexError:
+            raise IndexError("ERROR: no data at requested latitude and longitude - point outside of model grid")
+
+        if not bitmap_wind[y, x]:
+            raise IndexError("ERROR: no data at requested latitude and longitude - data at point is masked")
+
+        data_array_wind = band_wind.ReadAsArray()
+
+        norm = data_array_wind[y, x] * MS_TO_KNOTS
+        dir = None
 
     output = {}
 
