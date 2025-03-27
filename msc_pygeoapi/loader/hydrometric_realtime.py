@@ -48,7 +48,8 @@ from msc_pygeoapi.util import (
 LOGGER = logging.getLogger(__name__)
 
 STATIONS_LIST_NAME = 'hydrometric_StationList.csv'
-STATIONS_LIST_URL = f'https://dd.weather.gc.ca/hydrometric/doc/{STATIONS_LIST_NAME}'  # noqa
+TODAY_DATE = datetime.today().strftime('%Y%m%d')
+STATIONS_LIST_URL = f'https://dd.weather.gc.ca/{TODAY_DATE}/WXO-DD/hydrometric/doc/{STATIONS_LIST_NAME}'  # noqa
 
 STATIONS_CACHE = os.path.join(MSC_PYGEOAPI_CACHEDIR, STATIONS_LIST_NAME)
 
