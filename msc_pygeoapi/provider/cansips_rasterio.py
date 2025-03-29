@@ -31,18 +31,15 @@
 # =================================================================
 
 from datetime import date, datetime
-import glob
 import logging
 import os
 from parse import search
-import pathlib
+from pathlib import Path
 
 from dateutil.relativedelta import relativedelta
-import numpy as np
 import rasterio
 from rasterio.io import MemoryFile
 import rasterio.mask
-from rasterio.transform import from_bounds
 
 from pygeoapi.provider.base import (BaseProvider, ProviderConnectionError,
                                     ProviderQueryError)
@@ -69,17 +66,16 @@ class CanSIPSProvider(RasterioProvider):
             self.member = []
             self.parameter = ''
 
-            self.var = 'TMP_TGL_2m_'
+            self.var_list = ['AirTemp_AGL-2m',
+                             'GeopotentialHeight_ISBL-0500',
+                             'PrecipRate_Sfc',
+                             'Pressure_MSL',
+                             'AirTemp_ISBL-0850',
+                             'WaterTemp_Sfc']
+            self.var = self.var_list[0]
             self.get_file_list(self.var)
 
             self.data = self.file_list[0]
-
-            self.var_list = ['TMP_TGL_2m',
-                             'HGT_ISBL_0500', # noqa
-                             'PRATE_SFC_0',
-                             'PRMSL_MSL_0',
-                             'TMP_ISBL_0850', # noqa
-                             'WTMP_SFC_0']
 
             self._data = rasterio.open(self.data)
             self._coverage_properties = self._get_coverage_properties()
@@ -104,7 +100,7 @@ class CanSIPSProvider(RasterioProvider):
         domainset = {}
         domainset['member'] = {
                 'definition': 'Members - RegularAxis',
-                'interval': [[1, 20]],
+                'interval': [[1, 40]],
                 'grid': {
                     'resolution': 1
                 }
@@ -123,7 +119,7 @@ class CanSIPSProvider(RasterioProvider):
 
         for var in self.var_list:
             self._data = rasterio.open(self.data.replace(
-                'TMP_TGL_2m', var))
+                'AirTemp_AGL-2m', var))
 
             i, dtype, _ = self._data.indexes[0], \
                 self._data.dtypes[0], self._data.nodatavals[0]
@@ -138,9 +134,6 @@ class CanSIPSProvider(RasterioProvider):
                     self._data.profile['driver'], self._data.tags(i))
                 name = self.parameter['description']
                 units = self.parameter['unit_label']
-
-            if 'TMP_ISBL_0850' in var:
-                name = 'Temperature [C] at 850 mb'
 
             dtype2 = dtype
             if dtype.startswith('float'):
@@ -159,7 +152,7 @@ class CanSIPSProvider(RasterioProvider):
 
         return self._fields
 
-    def query(self, properties=['TMP_TGL_2m'], subsets={}, bbox=[],
+    def query(self, properties=['AirTemp_AGL-2m'], subsets={}, bbox=[],
               datetime_=None, format_='json', **kwargs):
         """
         Extract data from collection collection
@@ -183,8 +176,6 @@ class CanSIPSProvider(RasterioProvider):
             LOGGER.error(err)
             raise ProviderQueryError(err)
 
-        self.get_file_list(properties[0])
-
         try:
             self.member = subsets['member']
         except KeyError:
@@ -194,178 +185,190 @@ class CanSIPSProvider(RasterioProvider):
             'indexes': None
         }
 
-        bands = []
+        bands = list(map(int, self.member))
 
         drt_dict = self._coverage_properties['uad']['reference_time']
         dt_begin = self._coverage_properties['time_range'][0]
-        if datetime_:
-            if 'reference_time' in subsets:
-                year, month = subsets['reference_time'][0].split('-')
-            # check if datetime requested later than the latest default time
-            elif datetime_.split('/')[0] > dt_begin:
-                year, month = drt_dict['interval'][0][-1].split('-')
-            else:
-                year, month = datetime_.split('/')[0].split('-')
-                if month == '01':
-                    year = str(int(year) - 1)
-                    month = '12'
-                else:
-                    month = str(int(month) - 1).zfill(2)
-            bands = self.get_band_datetime(datetime_, year, month)
-        else:
-            if 'reference_time' in subsets:
-                year, month = subsets['reference_time'][0].split('-')
-            else:
-                year, month = drt_dict['interval'][0][-1].split('-')
-            num_months_1 = 1 + 12 * (self.member[0] - 1)
-            num_months_2 = 12 + 12 * (self.member[0] - 1)
-            bands = list(range(num_months_1, num_months_2 + 1))
+        month_list = ['00']
 
-        self.data = self.data.replace('2013', year)
-        self.data = self.data.replace('04', month)
+        if datetime_:
+            if '/' in datetime_:  # Date range scenario
+                month_list = []
+                reference_time_key = 'reference_time' in subsets
+                if reference_time_key:
+                    sub_rf = subsets['reference_time'][0]
+                    model_year, model_month = sub_rf.split('-')
+                else:
+                    dt_split = datetime_.split('/')[0]
+                    model_year, model_month = dt_split.split('-')
+
+                min_date, max_date = datetime_.split('/')
+                min_forecast_year, min_forecast_month = min_date.split('-')
+                max_forecast_year, max_forecast_month = max_date.split('-')
+
+                # Compute month differences and generate list
+                min_diff = self.get_month_difference(model_year,
+                                                     model_month,
+                                                     min_forecast_year,
+                                                     min_forecast_month)
+                max_diff = self.get_month_difference(model_year,
+                                                     model_month,
+                                                     max_forecast_year,
+                                                     max_forecast_month)
+                month_list = self.generate_month_list(min_diff, max_diff)
+
+            else:  # Single date scenario
+                reference_time_key = 'reference_time' in subsets
+                if reference_time_key:
+                    sub = subsets['reference_time']
+                    model_year, model_month = sub[0].split('-')
+                elif datetime_ > dt_begin:
+                    drtd = drt_dict['interval']
+                    model_year, model_month = drtd[0][-1].split('-')
+                else:
+                    model_year, model_month = datetime_.split('-')
+
+                forecast_year, forecast_month = datetime_.split('-')
+                diff_in_months = self.get_month_difference(model_year,
+                                                           model_month,
+                                                           forecast_year,
+                                                           forecast_month)
+                month_list = [str(diff_in_months).zfill(2)]
+
+        else:  # No datetime provided
+            model_year, model_month = (
+                subsets['reference_time'][0].split('-')
+                if 'reference_time' in subsets
+                else drt_dict['interval'][0][-1].split('-')
+            )
+
+        # Call the function with computed values
+        if any(int(i) > 11 for i in month_list):
+            msg = 'time interval is invalid'
+            LOGGER.error(msg)
+            raise ProviderQueryError(msg)
+        self.get_file_list(properties[0],
+                           f'{model_year}{model_month}',
+                           month_list)
 
         LOGGER.debug('Selecting bands')
         args['indexes'] = bands
 
-        self.data = self.data.replace(
-            'TMP_TGL_2m', properties[0])
+        for _file in self.file_list:
+            if not os.path.isfile(_file):
+                msg = 'No such file'
+                LOGGER.error(msg)
+                raise ProviderQueryError(msg)
 
-        if not os.path.isfile(self.data):
-            msg = 'No such file'
-            LOGGER.error(msg)
-            raise ProviderQueryError(msg)
+        with rasterio.open(self.file_list[0]) as self._data:
 
-        with rasterio.open(self.data) as self._data:
-            # Get original transform and bounds
-            left, bottom, right, top = self._data.bounds
-            width, height = self._data.width, self._data.height
+            out_meta = self._data.meta
+            out_meta.update(nodata=9999.0)
+            tags = [self._data.tags(args['indexes'][0])]
 
-            # Read the raster data
-            data = self._data.read()
-            self.parameter = _get_parameter_metadata(self._data.driver,
-                                                     self._data.tags(1))
+            if len(bbox) > 0:
+                minx, miny, maxx, maxy = bbox
+            else:
+                minx, miny, maxx, maxy = self._data.bounds
+            shapes = [{
+                'type': 'Polygon',
+                'coordinates': [[
+                    [minx, miny],
+                    [minx, maxy],
+                    [maxx, maxy],
+                    [maxx, miny],
+                    [minx, miny]
+                ]]
+            }]
+            out_meta['bbox'] = [minx, miny, maxx, maxy]
 
-            # Shift left half (-180 to 0) and right half (0 to 180)
-            mid_idx = width // 2  # Find the middle pixel column
-            left_half = data[:, :, mid_idx:]
-            right_half = data[:, :, :mid_idx]
+            if self.options is not None:
+                LOGGER.debug('Adding dataset options')
+                for key, value in self.options.items():
+                    out_meta[key] = value
 
-            # Pad right_half to match left_half width
-            right_half = np.pad(right_half,
-                                ((0, 0), (0, 0), (0, 1)),
-                                mode='constant',
-                                constant_values=np.nan)
+            try:
+                LOGGER.debug('Clipping data with bbox')
+                out_image, out_transform = rasterio.mask.mask(
+                    self._data,
+                    filled=False,
+                    shapes=shapes,
+                    crop=True,
+                    nodata=9999.0,
+                    indexes=args['indexes'])
+            except ValueError as err:
+                LOGGER.error(err)
+                raise ProviderQueryError(err)
 
-            # Merge both halves
-            data_shifted = np.concatenate((left_half, right_half), axis=2)
-            # **Remove the padding (last column)**
-            # data_shifted = data_shifted[:, :, :-1]  # Trim last column
+            out_meta.update({'driver': self.native_format,
+                             'height': out_image.shape[1],
+                             'width': out_image.shape[2],
+                             'transform': out_transform})
 
-            # New longitude bounds
-            new_left, new_right = left - 180, right - 180
+            # CovJSON output does not support multiple bands yet
+            # Only the first timestep is returned
+            if format_ == 'json':
 
-            # Create new transform
-            new_transform = from_bounds(new_left,
-                                        bottom,
-                                        new_right,
-                                        top,
-                                        width,
-                                        height)
+                if datetime_ and '/' in datetime_:
+                    err = 'Date range not yet supported for CovJSON'
+                    LOGGER.error(err)
+                    raise ProviderQueryError(err)
+                else:
+                    LOGGER.debug('Creating output in CoverageJSON')
+                    out_meta['bands'] = [1]
+                    self.parameter = _get_parameter_metadata(self._data.driver,
+                                                             tags[0])
+                    return self.gen_covjson(out_meta, out_image)
+            else:
+                fn = f'{model_year}{model_month}_MSC_CanSIPS_{properties[0]}_LatLon1.0.grib2' # noqa
+                self.filename = fn
+                if len(self.file_list) > 1:
+                    out_meta.update(count=len(self.file_list))
+                    LOGGER.debug('Serializing data in memory')
+                    with MemoryFile() as memfile:
+                        with memfile.open(**out_meta, nbits=nbits) as dest:
+                            # first out_image is used above
+                            # no need to reclip it
+                            dest.update_tags(1, **tags[0])
+                            dest.write_band(1, out_image[0])
+                            for id, layer in enumerate(self.file_list[1:],
+                                                       start=2):
+                                with rasterio.open(layer) as src1:
+                                    tags.append(src1.tags(args['indexes'][0]))
+                                    if shapes:  # spatial subset
+                                        try:
+                                            LOGGER.debug('Clipping data')
+                                            out_image, out_transform = \
+                                                rasterio.mask.mask(
+                                                    src1,
+                                                    filled=False,
+                                                    shapes=shapes,
+                                                    crop=True,
+                                                    nodata=9999.0,
+                                                    indexes=args['indexes'])
+                                        except ValueError as err:
+                                            LOGGER.error(err)
+                                            raise ProviderQueryError(err)
+                                    else:
+                                        out_image = src1.read(
+                                            indexes=args['indexes'])
+                                    dest.update_tags(id, **tags[id-1])
+                                    dest.write_band(id, out_image[0])
+                        # return data in native format
+                        LOGGER.debug('Returning data in native format')
+                        return memfile.read()
+                else:
+                    LOGGER.debug('Serializing data in memory')
+                    out_meta.update(count=len(args['indexes']))
+                    with MemoryFile() as _memfile:
+                        with _memfile.open(**out_meta, nbits=nbits) as dst:
+                            dst.update_tags(1, **tags[0])
+                            print(self.file_list[0])
+                            dst.write(out_image)
 
-            # Update profile for output
-            profile = self._data.profile
-            profile.update(transform=new_transform,
-                           nodata=9999.0)
-
-            with MemoryFile() as tmp_memfile:
-                with tmp_memfile.open(**profile, nbits=nbits) as mem_data:
-                    mem_data.write(data_shifted)
-
-                # TODO: uncomment, fix indentation once we have rasterio 1.3.11
-                # with rasterio.open(self.data) as src:
-                #     LOGGER.debug('Creating output coverage metadata')
-                #     #dst_crs = "EPSG:4326"
-                #     dst_crs = CRS.from_epsg(4326)
-                #     left, bottom, right, top = transform_bounds(src.crs,
-                #                                                 dst_crs,
-                #                                                 *src.bounds)
-                #     dst_bounds=(left, bottom, right, top)
-
-                    out_meta = mem_data.meta
-
-                    if len(bbox) > 0:
-                        minx, miny, maxx, maxy = bbox
-                    else:
-                        minx, miny, maxx, maxy = (-178.75,
-                                                  -91.25,
-                                                  181.25,
-                                                  91.25)
-                    shapes = [{
-                        'type': 'Polygon',
-                        'coordinates': [[
-                            [minx, miny],
-                            [minx, maxy],
-                            [maxx, maxy],
-                            [maxx, miny],
-                            [minx, miny]
-                        ]]
-                    }]
-                    out_meta['bbox'] = [minx, miny, maxx, maxy]
-
-                    # TODO: uncomment, fix indentation
-                    # once we have rasterio 1.3.11
-                    # reprojection of the original file from 0,360 to -180,180
-                    # with WarpedVRT(src,
-                    #                crs=dst_crs,
-                    #                dst_bounds=dst_bounds) as self._data:
-
-                    if self.options is not None:
-                        LOGGER.debug('Adding dataset options')
-                        for key, value in self.options.items():
-                            out_meta[key] = value
-
-                    try:
-                        LOGGER.debug('Clipping data with bbox')
-                        out_image, out_transform = rasterio.mask.mask(
-                            mem_data,
-                            filled=False,
-                            shapes=shapes,
-                            crop=True,
-                            nodata=9999.0,
-                            indexes=args['indexes'])
-                    except ValueError as err:
-                        LOGGER.error(err)
-                        raise ProviderQueryError(err)
-
-                    out_meta.update({'driver': self.native_format,
-                                     'height': out_image.shape[1],
-                                     'width': out_image.shape[2],
-                                     'transform': out_transform})
-
-                    # CovJSON output does not support multiple bands yet
-                    # Only the first timestep is returned
-                    if format_ == 'json':
-
-                        if datetime_ and '/' in datetime_:
-                            err = 'Date range not yet supported for CovJSON'
-                            LOGGER.error(err)
-                            raise ProviderQueryError(err)
-                        else:
-                            LOGGER.debug('Creating output in CoverageJSON')
-                            out_meta['bands'] = [1]
-                            return self.gen_covjson(out_meta, out_image)
-                    else:
-                        LOGGER.debug('Serializing data in memory')
-                        out_meta.update(count=len(args['indexes']))
-                        out_meta[''] = ''
-                        self.filename = self.data.split('/')[-1]
-                        with MemoryFile() as _memfile:
-                            with _memfile.open(**out_meta, nbits=nbits) as dst:
-                                dst.write(out_image)
-
-                            # return data in native format
-                            LOGGER.debug('Returning data in native format')
-                            return _memfile.read()
+                        # return data in native format
+                        LOGGER.debug('Returning data in native format')
+                        return _memfile.read()
 
     def _get_coverage_properties(self):
         """
@@ -383,7 +386,7 @@ class CanSIPSProvider(RasterioProvider):
 
         domainset['reference_time'] = {
             'definition': 'reference_time - Temporal',
-            'interval': [['2013-04', end]],
+            'interval': [['2023-11', end]],
             'grid': {
                 'resolution': restime
                 }
@@ -391,8 +394,8 @@ class CanSIPSProvider(RasterioProvider):
 
         properties['uad'] = domainset
 
-        begin = self.get_time_from_dim(end, 1)
-        end = self.get_time_from_dim(end, 13)
+        begin = self.get_time_from_dim(end, 0)
+        end = self.get_time_from_dim(end, 12)
 
         properties['time_range'] = [begin, end]
         properties['restime'] = restime
@@ -431,45 +434,48 @@ class CanSIPSProvider(RasterioProvider):
 
         return cj
 
-    def get_file_list(self, variable, datetime_=None):
+    def get_file_list(
+        self,
+        variable: str = '*',
+        reference_time: str = '*',
+        forecast_months: list = ['00'],
+    ) -> list[str]:
         """
-        Generate list of datetime from the query datetime_
+        Get list of files for given variable, probability and specified model
+        run (if provided)
 
-        :param variable: variable from query
-        :param datetime_: forecast time from the query
-
-        :returns: True
+        :param variable: variable name
+        :param reference_time: model run datetime
+        :param forecast_months: forecast months for datetime
+        :returns: list of files
         """
 
-        try:
-            file_path = pathlib.Path(self.data).parent.resolve()
+        LOGGER.debug(
+            f'Getting files list for variable: {variable}, reference_time: {reference_time}, forecast_months: {forecast_months}'  # noqa
+        )
 
-            file_path = str(file_path).split('/')
-            file_path[-1] = '*'
-            file_path[-2] = '*'
+        # if reference_time is a datetime object, we will format it to match
+        # the file name
+        if reference_time != '*':
+            reference_time = f'{reference_time}*'
 
-            file_ = f'cansips_forecast_raw_latlon2.5x2.5_{variable}*'
-            file_path_ = glob.glob(os.path.join('/'.join(file_path), file_))
-            file_path_.sort()
+        files = []
+        for month in forecast_months:
+            filter = f'{reference_time}_MSC_CanSIPS_{variable}_LatLon1.0_P{month}M.grib2' # noqa
 
-            if datetime_:
-                begin, end = datetime_.split('/')
+            # Find files for each month and add to the overall list
+            month_files = [
+                str(file)
+                for file in Path(
+                    '/datasan/geomet/local/cansips-archives/100km/forecast/'
+                ).rglob(filter)
+            ]
+            files.extend(month_files)
 
-                begin_file_idx = [file_path_.index(i) for i
-                                  in file_path_ if begin in i]
-                end_file_idx = [file_path_.index(i) for i
-                                in file_path_ if end in i]
+        # Sort all collected files
+        self.file_list = sorted(files)
 
-                self.file_list = file_path_[
-                    begin_file_idx[0]:end_file_idx[0] + 1]
-                return True
-            else:
-                self.file_list = file_path_
-                return True
-
-        except ValueError as err:
-            LOGGER.error(err)
-            return False
+        return self.file_list
 
     def get_end_time_from_file(self):
         """
@@ -478,10 +484,12 @@ class CanSIPSProvider(RasterioProvider):
         :returns: list of begin and end time as string
         """
 
-        pattern = 'TMP_TGL_2m_{}_allmembers.grib2'
+        pattern = '/datasan/geomet/local/cansips-archives/100km/forecast/{year}/{month}/{model_run}_MSC_CanSIPS_AirTemp_AGL-2m_LatLon1.0_P00M.grib2' # noqa
 
-        begin = search(pattern, self.file_list[0])[0]
-        end = search(pattern, self.file_list[-1])[0]
+        begin = search(pattern, self.file_list[0])['model_run']
+        begin = f'{begin[:4]}-{begin[4:]}'
+        end = search(pattern, self.file_list[-1])['model_run']
+        end = f'{end[:4]}-{end[4:]}'
 
         return begin, end
 
@@ -503,71 +511,15 @@ class CanSIPSProvider(RasterioProvider):
 
         return forecast_time
 
-    def get_months_number(self, possible_time, year, month, datetime_):
-        """
-        Get the difference in number of months between
-        reference_time (year, month) and datetime_
+    def get_month_difference(self, start_y, start_m, end_y, end_m):
+        """Calculate the number of months between two dates."""
+        start_date = datetime(int(start_y), int(start_m), 1)
+        end_date = datetime(int(end_y), int(end_m), 1)
+        final_month1 = (end_date.year - start_date.year) * 12
+        final_month2 = (end_date.month - start_date.month)
+        return final_month1 + final_month2
 
-        :param possible_time: list of possible time from dim_refenrence_time
-        :param year: year from dim_refenrence_time
-        :param month: month from dim_refenrence_time
-        :param datetime_: forecast time from the query
-
-        :returns: number of months as integer
-        """
-
-        if datetime_ not in possible_time:
-            err = 'Not a valid datetime'
-            LOGGER.error(err)
-            raise ProviderQueryError(err)
-        else:
-            # from dim_ref_time
-            begin_date = datetime(int(year), int(month), 1)
-            # from datetime_
-            year2, month2 = datetime_.split('-')
-            end_date = datetime(int(year2), int(month2), 1)
-            num_months = (end_date.year - begin_date.year) \
-                * 12 + (end_date.month - begin_date.month)
-            return num_months
-
-    def get_band_datetime(self, datetime_, year, month):
-        """
-        generate list of bands from dim_refenrece_time and datetime_
-
-        :param datetime_: forecast time from the query
-        :param year: year from reference_time
-        :param month: month from reference_time
-
-        :returns: list of bands
-        """
-
-        # making a list of the datetime for the given dim_ref_time
-        possible_time = []
-        for i in range(1, 13):
-            possible_time.append(self.get_time_from_dim(f'{year}-{month}', i))
-
-        if '/' not in datetime_:
-            if datetime_ not in possible_time:
-                err = 'Not a valid datetime'
-                LOGGER.error(err)
-                raise ProviderQueryError(err)
-            else:
-                num_months = self.get_months_number(
-                    possible_time, year, month, datetime_)
-                return [num_months + 12 * (self.member[0] - 1)]
-
-        else:
-            datetime1, datetime2 = datetime_.split('/')
-            if datetime1 not in possible_time or \
-                    datetime2 not in possible_time:
-                err = 'Not a valid datetime'
-                LOGGER.error(err)
-                raise ProviderQueryError(err)
-            num_months_1 = self.get_months_number(
-                possible_time, year, month, datetime1)
-            num_months_2 = self.get_months_number(
-                possible_time, year, month, datetime2)
-
-            num_months_1 = num_months_1 + 12 * (self.member[0] - 1)
-            num_months_2 = num_months_2 + 12 * (self.member[0] - 1)
-            return (list(range(num_months_1, num_months_2 + 1)))
+    def generate_month_list(self, start_diff, end_diff):
+        """Generate a list of month differences as zero-padded strings."""
+        return [str(i).zfill(2) for i in range(int(start_diff),
+                                               int(end_diff) + 1)]
