@@ -4058,8 +4058,8 @@ resources:
     weather:cansips:100km:forecast:members:
         type: collection
         title:
-            en: Canadian Seasonal to Inter-annual Prediction System (CanSIPS) - members at 100km
-            fr: Système de Prévision Interannuelle et Saisonnière Canadien (SPISCan) - membres à 100 km
+            en: CanSIPS - Members at 100 km
+            fr: SPISCan - Membres à 100 km
         description:
             en: The Canadian Seasonal to Inter-annual Prediction System (CanSIPS) carries out physics calculations to arrive at probabilistic predictions of atmospheric elements from the beginning of a month out to up to 12 months into the future, resulting in seasonal forecasts. Atmospheric elements include temperature, precipitation, wind speed and direction and others. This product contains raw numerical results of these calculations. Geographical coverage is global. Data is available on a grid at a horizontal resolution of 1 degree and for a few selected vertical levels.
             fr: Le Système de Prévision Interannuelle et Saisonnière Canadien (SPISCan) procède à des calculs physiques afin de produire des prévisions probabilistes d'éléments de l'atmosphère du début d'un mois jusqu'à 12 mois dans le futur. Ceci permet d'établir des prévisions saisonnières. Les éléments de l'atmosphère incluent notamment la température, la précipitation, la vitesse et direction des vents. Ce produit contient les résultats numériques bruts de ces calculs. La couverture géographique est mondiale. Les données sont disponibles pour quelques niveaux verticaux choisis et sur une grille de résolution spatiale de 1 degrée.
