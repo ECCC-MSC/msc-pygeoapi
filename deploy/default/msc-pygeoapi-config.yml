@@ -1161,11 +1161,11 @@ resources:
     swob-realtime:
         type: collection
         title:
-            en: Surface Weather Observations (SWOB) - Real-Time Data
-            fr: Observations météorologiques à la surface (SWOB) - Données en temps réel
+            en: SWOB - Real-Time Data
+            fr: SWOB - Données en temps réel
         description:
-            en: Surface Observations measured at the automatic and manual stations of the Environment and Climate Change Canada and partners networks, either for a single station, or for the stations of specific provinces and territories (last 30 days).
-            fr: Observations de surface mesurées aux stations automatiques et manuelles des réseaux d'Environnement et Changement climatique Canada et de ses partenaires soit pour une seule station, soit pour les stations de provinces et territoires spécifiques (30 derniers jours).
+            en: Surface Weather Observations (SWOB) measured at the automatic and manual stations of the Environment and Climate Change Canada and partners networks, either for a single station, or for the stations of specific provinces and territories (last 30 days).
+            fr: Observations météorologiques à la surface (SWOB) mesurées aux stations automatiques et manuelles des réseaux d'Environnement et Changement climatique Canada et de ses partenaires soit pour une seule station, soit pour les stations de provinces et territoires spécifiques (30 derniers jours).
         keywords:
             en: [surface, observations, weather, realtime]
             fr: [surface, observations, météo, temps réel]
@@ -1196,6 +1196,120 @@ resources:
               data: ${MSC_PYGEOAPI_ES_URL}/swob_realtime.*
               id_field: id
               time_field: date_tm-value
+
+    swob-station:
+        type: collection
+        title:
+            en: SWOB - Stations
+            fr: SWOB - Stations
+        description:
+            en: Surface Weather Observations (SWOB) measured at the automatic and manual stations of the Environment and Climate Change Canada and partners networks, either for a single station, or for the stations of specific provinces and territories (last 30 days).
+            fr: Observations météorologiques à la surface (SWOB) mesurées aux stations automatiques et manuelles des réseaux d'Environnement et Changement climatique Canada et de ses partenaires soit pour une seule station, soit pour les stations de provinces et territoires spécifiques (30 derniers jours).
+        keywords:
+            en: [surface, observations, weather, station]
+            fr: [surface, observations, météo, station]
+        crs:
+            - CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title:
+                  en: Stations of in situ observations
+                  fr: Stations d'observations
+              href:
+                  en: https://eccc-msc.github.io/open-data/msc-data/obs_station/readme_obs_insitu_swobdatamart_en
+                  fr: https://eccc-msc.github.io/open-data/msc-data/obs_station/readme_obs_insitu_swobdatamart_fr
+              hreflang:
+                  en: en-CA
+                  fr: fr-CA
+        extents:
+            spatial:
+                bbox: [-142, 42, -52, 84]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+            temporal:
+                begin: null
+                end: null # or empty
+        providers:
+            - type: feature
+              name: Elasticsearch
+              data: ${MSC_PYGEOAPI_ES_URL}/swob-surface-stations
+              id_field: id
+
+    swob-partner-station:
+        type: collection
+        title:
+            en: SWOB - Stations from Partners
+            fr: SWOB - Stations des partenaires
+        description:
+            en: Surface Weather Observations (SWOB) measured at the automatic and manual stations of the Environment and Climate Change Canada and partners networks, either for a single station, or for the stations of specific provinces and territories (last 30 days).
+            fr: Observations météorologiques à la surface (SWOB) mesurées aux stations automatiques et manuelles des réseaux d'Environnement et Changement climatique Canada et de ses partenaires soit pour une seule station, soit pour les stations de provinces et territoires spécifiques (30 derniers jours).
+        keywords:
+            en: [surface, observations, weather, station]
+            fr: [surface, observations, météo, station]
+        crs:
+            - CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title:
+                  en: Stations of in situ observations
+                  fr: Stations d'observations
+              href:
+                  en: https://eccc-msc.github.io/open-data/msc-data/obs_station/readme_obs_insitu_swobdatamart_en
+                  fr: https://eccc-msc.github.io/open-data/msc-data/obs_station/readme_obs_insitu_swobdatamart_fr
+              hreflang:
+                  en: en-CA
+                  fr: fr-CA
+        extents:
+            spatial:
+                bbox: [-142, 42, -52, 84]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+            temporal:
+                begin: null
+                end: null # or empty
+        providers:
+            - type: feature
+              name: Elasticsearch
+              data: ${MSC_PYGEOAPI_ES_URL}/swob-partner-stations
+              id_field: id
+
+    swob-marine-station:
+        type: collection
+        title:
+            en: SWOB - Stations for Marine
+            fr: SWOB - Stations pour la marine
+        description:
+            en: Surface Weather Observations (SWOB) measured at the automatic and manual stations of the Environment and Climate Change Canada and partners networks, either for a single station, or for the stations of specific provinces and territories (last 30 days).
+            fr: Observations météorologiques à la surface (SWOB) mesurées aux stations automatiques et manuelles des réseaux d'Environnement et Changement climatique Canada et de ses partenaires soit pour une seule station, soit pour les stations de provinces et territoires spécifiques (30 derniers jours).
+        keywords:
+            en: [surface, observations, weather, station]
+            fr: [surface, observations, météo, station]
+        crs:
+            - CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title:
+                  en: Stations of in situ observations
+                  fr: Stations d'observations
+              href:
+                  en: https://eccc-msc.github.io/open-data/msc-data/obs_station/readme_obs_insitu_swobdatamart_en
+                  fr: https://eccc-msc.github.io/open-data/msc-data/obs_station/readme_obs_insitu_swobdatamart_fr
+              hreflang:
+                  en: en-CA
+                  fr: fr-CA
+        extents:
+            spatial:
+                bbox: [-142, 42, -52, 84]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+            temporal:
+                begin: null
+                end: null # or empty
+        providers:
+            - type: feature
+              name: Elasticsearch
+              data: ${MSC_PYGEOAPI_ES_URL}/swob-marine-stations
+              id_field: id
 
     ltce-stations:
         type: collection
