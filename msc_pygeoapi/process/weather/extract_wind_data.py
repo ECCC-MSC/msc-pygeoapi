@@ -166,29 +166,29 @@ def geo2xy(ds, x, y):
 
 def get_single_wind_data(model, date_formatted, run_hour, forecast_hour, data_basepath, lon, lat):
     match(model):
-        case "GDWPS":
+        case "gdwps":
             inter_path = f"/model_gdwps/25km/{run_hour}/"
             file_name_u = f"{date_formatted}T{run_hour}Z_MSC_GDWPS_UGRD_AGL-10m_LatLon0.25_PT{forecast_hour}H.grib2"
             file_name_v = f"{date_formatted}T{run_hour}Z_MSC_GDWPS_VGRD_AGL-10m_LatLon0.25_PT{forecast_hour}H.grib2"
 
-        case "GDPS":
+        case "gdps":
             inter_path = f"/model_gem_global/15km/grib2/lat_lon/{run_hour}/{forecast_hour}/"
             file_name_u = f"CMC_glb_UGRD_TGL_10_latlon.15x.15_{date_formatted}{run_hour}_P{forecast_hour}.grib2"
             file_name_v = f"CMC_glb_VGRD_TGL_10_latlon.15x.15_{date_formatted}{run_hour}_P{forecast_hour}.grib2"
 
-        case "HRDPS" | "RDWPS":
+        case "hrdps" | "rdwps":
             inter_path = f"/model_hrdps/continental/2.5km/{run_hour}/{forecast_hour}/"
             file_name_wind = f"{date_formatted}T{run_hour}Z_MSC_HRDPS_WIND_AGL-10m_RLatLon0.0225_PT{forecast_hour}H.grib2"
             file_name_wdir = f"{date_formatted}T{run_hour}Z_MSC_HRDPS_WDIR_AGL-10m_RLatLon0.0225_PT{forecast_hour}H.grib2"
 
-        case "REPS":
+        case "reps":
             inter_path = f"/ensemble/reps/10km/grib2/{run_hour}/{forecast_hour}/"
             file_name_wind = f"{date_formatted}T{run_hour}Z_MSC_REPS_WIND_AGL-80m_RLatLon0.09x0.09_PT{forecast_hour}H.grib2"
 
         case _:
             raise ValueError(f"Unknown model: {model}")
 
-    if model in ("GDWPS", "GDPS"):
+    if model in ("gdwps", "gdps"):
         full_path_u = f"{data_basepath}{inter_path}{file_name_u}"
         full_path_v = f"{data_basepath}{inter_path}{file_name_v}"
 
@@ -228,7 +228,7 @@ def get_single_wind_data(model, date_formatted, run_hour, forecast_hour, data_ba
         norm = get_norm(wind_speed_u, wind_speed_v) * MS_TO_KNOTS
         dir = get_dir(wind_speed_u, wind_speed_v)
 
-    elif model in ("HRDPS", "RDWPS"):
+    elif model in ("hrdps", "rdwps"):
         full_path_wind = f"{data_basepath}{inter_path}{file_name_wind}"
         full_path_wdir = f"{data_basepath}{inter_path}{file_name_wdir}"
 
@@ -314,6 +314,8 @@ def extract_wind_data(
     from msc_pygeoapi.env import GEOMET_HPFX_BASEPATH
 
     data_basepath = GEOMET_HPFX_BASEPATH
+
+    model = model.lower()
 
     date = datetime.datetime.strptime(model_run, DATE_FORMAT)
     run_hour = f"{date.hour:02}"
