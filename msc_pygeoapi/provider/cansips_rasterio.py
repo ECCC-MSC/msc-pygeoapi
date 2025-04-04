@@ -461,14 +461,14 @@ class CanSIPSProvider(RasterioProvider):
 
         files = []
         for month in forecast_months:
-            filter = f'{reference_time}_MSC_CanSIPS_{variable}_LatLon1.0_P{month}M.grib2' # noqa
+            filter_ = f'{reference_time}_MSC_CanSIPS_{variable}_LatLon1.0_P{month}M.grib2' # noqa
 
             # Find files for each month and add to the overall list
             month_files = [
                 str(file)
                 for file in Path(
-                    '/datasan/geomet/local/cansips-archives/100km/forecast/'
-                ).rglob(filter)
+                    '/data/geomet/local/cansips-archives/100km/forecast/'
+                ).rglob(filter_)
             ]
             files.extend(month_files)
 
@@ -484,7 +484,7 @@ class CanSIPSProvider(RasterioProvider):
         :returns: list of begin and end time as string
         """
 
-        pattern = '/datasan/geomet/local/cansips-archives/100km/forecast/{year}/{month}/{model_run}_MSC_CanSIPS_AirTemp_AGL-2m_LatLon1.0_P00M.grib2' # noqa
+        pattern = '/data/geomet/local/cansips-archives/100km/forecast/{year}/{month}/{model_run}_MSC_CanSIPS_AirTemp_AGL-2m_LatLon1.0_P00M.grib2' # noqa
 
         begin = search(pattern, self.file_list[0])['model_run']
         begin = f'{begin[:4]}-{begin[4:]}'
