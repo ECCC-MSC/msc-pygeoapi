@@ -250,7 +250,6 @@ def extract_quartiles(
 
     for i in range(n):
         forecast_hour = forecast_start_hour + (i * forecast_step)
-        #forecast_hour = f'{forecast_hour:03}'
         output['time_steps'].append(forecast_hour)
 
     date = datetime.datetime.strptime(model_run, DATE_FORMAT)
