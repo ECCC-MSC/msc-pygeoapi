@@ -181,7 +181,7 @@ def get_single_wind_data(model, date_formatted, run_hour, forecast_hour, data_ba
             file_name_wind = f"{date_formatted}T{run_hour}Z_MSC_HRDPS_WIND_AGL-10m_RLatLon0.0225_PT{forecast_hour}H.grib2"
             file_name_wdir = f"{date_formatted}T{run_hour}Z_MSC_HRDPS_WDIR_AGL-10m_RLatLon0.0225_PT{forecast_hour}H.grib2"
 
-        case "reps":
+        case "reps" | "rewps":
             inter_path = f"/ensemble/reps/10km/grib2/{run_hour}/{forecast_hour}/"
             file_name_wind = f"{date_formatted}T{run_hour}Z_MSC_REPS_WIND_AGL-80m_RLatLon0.09x0.09_PT{forecast_hour}H.grib2"
 
