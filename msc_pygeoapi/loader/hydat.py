@@ -306,6 +306,10 @@ class HydatLoader(BaseLoader):
                                     "type": "text",
                                     "fields": {"raw": {"type": "keyword"}},
                                 },
+                                "REAL_TIME": {"type": "byte"},
+                                "RHBN": {"type": "byte"},
+                                "DRAINAGE_AREA_GROSS": {"type": "float"},
+                                "DRAINAGE_AREA_EFFECT": {"type": "float"},
                             }
                         },
                         "geometry": {"type": "geo_shape"},
@@ -682,6 +686,16 @@ class HydatLoader(BaseLoader):
                 float(station_metadata[station_keys.index('LONGITUDE')]),
                 float(station_metadata[station_keys.index('LATITUDE')]),
             ]
+            station_rhbn = station_metadata[station_keys.index('RHBN')]
+            station_real_time = station_metadata[
+                station_keys.index('REAL_TIME')
+            ]
+            station_drainage_area_gross = station_metadata[
+                station_keys.index('DRAINAGE_AREA_GROSS')
+            ]
+            station_draininage_area_effect = station_metadata[
+                station_keys.index('DRAINAGE_AREA_EFFECT')
+            ]
             agency_id = station_metadata[station_keys.index('CONTRIBUTOR_ID')]
             datum_id = station_metadata[station_keys.index('DATUM_ID')]
             if agency_id is not None:
@@ -745,7 +759,11 @@ class HydatLoader(BaseLoader):
                     'STATUS_FR': status_fr,
                     'CONTRIBUTOR_EN': agency_en,
                     'CONTRIBUTOR_FR': agency_fr,
-                    'VERTICAL_DATUM': datum_en
+                    'VERTICAL_DATUM': datum_en,
+                    'REAL_TIME': station_real_time,
+                    'RHBN': station_rhbn,
+                    'DRAINAGE_AREA_GROSS': station_drainage_area_gross,
+                    'DRAINAGE_AREA_EFFECT': station_draininage_area_effect,
                 },
                 'links': [
                     {
