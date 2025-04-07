@@ -43,7 +43,7 @@ from msc_pygeoapi.util import (
 LOGGER = logging.getLogger(__name__)
 
 # cleanup settings
-DAYS_TO_KEEP = 140
+DAYS_TO_KEEP = 30
 
 # index settings
 INDEX_BASENAME = 'bulletins.'
@@ -122,7 +122,8 @@ class BulletinsRealtimeLoader(BaseLoader):
 
         BaseLoader.__init__(self)
 
-        self.DD_URL = 'https://dd.weather.gc.ca/bulletins/alphanumeric'
+        today_date = datetime.today().strftime('%Y%m%d')
+        self.DD_URL = f'https://dd.weather.gc.ca/{today_date}/WXO-DD/bulletins/alphanumeric' # noqa
         self.conn = ElasticsearchConnector(conn_config)
         self.conn.create_template(INDEX_BASENAME, SETTINGS)
 
