@@ -46,7 +46,13 @@ from pygeoapi.provider.base import (BaseProvider, ProviderConnectionError,
 from pygeoapi.provider.rasterio_ import (RasterioProvider,
                                          _get_parameter_metadata)
 
+from msc_pygeoapi.env import GEOMET_LOCAL_BASEPATH
+
 LOGGER = logging.getLogger(__name__)
+
+CANSIPS_ARCHIVES_BASEPATH = (
+    f'{GEOMET_LOCAL_BASEPATH}/cansips-archives/100km/forecast/'
+)
 
 
 class CanSIPSProvider(RasterioProvider):
@@ -467,7 +473,7 @@ class CanSIPSProvider(RasterioProvider):
             month_files = [
                 str(file)
                 for file in Path(
-                    '/data/geomet/local/cansips-archives/100km/forecast/'
+                    CANSIPS_ARCHIVES_BASEPATH
                 ).rglob(filter_)
             ]
             files.extend(month_files)
@@ -484,7 +490,7 @@ class CanSIPSProvider(RasterioProvider):
         :returns: list of begin and end time as string
         """
 
-        pattern = '/data/geomet/local/cansips-archives/100km/forecast/{year}/{month}/{model_run}_MSC_CanSIPS_AirTemp_AGL-2m_LatLon1.0_P00M.grib2' # noqa
+        pattern = f'{CANSIPS_ARCHIVES_BASEPATH}{{year}}/{{month}}/{{model_run}}_MSC_CanSIPS_AirTemp_AGL-2m_LatLon1.0_P00M.grib2' # noqa
 
         begin = search(pattern, self.file_list[0])['model_run']
         begin = f'{begin[:4]}-{begin[4:]}'
