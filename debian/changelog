@@ -1,3 +1,11 @@
+msc-pygeoapi (0.13.4) jammy; urgency=medium
+
+  * remove unicodecsv dependency
+  * fix sr3 config for bulletins (do not save to disk)
+  * update OpenAPI document
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Tue, 08 Apr 2025 18:41:48 +0000
+
 msc-pygeoapi (0.13.3) jammy; urgency=medium
 
   * implement sr3 discard workaround
