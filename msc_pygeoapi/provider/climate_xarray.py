@@ -61,6 +61,7 @@ class ClimateProvider(XarrayProvider):
         BaseProvider.__init__(self, provider_def)
 
         try:
+            self.period = 'P1Y'
             self._data = open_data(self.data)
             self._coverage_properties = self._get_coverage_properties()
 
@@ -232,7 +233,8 @@ class ClimateProvider(XarrayProvider):
 
         # if 'avg_20years' not in self.data:
         if time_enabled:
-            properties['restime'] = self.get_time_resolution()
+            self.get_time_resolution()
+            properties['restime'] = self.period
             properties['time_range'] = [
                 self._to_datetime_string(
                     self._data.coords[self.time_field].values[0]
@@ -257,14 +259,12 @@ class ClimateProvider(XarrayProvider):
             self.monthly_data = ['monthly_ens', 'SPEI', '_P1M']
 
             if any(month in self.data for month in self.monthly_data):
-                period = 'P1M'
-            else:
-                period = 'P1Y'
+                self.period = 'P1M'
 
-            return period
+            return True
 
         else:
-            return None
+            return False
 
     def _to_datetime_string(self, datetime_):
         """
@@ -544,7 +544,6 @@ class ClimateProvider(XarrayProvider):
 
         LOGGER.debug('Creating CoverageJSON domain')
         minx, miny, maxx, maxy = metadata['bbox']
-        mint, maxt = metadata['time']
 
         try:
             tmp_min = data.coords[self.y_field].values[0]
@@ -559,6 +558,11 @@ class ClimateProvider(XarrayProvider):
             LOGGER.debug(f'Reversing direction of {self.y_field}')
             miny = tmp_max
             maxy = tmp_min
+
+        cov_tfor = '%Y'
+        if self.period == 'P1M':
+            cov_tfor = '%Y-%m'
+        date_coord = data.coords[self.time_field].dt.strftime(cov_tfor).values
 
         cj = {
             'type': 'Coverage',
@@ -576,11 +580,7 @@ class ClimateProvider(XarrayProvider):
                         'stop': miny,
                         'num': metadata['height']
                     },
-                    self.time_field: {
-                        'start': mint,
-                        'stop': maxt,
-                        'num': metadata['time_steps']
-                    }
+                    't': {'values': list(date_coord)}
                 },
                 'referencing': [{
                     'coordinates': ['x', 'y'],
@@ -594,9 +594,9 @@ class ClimateProvider(XarrayProvider):
             'ranges': {}
         }
 
-        for variable in range_type:
+        for var in range_type:
             pm = self._get_parameter_metadata(
-                variable, self._data[variable].attrs)
+                var, self._data[var].attrs)
 
             parameter = {
                 'type': 'Parameter',
@@ -619,13 +619,16 @@ class ClimateProvider(XarrayProvider):
         data = data.fillna(None)
         data = _convert_float32_to_float64(data)
 
+        d_type = ''.join(c for c in str(self._data[var].dtype) if c.isalpha())
+
         try:
             for key in cj['parameters'].keys():
                 cj['ranges'][key] = {
                     'type': 'NdArray',
-                    'dataType': str(self._data[variable].dtype),
+                    # dataType must be either float, integer or string
+                    'dataType': d_type,
                     'axisNames': [
-                        'y', 'x', self._coverage_properties['time_axis_label']
+                        'y', 'x', 't'
                     ],
                     'shape': [metadata['height'],
                               metadata['width'],
