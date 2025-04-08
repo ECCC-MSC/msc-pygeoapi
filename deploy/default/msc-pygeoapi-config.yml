@@ -4273,7 +4273,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.cansips_products_rasterio.CanSIPSProductsProvider
-              data: /datasan/geomet/local/cansips-archives/100km/forecast/2023/10/202310_MSC_CanSIPS_AirTemp-ProbAboveNormal_AGL-2m_LatLon1.0_P00M-P02M.grib2
+              data: /data/geomet/local/cansips-archives/100km/forecast/2023/10/202310_MSC_CanSIPS_AirTemp-ProbAboveNormal_AGL-2m_LatLon1.0_P00M-P02M.grib2
               options:
                   DATA_ENCODING: COMPLEX_PACKING
               format:
@@ -4310,7 +4310,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.cansips_products_rasterio.CanSIPSProductsProvider
-              data: /datasan/geomet/local/cansips-archives/100km/forecast/2025/03/202503_MSC_CanSIPS_AirTemp-ProbAboveNormal_AGL-2m_LatLon1.0_P00M.grib2
+              data: /data/geomet/local/cansips-archives/100km/forecast/2025/03/202503_MSC_CanSIPS_AirTemp-ProbAboveNormal_AGL-2m_LatLon1.0_P00M.grib2
               options:
                   DATA_ENCODING: COMPLEX_PACKING
               format:
