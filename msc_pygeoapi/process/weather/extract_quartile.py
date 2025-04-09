@@ -188,9 +188,6 @@ def geo2xy(ds, x, y):
 
     return x, y
 
-def r_geo2xy(ds, x, y):
-    raise NotImplementedError("to do")
-
 def get_unit(path, prod):
     ds = gdal.Open(path, gdal.GA_ReadOnly)
     if ds is None:
@@ -268,19 +265,6 @@ def extract_quartiles(
             }
 
     return output
-
-if __name__ == "__main__":
-    print(extract_quartiles(
-        model="REPS",
-        variables_and_levels=[["TMP", "AGL-2m"], ["WIND", "AGL-10m"]],
-        products=["min_all_mem", "prct_10", "prct_25", "prct_50", "prct_75", "prct_90", "max_all_mem"],
-        lat=45,
-        lon=-82,
-        model_run=f'{(datetime.date.today() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")}T00:00:00Z',
-        forecast_start_hour=3,
-        forecast_step=3,
-        forecast_end_hour=9
-    ))
 
 try:
     from pygeoapi.process.base import BaseProcessor, ProcessorExecuteError
