@@ -462,7 +462,6 @@ class ClimateProvider(XarrayProvider):
 
             LOGGER.debug(f'Query parameters: {query_params}')
             try:
-                data[self.time_field] = data.indexes["time"].to_datetimeindex()
                 data = data.loc[query_params]
             except Exception as err:
                 LOGGER.warning(err)
