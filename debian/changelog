@@ -1,8 +1,14 @@
+msc-pygeoapi (0.13.6) jammy; urgency=medium
+
+  * fix datetime in this changelog!
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Thu, 10 Apr 2025 12:02:11 +0000
+
 msc-pygeoapi (0.13.5) jammy; urgency=medium
 
   * fix DEV URL
 
- -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Thu, 09 2025 20:05:22 +0000
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Wed, 09 Apr 2025 20:05:22 +0000
 
 msc-pygeoapi (0.13.4) jammy; urgency=medium
 
