@@ -33,6 +33,7 @@ import json
 import logging
 from osgeo import gdal
 from pyproj import Transformer
+from msc_pygeoapi.env import GEOMET_HPFX_BASEPATH
 
 LOGGER = logging.getLogger(__name__)
 
@@ -149,7 +150,7 @@ PROCESS_METADATA = {
 }
 
 DATE_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
-HPFX_BASEPATH = "/datasan/geomet/feeds/hpfx/ensemble/"
+ENSEMBLE_HPFX_PATH = f"{GEOMET_HPFX_BASEPATH}/ensemble/"
 
 BANDS = {
     "prct_10": 1,
@@ -191,7 +192,8 @@ def geo2xy(ds, x, y):
 def get_unit(path, prod):
     ds = gdal.Open(path, gdal.GA_ReadOnly)
     if ds is None:
-        raise NameError(f"Couldn't open {path}, check if file exists")
+        LOGGER.error(f"Couldn't open {path} to get unit type, check if file exists")
+        raise NameError(f"Couldn't open {path} to get unit type, check if file exists")
     
     band = ds.GetRasterBand(BANDS[prod])
 
@@ -200,7 +202,8 @@ def get_unit(path, prod):
 def get_var(path, prod, lon, lat):
     ds = gdal.Open(path, gdal.GA_ReadOnly)
     if ds is None:
-        raise NameError(f"Couldn't open {path}, check if file exists")
+        LOGGER.error(f"Couldn't open {path} to get variable, check if file exists")
+        raise NameError(f"Couldn't open {path} to get variable, check if file exists")
     
     out_proj = ds.GetProjection()
     transformer = Transformer.from_crs("EPSG:4326", out_proj, always_xy=True)
@@ -212,17 +215,20 @@ def get_var(path, prod, lon, lat):
     try:
         _ = data_array[y, x]
     except IndexError:
+        LOGGER.error("ERROR: no data at requested latitude and longitude - point outside of model grid")
         raise IndexError("ERROR: no data at requested latitude and longitude - point outside of model grid")
 
     return data_array[y, x]
 
 def get_path(model, run_hour, forecast_start_hour, date_formatted, var, level):
+    model = model.lower()
     forecast_start_hour = f"{forecast_start_hour:03}"
     if model == "geps":
-        path = f"{HPFX_BASEPATH}{model}/grib2/products/{run_hour}/{forecast_start_hour}/CMC_geps-prob_{var}_{level}_latlon0p5x0p5_{date_formatted}{run_hour}_P{forecast_start_hour}_all-products.grib2"
+        path = f"{ENSEMBLE_HPFX_PATH}{model}/grib2/products/{run_hour}/{forecast_start_hour}/CMC_geps-prob_{var}_{level}_latlon0p5x0p5_{date_formatted}{run_hour}_P{forecast_start_hour}_all-products.grib2"
     elif model == "reps":
-        path = f"{HPFX_BASEPATH}{model}/10km/grib2/{run_hour}/{forecast_start_hour}/{date_formatted}T{run_hour}Z_MSC_REPS_{var}-Prob_{level}_RLatLon0.09x0.09_PT{forecast_start_hour}H.grib2"
+        path = f"{ENSEMBLE_HPFX_PATH}{model}/10km/grib2/{run_hour}/{forecast_start_hour}/{date_formatted}T{run_hour}Z_MSC_REPS_{var}-Prob_{level}_RLatLon0.09x0.09_PT{forecast_start_hour}H.grib2"
     else:
+        LOGGER.error(f"Invalid model {model}")
         raise NameError(f"Invalid model {model}")
     
     return path
