@@ -236,13 +236,20 @@ def get_path(model, run_hour, forecast_start_hour, date_formatted, var, level):
     model = model.lower()
     forecast_start_hour = f"{forecast_start_hour:03}"
     if model == "geps":
-        path = f"""{ENSEMBLE_HPFX_PATH}{model}/grib2/products/{run_hour}/
-        {forecast_start_hour}/CMC_geps-prob_{var}_{level}_latlon0p5x0p5_
-        {date_formatted}{run_hour}_P{forecast_start_hour}_all-products.grib2"""
+        p1 = f"{ENSEMBLE_HPFX_PATH}{model}/grib2/products/{run_hour}/"
+        p2 = f"{forecast_start_hour}/CMC_geps-prob_{var}_{level}"
+        p3 = "_latlon0p5x0p5_"
+        p4 = f"{date_formatted}{run_hour}_P{forecast_start_hour}"
+        p5 = "_all-products.grib2"
+        path = p1 + p2 + p3 + p4 + p5
+
     elif model == "reps":
-        path = f"""{ENSEMBLE_HPFX_PATH}{model}/10km/grib2/{run_hour}/
-        {forecast_start_hour}/{date_formatted}T{run_hour}Z_MSC_REPS_{var}
-        -Prob_{level}_RLatLon0.09x0.09_PT{forecast_start_hour}H.grib2"""
+        p1 = f"{ENSEMBLE_HPFX_PATH}{model}/10km/grib2/{run_hour}/"
+        p2 = f"{forecast_start_hour}/{date_formatted}T{run_hour}"
+        p3 = f"Z_MSC_REPS_{var}"
+        p4 = f"-Prob_{level}_RLatLon0.09x0.09_PT{forecast_start_hour}H.grib2"
+        path = p1 + p2 + p3 + p4
+        
     else:
         LOGGER.error(f"Invalid model {model}")
         raise NameError(f"Invalid model {model}")

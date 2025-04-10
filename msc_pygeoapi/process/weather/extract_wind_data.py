@@ -176,33 +176,43 @@ def get_single_wind_data(model,
     match(model):
         case "gdwps":
             inter_path = f"/model_gdwps/25km/{run_hour}/"
-            file_name_u = f"""{date_formatted}T{run_hour}
-            Z_MSC_GDWPS_UGRD_AGL-10m_LatLon0.25_PT{forecast_hour}H.grib2"""
-            file_name_v = f"""{date_formatted}T{run_hour}
-            Z_MSC_GDWPS_VGRD_AGL-10m_LatLon0.25_PT{forecast_hour}H.grib2"""
+            u1 = f"{date_formatted}T{run_hour}"
+            u2 = f"Z_MSC_GDWPS_UGRD_AGL-10m_LatLon0.25_PT{forecast_hour}H.grib2"
+            file_name_u = u1 + u2
+            v1 = f"{date_formatted}T{run_hour}"
+            v2 = f"Z_MSC_GDWPS_VGRD_AGL-10m_LatLon0.25_PT{forecast_hour}H.grib2"
+            file_name_v = v1 + v2
 
         case "gdps":
-            inter_path = f"""/model_gem_global/15km/grib2/lat_lon/
-            {run_hour}/{forecast_hour}/"""
-            file_name_u = f"""CMC_glb_UGRD_TGL_10_latlon.15x.15_
-            {date_formatted}{run_hour}_P{forecast_hour}.grib2"""
-            file_name_v = f"""CMC_glb_VGRD_TGL_10_latlon.15x.15_
-            {date_formatted}{run_hour}_P{forecast_hour}.grib2"""
+            ip1 = f"/model_gem_global/15km/grib2/lat_lon/"
+            ip2 = f"{run_hour}/{forecast_hour}/"
+            inter_path = ip1 + ip2
+            u1 = "CMC_glb_UGRD_TGL_10_latlon.15x.15_"
+            u2 = f"{date_formatted}{run_hour}_P{forecast_hour}.grib2"
+            file_name_u = u1 + u2
+            v1 = "CMC_glb_VGRD_TGL_10_latlon.15x.15_"
+            v2 = f"{date_formatted}{run_hour}_P{forecast_hour}.grib2"
+            file_name_v = v1 + v2
 
         case "hrdps" | "rdwps":
-            inter_path = f"""/model_hrdps/continental/2.5km/
-            {run_hour}/{forecast_hour}/"""
-            file_name_wind = f"""{date_formatted}T{run_hour}
-            Z_MSC_HRDPS_WIND_AGL-10m_RLatLon0.0225_PT{forecast_hour}H.grib2"""
-            file_name_wdir = f"""{date_formatted}T{run_hour}
-            Z_MSC_HRDPS_WDIR_AGL-10m_RLatLon0.0225_PT{forecast_hour}H.grib2"""
+            ip1 = "/model_hrdps/continental/2.5km/"
+            ip2 = f"{run_hour}/{forecast_hour}/"
+            inter_path = ip1 + ip2
+            wind1 = f"{date_formatted}T{run_hour}"
+            wind2 = f"Z_MSC_HRDPS_WIND_AGL-10m_RLatLon0.0225_PT{forecast_hour}H.grib2"
+            file_name_wind = wind1 + wind2
+            wdir1 = f"{date_formatted}T{run_hour}"
+            wdir2 = f"Z_MSC_HRDPS_WDIR_AGL-10m_RLatLon0.0225_PT{forecast_hour}H.grib2"
+            file_name_wdir = wdir1 + wdir2
 
         case "reps" | "rewps":
-            inter_path = f"""/ensemble/reps/10km/grib2/
-            {run_hour}/{forecast_hour}/"""
-            file_name_wind = f"""{date_formatted}T{run_hour}
-            Z_MSC_REPS_WIND_AGL-80m_RLatLon0.09x0.09_PT
-            {forecast_hour}H.grib2"""
+            ip1 = "/ensemble/reps/10km/grib2/"
+            ip2 = f"{run_hour}/{forecast_hour}/"
+            inter_path = ip1 + ip2
+            w1 = f"{date_formatted}T{run_hour}"
+            w2 = "Z_MSC_REPS_WIND_AGL-10m_RLatLon0.09x0.09_PT"
+            w3 = f"{forecast_hour}H.grib2"
+            file_name_wind = w1 + w2 + w3
 
         case _:
             LOGGER.error(f"Unknown model: {model}")
