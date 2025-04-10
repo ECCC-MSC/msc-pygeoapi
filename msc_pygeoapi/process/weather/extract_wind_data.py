@@ -112,7 +112,7 @@ PROCESS_METADATA = {
     'example': {
         'inputs': {
             'model': 'GDWPS',
-            'model_run': f'{(datetime.date.today() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")}T12:00:00Z',
+            'model_run': '2025-04-10T00:00:00Z',
             'forecast_start_hour': '003',
             'lon': -28.75,
             'lat': 39.25,
@@ -164,28 +164,45 @@ def geo2xy(ds, x, y):
     return (x, y)
 
 
-def get_single_wind_data(model, date_formatted, run_hour, forecast_hour, data_basepath, lon, lat):
+def get_single_wind_data(model,
+                         date_formatted,
+                         run_hour,
+                         forecast_hour,
+                         data_basepath,
+                         lon,
+                         lat):
     model = model.lower()
 
     match(model):
         case "gdwps":
             inter_path = f"/model_gdwps/25km/{run_hour}/"
-            file_name_u = f"{date_formatted}T{run_hour}Z_MSC_GDWPS_UGRD_AGL-10m_LatLon0.25_PT{forecast_hour}H.grib2"
-            file_name_v = f"{date_formatted}T{run_hour}Z_MSC_GDWPS_VGRD_AGL-10m_LatLon0.25_PT{forecast_hour}H.grib2"
+            file_name_u = f"""{date_formatted}T{run_hour}
+            Z_MSC_GDWPS_UGRD_AGL-10m_LatLon0.25_PT{forecast_hour}H.grib2"""
+            file_name_v = f"""{date_formatted}T{run_hour}
+            Z_MSC_GDWPS_VGRD_AGL-10m_LatLon0.25_PT{forecast_hour}H.grib2"""
 
         case "gdps":
-            inter_path = f"/model_gem_global/15km/grib2/lat_lon/{run_hour}/{forecast_hour}/"
-            file_name_u = f"CMC_glb_UGRD_TGL_10_latlon.15x.15_{date_formatted}{run_hour}_P{forecast_hour}.grib2"
-            file_name_v = f"CMC_glb_VGRD_TGL_10_latlon.15x.15_{date_formatted}{run_hour}_P{forecast_hour}.grib2"
+            inter_path = f"""/model_gem_global/15km/grib2/lat_lon/
+            {run_hour}/{forecast_hour}/"""
+            file_name_u = f"""CMC_glb_UGRD_TGL_10_latlon.15x.15_
+            {date_formatted}{run_hour}_P{forecast_hour}.grib2"""
+            file_name_v = f"""CMC_glb_VGRD_TGL_10_latlon.15x.15_
+            {date_formatted}{run_hour}_P{forecast_hour}.grib2"""
 
         case "hrdps" | "rdwps":
-            inter_path = f"/model_hrdps/continental/2.5km/{run_hour}/{forecast_hour}/"
-            file_name_wind = f"{date_formatted}T{run_hour}Z_MSC_HRDPS_WIND_AGL-10m_RLatLon0.0225_PT{forecast_hour}H.grib2"
-            file_name_wdir = f"{date_formatted}T{run_hour}Z_MSC_HRDPS_WDIR_AGL-10m_RLatLon0.0225_PT{forecast_hour}H.grib2"
+            inter_path = f"""/model_hrdps/continental/2.5km/
+            {run_hour}/{forecast_hour}/"""
+            file_name_wind = f"""{date_formatted}T{run_hour}
+            Z_MSC_HRDPS_WIND_AGL-10m_RLatLon0.0225_PT{forecast_hour}H.grib2"""
+            file_name_wdir = f"""{date_formatted}T{run_hour}
+            Z_MSC_HRDPS_WDIR_AGL-10m_RLatLon0.0225_PT{forecast_hour}H.grib2"""
 
         case "reps" | "rewps":
-            inter_path = f"/ensemble/reps/10km/grib2/{run_hour}/{forecast_hour}/"
-            file_name_wind = f"{date_formatted}T{run_hour}Z_MSC_REPS_WIND_AGL-80m_RLatLon0.09x0.09_PT{forecast_hour}H.grib2"
+            inter_path = f"""/ensemble/reps/10km/grib2/
+            {run_hour}/{forecast_hour}/"""
+            file_name_wind = f"""{date_formatted}T{run_hour}
+            Z_MSC_REPS_WIND_AGL-80m_RLatLon0.09x0.09_PT
+            {forecast_hour}H.grib2"""
 
         case _:
             LOGGER.error(f"Unknown model: {model}")
@@ -200,14 +217,18 @@ def get_single_wind_data(model, date_formatted, run_hour, forecast_hour, data_ba
 
         if ds_u is None:
             LOGGER.error(f"Couldn't open {full_path_u}, check if file exists")
-            raise NameError(f"Couldn't open {full_path_u}, check if file exists")
+            raise NameError(f"""Couldn't open {full_path_u},
+                            check if file exists""")
 
         if ds_v is None:
             LOGGER.error(f"Couldn't open {full_path_v}, check if file exists")
-            raise NameError(f"Couldn't open {full_path_v}, check if file exists")
+            raise NameError(f"""Couldn't open {full_path_v},
+                            check if file exists""")
 
         out_proj = ds_u.GetProjection()
-        transformer = Transformer.from_crs("EPSG:4326", out_proj, always_xy=True)
+        transformer = Transformer.from_crs("EPSG:4326",
+                                           out_proj,
+                                           always_xy=True)
         _x, _y = transformer.transform(lon, lat)
         x, y = geo2xy(ds_u, _x, _y)
 
@@ -217,12 +238,16 @@ def get_single_wind_data(model, date_formatted, run_hour, forecast_hour, data_ba
         try:
             _ = bitmap_u[y, x]
         except IndexError:
-            LOGGER.error("ERROR: no data at requested latitude and longitude - point outside of model grid")
-            raise IndexError("ERROR: no data at requested latitude and longitude - point outside of model grid")
+            LOGGER.error("""ERROR: no data at requested latitude
+                          and longitude - point outside of model grid""")
+            raise IndexError("""ERROR: no data at requested latitude
+                              and longitude- point outside of model grid""")
 
         if not bitmap_u[y, x]:
-            LOGGER.error("ERROR: no data at requested latitude and longitude - data at point is masked")
-            raise IndexError("ERROR: no data at requested latitude and longitude - data at point is masked")
+            LOGGER.error("""ERROR: no data at requested latitude and longitude
+                          - data at point is masked""")
+            raise IndexError("""ERROR: no data at requested latitude and
+                              longitude - data at point is masked""")
 
         band_y = ds_v.GetRasterBand(1)
 
@@ -243,15 +268,21 @@ def get_single_wind_data(model, date_formatted, run_hour, forecast_hour, data_ba
         ds_wdir = gdal.Open(full_path_wdir, gdal.GA_ReadOnly)
 
         if ds_wind is None:
-            LOGGER.error(f"Couldn't open {full_path_wind}, check if file exists")
-            raise NameError(f"Couldn't open {full_path_wind}, check if file exists")
+            LOGGER.error(f"""Couldn't open {full_path_wind},
+                          check if file exists""")
+            raise NameError(f"""Couldn't open {full_path_wind},
+                             check if file exists""")
 
         if ds_wdir is None:
-            LOGGER.error(f"Couldn't open {full_path_wdir}, check if file exists")
-            raise NameError(f"Couldn't open {full_path_wdir}, check if file exists")
+            LOGGER.error(f"""Couldn't open {full_path_wdir},
+                          check if file exists""")
+            raise NameError(f"""Couldn't open {full_path_wdir},
+                             check if file exists""")
 
         out_proj = ds_wind.GetProjection()
-        transformer = Transformer.from_crs("EPSG:4326", out_proj, always_xy=True)
+        transformer = Transformer.from_crs("EPSG:4326",
+                                           out_proj,
+                                           always_xy=True)
         _x, _y = transformer.transform(lon, lat)
         x, y = geo2xy(ds_wind, _x, _y)
 
@@ -261,12 +292,16 @@ def get_single_wind_data(model, date_formatted, run_hour, forecast_hour, data_ba
         try:
             _ = bitmap_wind[y, x]
         except IndexError:
-            LOGGER.error("ERROR: no data at requested latitude and longitude - point outside of model grid")
-            raise IndexError("ERROR: no data at requested latitude and longitude - point outside of model grid")
+            LOGGER.error("""ERROR: no data at requested latitude
+                          and longitude - point outside of model grid""")
+            raise IndexError("""ERROR: no data at requested latitude
+                              and longitude - point outside of model grid""")
 
         if not bitmap_wind[y, x]:
-            LOGGER.error("ERROR: no data at requested latitude and longitude - data at point is masked")
-            raise IndexError("ERROR: no data at requested latitude and longitude - data at point is masked")
+            LOGGER.error("""ERROR: no data at requested latitude
+                          and longitude - data at point is masked""")
+            raise IndexError("""ERROR: no data at requested latitude
+                              and longitude - data at point is masked""")
 
         band_wdir = ds_wdir.GetRasterBand(1)
 
@@ -282,11 +317,15 @@ def get_single_wind_data(model, date_formatted, run_hour, forecast_hour, data_ba
         ds_wind = gdal.Open(full_path_wind, gdal.GA_ReadOnly)
 
         if ds_wind is None:
-            LOGGER.error(f"Couldn't open {full_path_wind}, check if file exists")
-            raise NameError(f"Couldn't open {full_path_wind}, check if file exists")
+            LOGGER.error(f"""Couldn't open {full_path_wind},
+                          check if file exists""")
+            raise NameError(f"""Couldn't open {full_path_wind},
+                             check if file exists""")
 
         out_proj = ds_wind.GetProjection()
-        transformer = Transformer.from_crs("EPSG:4326", out_proj, always_xy=True)
+        transformer = Transformer.from_crs("EPSG:4326",
+                                           out_proj,
+                                           always_xy=True)
         _x, _y = transformer.transform(lon, lat)
         x, y = geo2xy(ds_wind, _x, _y)
 
@@ -296,12 +335,16 @@ def get_single_wind_data(model, date_formatted, run_hour, forecast_hour, data_ba
         try:
             _ = bitmap_wind[y, x]
         except IndexError:
-            LOGGER.error("ERROR: no data at requested latitude and longitude - point outside of model grid")
-            raise IndexError("ERROR: no data at requested latitude and longitude - point outside of model grid")
+            LOGGER.error("""ERROR: no data at requested latitude
+                          and longitude - point outside of model grid""")
+            raise IndexError("""ERROR: no data at requested latitude
+                              and longitude - point outside of model grid""")
 
         if not bitmap_wind[y, x]:
-            LOGGER.error("ERROR: no data at requested latitude and longitude - data at point is masked")
-            raise IndexError("ERROR: no data at requested latitude and longitude - data at point is masked")
+            LOGGER.error("""ERROR: no data at requested latitude
+                          and longitude - data at point is masked""")
+            raise IndexError("""ERROR: no data at requested latitude
+                              and longitude - data at point is masked""")
 
         data_array_wind = band_wind.ReadAsArray()
 
@@ -333,7 +376,7 @@ def extract_wind_data(
 
     date = datetime.datetime.strptime(model_run, DATE_FORMAT)
     run_hour = f"{date.hour:02}"
-    date_formatted = date.strftime("%Y%m%d")
+    date_f = date.strftime("%Y%m%d")
 
     output = {
         'type': "Feature",
@@ -348,9 +391,15 @@ def extract_wind_data(
     n = int(n) + 1
 
     for i in range(n):
-        forecast_hour = forecast_start_hour + (i * forecast_step)
-        forecast_hour = f'{forecast_hour:03}'
-        output['properties'][forecast_hour] = get_single_wind_data(model, date_formatted, run_hour, forecast_hour, data_basepath, lon, lat)
+        forecast_h = forecast_start_hour + (i * forecast_step)
+        forecast_h = f'{forecast_h:03}'
+        output['properties'][forecast_h] = get_single_wind_data(model,
+                                                                date_f,
+                                                                run_hour,
+                                                                forecast_h,
+                                                                data_basepath,
+                                                                lon,
+                                                                lat)
 
     return output
 
@@ -436,7 +485,8 @@ try:
         def execute(self, data, outputs=None):
             mimetype = "application/json"
 
-            required = ["model", "model_run", "forecast_start_hour", "forecast_step", "forecast_end_hour", "lon", "lat"]
+            required = ["model", "model_run", "forecast_start_hour",
+                        "forecast_step", "forecast_end_hour", "lon", "lat"]
             if not all([param in data for param in required]):
                 msg = "Missing required parameters."
                 LOGGER.error(msg)

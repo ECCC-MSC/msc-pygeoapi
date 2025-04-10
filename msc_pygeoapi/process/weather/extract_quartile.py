@@ -29,7 +29,6 @@
 # =================================================================
 
 import datetime
-import json
 import logging
 from osgeo import gdal
 from pyproj import Transformer
@@ -71,7 +70,8 @@ PROCESS_METADATA = {
         },
         'products': {
             'title': 'products',
-            'description': 'ex: ["min_all_mem", "prct_10", "prct_25", "prct_50", "prct_75", "prct_90", "max_all_mem"]',
+            'description': '''ex: ["min_all_mem", "prct_10", "prct_25",
+            "prct_50", "prct_75", "prct_90", "max_all_mem"]''',
             'schema': {
                 'type': 'array',
                 'items': {
@@ -128,7 +128,7 @@ PROCESS_METADATA = {
             'maxOccurs': 1,
         },
     },
-    'outputs':{
+    'outputs': {
         "extract_quartile_response": {
             "title": "extract_wind_data_response",
             "schema": {"contentMediaType": "application/json"},
@@ -137,8 +137,10 @@ PROCESS_METADATA = {
     'example': {
         'inputs': {
                 'model': 'REPS',
-                'variables_and_levels': [['TMP', 'AGL-2m'],['WIND', 'AGL-10m']],
-                'products': ['min_all_mem', 'prct_10', 'prct_25', 'prct_50', 'prct_75', 'prct_90', 'max_all_mem'],
+                'variables_and_levels': [['TMP', 'AGL-2m'],
+                                         ['WIND', 'AGL-10m']],
+                'products': ['min_all_mem', 'prct_10', 'prct_25',
+                             'prct_50', 'prct_75', 'prct_90', 'max_all_mem'],
                 'lat': 45,
                 'lon': -82,
                 'model_run': "2025-04-03T00:00:00Z",
@@ -163,6 +165,7 @@ BANDS = {
     "min_all_mem": 8,
     "max_all_mem": 9
 }
+
 
 def geo2xy(ds, x, y):
     """
@@ -189,22 +192,28 @@ def geo2xy(ds, x, y):
 
     return x, y
 
+
 def get_unit(path, prod):
     ds = gdal.Open(path, gdal.GA_ReadOnly)
     if ds is None:
-        LOGGER.error(f"Couldn't open {path} to get unit type, check if file exists")
-        raise NameError(f"Couldn't open {path} to get unit type, check if file exists")
-    
+        LOGGER.error(f"""Couldn't open {path} to get unit
+                      type, check if file exists""")
+        raise NameError(f"""Couldn't open {path} to get unit
+                         type, check if file exists""")
+
     band = ds.GetRasterBand(BANDS[prod])
 
     return band.GetMetadataItem('GRIB_UNIT')
 
+
 def get_var(path, prod, lon, lat):
     ds = gdal.Open(path, gdal.GA_ReadOnly)
     if ds is None:
-        LOGGER.error(f"Couldn't open {path} to get variable, check if file exists")
-        raise NameError(f"Couldn't open {path} to get variable, check if file exists")
-    
+        LOGGER.error(f"""Couldn't open {path} to get
+                      variable, check if file exists""")
+        raise NameError(f"""Couldn't open {path} to get
+                         variable, check if file exists""")
+
     out_proj = ds.GetProjection()
     transformer = Transformer.from_crs("EPSG:4326", out_proj, always_xy=True)
     _x, _y = transformer.transform(lon, lat)
@@ -215,23 +224,31 @@ def get_var(path, prod, lon, lat):
     try:
         _ = data_array[y, x]
     except IndexError:
-        LOGGER.error("ERROR: no data at requested latitude and longitude - point outside of model grid")
-        raise IndexError("ERROR: no data at requested latitude and longitude - point outside of model grid")
+        LOGGER.error("""ERROR: no data at requested latitude and
+                      longitude - point outside of model grid""")
+        raise IndexError("""ERROR: no data at requested latitude and
+                          longitude - point outside of model grid""")
 
     return data_array[y, x]
+
 
 def get_path(model, run_hour, forecast_start_hour, date_formatted, var, level):
     model = model.lower()
     forecast_start_hour = f"{forecast_start_hour:03}"
     if model == "geps":
-        path = f"{ENSEMBLE_HPFX_PATH}{model}/grib2/products/{run_hour}/{forecast_start_hour}/CMC_geps-prob_{var}_{level}_latlon0p5x0p5_{date_formatted}{run_hour}_P{forecast_start_hour}_all-products.grib2"
+        path = f"""{ENSEMBLE_HPFX_PATH}{model}/grib2/products/{run_hour}/
+        {forecast_start_hour}/CMC_geps-prob_{var}_{level}_latlon0p5x0p5_
+        {date_formatted}{run_hour}_P{forecast_start_hour}_all-products.grib2"""
     elif model == "reps":
-        path = f"{ENSEMBLE_HPFX_PATH}{model}/10km/grib2/{run_hour}/{forecast_start_hour}/{date_formatted}T{run_hour}Z_MSC_REPS_{var}-Prob_{level}_RLatLon0.09x0.09_PT{forecast_start_hour}H.grib2"
+        path = f"""{ENSEMBLE_HPFX_PATH}{model}/10km/grib2/{run_hour}/
+        {forecast_start_hour}/{date_formatted}T{run_hour}Z_MSC_REPS_{var}
+        -Prob_{level}_RLatLon0.09x0.09_PT{forecast_start_hour}H.grib2"""
     else:
         LOGGER.error(f"Invalid model {model}")
         raise NameError(f"Invalid model {model}")
-    
+
     return path
+
 
 def extract_quartiles(
         model,
@@ -263,7 +280,12 @@ def extract_quartiles(
 
     for var, level in variables_and_levels:
         output[var] = {}
-        paths = [get_path(model, run_hour, fsh, date_formatted, var, level) for fsh in output['time_steps']]
+        paths = [get_path(model,
+                          run_hour,
+                          fsh,
+                          date_formatted,
+                          var,
+                          level) for fsh in output['time_steps']]
         for prod in products:
             output[var][prod] = {
                 'units': get_unit(paths[0], prod),
@@ -271,6 +293,7 @@ def extract_quartiles(
             }
 
     return output
+
 
 try:
     from pygeoapi.process.base import BaseProcessor, ProcessorExecuteError
@@ -292,7 +315,15 @@ try:
         def execute(self, data, outputs=None):
             mimetype = "application/json"
 
-            required = ["model", "variables_and_levels", "products", "lat", "lon", "model_run", "forecast_start_hour", "forecast_step", "forecast_end_hour"]
+            required = ["model",
+                        "variables_and_levels",
+                        "products",
+                        "lat",
+                        "lon",
+                        "model_run",
+                        "forecast_start_hour",
+                        "forecast_step",
+                        "forecast_end_hour"]
             if not all([param in data for param in required]):
                 msg = "Missing required parameters."
                 LOGGER.error(msg)
