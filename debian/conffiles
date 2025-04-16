@@ -3,7 +3,7 @@
 /opt/msc-pygeoapi/etc/sarracenia/citypageweather.conf
 /opt/msc-pygeoapi/etc/sarracenia/hurricanes.conf
 /opt/msc-pygeoapi/etc/sarracenia/hydrometric-realtime.conf
-/opt/msc-pygeoapi/etc/sarracenia/marine_weather.conf
+/opt/msc-pygeoapi/etc/sarracenia/marineweather-realtime.conf
 /opt/msc-pygeoapi/etc/sarracenia/swob-realtime.conf
 /opt/msc-pygeoapi/etc/sarracenia/aqhi-realtime.conf
 /opt/msc-pygeoapi/etc/sarracenia/metnotes.conf
