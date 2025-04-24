@@ -1,3 +1,11 @@
+msc-pygeoapi (0.13.7) jammy; urgency=medium
+
+  * fix process links in landing page
+  * fix debian conffiles
+  * update pygeoapi limits in configuration
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Thu, 24 Apr 2025 14:26:35 +0000
+
 msc-pygeoapi (0.13.6) jammy; urgency=medium
 
   * fix datetime in this changelog!
