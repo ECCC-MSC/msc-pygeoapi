@@ -52,7 +52,7 @@ LOGGER = logging.getLogger(__name__)
 INDEX_BASENAME = 'aqhi_stations'
 
 STATIONS_LIST_NAME = 'AQHI_XML_File_List.xml'
-STATIONS_LIST_URL = f'https://dd.weather.gc.ca/air_quality/doc/{STATIONS_LIST_NAME}'  # noqa
+STATIONS_LIST_URL = f'https://dd.weather.gc.ca/today/air_quality/doc/{STATIONS_LIST_NAME}'  # noqa
 STATIONS_CACHE = os.path.join(MSC_PYGEOAPI_CACHEDIR, STATIONS_LIST_NAME)
 
 if not os.path.exists(MSC_PYGEOAPI_CACHEDIR):
@@ -131,13 +131,13 @@ SETTINGS = {
 class AQHIStationLoader(BaseLoader):
     """AQHI Station loader"""
 
-    def __init__(self, conn_config={}):
+    def __init__(self, conn_config={}, station_file=STATIONS_CACHE):
         """initializer"""
 
         BaseLoader.__init__(self)
 
         self.conn = ElasticsearchConnector(conn_config)
-        self.filepath = STATIONS_CACHE
+        self.filepath = station_file
         self.items = []
 
         if not os.path.exists(self.filepath):
@@ -283,7 +283,7 @@ def add(ctx, file_, es, username, password, ignore_certs):
 
     conn_config = configure_es_connection(es, username, password, ignore_certs)
 
-    loader = AQHIStationLoader(conn_config)
+    loader = AQHIStationLoader(conn_config, file_)
     result = loader.load_data()
     if not result:
         click.echo('features not generated')
