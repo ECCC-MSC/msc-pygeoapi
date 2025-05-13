@@ -48,7 +48,7 @@ LOGGER = logging.getLogger(__name__)
 NODATA_VALUE = 9999.0
 
 CANSIPS_ARCHIVES_FORECAST_BASEPATH = (
-    f'{GEOMET_LOCAL_BASEPATH}/cansips-archives/100km/forecast/'
+    f'{GEOMET_LOCAL_BASEPATH}/cansips-archives/100km/forecast'
 )
 
 
@@ -81,6 +81,24 @@ class CanSIPSProductsProvider(RasterioProvider):
             'AirTemp-ProbAboveNormal',
             'AirTemp-ProbNearNormal',
             'AirTemp-ProbBelowNormal',
+            'AirTemp-ProbGT10Pct',
+            'AirTemp-ProbGT20Pct',
+            'AirTemp-ProbGT30Pct',
+            'AirTemp-ProbGT40Pct',
+            'AirTemp-ProbGT50Pct',
+            'AirTemp-ProbGT60Pct',
+            'AirTemp-ProbGT70Pct',
+            'AirTemp-ProbGT80Pct',
+            'AirTemp-ProbGT90Pct',
+            'PrecipAccum-ProbGT10Pct',
+            'PrecipAccum-ProbGT20Pct',
+            'PrecipAccum-ProbGT30Pct',
+            'PrecipAccum-ProbGT40Pct',
+            'PrecipAccum-ProbGT50Pct',
+            'PrecipAccum-ProbGT60Pct',
+            'PrecipAccum-ProbGT70Pct',
+            'PrecipAccum-ProbGT80Pct',
+            'PrecipAccum-ProbGT90Pct',
             'PrecipAccum-ProbAboveNormal',
             'PrecipAccum-ProbNearNormal',
             'PrecipAccum-ProbBelowNormal'
@@ -334,13 +352,10 @@ class CanSIPSProductsProvider(RasterioProvider):
                 subsets['reference_time'][0], '%Y-%m'
             )
         except (KeyError, IndexError):
-            if self.product_type == 'seasonal':
-                self.reference_time = datetime.strptime(
-                    self._coverage_properties['uad']['reference_time']['interval'][0][-1], # noqa
-                    '%Y-%m'
-                )
-            else:
-                self.reference_time = datetime.strptime('2025-03', '%Y-%m')
+            self.reference_time = datetime.strptime(
+                self._coverage_properties['uad']['reference_time']['interval'][0][-1], # noqa
+                '%Y-%m'
+            )
         except ValueError:
             err = 'Invalid reference_time value provided.'
             LOGGER.error(err)
