@@ -141,7 +141,7 @@ class AQHIStationLoader(BaseLoader):
         self.items = []
 
         if not os.path.exists(self.filepath):
-            download_stations()
+            self.filepath = download_stations()
 
         self.conn.create_template(INDEX_BASENAME, SETTINGS)
 
@@ -255,11 +255,19 @@ class AQHIStationLoader(BaseLoader):
 def download_stations():
     """
     Download realtime stations
-    :returns: void
+    :returns: `str` path to downloaded file
     """
 
     LOGGER.debug(f'Caching {STATIONS_LIST_URL} to {STATIONS_CACHE}')
-    urllib.request.urlretrieve(STATIONS_LIST_URL, STATIONS_CACHE)
+
+    try:
+        urllib.request.urlretrieve(STATIONS_LIST_URL, STATIONS_CACHE)
+    except Exception as err:
+        msg = f'Error downloading {STATIONS_LIST_URL}: {err}'
+        LOGGER.error(msg)
+        raise RuntimeError(msg)
+
+    return STATIONS_CACHE
 
 
 @click.group()
@@ -278,12 +286,8 @@ def aqhi_stations():
 def add(ctx, file_, es, username, password, ignore_certs):
     """Add AQHI data to Elasticsearch"""
 
-    if file_ is None:
-        download_stations()
-
     conn_config = configure_es_connection(es, username, password, ignore_certs)
-
-    loader = AQHIStationLoader(conn_config, file_)
+    loader = AQHIStationLoader(conn_config, file_ or STATIONS_CACHE)
     result = loader.load_data()
     if not result:
         click.echo('features not generated')
