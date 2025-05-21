@@ -94,7 +94,7 @@ export default function useMap(mapElemId, geoJsonData, itemsPath, tileLayerUrl, 
     // feature collection
     if (Object.prototype.hasOwnProperty.call(geoJsonData.value, 'features')) {
       if (geoJsonData.value.features.length === 0 || geoJsonData.value.features[0].geometry === null) {
-        map.setView([0, 0], 1)
+        markers.clearLayers();
         return false
       }
     } else if (geoJsonData.value.type === 'Feature') { // single feature
