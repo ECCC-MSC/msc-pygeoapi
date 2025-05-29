@@ -54,6 +54,7 @@ class CanDCSU6Provider(ClimateProvider):
         BaseProvider.__init__(self, provider_def)
 
         try:
+            self.period = 'P1Y'
             self._data = open_data(self.data)
             self._coverage_properties = self._get_coverage_properties()
 
