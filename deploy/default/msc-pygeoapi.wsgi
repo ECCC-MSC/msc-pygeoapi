@@ -55,6 +55,7 @@ os.environ['MSC_PYGEOAPI_TEMPLATES'] = '/opt/msc-pygeoapi/theme/templates'
 os.environ['MSC_PYGEOAPI_STATIC'] = '/opt/msc-pygeoapi/theme/static'
 os.environ['MSC_PYGEOAPI_OGC_SCHEMAS_LOCATION'] = '/opt/msc-pygeoapi/schemas.opengis.net'
 os.environ['GEOMET_HPFX_BASEPATH'] = '/data/geomet/feeds/hpfx'
+os.environ['GEOMET_LOCAL_BASEPATH'] = '/data/geomet/local'
 os.environ['GEOMET_SCIENCE_BASEPATH'] = '/data/geomet/feeds/cmoi-science'
 
 

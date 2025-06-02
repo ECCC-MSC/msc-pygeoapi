@@ -39,6 +39,7 @@ export MSC_PYGEOAPI_TEMPLATES=/data/web/msc-pygeoapi-nightly/latest/msc-pygeoapi
 export MSC_PYGEOAPI_STATIC=/data/web/msc-pygeoapi-nightly/latest/msc-pygeoapi/theme/static
 export MSC_PYGEOAPI_OGC_SCHEMAS_LOCATION=/data/web/msc-pygeoapi-nightly/latest/schemas.opengis.net
 export GEOMET_HPFX_BASEPATH=/data/geomet/feeds/hpfx
+export GEOMET_LOCAL_BASEPATH=/data/geomet/local
 export GEOMET_SCIENCE_BASEPATH=/data/geomet/feeds/cmoi-science
 
 # you should be okay from here
