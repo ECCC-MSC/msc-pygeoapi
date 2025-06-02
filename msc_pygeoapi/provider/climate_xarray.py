@@ -561,11 +561,6 @@ class ClimateProvider(XarrayProvider):
             miny = tmp_max
             maxy = tmp_min
 
-        cov_tfor = '%Y'
-        if self.period == 'P1M':
-            cov_tfor = '%Y-%m'
-        date_coord = data.coords[self.time_field].dt.strftime(cov_tfor).values
-
         cj = {
             'type': 'Coverage',
             'domain': {
@@ -581,8 +576,7 @@ class ClimateProvider(XarrayProvider):
                         'start': maxy,
                         'stop': miny,
                         'num': metadata['height']
-                    },
-                    't': {'values': list(date_coord)}
+                    }
                 },
                 'referencing': [{
                     'coordinates': ['x', 'y'],
@@ -595,6 +589,13 @@ class ClimateProvider(XarrayProvider):
             'parameters': {},
             'ranges': {}
         }
+
+        if self.time_field in data.coords:
+            cov_tfor = '%Y'
+            if self.period == 'P1M':
+                cov_tfor = '%Y-%m'
+            date_coord = data.coords[self.time_field].dt.strftime(cov_tfor).values # noqa
+            cj['domain']['axes']['t'] = {'values': list(date_coord)}
 
         for var in range_type:
             pm = self._get_parameter_metadata(
@@ -628,12 +629,14 @@ class ClimateProvider(XarrayProvider):
                     # dataType must be either float, integer or string
                     'dataType': self.dtype,
                     'axisNames': [
-                        'y', 'x', 't'
+                        'y', 'x'
                     ],
                     'shape': [metadata['height'],
-                              metadata['width'],
-                              metadata['time_steps']]
+                              metadata['width']]
                 }
+                if 't' in cj['domain']['axes']:
+                    cj['ranges'][key]['axisNames'].append('t')
+                    cj['ranges'][key]['shape'].append(metadata['time_steps'])
                 cj['ranges'][key]['values'] = data[key].values.flatten().tolist()  # noqa
         except IndexError as err:
             LOGGER.warning(err)
