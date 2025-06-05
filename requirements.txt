@@ -3,7 +3,7 @@ dask
 elasticsearch>=8,<9
 fiona<1.10
 fsspec
-gdal<=3.6.4
+gdal<=3.8.4
 lxml
 netcdf4
 pandas
