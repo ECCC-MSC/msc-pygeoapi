@@ -14,7 +14,7 @@ server:
     pretty_print: false
     limits:
         default_items: 500
-        max_items: 500
+        max_items: 10000
     templates:
         path: ${MSC_PYGEOAPI_TEMPLATES}
         static: ${MSC_PYGEOAPI_STATIC}
