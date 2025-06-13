@@ -49,6 +49,8 @@
 #items-table-container {
   height: 400px;
   overflow: scroll;
+  resize:vertical;
+  min-height: 400px;
 }
 
 footer.sticky {
