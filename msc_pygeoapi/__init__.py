@@ -2,7 +2,7 @@
 #
 # Author: Tom Kralidis <tom.kralidis@ec.gc.ca>
 #
-# Copyright (c) 2024 Tom Kralidis
+# Copyright (c) 2025 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -42,7 +42,7 @@ from msc_pygeoapi.loader import metadata  # noqa
 from msc_pygeoapi.process import process  # noqa
 
 
-__version__ = '0.14.dev0'
+__version__ = '0.14.1'
 
 
 @click.group()

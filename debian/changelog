@@ -1,7 +1,33 @@
+msc-pygeoapi (0.14.1) jammy; urgency=medium
+
+  * fix for missing time dimension in DCS
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Mon, 02 Jun 2025 22:19:45 +0000
+
+msc-pygeoapi (0.14.0) jammy; urgency=medium
+
+  * update weatherstories mappings
+  * update marineweather filename patterns and attributes
+  * update RDPA OGC API - Coverages provider plugin
+  * remove unicodecsv dependency
+  * set hurricanes as experimental
+  * set thunderstorm outlooks as experimental
+  * serve SWOB partner station data for surface, partner, marine
+  * update SR3 handling and workflow
+  * add CanSIPS 1-degree probabalistic OGC API - Coverages provider plugin
+  * update Dockerfile to use pygeoapi 0.20
+  * fix missing processes link in landing page HTML
+  * update limits handling as per pygeoapi 0.20
+  * add CanSIPS seasonal/monthly probability of exceedance product
+  * fix feature cluster handling when no results
+  * update OpenAPI document
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Thu, 29 May 2025 15:32:45 +0000
+
 msc-pygeoapi (0.13.0) jammy; urgency=medium
 
   * Unstable release for development and testing
-  * Changes for Ubuntu:jammy
+  * Changes for ubuntu:jammy
   * Changes for pygeoapi 0.20
 
  -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Thu, 06 Feb 2025 22:58:54 +0000
