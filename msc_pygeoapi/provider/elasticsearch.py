@@ -58,7 +58,17 @@ class MSCElasticsearchProvider(ElasticsearchProvider):
         :returns: `str` of time_field format
         """
         mapping = self.es.indices.get_mapping(index=self.index_name)
-        p = mapping[self.index_name]['mappings']['properties']['properties']
+        try:
+            p = mapping[self.index_name]['mappings']['properties'][
+                'properties'
+            ]
+        except KeyError:
+            LOGGER.debug(
+                'Could not find index name in mapping. '
+                'Setting from first matching index.'
+            )
+            index_name_ = list(mapping.keys())[0]
+            p = mapping[index_name_]['mappings']['properties']['properties']
 
         format_ = p['properties'][self.time_field].get('format')
 
