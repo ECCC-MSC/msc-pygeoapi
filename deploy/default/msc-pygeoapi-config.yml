@@ -2788,7 +2788,7 @@ resources:
     climate:candcsu6:projected:seasonal:P30Y-Avg:
         type: collection
         title:
-            en: CanDCSU6 - 30 Year Averages of Projected Annual Anomalies
+            en: CanDCSU6 - 30 Year Averages of Projected Seasonal Anomalies
             fr: CanDCSU6 - Moyennes sur 30 ans des anomalies saisonnières projetées
         description:
             en: CMIP6 climate projections are based on both updated global climate models and new emissions scenarios called “Shared Socioeconomic Pathways” (SSPs). Statistically downscaled datasets have been produced from 26 CMIP6 Global Climate Models (GCMs) under three different emission scenarios (i.e., SSP1-2.6, SSP2-4.5, and SSP5-8.5) using the same downscaling method (Bias Correction/Constructed Analogues with Quantile mapping (BCCAQv2)) and downscaling target data (NRCANmet) as the CMIP5-based downscaled scenarios. Downscaled daily maximum and minimum temperatures (°C) and daily precipitation (mm) are available across Canada at 6x10km grid spatial resolution for the 1950-2014 historical period and for the 2015-2100 period following each of the three emission scenarios.
