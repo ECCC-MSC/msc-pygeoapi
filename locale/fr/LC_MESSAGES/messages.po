@@ -902,6 +902,10 @@ msgstr "URL"
 msgid "Map extent preview not available"
 msgstr "Aperçu de l'étendue de la carte n'est pas disponible"
 
+#: theme/templates/collections/index.html:51
+msgid "spatiotemporal"
+msgstr "spatio-temporelle"
+
 #~ msgid ""
 #~ "No results. Please modify your search query or <button\n"
 #~ "            :title=\"txt.reset\"  \n"
@@ -919,4 +923,3 @@ msgstr "Aperçu de l'étendue de la carte n'est pas disponible"
 
 #~ msgid "Output Formats"
 #~ msgstr "Formats de fichiers"
-
