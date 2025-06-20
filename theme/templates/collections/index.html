@@ -47,7 +47,11 @@
                 href="{{ config['server']['url'] }}/collections/{{ col.id }}">
                 <span>{{ col['title'] | striptags | truncate }}</span></a>
             </td>
+            {% if col['data_queries'] and col['parameter_names'] %}
+            <td data-label="type">{% trans %}spatiotemporal{% endtrans %}</td>
+            {% else %}
             <td data-label="type">{{ col["itemType"] }}</td>
+            {% endif %}
             <td data-label="description">
               {{ col['description'] | striptags | truncate }}
             </td>

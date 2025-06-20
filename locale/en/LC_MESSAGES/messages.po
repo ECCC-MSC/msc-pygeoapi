@@ -766,3 +766,6 @@ msgstr ""
 msgid "Map extent preview not available"
 msgstr ""
 
+#: theme/templates/collections/index.html:51
+msgid "spatiotemporal"
+msgstr ""
