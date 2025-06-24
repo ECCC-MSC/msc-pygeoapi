@@ -42,7 +42,7 @@
   top: 0; /* sticky table header */
 }
 
-#items-map, #collection-map {
+#items-map, #collection-map, #coverages-map {
   width: 100%;
   height: 400px;
 }
