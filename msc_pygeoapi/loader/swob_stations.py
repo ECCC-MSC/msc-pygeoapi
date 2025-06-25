@@ -275,9 +275,8 @@ class SWOBStationLoader(BaseLoader):
         elif self.dataset == 'partner':
             file_list = os.path.join(MSC_PYGEOAPI_CACHEDIR,
                                      STATIONS_LIST_NAME.format('partner_'))
-            with open(file_list, newline='', encoding='Windows-1252') as file_swob_stations: # noqa
+            with open(file_list, newline='', encoding='utf-8') as file_swob_stations: # noqa
                 # use result = chardet.detect(file.read()) to find encoding
-                # in this case it's Windows-1252
                 csv_reader = csv.DictReader(file_swob_stations)
                 for row in csv_reader:
                     id_ = row['# MSC ID']
