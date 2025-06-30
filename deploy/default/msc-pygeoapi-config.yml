@@ -1777,7 +1777,7 @@ resources:
     hurricanes-wind_radii-realtime:
         type: collection
         title:
-            en: Hurricane Tracks - Wind Raddi [experimental]
+            en: Hurricane Tracks - Wind Radii [experimental]
             fr: Trajectoires d'ouragans - Radius de vent [expérimental]
         description:
             en: "Hurricane tracks and response zone are issued by the Canadian Hurricane Centre as part of the regular hurricane season forecast."
