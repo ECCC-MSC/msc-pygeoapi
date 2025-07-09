@@ -45,7 +45,7 @@ PLUGINS = {
             'handler': 'msc_pygeoapi.loader.bulletins_realtime.BulletinsRealtimeLoader'  # noqa
         },
         'citypageweather_realtime': {
-            'filename_pattern': 'citypage_weather/xml',
+            'filename_pattern': 'citypage_weather',
             'handler': 'msc_pygeoapi.loader.citypageweather_realtime.CitypageweatherRealtimeLoader' # noqa
         },
         'hurricanes_realtime': {
