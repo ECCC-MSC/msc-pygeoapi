@@ -3307,6 +3307,2469 @@ paths:
       summary: Get Meteorological Bulletins schema
       tags:
       - bulletins-realtime
+  /collections/citypageweather-realtime:
+    get:
+      description: Provides current conditions, forecasts, warnings and regional normals
+        for a selection of Canadian cities.
+      operationId: describeCitypageweather-realtimeCollection
+      parameters:
+      - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
+      responses:
+        '200':
+          $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
+        '400':
+          $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        '404':
+          $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        '500':
+          $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get City Page Weather [experimental] metadata
+      tags:
+      - citypageweather-realtime
+  /collections/citypageweather-realtime/items:
+    get:
+      description: Provides current conditions, forecasts, warnings and regional normals
+        for a selection of Canadian cities.
+      operationId: getCitypageweather-realtimeFeatures
+      parameters:
+      - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
+      - $ref: '#/components/parameters/bbox'
+      - $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/limit
+      - $ref: '#/components/parameters/crs'
+      - $ref: '#/components/parameters/bbox-crs'
+      - description: The properties that should be included for each feature. The
+          parameter value is a comma-separated list of property names.
+        explode: false
+        in: query
+        name: properties
+        required: false
+        schema:
+          items:
+            enum:
+            - currentConditions.condition.en
+            - currentConditions.condition.fr
+            - currentConditions.dewpoint.qaValue.en
+            - currentConditions.dewpoint.qaValue.fr
+            - currentConditions.dewpoint.unitType.en
+            - currentConditions.dewpoint.unitType.fr
+            - currentConditions.dewpoint.units.en
+            - currentConditions.dewpoint.units.fr
+            - currentConditions.dewpoint.value.en
+            - currentConditions.dewpoint.value.fr
+            - currentConditions.icon
+            - currentConditions.iconCode.format
+            - currentConditions.iconCode.url
+            - currentConditions.iconCode.value
+            - currentConditions.pressure.change.en
+            - currentConditions.pressure.change.fr
+            - currentConditions.pressure.qaValue.en
+            - currentConditions.pressure.qaValue.fr
+            - currentConditions.pressure.tendency.en
+            - currentConditions.pressure.tendency.fr
+            - currentConditions.pressure.unitType.en
+            - currentConditions.pressure.unitType.fr
+            - currentConditions.pressure.units.en
+            - currentConditions.pressure.units.fr
+            - currentConditions.pressure.value.en
+            - currentConditions.pressure.value.fr
+            - currentConditions.relativeHumidity.qaValue.en
+            - currentConditions.relativeHumidity.qaValue.fr
+            - currentConditions.relativeHumidity.unitType.en
+            - currentConditions.relativeHumidity.unitType.fr
+            - currentConditions.relativeHumidity.units.en
+            - currentConditions.relativeHumidity.units.fr
+            - currentConditions.relativeHumidity.value.en
+            - currentConditions.relativeHumidity.value.fr
+            - currentConditions.station.code.en
+            - currentConditions.station.code.fr
+            - currentConditions.station.lat.en
+            - currentConditions.station.lat.fr
+            - currentConditions.station.lon.en
+            - currentConditions.station.lon.fr
+            - currentConditions.station.value.en
+            - currentConditions.station.value.fr
+            - currentConditions.temperature.qaValue.en
+            - currentConditions.temperature.qaValue.fr
+            - currentConditions.temperature.unitType.en
+            - currentConditions.temperature.unitType.fr
+            - currentConditions.temperature.units.en
+            - currentConditions.temperature.units.fr
+            - currentConditions.temperature.value.en
+            - currentConditions.temperature.value.fr
+            - currentConditions.timestamp.en
+            - currentConditions.timestamp.fr
+            - currentConditions.wind.bearing.qaValue.en
+            - currentConditions.wind.bearing.qaValue.fr
+            - currentConditions.wind.bearing.units.en
+            - currentConditions.wind.bearing.units.fr
+            - currentConditions.wind.bearing.value.en
+            - currentConditions.wind.bearing.value.fr
+            - currentConditions.wind.direction.en
+            - currentConditions.wind.direction.fr
+            - currentConditions.wind.direction.qaValue.en
+            - currentConditions.wind.direction.qaValue.fr
+            - currentConditions.wind.direction.value.en
+            - currentConditions.wind.direction.value.fr
+            - currentConditions.wind.gust.qaValue.en
+            - currentConditions.wind.gust.qaValue.fr
+            - currentConditions.wind.gust.unitType.en
+            - currentConditions.wind.gust.unitType.fr
+            - currentConditions.wind.gust.units.en
+            - currentConditions.wind.gust.units.fr
+            - currentConditions.wind.gust.value.en
+            - currentConditions.wind.gust.value.fr
+            - currentConditions.wind.speed.qaValue.en
+            - currentConditions.wind.speed.qaValue.fr
+            - currentConditions.wind.speed.unitType.en
+            - currentConditions.wind.speed.unitType.fr
+            - currentConditions.wind.speed.units.en
+            - currentConditions.wind.speed.units.fr
+            - currentConditions.wind.speed.value.en
+            - currentConditions.wind.speed.value.fr
+            - currentConditions.windChill.qaValue.en
+            - currentConditions.windChill.qaValue.fr
+            - currentConditions.windChill.unitType.en
+            - currentConditions.windChill.unitType.fr
+            - currentConditions.windChill.value.en
+            - currentConditions.windChill.value.fr
+            - forecastGroup.forecasts.abbreviatedForecast.icon.format
+            - forecastGroup.forecasts.abbreviatedForecast.icon.url
+            - forecastGroup.forecasts.abbreviatedForecast.icon.value
+            - forecastGroup.forecasts.abbreviatedForecast.textSummary.en
+            - forecastGroup.forecasts.abbreviatedForecast.textSummary.fr
+            - forecastGroup.forecasts.abbreviated_forecast.icon
+            - forecastGroup.forecasts.abbreviated_forecast.pop
+            - forecastGroup.forecasts.abbreviated_forecast.text_summary
+            - forecastGroup.forecasts.cloudPrecip.en
+            - forecastGroup.forecasts.cloudPrecip.fr
+            - forecastGroup.forecasts.cloud_precip
+            - forecastGroup.forecasts.frost.textSummary.en
+            - forecastGroup.forecasts.frost.textSummary.fr
+            - forecastGroup.forecasts.humidex.calculated.en
+            - forecastGroup.forecasts.humidex.calculated.fr
+            - forecastGroup.forecasts.humidex.textSummary.en
+            - forecastGroup.forecasts.humidex.textSummary.fr
+            - forecastGroup.forecasts.period.textForecastName.en
+            - forecastGroup.forecasts.period.textForecastName.fr
+            - forecastGroup.forecasts.period.value.en
+            - forecastGroup.forecasts.period.value.fr
+            - forecastGroup.forecasts.precipitation.accumulation.amount.unitType.en
+            - forecastGroup.forecasts.precipitation.accumulation.amount.unitType.fr
+            - forecastGroup.forecasts.precipitation.accumulation.amount.units.en
+            - forecastGroup.forecasts.precipitation.accumulation.amount.units.fr
+            - forecastGroup.forecasts.precipitation.accumulation.amount.value.en
+            - forecastGroup.forecasts.precipitation.accumulation.amount.value.fr
+            - forecastGroup.forecasts.precipitation.accumulation.name.en
+            - forecastGroup.forecasts.precipitation.accumulation.name.fr
+            - forecastGroup.forecasts.precipitation.precipPeriods.end.en
+            - forecastGroup.forecasts.precipitation.precipPeriods.end.fr
+            - forecastGroup.forecasts.precipitation.precipPeriods.start.en
+            - forecastGroup.forecasts.precipitation.precipPeriods.start.fr
+            - forecastGroup.forecasts.precipitation.precipPeriods.value.en
+            - forecastGroup.forecasts.precipitation.precipPeriods.value.fr
+            - forecastGroup.forecasts.precipitation.precip_periods.end
+            - forecastGroup.forecasts.precipitation.precip_periods.precip_type
+            - forecastGroup.forecasts.precipitation.precip_periods.start
+            - forecastGroup.forecasts.precipitation.textSummary.en
+            - forecastGroup.forecasts.precipitation.textSummary.fr
+            - forecastGroup.forecasts.rel_hum.en
+            - forecastGroup.forecasts.rel_hum.fr
+            - forecastGroup.forecasts.relativeHumidity.units.en
+            - forecastGroup.forecasts.relativeHumidity.units.fr
+            - forecastGroup.forecasts.relativeHumidity.value.en
+            - forecastGroup.forecasts.relativeHumidity.value.fr
+            - forecastGroup.forecasts.snowLevel.textSummary.en
+            - forecastGroup.forecasts.snowLevel.textSummary.fr
+            - forecastGroup.forecasts.temperatures.temp_high
+            - forecastGroup.forecasts.temperatures.temp_low
+            - forecastGroup.forecasts.temperatures.temperature.class.en
+            - forecastGroup.forecasts.temperatures.temperature.class.fr
+            - forecastGroup.forecasts.temperatures.temperature.unitType.en
+            - forecastGroup.forecasts.temperatures.temperature.unitType.fr
+            - forecastGroup.forecasts.temperatures.temperature.units.en
+            - forecastGroup.forecasts.temperatures.temperature.units.fr
+            - forecastGroup.forecasts.temperatures.temperature.value.en
+            - forecastGroup.forecasts.temperatures.temperature.value.fr
+            - forecastGroup.forecasts.temperatures.textSummary.en
+            - forecastGroup.forecasts.temperatures.textSummary.fr
+            - forecastGroup.forecasts.temperatures.text_summary.en
+            - forecastGroup.forecasts.temperatures.text_summary.fr
+            - forecastGroup.forecasts.textForecast_name.en
+            - forecastGroup.forecasts.textForecast_name.fr
+            - forecastGroup.forecasts.textSummary.en
+            - forecastGroup.forecasts.textSummary.fr
+            - forecastGroup.forecasts.uv.category.en
+            - forecastGroup.forecasts.uv.category.fr
+            - forecastGroup.forecasts.uv.index.en
+            - forecastGroup.forecasts.uv.index.fr
+            - forecastGroup.forecasts.uv.textSummary.en
+            - forecastGroup.forecasts.uv.textSummary.fr
+            - forecastGroup.forecasts.uv.text_summary.en
+            - forecastGroup.forecasts.uv.text_summary.fr
+            - forecastGroup.forecasts.visibility.cause
+            - forecastGroup.forecasts.visibility.textSummary.en
+            - forecastGroup.forecasts.visibility.textSummary.fr
+            - forecastGroup.forecasts.windChill.calculated.en
+            - forecastGroup.forecasts.windChill.calculated.fr
+            - forecastGroup.forecasts.windChill.frostbite.en
+            - forecastGroup.forecasts.windChill.frostbite.fr
+            - forecastGroup.forecasts.windChill.textSummary.en
+            - forecastGroup.forecasts.windChill.textSummary.fr
+            - forecastGroup.forecasts.winds.periods.bearing.units.en
+            - forecastGroup.forecasts.winds.periods.bearing.units.fr
+            - forecastGroup.forecasts.winds.periods.bearing.value.en
+            - forecastGroup.forecasts.winds.periods.bearing.value.fr
+            - forecastGroup.forecasts.winds.periods.direction.en
+            - forecastGroup.forecasts.winds.periods.direction.fr
+            - forecastGroup.forecasts.winds.periods.gust.unitType.en
+            - forecastGroup.forecasts.winds.periods.gust.unitType.fr
+            - forecastGroup.forecasts.winds.periods.gust.units.en
+            - forecastGroup.forecasts.winds.periods.gust.units.fr
+            - forecastGroup.forecasts.winds.periods.gust.value.en
+            - forecastGroup.forecasts.winds.periods.gust.value.fr
+            - forecastGroup.forecasts.winds.periods.index.en
+            - forecastGroup.forecasts.winds.periods.index.fr
+            - forecastGroup.forecasts.winds.periods.rank.en
+            - forecastGroup.forecasts.winds.periods.rank.fr
+            - forecastGroup.forecasts.winds.periods.speed.unitType.en
+            - forecastGroup.forecasts.winds.periods.speed.unitType.fr
+            - forecastGroup.forecasts.winds.periods.speed.units.en
+            - forecastGroup.forecasts.winds.periods.speed.units.fr
+            - forecastGroup.forecasts.winds.periods.speed.value.en
+            - forecastGroup.forecasts.winds.periods.speed.value.fr
+            - forecastGroup.forecasts.winds.textSummary.en
+            - forecastGroup.forecasts.winds.textSummary.fr
+            - forecastGroup.forecasts.winds.text_summary
+            - forecastGroup.forecasts
+            - forecastGroup.regionalNormals.temperature.class.en
+            - forecastGroup.regionalNormals.temperature.class.fr
+            - forecastGroup.regionalNormals.temperature.unitType.en
+            - forecastGroup.regionalNormals.temperature.unitType.fr
+            - forecastGroup.regionalNormals.temperature.units.en
+            - forecastGroup.regionalNormals.temperature.units.fr
+            - forecastGroup.regionalNormals.temperature.value.en
+            - forecastGroup.regionalNormals.temperature.value.fr
+            - forecastGroup.regionalNormals.temperature
+            - forecastGroup.regionalNormals.textSummary.en
+            - forecastGroup.regionalNormals.textSummary.fr
+            - forecastGroup.timestamp.en
+            - forecastGroup.timestamp.fr
+            - hourlyForecastGroup.hourlyForecasts.condition.en
+            - hourlyForecastGroup.hourlyForecasts.condition.fr
+            - hourlyForecastGroup.hourlyForecasts.humidex.unitType.en
+            - hourlyForecastGroup.hourlyForecasts.humidex.unitType.fr
+            - hourlyForecastGroup.hourlyForecasts.humidex.value.en
+            - hourlyForecastGroup.hourlyForecasts.humidex.value.fr
+            - hourlyForecastGroup.hourlyForecasts.iconCode.format
+            - hourlyForecastGroup.hourlyForecasts.iconCode.url
+            - hourlyForecastGroup.hourlyForecasts.iconCode.value
+            - hourlyForecastGroup.hourlyForecasts.lop.category.en
+            - hourlyForecastGroup.hourlyForecasts.lop.category.fr
+            - hourlyForecastGroup.hourlyForecasts.lop.units.en
+            - hourlyForecastGroup.hourlyForecasts.lop.units.fr
+            - hourlyForecastGroup.hourlyForecasts.lop.value.en
+            - hourlyForecastGroup.hourlyForecasts.lop.value.fr
+            - hourlyForecastGroup.hourlyForecasts.temperature.unitType.en
+            - hourlyForecastGroup.hourlyForecasts.temperature.unitType.fr
+            - hourlyForecastGroup.hourlyForecasts.temperature.units.en
+            - hourlyForecastGroup.hourlyForecasts.temperature.units.fr
+            - hourlyForecastGroup.hourlyForecasts.temperature.value.en
+            - hourlyForecastGroup.hourlyForecasts.temperature.value.fr
+            - hourlyForecastGroup.hourlyForecasts.timestamp
+            - hourlyForecastGroup.hourlyForecasts.uv.index.value.en
+            - hourlyForecastGroup.hourlyForecasts.uv.index.value.fr
+            - hourlyForecastGroup.hourlyForecasts.wind.direction.value.en
+            - hourlyForecastGroup.hourlyForecasts.wind.direction.value.fr
+            - hourlyForecastGroup.hourlyForecasts.wind.direction.windDirFull.en
+            - hourlyForecastGroup.hourlyForecasts.wind.direction.windDirFull.fr
+            - hourlyForecastGroup.hourlyForecasts.wind.gust.unitType.en
+            - hourlyForecastGroup.hourlyForecasts.wind.gust.unitType.fr
+            - hourlyForecastGroup.hourlyForecasts.wind.gust.units.en
+            - hourlyForecastGroup.hourlyForecasts.wind.gust.units.fr
+            - hourlyForecastGroup.hourlyForecasts.wind.gust.value.en
+            - hourlyForecastGroup.hourlyForecasts.wind.gust.value.fr
+            - hourlyForecastGroup.hourlyForecasts.wind.speed.unitType.en
+            - hourlyForecastGroup.hourlyForecasts.wind.speed.unitType.fr
+            - hourlyForecastGroup.hourlyForecasts.wind.speed.units.en
+            - hourlyForecastGroup.hourlyForecasts.wind.speed.units.fr
+            - hourlyForecastGroup.hourlyForecasts.wind.speed.value.en
+            - hourlyForecastGroup.hourlyForecasts.wind.speed.value.fr
+            - hourlyForecastGroup.hourlyForecasts.windChill.unitType.en
+            - hourlyForecastGroup.hourlyForecasts.windChill.unitType.fr
+            - hourlyForecastGroup.hourlyForecasts.windChill.value.en
+            - hourlyForecastGroup.hourlyForecasts.windChill.value.fr
+            - hourlyForecastGroup.hourlyForecasts
+            - hourlyForecastGroup.timestamp.en
+            - hourlyForecastGroup.timestamp.fr
+            - identifier
+            - lastUpdated
+            - name.en
+            - name.fr
+            - region.en
+            - region.fr
+            - riseSet.disclaimer.en
+            - riseSet.disclaimer.fr
+            - riseSet.sunrise.en
+            - riseSet.sunrise.fr
+            - riseSet.sunset.en
+            - riseSet.sunset.fr
+            - url.en
+            - url.fr
+            - warnings.description.en
+            - warnings.description.fr
+            - warnings.eventIssue.en
+            - warnings.eventIssue.fr
+            - warnings.expiryTime.en
+            - warnings.expiryTime.fr
+            - warnings.priority.en
+            - warnings.priority.fr
+            - warnings.type.en
+            - warnings.type.fr
+            - warnings.url.en
+            - warnings.url.fr
+            - warnings
+            type: string
+          type: array
+        style: form
+      - $ref: '#/components/parameters/vendorSpecificParameters'
+      - $ref: '#/components/parameters/skipGeometry'
+      - $ref: https://raw.githubusercontent.com/opengeospatial/ogcapi-records/master/core/openapi/parameters/sortby.yaml
+      - $ref: '#/components/parameters/offset'
+      - $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/datetime
+      - explode: false
+        in: query
+        name: currentConditions.condition.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.condition.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.dewpoint.qaValue.en
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.dewpoint.qaValue.fr
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.dewpoint.unitType.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.dewpoint.unitType.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.dewpoint.units.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.dewpoint.units.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.dewpoint.value.en
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.dewpoint.value.fr
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.icon
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.iconCode.format
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.iconCode.url
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.iconCode.value
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.pressure.change.en
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.pressure.change.fr
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.pressure.qaValue.en
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.pressure.qaValue.fr
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.pressure.tendency.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.pressure.tendency.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.pressure.unitType.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.pressure.unitType.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.pressure.units.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.pressure.units.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.pressure.value.en
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.pressure.value.fr
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.relativeHumidity.qaValue.en
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.relativeHumidity.qaValue.fr
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.relativeHumidity.unitType.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.relativeHumidity.unitType.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.relativeHumidity.units.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.relativeHumidity.units.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.relativeHumidity.value.en
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.relativeHumidity.value.fr
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.station.code.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.station.code.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.station.lat.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.station.lat.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.station.lon.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.station.lon.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.station.value.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.station.value.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.temperature.qaValue.en
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.temperature.qaValue.fr
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.temperature.unitType.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.temperature.unitType.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.temperature.units.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.temperature.units.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.temperature.value.en
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.temperature.value.fr
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.timestamp.en
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.timestamp.fr
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.wind.bearing.qaValue.en
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.wind.bearing.qaValue.fr
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.wind.bearing.units.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.wind.bearing.units.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.wind.bearing.value.en
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.wind.bearing.value.fr
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.wind.direction.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.wind.direction.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.wind.direction.qaValue.en
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.wind.direction.qaValue.fr
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.wind.direction.value.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.wind.direction.value.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.wind.gust.qaValue.en
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.wind.gust.qaValue.fr
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.wind.gust.unitType.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.wind.gust.unitType.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.wind.gust.units.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.wind.gust.units.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.wind.gust.value.en
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.wind.gust.value.fr
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.wind.speed.qaValue.en
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.wind.speed.qaValue.fr
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.wind.speed.unitType.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.wind.speed.unitType.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.wind.speed.units.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.wind.speed.units.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.wind.speed.value.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.wind.speed.value.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.windChill.qaValue.en
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.windChill.qaValue.fr
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.windChill.unitType.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.windChill.unitType.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.windChill.value.en
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: currentConditions.windChill.value.fr
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.abbreviatedForecast.icon.format
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.abbreviatedForecast.icon.url
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.abbreviatedForecast.icon.value
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.abbreviatedForecast.textSummary.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.abbreviatedForecast.textSummary.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.abbreviated_forecast.icon
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.abbreviated_forecast.pop
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.abbreviated_forecast.text_summary
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.cloudPrecip.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.cloudPrecip.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.cloud_precip
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.frost.textSummary.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.frost.textSummary.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.humidex.calculated.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.humidex.calculated.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.humidex.textSummary.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.humidex.textSummary.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.period.textForecastName.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.period.textForecastName.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.period.value.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.period.value.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.precipitation.accumulation.amount.unitType.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.precipitation.accumulation.amount.unitType.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.precipitation.accumulation.amount.units.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.precipitation.accumulation.amount.units.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.precipitation.accumulation.amount.value.en
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.precipitation.accumulation.amount.value.fr
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.precipitation.accumulation.name.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.precipitation.accumulation.name.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.precipitation.precipPeriods.end.en
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.precipitation.precipPeriods.end.fr
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.precipitation.precipPeriods.start.en
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.precipitation.precipPeriods.start.fr
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.precipitation.precipPeriods.value.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.precipitation.precipPeriods.value.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.precipitation.precip_periods.end
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.precipitation.precip_periods.precip_type
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.precipitation.precip_periods.start
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.precipitation.textSummary.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.precipitation.textSummary.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.rel_hum.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.rel_hum.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.relativeHumidity.units.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.relativeHumidity.units.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.relativeHumidity.value.en
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.relativeHumidity.value.fr
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.snowLevel.textSummary.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.snowLevel.textSummary.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.temperatures.temp_high
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.temperatures.temp_low
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.temperatures.temperature.class.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.temperatures.temperature.class.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.temperatures.temperature.unitType.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.temperatures.temperature.unitType.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.temperatures.temperature.units.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.temperatures.temperature.units.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.temperatures.temperature.value.en
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.temperatures.temperature.value.fr
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.temperatures.textSummary.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.temperatures.textSummary.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.temperatures.text_summary.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.temperatures.text_summary.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.textForecast_name.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.textForecast_name.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.textSummary.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.textSummary.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.uv.category.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.uv.category.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.uv.index.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.uv.index.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.uv.textSummary.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.uv.textSummary.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.uv.text_summary.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.uv.text_summary.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.visibility.cause
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.visibility.textSummary.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.visibility.textSummary.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.windChill.calculated.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.windChill.calculated.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.windChill.frostbite.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.windChill.frostbite.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.windChill.textSummary.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.windChill.textSummary.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.winds.periods.bearing.units.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.winds.periods.bearing.units.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.winds.periods.bearing.value.en
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.winds.periods.bearing.value.fr
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.winds.periods.direction.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.winds.periods.direction.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.winds.periods.gust.unitType.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.winds.periods.gust.unitType.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.winds.periods.gust.units.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.winds.periods.gust.units.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.winds.periods.gust.value.en
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.winds.periods.gust.value.fr
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.winds.periods.index.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.winds.periods.index.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.winds.periods.rank.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.winds.periods.rank.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.winds.periods.speed.unitType.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.winds.periods.speed.unitType.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.winds.periods.speed.units.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.winds.periods.speed.units.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.winds.periods.speed.value.en
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.winds.periods.speed.value.fr
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.winds.textSummary.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.winds.textSummary.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts.winds.text_summary
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.forecasts
+        required: false
+        schema:
+          type: nested
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.regionalNormals.temperature.class.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.regionalNormals.temperature.class.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.regionalNormals.temperature.unitType.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.regionalNormals.temperature.unitType.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.regionalNormals.temperature.units.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.regionalNormals.temperature.units.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.regionalNormals.temperature.value.en
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.regionalNormals.temperature.value.fr
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.regionalNormals.temperature
+        required: false
+        schema:
+          type: nested
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.regionalNormals.textSummary.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.regionalNormals.textSummary.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.timestamp.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: forecastGroup.timestamp.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.condition.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.condition.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.humidex.unitType.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.humidex.unitType.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.humidex.value.en
+        required: false
+        schema:
+          type: byte
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.humidex.value.fr
+        required: false
+        schema:
+          type: byte
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.iconCode.format
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.iconCode.url
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.iconCode.value
+        required: false
+        schema:
+          type: byte
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.lop.category.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.lop.category.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.lop.units.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.lop.units.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.lop.value.en
+        required: false
+        schema:
+          type: byte
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.lop.value.fr
+        required: false
+        schema:
+          type: byte
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.temperature.unitType.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.temperature.unitType.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.temperature.units.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.temperature.units.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.temperature.value.en
+        required: false
+        schema:
+          type: byte
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.temperature.value.fr
+        required: false
+        schema:
+          type: byte
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.timestamp
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.uv.index.value.en
+        required: false
+        schema:
+          type: byte
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.uv.index.value.fr
+        required: false
+        schema:
+          type: byte
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.wind.direction.value.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.wind.direction.value.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.wind.direction.windDirFull.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.wind.direction.windDirFull.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.wind.gust.unitType.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.wind.gust.unitType.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.wind.gust.units.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.wind.gust.units.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.wind.gust.value.en
+        required: false
+        schema:
+          type: byte
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.wind.gust.value.fr
+        required: false
+        schema:
+          type: byte
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.wind.speed.unitType.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.wind.speed.unitType.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.wind.speed.units.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.wind.speed.units.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.wind.speed.value.en
+        required: false
+        schema:
+          type: short
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.wind.speed.value.fr
+        required: false
+        schema:
+          type: short
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.windChill.unitType.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.windChill.unitType.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.windChill.value.en
+        required: false
+        schema:
+          type: byte
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts.windChill.value.fr
+        required: false
+        schema:
+          type: byte
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.hourlyForecasts
+        required: false
+        schema:
+          type: nested
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.timestamp.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: hourlyForecastGroup.timestamp.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: identifier
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: lastUpdated
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: name.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: name.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: region.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: region.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: riseSet.disclaimer.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: riseSet.disclaimer.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: riseSet.sunrise.en
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: riseSet.sunrise.fr
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: riseSet.sunset.en
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: riseSet.sunset.fr
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: url.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: url.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: warnings.description.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: warnings.description.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: warnings.eventIssue.en
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: warnings.eventIssue.fr
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: warnings.expiryTime.en
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: warnings.expiryTime.fr
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: warnings.priority.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: warnings.priority.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: warnings.type.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: warnings.type.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: warnings.url.en
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: warnings.url.fr
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: warnings
+        required: false
+        schema:
+          type: nested
+        style: form
+      responses:
+        '200':
+          $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
+        '400':
+          $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        '404':
+          $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        '500':
+          $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get City Page Weather [experimental] items
+      tags:
+      - citypageweather-realtime
+    options:
+      description: Provides current conditions, forecasts, warnings and regional normals
+        for a selection of Canadian cities.
+      operationId: optionsCitypageweather-realtimeFeatures
+      responses:
+        '200':
+          description: options response
+      summary: Options for City Page Weather [experimental] items
+      tags:
+      - citypageweather-realtime
+  /collections/citypageweather-realtime/items/{featureId}:
+    get:
+      description: Provides current conditions, forecasts, warnings and regional normals
+        for a selection of Canadian cities.
+      operationId: getCitypageweather-realtimeFeature
+      parameters:
+      - $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
+      - $ref: '#/components/parameters/crs'
+      - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
+      responses:
+        '200':
+          $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Feature
+        '400':
+          $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        '404':
+          $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        '500':
+          $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get City Page Weather [experimental] item by id
+      tags:
+      - citypageweather-realtime
+    options:
+      description: Provides current conditions, forecasts, warnings and regional normals
+        for a selection of Canadian cities.
+      operationId: optionsCitypageweather-realtimeFeature
+      parameters:
+      - $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
+      responses:
+        '200':
+          description: options response
+      summary: Options for City Page Weather [experimental] item by id
+      tags:
+      - citypageweather-realtime
+  /collections/citypageweather-realtime/queryables:
+    get:
+      description: Provides current conditions, forecasts, warnings and regional normals
+        for a selection of Canadian cities.
+      operationId: getCitypageweather-realtimeQueryables
+      parameters:
+      - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
+      responses:
+        '200':
+          $ref: '#/components/responses/Queryables'
+        '400':
+          $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        '404':
+          $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        '500':
+          $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get City Page Weather [experimental] queryables
+      tags:
+      - citypageweather-realtime
+  /collections/citypageweather-realtime/schema:
+    get:
+      description: Provides current conditions, forecasts, warnings and regional normals
+        for a selection of Canadian cities.
+      operationId: getCitypageweather-realtimeSchema
+      parameters:
+      - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
+      responses:
+        '200':
+          $ref: '#/components/responses/Queryables'
+        '400':
+          $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        '404':
+          $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        '500':
+          $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get City Page Weather [experimental] schema
+      tags:
+      - citypageweather-realtime
   /collections/climate-daily:
     get:
       description: 'Daily climate observations are derived from two sources of data.
@@ -5999,7 +8462,7 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get CanDCSU6 - 30 Year Averages of Projected Annual Anomalies metadata
+      summary: Get CanDCSU6 - 30 Year Averages of Projected Seasonal Anomalies metadata
       tags:
       - climate:candcsu6:projected:seasonal:P30Y-Avg
   /collections/climate:candcsu6:projected:seasonal:P30Y-Avg/coverage:
@@ -6030,7 +8493,7 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get CanDCSU6 - 30 Year Averages of Projected Annual Anomalies coverage
+      summary: Get CanDCSU6 - 30 Year Averages of Projected Seasonal Anomalies coverage
       tags:
       - climate:candcsu6:projected:seasonal:P30Y-Avg
   /collections/climate:candcsu6:projected:seasonal:absolute:
@@ -8792,10 +11255,6 @@ paths:
             - id
             - latest_publication
             - metobject.classification
-            - metobject.eye_diameter.unit
-            - metobject.eye_diameter.value
-            - metobject.max_seas.unit
-            - metobject.max_seas.value
             - metobject.max_wind.unit
             - metobject.max_wind.value
             - metobject.motion.direction.unit
@@ -8890,36 +11349,6 @@ paths:
         required: false
         schema:
           type: string
-        style: form
-      - explode: false
-        in: query
-        name: metobject.eye_diameter.unit
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: metobject.eye_diameter.value
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: metobject.max_seas.unit
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: metobject.max_seas.value
-        required: false
-        schema:
-          format: float
-          type: number
         style: form
       - explode: false
         in: query
@@ -9241,14 +11670,6 @@ paths:
             - metobject.cyclone_2.along_track_error.value
             - metobject.cyclone_2.cross_track_error.unit
             - metobject.cyclone_2.cross_track_error.value
-            - metobject.cyclone_3.along_track_error.unit
-            - metobject.cyclone_3.along_track_error.value
-            - metobject.cyclone_3.cross_track_error.unit
-            - metobject.cyclone_3.cross_track_error.value
-            - metobject.cyclone_4.along_track_error.unit
-            - metobject.cyclone_4.along_track_error.value
-            - metobject.cyclone_4.cross_track_error.unit
-            - metobject.cyclone_4.cross_track_error.value
             - product_class
             - product_sub_type
             - product_type
@@ -9411,66 +11832,6 @@ paths:
       - explode: false
         in: query
         name: metobject.cyclone_2.cross_track_error.value
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: metobject.cyclone_3.along_track_error.unit
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: metobject.cyclone_3.along_track_error.value
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: metobject.cyclone_3.cross_track_error.unit
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: metobject.cyclone_3.cross_track_error.value
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: metobject.cyclone_4.along_track_error.unit
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: metobject.cyclone_4.along_track_error.value
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: metobject.cyclone_4.cross_track_error.unit
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: metobject.cyclone_4.cross_track_error.value
         required: false
         schema:
           format: float
@@ -9973,7 +12334,7 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Hurricane Tracks - Wind Raddi [experimental] metadata
+      summary: Get Hurricane Tracks - Wind Radii [experimental] metadata
       tags:
       - hurricanes-wind_radii-realtime
   /collections/hurricanes-wind_radii-realtime/items:
@@ -10248,7 +12609,7 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Hurricane Tracks - Wind Raddi [experimental] items
+      summary: Get Hurricane Tracks - Wind Radii [experimental] items
       tags:
       - hurricanes-wind_radii-realtime
     options:
@@ -10258,7 +12619,7 @@ paths:
       responses:
         '200':
           description: options response
-      summary: Options for Hurricane Tracks - Wind Raddi [experimental] items
+      summary: Options for Hurricane Tracks - Wind Radii [experimental] items
       tags:
       - hurricanes-wind_radii-realtime
   /collections/hurricanes-wind_radii-realtime/items/{featureId}:
@@ -10280,7 +12641,7 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Hurricane Tracks - Wind Raddi [experimental] item by id
+      summary: Get Hurricane Tracks - Wind Radii [experimental] item by id
       tags:
       - hurricanes-wind_radii-realtime
     options:
@@ -10292,7 +12653,7 @@ paths:
       responses:
         '200':
           description: options response
-      summary: Options for Hurricane Tracks - Wind Raddi [experimental] item by id
+      summary: Options for Hurricane Tracks - Wind Radii [experimental] item by id
       tags:
       - hurricanes-wind_radii-realtime
   /collections/hurricanes-wind_radii-realtime/queryables:
@@ -10312,7 +12673,7 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Hurricane Tracks - Wind Raddi [experimental] queryables
+      summary: Get Hurricane Tracks - Wind Radii [experimental] queryables
       tags:
       - hurricanes-wind_radii-realtime
   /collections/hurricanes-wind_radii-realtime/schema:
@@ -10332,7 +12693,7 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Hurricane Tracks - Wind Raddi [experimental] schema
+      summary: Get Hurricane Tracks - Wind Radii [experimental] schema
       tags:
       - hurricanes-wind_radii-realtime
   /collections/hydrometric-annual-peaks:
@@ -15584,7 +17945,6 @@ paths:
             - avg_rel_hum_pst1hr-data_flag-code_src
             - avg_rel_hum_pst1hr-data_flag-uom
             - avg_rel_hum_pst1hr-data_flag-value
-            - avg_rel_hum_pst1hr-qa
             - avg_rel_hum_pst1hr-uom
             - avg_rel_hum_pst2mts
             - avg_rel_hum_pst2mts-qa
@@ -15779,6 +18139,8 @@ paths:
             - dwpt_temp-data_flag-value
             - dwpt_temp-qa
             - dwpt_temp-uom
+            - frstry_distrct-uom
+            - frstry_distrct-value
             - hdr_fwd_pwr
             - hdr_fwd_pwr-qa
             - hdr_fwd_pwr-uom
@@ -15857,6 +18219,7 @@ paths:
             - max_rel_hum_pst24hrs
             - max_rel_hum_pst24hrs-qa
             - max_rel_hum_pst24hrs-uom
+            - max_vis_pst10mts
             - max_vis_pst10mts-qa
             - max_vis_pst10mts-uom
             - max_vis_pst1hr
@@ -15952,6 +18315,7 @@ paths:
             - min_rel_hum_pst24hrs
             - min_rel_hum_pst24hrs-qa
             - min_rel_hum_pst24hrs-uom
+            - min_vis_pst10mts
             - min_vis_pst10mts-qa
             - min_vis_pst10mts-uom
             - msc_id-uom
@@ -16086,9 +18450,6 @@ paths:
             - rptg_freq-uom
             - rptg_freq-value
             - snw_dpth
-            - snw_dpth-data_flag-code_src
-            - snw_dpth-data_flag-uom
-            - snw_dpth-data_flag-value
             - snw_dpth-qa
             - snw_dpth-uom
             - snw_dpth_1
@@ -16676,14 +19037,6 @@ paths:
       - explode: false
         in: query
         name: avg_rel_hum_pst1hr-data_flag-value
-        required: false
-        schema:
-          format: long
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: avg_rel_hum_pst1hr-qa
         required: false
         schema:
           format: long
@@ -18157,6 +20510,20 @@ paths:
         style: form
       - explode: false
         in: query
+        name: frstry_distrct-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: frstry_distrct-value
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
         name: hdr_fwd_pwr
         required: false
         schema:
@@ -18742,6 +21109,14 @@ paths:
         required: false
         schema:
           type: string
+        style: form
+      - explode: false
+        in: query
+        name: max_vis_pst10mts
+        required: false
+        schema:
+          format: float
+          type: number
         style: form
       - explode: false
         in: query
@@ -19461,6 +21836,14 @@ paths:
         style: form
       - explode: false
         in: query
+        name: min_vis_pst10mts
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
         name: min_vis_pst10mts-qa
         required: false
         schema:
@@ -19634,7 +22017,7 @@ paths:
         name: pcpn_amt_pst1hr
         required: false
         schema:
-          format: long
+          format: float
           type: number
         style: form
       - explode: false
@@ -19679,7 +22062,7 @@ paths:
         name: pcpn_amt_pst24hrs
         required: false
         schema:
-          format: long
+          format: float
           type: number
         style: form
       - explode: false
@@ -19814,7 +22197,7 @@ paths:
         name: pcpn_amt_snc_top_of_hr
         required: false
         schema:
-          format: long
+          format: float
           type: number
         style: form
       - explode: false
@@ -19956,7 +22339,7 @@ paths:
         name: pres_tend_amt_pst3hrs
         required: false
         schema:
-          format: long
+          format: float
           type: number
         style: form
       - explode: false
@@ -20204,7 +22587,7 @@ paths:
         name: rnfl_amt_pst1hr
         required: false
         schema:
-          format: long
+          format: float
           type: number
         style: form
       - explode: false
@@ -20455,28 +22838,6 @@ paths:
       - explode: false
         in: query
         name: snw_dpth
-        required: false
-        schema:
-          format: long
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: snw_dpth-data_flag-code_src
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: snw_dpth-data_flag-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: snw_dpth-data_flag-value
         required: false
         schema:
           format: long
@@ -21741,12 +24102,15 @@ paths:
             - expiration_datetime
             - file_id
             - id
+            - metobject.confidence.value
             - metobject.gust.unit
             - metobject.gust.value
             - metobject.hail.unit
             - metobject.hail.value
+            - metobject.impact.value
             - metobject.rain.unit
             - metobject.rain.value
+            - metobject.risk_swo.value
             - metobject.severity.value
             - metobject.sub_type
             - metobject.thunderstorm.value
@@ -21804,6 +24168,14 @@ paths:
         style: form
       - explode: false
         in: query
+        name: metobject.confidence.value
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
         name: metobject.gust.unit
         required: false
         schema:
@@ -21834,6 +24206,14 @@ paths:
         style: form
       - explode: false
         in: query
+        name: metobject.impact.value
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
         name: metobject.rain.unit
         required: false
         schema:
@@ -21842,6 +24222,14 @@ paths:
       - explode: false
         in: query
         name: metobject.rain.value
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: metobject.risk_swo.value
         required: false
         schema:
           format: long
@@ -23725,6 +26113,9 @@ tags:
     including precipitation totals, max-min temperatures, and degree days. This data
     is available from stations that produce daily data.
   name: climate-monthly
+- description: Provides current conditions, forecasts, warnings and regional normals
+    for a selection of Canadian cities.
+  name: citypageweather-realtime
 - description: 'Daily climate observations are derived from two sources of data. The
     first are Daily Climate Stations producing one or two observations per day of
     temperature, precipitation. The second are hourly stations that typically produce
