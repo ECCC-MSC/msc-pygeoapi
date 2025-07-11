@@ -52,6 +52,9 @@
   resize:vertical;
   min-height: 400px;
 }
+.leaflet-attribution-flag { 
+  display: none !important; 
+}
 
 footer.sticky {
   position: fixed;
