@@ -681,7 +681,7 @@ resources:
                   - DAYS_WITH_VALID_SUNSHINE
                   - COOLING_DEGREE_DAYS
                   - HEATING_DEGREE_DAYS
-    citypageweather:
+    citypageweather-realtime:
         type: collection
         title:
             en: City Page Weather [experimental]
