@@ -15,4 +15,4 @@ pyyaml
 rasterio<1.4
 requests
 sqlalchemy
-xarray
+xarray<2025.0.0
