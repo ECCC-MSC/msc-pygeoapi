@@ -1,3 +1,19 @@
+msc-pygeoapi (0.15.0) jammy; urgency=medium
+
+  * add GEOMET_LOCAL_BASEPATH to setup
+  * update to GDAL <= 3.8.4 in pip requirments
+  * update server max items
+  * ES: fix KeyError when index name is alias or wildcard
+  * update broken metadata URLs in configuration
+  * fix table resizing in .../items HTML templates
+  * add type for EDR-based collections
+  * update CSS for coverages map
+  * fix pathing for hurricanes data feed
+  * fix CSV handling for SWOB partner station list handling
+  * update CPW loader to include 7day/hourly forecasts/warnings/sunrise/sunset
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Fri, 11 Jul 2025 10:30:33 +0000
+
 msc-pygeoapi (0.14.1) jammy; urgency=medium
 
   * fix for missing time dimension in DCS
