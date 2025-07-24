@@ -662,8 +662,60 @@ def open_data(data):
             _data['time'] = cftime.num2date(_data['time'].values,
                                             units='hours since 0001-01-01',
                                             calendar='standard')
+        except TypeError:
+            # Datasets with inconsistent times values across variables
+            _data = open_func(
+                data,
+                preprocess=preprocess_time,
+                decode_times=True,
+                use_cftime=True,
+                combine='by_coords'
+            )
+
         _data = _convert_float32_to_float64(_data)
 
         return _data
     except Exception as err:
         LOGGER.error(err)
+
+
+def preprocess_time(ds):
+    """Preprocessing function to standardize time coordinates"""
+
+    if 'time' in ds.coords:
+        time_values = ds.time.values
+
+        # Convert all to cftime DatetimeNoLeap
+        if not hasattr(time_values[0], 'calendar'):
+            # Convert pandas timestamps to cftime
+            import pandas as pd
+            new_times = []
+            for t in pd.to_datetime(time_values):
+                new_times.append(
+                    cftime.DatetimeNoLeap(
+                        t.year,
+                        t.month,
+                        t.day,
+                        t.hour,
+                        t.minute,
+                        t.second
+                    )
+                )
+            ds = ds.assign_coords(time=new_times)
+        elif time_values[0].calendar != 'noleap':
+            # Convert other cftime calendars to noleap
+            new_times = []
+            for t in time_values:
+                new_times.append(
+                    cftime.DatetimeNoLeap(
+                        t.year,
+                        t.month,
+                        t.day,
+                        t.hour,
+                        t.minute,
+                        t.second
+                    )
+                )
+            ds = ds.assign_coords(time=new_times)
+
+    return ds
