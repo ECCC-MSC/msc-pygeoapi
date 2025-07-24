@@ -29,8 +29,12 @@
 #
 # =================================================================
 
+import cftime
+from datetime import datetime
 import logging
 import tempfile
+
+import numpy as np
 
 from pygeoapi.provider.base import (BaseProvider,
                                     ProviderConnectionError,
@@ -90,6 +94,28 @@ class SPEIProvider(ClimateProvider):
                 }
 
         return domainset
+
+    def _datetime_to_string(self, datetime_):
+        """
+        Convenience function to formulate string from various datetime objects
+
+        :param datetime_obj: datetime object (native datetime, cftime)
+
+        :returns: str representation of datetime
+        """
+
+        try:
+            if isinstance(datetime_, (cftime._cftime.DatetimeNoLeap,
+                                      cftime._cftime.DatetimeGregorian)):
+                cftime_str = datetime_.strftime('%Y-%m-%d %H:%M:%S')
+                python_datetime = datetime.strptime(cftime_str,
+                                                    '%Y-%m-%d %H:%M:%S')
+                datetime_ = np.datetime64(python_datetime)
+
+            datetime_str = np.datetime_as_string(datetime_, unit='D')
+            return datetime_str
+        except Exception as err:
+            LOGGER.error(err)
 
     def query(self, properties=['spei'], subsets={},
               bbox=[], datetime_=None, format_='json'):
@@ -160,7 +186,6 @@ class SPEIProvider(ClimateProvider):
                     slice(bbox[0], bbox[2])
                 query_params[self._coverage_properties['y_axis_label']] = \
                     slice(bbox[3], bbox[1])
-
             if datetime_ is not None:
                 if self._coverage_properties['time_axis_label'] in subsets:
                     msg = 'datetime and temporal subsetting are exclusive'
@@ -176,7 +201,17 @@ class SPEIProvider(ClimateProvider):
                             LOGGER.debug('Reversing slicing from high to low')
                             query_params[self.time_field] = slice(end, begin)
                     else:
-                        query_params[self.time_field] = datetime_
+                        target = cftime.datetime.strptime(
+                            datetime_, '%Y-%m', calendar='noleap'
+                        )
+                        nearest_time = data.time.sel(
+                            time=target,
+                            method='nearest'
+                        )
+                        nearest_time = nearest_time.dt.strftime(
+                            '%Y-%m-%d'
+                        ).item()
+                        query_params[self.time_field] = [nearest_time]
 
             LOGGER.debug(f'Query parameters: {query_params}')
             try:
@@ -199,17 +234,17 @@ class SPEIProvider(ClimateProvider):
                 data.coords[self.x_field].values[-1],
                 data.coords[self.y_field].values[-1]
             ],
-            "time": [
-                self._to_datetime_string(
+            'time': [
+                self._datetime_to_string(
                     data.coords[self.time_field].values[0]),
-                self._to_datetime_string(
+                self._datetime_to_string(
                     data.coords[self.time_field].values[-1])
             ],
-            "driver": "xarray",
-            "height": data.sizes[self.y_field],
-            "width": data.sizes[self.x_field],
-            "time_steps": data.sizes[self.time_field],
-            "variables": {var_name: var.attrs
+            'driver': 'xarray',
+            'height': data.sizes[self.y_field],
+            'width': data.sizes[self.x_field],
+            'time_steps': data.sizes[self.time_field],
+            'variables': {var_name: var.attrs
                           for var_name, var in data.variables.items()}
         }
 
@@ -218,7 +253,9 @@ class SPEIProvider(ClimateProvider):
         LOGGER.debug('Serializing data in memory')
         if format_ == 'json':
             LOGGER.debug('Creating output in CoverageJSON')
-            return self.gen_covjson(out_meta, data, properties)
+            cj = self.gen_covjson(out_meta, data, properties)
+            cj['domain']['axes']['t'] = {'values': out_meta['time']}
+            return cj
         elif format_ == 'zarr':
             LOGGER.debug('Returning data in native zarr format')
             return _get_zarr_data(data)
