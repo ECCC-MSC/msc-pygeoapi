@@ -1,3 +1,14 @@
+msc-pygeoapi (0.15.1) jammy; urgency=medium
+
+  * add sarracenia configuration for aqhi internal data feed
+  * fixed cmip5 servor error caused by inconsistent time values between variables
+  * fix for inconsistent datetime in spei data
+  * update citypageweather realtime subscriber
+  * pin xarray to be compatible with python 3.10
+  * update OpenAPI documentation
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Fri, 25 Jul 2025 13:18:32 +0000
+
 msc-pygeoapi (0.15.0) jammy; urgency=medium
 
   * add GEOMET_LOCAL_BASEPATH to setup
@@ -13,6 +24,7 @@ msc-pygeoapi (0.15.0) jammy; urgency=medium
   * update CPW loader to include 7day/hourly forecasts/warnings/sunrise/sunset
 
  -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Fri, 11 Jul 2025 10:30:33 +0000
+
 
 msc-pygeoapi (0.14.1) jammy; urgency=medium
 
