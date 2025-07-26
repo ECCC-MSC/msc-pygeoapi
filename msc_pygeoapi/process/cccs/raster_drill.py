@@ -323,7 +323,7 @@ def serialize(values_dict, cfg, output_format, x, y):
             pctl_en = pctl_fr = ''
 
         if output_format == 'CSV':
-            time_ = 'time_{time_begin}/{time_end}/{time_step}'
+            time_ = f'time_{time_begin}/{time_end}/{time_step}'
             row = [time_,
                    'values',
                    'longitude',
