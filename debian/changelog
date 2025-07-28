@@ -1,3 +1,10 @@
+msc-pygeoapi (0.15.2) jammy; urgency=medium
+
+  * fix CSV download fieldname/header
+  * update citypageweather realtime subscriber
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Mon, 28 Jul 2025 12:44:42 +0000
+
 msc-pygeoapi (0.15.1) jammy; urgency=medium
 
   * add sarracenia configuration for aqhi internal data feed
