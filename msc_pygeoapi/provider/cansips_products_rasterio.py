@@ -73,7 +73,7 @@ class CanSIPSProductsProvider(RasterioProvider):
         self.file_list = self._get_files_list()
 
         try:
-            self.data = self.file_list['AirTemp-ProbAboveNormal'][0].absolute()
+            self.data = self.file_list['AirTemp-ProbAboveNormal'][-1].absolute() # noqa
         except IndexError:
             raise ProviderConnectionError('No associated data files found.')
 
@@ -261,7 +261,7 @@ class CanSIPSProductsProvider(RasterioProvider):
         LOGGER.debug('Getting fields')
 
         for variable in self.variables:
-            self._data = rasterio.open(self.file_list[variable][0])
+            self._data = rasterio.open(self.file_list[variable][-1])
             for i, dtype in zip(self._data.indexes, self._data.dtypes):
                 LOGGER.debug(f'Adding field for band {i}')
                 i2 = str(variable)
