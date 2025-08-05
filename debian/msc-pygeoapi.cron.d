@@ -56,7 +56,7 @@ MAILTO=""
 0 3 * * * geoadm . /local/home/geoadm/.profile && /usr/bin/find $MSC_PYGEOAPI_CACHEDIR -type d -empty -delete > /dev/null 2>&1
 
 # every hour, clean out CitypageWeather XML files older than 12 hours
-0 * * * * geoadm . /local/home/geoadm/.profile && /usr/bin/find $MSC_PYGEOAPI_CACHEDIR/citypage_weather -name "*MSC_CitypageWeather*.xml" -type f -mmin +720 -delete
+0 * * * * geoadm . /local/home/geoadm/.profile && /usr/bin/find $MSC_PYGEOAPI_CACHEDIR/citypage_weather -type f -mmin +720 -delete /dev/null 2>&1
 
 # every day at 0800h, clean umos realtime data older than 7 days
 0 8 * * * geoadm . /local/home/geoadm/.profile && msc-pygeoapi data umos-realtime clean-indexes --dataset all --days 7 --yes
