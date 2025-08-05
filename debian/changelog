@@ -1,3 +1,10 @@
+msc-pygeoapi (0.15.3) jammy; urgency=medium
+
+  * CanSIPS: fix variable definitions
+  * update citypageweather cronjob
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Tue, 05 Aug Jul 2025 14:21:48 +0000
+
 msc-pygeoapi (0.15.2) jammy; urgency=medium
 
   * fix CSV download fieldname/header
