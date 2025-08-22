@@ -1197,7 +1197,7 @@ resources:
               id_field: id
               time_field: date_tm-value
 
-    swob-station:
+    swob-stations:
         type: collection
         title:
             en: SWOB - Stations
@@ -1235,7 +1235,7 @@ resources:
               data: ${MSC_PYGEOAPI_ES_URL}/swob-surface-stations
               id_field: id
 
-    swob-partner-station:
+    swob-partner-stations:
         type: collection
         title:
             en: SWOB - Stations from Partners
@@ -1273,7 +1273,7 @@ resources:
               data: ${MSC_PYGEOAPI_ES_URL}/swob-partner-stations
               id_field: id
 
-    swob-marine-station:
+    swob-marine-stations:
         type: collection
         title:
             en: SWOB - Stations for Marine
