@@ -9,7 +9,7 @@ netcdf4
 pandas
 parse
 pygeometa
-pyproj
+pyproj<=3.6.1
 python-slugify
 pyyaml
 rasterio<1.4
