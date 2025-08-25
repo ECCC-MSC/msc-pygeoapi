@@ -89,10 +89,13 @@
               <tr>
                 <th v-for="(th, index) in tableFields"
                   :class="th.colClass">
-                  <div class="sortable ellipsis" @click="changeSortDir(th.key)" :title="th.text">
+                  <div
+                    :class="{ 'sortable ellipsis': th.key !== 'id' }"
+                    :title="th.text"
+                    @click="th.key !== 'id' && changeSortDir(th.key)">
                     <span v-text="truncate(th.text, 15)"></span>
                     <span
-                      v-show="currentSort === th.key"
+                      v-show="currentSort === th.key && th.key !== 'id'"
                       :class="[sortIconClass, 'glyphicon']"></span>
                   </div>
                   <div v-if="th.key !== 'id'">
