@@ -308,6 +308,58 @@
             let csvLink = document.getElementById('csv-format-url')
             csvLink.href = '?' + queryParams.toString() + '&f=csv'
           }
+          const updateLangChangeLink = function() {
+            let langLinks = document.getElementsByClassName('lang-toggle')
+            let langLinksLen = langLinks.length
+
+            if (queryParams.has('lang')) {
+              // We will be preserving the order of the parameters as they are originally listed in the current page's URL
+              // To do this, it is split in 2 halves, with the first ending with the lang parameter so its value can be easily inserted for each language link
+              let newParamsFirstHalf = '?'
+              let newParamsSecondHalf = ''
+              let addToFirstHalf = true
+              let firstToAdd = true
+              for (const [key, value] of queryParams) {
+                if (firstToAdd) {
+                  // Guaranteed to be in first half
+                  if (key === 'lang') {
+                    newParamsFirstHalf = newParamsFirstHalf + `${key}=`
+                    addToFirstHalf = false
+                  } else {
+                    newParamsFirstHalf = newParamsFirstHalf + `${key}=${value}`
+                  }
+                  firstToAdd = false
+                } else {
+                  if (addToFirstHalf) {
+                    if (key === 'lang') {
+                      newParamsFirstHalf = newParamsFirstHalf + `&${key}=`
+                      addToFirstHalf = false
+                    } else {
+                      newParamsFirstHalf = newParamsFirstHalf + `&${key}=${value}`
+                    }
+                  } else {
+                    // Once in the second half, we know that the key cannot be lang, and that there are params that must come before it
+                    newParamsSecondHalf = newParamsSecondHalf + `&${key}=${value}`
+                  }
+                }
+              }
+
+              // Here, the complete list of params are constructed for each language link.
+              for (let i=0;i<langLinksLen;i++) {
+                let otherLang = langLinks.item(i).textContent.toLowerCase()
+                langLinks.item(i).href = newParamsFirstHalf + `${otherLang}` + newParamsSecondHalf
+              }
+            } else {
+              // Know current page is English, need to create other pages using the value from the other generated hrefs
+              for (let i=0;i<langLinksLen;i++) {
+                let otherLang = langLinks.item(i).textContent.toLowerCase()
+                let otherParams = queryParams.toString()
+                if (otherParams.length !== 0) {
+                  langLinks.item(i).href = '?' + queryParams.toString() + `&lang=${otherLang}`
+                }
+              }
+            }
+          }
           // updates URL query params with current state
           const updateQueryParams = function(lastHistoryState = null) {
             queryParams = new URLSearchParams(window.location.search)
@@ -351,6 +403,7 @@
             }
 
             updateJsonLinks()
+            updateLangChangeLink()
           }
           // update json data after each map moveend event
           watch(bbox, (newVal, oldVal) => {
@@ -420,6 +473,7 @@
           onMounted(() => {
             getItems(currentSort.value, currentSortDir.value, bbox.value)
             updateJsonLinks()
+            updateLangChangeLink()
           })
 
           // history back handling
