@@ -2,7 +2,7 @@
 #
 # Author: Tom Kralidis <tom.kralidis@ec.gc.ca>
 #
-# Copyright (c) 2023 Tom Kralidis
+# Copyright (c) 2025 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -68,6 +68,14 @@ SETTINGS = {
                         'format': 'strict_date_hour_minute||strict_date_optional_time'  # noqa
                     },
                     'identifier': {
+                        'type': 'text',
+                        'fields': {
+                            'raw': {
+                                'type': 'keyword'
+                            }
+                        }
+                    },
+                    'ttaaii': {
                         'type': 'text',
                         'fields': {
                             'raw': {
@@ -192,7 +200,9 @@ class BulletinsRealtimeLoader(BaseLoader):
         mm = yyyymmdd[4:6]
         dd = yyyymmdd[6:8]
 
-        min_ = filename.split('_')[2][-2:]
+        ftokens = filename.split('_')
+        min_ = ftokens[2][-2:]
+        ttaaii = ftokens[0]
 
         datetime_ = f'{yyyy}-{mm}-{dd}T{hh}:{min_}'
 
@@ -200,6 +210,7 @@ class BulletinsRealtimeLoader(BaseLoader):
 
         dict_['properties']['datetime'] = datetime_
         dict_['properties']['type'] = tokens[1]
+        dict_['properties']['ttaaii'] = ttaaii
         dict_['properties']['issuer_code'] = tokens[2]
         dict_['properties']['issuer_name'] = issuer_name
         dict_['properties']['issuer_country'] = issuer_country
