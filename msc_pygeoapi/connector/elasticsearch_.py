@@ -48,6 +48,9 @@ from msc_pygeoapi.env import (
 
 LOGGER = logging.getLogger(__name__)
 elastic_logger.setLevel(getattr(logging, MSC_PYGEOAPI_LOGGING_LOGLEVEL))
+logging.getLogger('elastic_transport').setLevel(
+    getattr(logging, MSC_PYGEOAPI_LOGGING_LOGLEVEL)
+)
 
 
 class ElasticsearchConnector(BaseConnector):
@@ -118,7 +121,7 @@ class ElasticsearchConnector(BaseConnector):
             self.Elasticsearch.indices.exists(index=index_name)
             and not overwrite
         ):
-            LOGGER.info('{} index already exists.')
+            LOGGER.info(f'{index_name} index already exists.')
             return False
 
         elif self.Elasticsearch.indices.exists(index=index_name) and overwrite:
