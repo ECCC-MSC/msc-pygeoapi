@@ -3,7 +3,7 @@
 # Author: Louis-Philippe Rousseau-Lambert
 #             <louis-philippe.rousseaulambert@ec.gc.ca>
 #
-# Copyright (c) 2024 Louis-Philippe Rousseau-Lambert
+# Copyright (c) 2025 Louis-Philippe Rousseau-Lambert
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -54,7 +54,7 @@ ACTIVE_HOURS = 48
 TEMPLATE_MAPPINGS = ['cyclone', 'track', 'error_cone', 'wind_radii']
 
 # index settings
-INDEX_BASENAME = 'hurricanes-{}.'
+INDEX_BASENAME = 'hurricanes-{}'
 
 DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 
@@ -127,7 +127,20 @@ class HurricanesRealtimeLoader(BaseLoader):
             template_name = INDEX_BASENAME.format(hurricane_type)
             SETTINGS['index_patterns'] = [f'{template_name}*']
             SETTINGS['mappings'] = MAPPINGS
-            self.conn.create_template(template_name, SETTINGS)
+            self.conn.create_template(
+                f'{template_name}.',
+                SETTINGS,
+                overwrite=True
+                )
+            index_setting = {
+                'mappings': SETTINGS['mappings'],
+                'settings': SETTINGS['settings']
+                }
+            self.conn.create(
+                INDEX_BASENAME.format(hurricane_type),
+                index_setting,
+                overwrite=True
+                )
 
     def generate_geojson_features(self):
         """
@@ -179,7 +192,7 @@ class HurricanesRealtimeLoader(BaseLoader):
                 )
                 index_name = INDEX_BASENAME.format(type_)
                 index_date = date_.strftime('%Y-%m-%d')
-                self.es_index = f'{index_name}{index_date}'
+                self.es_index = f'{index_name}.{index_date}'
 
                 is_newer = self.check_if_newer(self.file_id, amendment)
 
@@ -303,7 +316,7 @@ class HurricanesRealtimeLoader(BaseLoader):
 
         # create list of today and yesterday index
         wildcard = '*'
-        index_ = f'{INDEX_BASENAME.format(wildcard)}*'
+        index_ = f'{INDEX_BASENAME.format(wildcard)}.*'
         try:
             self.conn.update_by_query(query, index_)
         except Exception as err:
@@ -344,7 +357,7 @@ class HurricanesRealtimeLoader(BaseLoader):
 
         # create list of today and yesterday index
         wildcard = '*'
-        index_ = f'{INDEX_BASENAME.format(wildcard)}*'
+        index_ = f'{INDEX_BASENAME.format(wildcard)}.*'
 
         try:
             self.conn.update_by_query(query, index_)
@@ -442,9 +455,9 @@ def clean_indexes(ctx, es, username, password, dataset, days, ignore_certs):
 
     if dataset == 'all':
         wildcard = '*'
-        indexes_to_fetch = f'{INDEX_BASENAME.format(wildcard)}*'
+        indexes_to_fetch = f'{INDEX_BASENAME.format(wildcard)}.*'
     else:
-        indexes_to_fetch = f'{INDEX_BASENAME.format(dataset)}*'
+        indexes_to_fetch = f'{INDEX_BASENAME.format(dataset)}.*'
 
     indexes = conn.get(indexes_to_fetch)
 
