@@ -3,8 +3,8 @@
 # Author: Louis-Philippe Rousseau-Lambert
 #           <louis-philippe.rousseaulambert@ec.gc.ca>
 #
-# Copyright (c) 2022 Louis-Philippe Rousseau-Lambert
 # Copyright (c) 2023 Tom Kralidis
+# Copyright (c) 2025 Louis-Philippe Rousseau-Lambert
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -58,7 +58,7 @@ DATETIME_FORMAT = '%Y%m%dT%H%M%S.%fZ'
 # cleanup settings
 DAYS_TO_KEEP = 7
 
-INDEX_BASENAME = 'metnotes.'
+INDEX_BASENAME = 'metnotes'
 
 MAPPINGS = {
     'properties': {
@@ -185,7 +185,19 @@ class MetNotesRealtimeLoader(BaseLoader):
         self.latest_file = None
 
         SETTINGS['mappings'] = MAPPINGS
-        self.conn.create_template(INDEX_BASENAME, SETTINGS)
+        self.conn.create_template(
+            f'{INDEX_BASENAME}.',
+            SETTINGS, overwrite=True
+            )
+        index_setting = {
+            'mappings': SETTINGS['mappings'],
+            'settings': SETTINGS['settings']
+            }
+        self.conn.create(
+            INDEX_BASENAME,
+            index_setting,
+            overwrite=True
+            )
 
     def load_data(self, filepath):
         """
@@ -215,7 +227,7 @@ class MetNotesRealtimeLoader(BaseLoader):
                     '%Y-%m-%dT%H:%M:%S.%fZ'
                 )
                 b_dt2 = b_dt.strftime('%Y-%m-%d')
-                es_index = f'{INDEX_BASENAME}{b_dt2}'
+                es_index = f'{INDEX_BASENAME}.{b_dt2}'
 
                 id_ = f"{feature['id']}_{feature['properties']['publication_version']}"  # noqa
 
@@ -332,7 +344,7 @@ class MetNotesRealtimeLoader(BaseLoader):
         }
 
         try:
-            self.conn.update_by_query(query, f'{INDEX_BASENAME}*')
+            self.conn.update_by_query(query, f'{INDEX_BASENAME}.*')
         except Exception as err:
             LOGGER.warning(f'Failed to update ES index: {err}')
 
@@ -384,7 +396,7 @@ def clean_indexes(ctx, days, es, username, password, ignore_certs):
     conn_config = configure_es_connection(es, username, password, ignore_certs)
     conn = ElasticsearchConnector(conn_config)
 
-    indexes = conn.get(f'{INDEX_BASENAME}*')
+    indexes = conn.get(f'{INDEX_BASENAME}.*')
 
     if indexes:
         indexes_to_delete = check_es_indexes_to_delete(indexes, days)
