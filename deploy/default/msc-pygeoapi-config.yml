@@ -1690,7 +1690,7 @@ resources:
         providers:
             - type: feature
               name: Elasticsearch
-              data: ${MSC_PYGEOAPI_ES_URL}/hurricanes-cyclone.*
+              data: ${MSC_PYGEOAPI_ES_URL}/hurricanes-cyclone*
               id_field: id
               time_field: validity_datetime
 
@@ -1729,7 +1729,7 @@ resources:
         providers:
             - type: feature
               name: Elasticsearch
-              data: ${MSC_PYGEOAPI_ES_URL}/hurricanes-track.*
+              data: ${MSC_PYGEOAPI_ES_URL}/hurricanes-track*
               id_field: id
               time_field: validity_datetime
 
@@ -1768,7 +1768,7 @@ resources:
         providers:
             - type: feature
               name: Elasticsearch
-              data: ${MSC_PYGEOAPI_ES_URL}/hurricanes-error_cone.*
+              data: ${MSC_PYGEOAPI_ES_URL}/hurricanes-error_cone*
               id_field: id
               time_field: validity_datetime
 
@@ -1807,7 +1807,7 @@ resources:
         providers:
             - type: feature
               name: Elasticsearch
-              data: ${MSC_PYGEOAPI_ES_URL}/hurricanes-wind_radii.*
+              data: ${MSC_PYGEOAPI_ES_URL}/hurricanes-wind_radii*
               id_field: id
               time_field: validity_datetime
 
@@ -2079,7 +2079,7 @@ resources:
         providers:
             - type: feature
               name: Elasticsearch
-              data: ${MSC_PYGEOAPI_ES_URL}/metnotes.*
+              data: ${MSC_PYGEOAPI_ES_URL}/metnotes*
               id_field: id
               time_field: publication_datetime
               properties:
