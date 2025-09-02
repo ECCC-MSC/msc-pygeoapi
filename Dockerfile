@@ -47,6 +47,7 @@ RUN apt-get install -y python3 python3-setuptools python3-pip git curl unzip pyt
 # install pygeoapi
 RUN git clone $PYGEOAPI_GITREPO -b 0.20.0 && \
     cd pygeoapi && \
+    pip3 install --upgrade packaging && \
     pip3 install -r requirements.txt && \
     pip3 install flask_cors gunicorn gevent greenlet && \
     pip3 install . && \
