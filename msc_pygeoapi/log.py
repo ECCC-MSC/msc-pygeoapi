@@ -70,3 +70,12 @@ def setup_logger(loglevel, logfile=None):
                 format=log_format,
                 filename=logfile,
             )
+    else:
+        logging.basicConfig(
+            level=loglevel,
+            datefmt=date_format,
+            format=log_format,
+        )
+
+    # set msc-pygeoapi logger level to allow propagation to child loggers
+    logging.getLogger('msc_pygeoapi').setLevel(loglevel)
