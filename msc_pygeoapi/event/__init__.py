@@ -41,6 +41,15 @@ LOGGER = logging.getLogger(__name__)
 
 class EventBase(FlowCB):
 
+    def __init__(self, options) -> None:
+        """
+        initializer
+
+        :param options: configuration options
+        """
+
+        super().__init__(options, LOGGER)
+
     def process_message(self, worklist, worklist_type) -> bool:
         """
         Process sarracenia message
@@ -74,7 +83,7 @@ class EventBase(FlowCB):
 
 class EventAfterWork(EventBase):
 
-    def after_work(self, worklist) -> None:
+    def after_work(self, worklist) -> bool:
         """
         sarracenia after_work dispatcher
 
@@ -88,7 +97,7 @@ class EventAfterWork(EventBase):
 
 class EventAfterAccept(EventBase):
 
-    def after_accept(self, worklist) -> None:
+    def after_accept(self, worklist) -> bool:
         """
         sarracenia after_accept dispatcher
 
