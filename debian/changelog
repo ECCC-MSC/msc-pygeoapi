@@ -1,3 +1,11 @@
+msc-pygeoapi (0.15.4) jammy; urgency=medium
+
+  * fix crontab find command syntax
+  * handle empty indexes for hurricanes and metnotes
+  * update logging for SR3 compat
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Tue, 09 Sep 2025 11:38:34 +0000
+
 msc-pygeoapi (0.15.3) jammy; urgency=medium
 
   * CanSIPS: fix variable definitions
