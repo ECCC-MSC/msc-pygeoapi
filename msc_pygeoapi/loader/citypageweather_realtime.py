@@ -1429,10 +1429,20 @@ CPW_PROPERTIES = {
                                             'type': 'object',
                                             'properties': {
                                                 'en': {
-                                                    'type': 'short'
+                                                    'type': 'text',
+                                                    'fields': {
+                                                        'raw': {
+                                                            'type': 'keyword'
+                                                        }
+                                                    }
                                                 },
                                                 'fr': {
-                                                    'type': 'short'
+                                                    'type': 'text',
+                                                    'fields': {
+                                                        'raw': {
+                                                            'type': 'keyword'
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
@@ -1556,6 +1566,19 @@ CPW_PROPERTIES = {
                         },
                         'fr': {
                             'type': 'date'
+                        }
+                    }
+                },
+                'alertColourLevel': {
+                    'type': 'object',
+                    'properties': {
+                        'en': {
+                            'type': 'text',
+                            'fields': {'raw': {'type': 'keyword'}}
+                        },
+                        'fr': {
+                            'type': 'text',
+                            'fields': {'raw': {'type': 'keyword'}}
                         }
                     }
                 },
