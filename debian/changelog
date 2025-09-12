@@ -1,3 +1,10 @@
+msc-pygeoapi (0.15.5) jammy; urgency=medium
+
+  * add SWOB collection renaming
+  * fix citypageweather ES mappings
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Fri, 12 Sep 2025 18:05:21 +0000
+
 msc-pygeoapi (0.15.4) jammy; urgency=medium
 
   * fix crontab find command syntax
