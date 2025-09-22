@@ -19,15 +19,16 @@
         <thead>
         <tr>
           <th v-for="(th, index) in tableFields"
-            :class="[th.colClass, 'sortable']"
-            @click="sortDir(th.key)"><span v-text="th.text">{% trans %}Name{% endtrans %}</span>
+            :class="[th.colClass, th.key !== 'temporal' && 'sortable']"
+            @click="th.key !== 'temporal' && sortDir(th.key)"><span v-text="th.text">{% trans %}Name{% endtrans %}</span>
             <span
-              v-show="currentSort === th.key"
+              v-show="currentSort === th.key && th.key !== 'temporal'"
               :class="sortIconClass"
               class="glyphicon"></span>
           </th>
           <th v-if="noJs">{% trans %}Type{% endtrans %}</th>
           <th v-if="noJs">{% trans %}Description{% endtrans %}</th>
+          <th v-if="noJs">{% trans %}Temporal Range{% endtrans %}</th>
         </tr>
         </thead>
         <tbody>
@@ -39,6 +40,21 @@
             </td>
             <td data-label="type" v-text="collection.itemType"></td>
             <td data-label="description" v-text="truncateStripTags(collection.description)"></td>
+            <td style="white-space: pre-wrap"
+                v-if="collection.itemType === 'feature' &&
+                      collection.extent.temporal !== undefined"
+                data-label="temporal range"
+                v-text="`{% trans %}From{% endtrans %}: ${collection.extent.temporal.interval[0][0]?collection.extent.temporal.interval[0][0]:'{% trans %}Not available{% endtrans %}'}
+                \n{% trans %}To{% endtrans %}: ${collection.extent.temporal.interval[0][1]?collection.extent.temporal.interval[0][1]:'{% trans %}Not available{% endtrans %}'}`"></td>
+            <td style="white-space: pre-wrap"
+                v-if="collection.itemType === 'feature' &&
+                      collection.extent.temporal === undefined"
+                data-label="temporal range"
+                v-text="`{% trans %}From{% endtrans %}: {% trans %}Not available{% endtrans %}
+                \n{% trans %}To{% endtrans %}: {% trans %}Not available{% endtrans %}`"></td>
+            <td style="white-space: pre-wrap"
+                v-if="collection.itemType !== 'feature'"
+                data-label="temporal range"></td>
           </tr>
           {% for col in data['collections']  %}
           <tr v-if="noJs">
@@ -55,6 +71,29 @@
             <td data-label="description">
               {{ col['description'] | striptags | truncate }}
             </td>
+            {% if col['extent']['temporal'] %}
+            <td data-label="temporal range">
+              {% if col['extent']['temporal']['interval'][0][0] == None %}
+                {% trans %}From{% endtrans %}: {% trans %}Not available{% endtrans %}
+              {% else %}
+                {% trans %}From{% endtrans %}: {{ col['extent']['temporal']['interval'][0][0] }}
+              {% endif %}
+              {% if col['extent']['temporal']['interval'][0][1] == None %}
+                <br><br>{% trans %}To{% endtrans %}: {% trans %}Not available{% endtrans %}
+              {% else %}
+                <br><br>{% trans %}To{% endtrans %}: {{ col['extent']['temporal']['interval'][0][1] }}
+              {% endif %}
+            </td>
+            {% else %}
+              {% if col['itemType'] == 'feature' %}
+              <td data-label="temporal range">
+                {% trans %}From{% endtrans %}: {% trans %}Not available{% endtrans %}
+                <br><br>{% trans %}To{% endtrans %}: {% trans %}Not available{% endtrans %}
+              </td>
+              {% else %}
+              <td></td>
+              {% endif %}
+            {% endif %}
           </tr>
           {% endfor %}
         </tbody>
@@ -90,6 +129,10 @@
               key: 'description',
               text: '{% trans %}Description{% endtrans %}',
               colClass: 'col-sm-7'
+            }, {
+              key: 'temporal',
+              text: '{% trans %}Temporal Range{% endtrans %}',
+              colClass: 'col-sm-2'
             }
           ])
           const keyColumns = computed(() => {
@@ -104,7 +147,7 @@
             collections: filteredRows, // don't care about unfiltered collections
             tableFields, truncateStripTags,
             searchText, searchTextLowered,
-            sortIconClass, sortDir, currentSort, 
+            sortIconClass, sortDir, currentSort,
           }
         }
       }).mount('#collections')    
