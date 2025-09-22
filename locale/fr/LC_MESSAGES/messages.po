@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-01-10 18:46+0000\n"
+"POT-Creation-Date: 2025-10-16 21:01+0000\n"
 "PO-Revision-Date: 2022-07-05 09:20-0700\n"
 "Last-Translator: \n"
 "Language: fr_CA\n"
 "Language-Team: \n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.16.0\n"
+"Generated-By: Babel 2.8.0\n"
 
 #: theme/templates/_base.html:46
 msgid "Skip to main content"
@@ -379,7 +379,7 @@ msgstr "ID"
 
 #: theme/templates/collections/collection.html:94
 #: theme/templates/collections/index.html:23
-#: theme/templates/collections/index.html:79
+#: theme/templates/collections/index.html:110
 #: theme/templates/collections/schema.html:19
 #: theme/templates/collections/tiles/index.html:109
 #: theme/templates/processes/index.html:14 theme/templates/stac/catalog.html:29
@@ -393,26 +393,65 @@ msgstr "Nom"
 msgid "Units"
 msgstr "Unités"
 
-#: theme/templates/collections/collection.html:107
+#: theme/templates/collections/collection.html:106
+#: theme/templates/collections/index.html:31
+#: theme/templates/collections/index.html:122
+msgid "Temporal range"
+msgstr "Étendue temporelle"
+
+#: theme/templates/collections/collection.html:112
+#: theme/templates/collections/collection.html:114
+#: theme/templates/collections/collection.html:132
+#: theme/templates/collections/index.html:45
+#: theme/templates/collections/index.html:67
+#: theme/templates/collections/index.html:69
+#: theme/templates/collections/index.html:79
+msgid "From:"
+msgstr "De :"
+
+#: theme/templates/collections/collection.html:112
+#: theme/templates/collections/collection.html:121
+#: theme/templates/collections/collection.html:132
+#: theme/templates/collections/collection.html:137
+#: theme/templates/collections/index.html:67
+#: theme/templates/collections/index.html:72
+#: theme/templates/collections/index.html:79
+#: theme/templates/collections/index.html:80
+#: theme/templates/collections/index.html:132
+#: theme/templates/collections/index.html:135
+msgid "Not available"
+msgstr "Pas disponible"
+
+#: theme/templates/collections/collection.html:121
+#: theme/templates/collections/collection.html:123
+#: theme/templates/collections/collection.html:137
+#: theme/templates/collections/index.html:46
+#: theme/templates/collections/index.html:72
+#: theme/templates/collections/index.html:74
+#: theme/templates/collections/index.html:80
+msgid "To:"
+msgstr "À :"
+
+#: theme/templates/collections/collection.html:142
 #: theme/templates/collections/edr/instance.html:25
 #: theme/templates/jobs/job.html:49 theme/templates/processes/process.html:77
 #: theme/templates/stac/catalog.html:13
 msgid "Links"
 msgstr "Liens"
 
-#: theme/templates/collections/collection.html:118
+#: theme/templates/collections/collection.html:153
 msgid "Reference Systems"
 msgstr "Systèmes de référence"
 
-#: theme/templates/collections/collection.html:126
+#: theme/templates/collections/collection.html:161
 msgid "Storage CRS"
 msgstr "Stockage SRC"
 
-#: theme/templates/collections/collection.html:129
+#: theme/templates/collections/collection.html:164
 msgid "CRS"
 msgstr "SRC"
 
-#: theme/templates/collections/collection.html:132
+#: theme/templates/collections/collection.html:167
 msgid "Epoch"
 msgstr "Époque"
 
@@ -421,19 +460,23 @@ msgid "Collections in this service"
 msgstr "Collections dans ce service"
 
 #: theme/templates/collections/index.html:29
-#: theme/templates/collections/index.html:83
+#: theme/templates/collections/index.html:114
 #: theme/templates/collections/schema.html:21
 msgid "Type"
 msgstr "Type"
 
 #: theme/templates/collections/index.html:30
-#: theme/templates/collections/index.html:87
+#: theme/templates/collections/index.html:118
 #: theme/templates/processes/index.html:15
 #: theme/templates/processes/process.html:25
 #: theme/templates/processes/process.html:55
 #: theme/templates/stac/collection.html:18
 msgid "Description"
 msgstr "Description"
+
+#: theme/templates/collections/index.html:57
+msgid "spatiotemporal"
+msgstr "spatio-temporelle"
 
 #: theme/templates/collections/schema.html:20
 #: theme/templates/processes/process.html:23
@@ -585,43 +628,43 @@ msgstr ""
 msgid "Search by keywords"
 msgstr "Recherche par mots-clés"
 
-#: theme/templates/collections/items/index.html:99
+#: theme/templates/collections/items/index.html:102
 msgid "Keyword search for: [% th.key %]"
 msgstr "Recherche de mots-clés pour : [% th.key %]"
 
-#: theme/templates/collections/items/index.html:103
+#: theme/templates/collections/items/index.html:106
 msgid ""
 "eg. &quot;BC QC ON&quot; will search for &quot;BC&quot; or &quot;ON&quot;"
 " or &quot;QC&quot;"
 msgstr "Par exemple, « BC QC ON » recherchera « BC » ou « ON » ou « QC »"
 
-#: theme/templates/collections/items/index.html:105
+#: theme/templates/collections/items/index.html:108
 msgid "Keyword"
 msgstr "Mot clé"
 
-#: theme/templates/collections/items/index.html:144
+#: theme/templates/collections/items/index.html:147
 msgid "Limit:"
 msgstr "Limite :"
 
-#: theme/templates/collections/items/index.html:154
+#: theme/templates/collections/items/index.html:157
 msgid "Higher limits are not recommended"
 msgstr "Des limites plus élevées ne sont pas recommandées"
 
-#: theme/templates/collections/items/index.html:165
+#: theme/templates/collections/items/index.html:168
 msgid "Previous"
 msgstr "Précédent"
 
-#: theme/templates/collections/items/index.html:167
+#: theme/templates/collections/items/index.html:170
 #, python-format
 msgid "Page [% currentPage %] / [% maxPages %]"
 msgstr "Page [% currentPage %] / [% maxPages %]"
 
-#: theme/templates/collections/items/index.html:169
+#: theme/templates/collections/items/index.html:172
 #: theme/templates/collections/items/item.html:62
 msgid "Next"
 msgstr "Suivant"
 
-#: theme/templates/collections/items/index.html:197
+#: theme/templates/collections/items/index.html:200
 msgid ""
 "Clear column keyword search queries and reset to display the default "
 "results"
@@ -629,23 +672,23 @@ msgstr ""
 "Effacer les requêtes de recherche par mots-clés des colonnes et "
 "réinitialiser pour afficher les résultats par défaut"
 
-#: theme/templates/collections/items/index.html:202
+#: theme/templates/collections/items/index.html:205
 msgid "Showing $firstPage to $upper of $itemsTotal"
 msgstr "Affichage de $firstPage jusqu'à $upper de $itemsTotal"
 
-#: theme/templates/collections/items/index.html:203
+#: theme/templates/collections/items/index.html:206
 msgid "Showing 0 results"
 msgstr "Affichage de 0 résultats"
 
-#: theme/templates/collections/items/index.html:247
+#: theme/templates/collections/items/index.html:250
 msgid "filtered from $totalSize total entry"
 msgstr "filtré de $totalSize entrée au total"
 
-#: theme/templates/collections/items/index.html:248
+#: theme/templates/collections/items/index.html:251
 msgid "filtered from $totalSize total entries"
 msgstr "filtrées de $totalSize entrées au total"
 
-#: theme/templates/collections/items/index.html:249
+#: theme/templates/collections/items/index.html:252
 msgid "Showing $startEntryOfPage to $lastEntryOfPage of $filteredNumEntries"
 msgstr ""
 "Affichage de $startEntryOfPage jusqu'à $lastEntryOfPage de "
@@ -902,10 +945,6 @@ msgstr "URL"
 msgid "Map extent preview not available"
 msgstr "Aperçu de l'étendue de la carte n'est pas disponible"
 
-#: theme/templates/collections/index.html:51
-msgid "spatiotemporal"
-msgstr "spatio-temporelle"
-
 #~ msgid ""
 #~ "No results. Please modify your search query or <button\n"
 #~ "            :title=\"txt.reset\"  \n"
@@ -923,3 +962,4 @@ msgstr "spatio-temporelle"
 
 #~ msgid "Output Formats"
 #~ msgstr "Formats de fichiers"
+
