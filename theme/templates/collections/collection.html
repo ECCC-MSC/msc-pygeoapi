@@ -103,7 +103,43 @@
         {% endfor %}
       </table>
       {% endif %}
-
+      {% if data['extent']['temporal'] != undefined %}
+      <h3>{% trans %}Temporal Range{% endtrans %}</h3>
+      <ul>
+        <li>
+          <div>
+            {% if data['extent']['temporal']['interval'][0][0] == None %}
+              {% trans %}From{% endtrans %}: {% trans %}Not available{% endtrans %}
+            {% else %}
+              {% trans %}From{% endtrans %}: {{data['extent']['temporal']['interval'][0][0]}}
+            {% endif %}
+          </div>
+        </li>
+        <li>
+          <div>
+            {% if data['extent']['temporal']['interval'][0][1] == None %}
+              {% trans %}To{% endtrans %}: {% trans %}Not available{% endtrans %}
+            {% else %}
+              {% trans %}To{% endtrans %}: {{data['extent']['temporal']['interval'][0][1]}}
+            {% endif %}
+          </div>
+        </li>
+      </ul>
+      {% else %}
+      <h3>{% trans %}Temporal Range{% endtrans %}</h3>
+      <ul>
+        <li>
+          <div>
+            {% trans %}From{% endtrans %}: {% trans %}Not available{% endtrans %}
+          </div>
+        </li>
+        <li>
+          <div>
+            {% trans %}To{% endtrans %}: {% trans %}Not available{% endtrans %}
+          </div>
+        </li>
+      </ul>
+      {% endif %}
       <h3>{% trans %}Links{% endtrans %}</h3>
       <ul>
       {% for link in data['links'] %}
