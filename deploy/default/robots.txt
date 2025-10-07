@@ -1,0 +1,9 @@
+# for more information, please see the MSC Open Data Service Usage Policy 
+# https://eccc-msc.github.io/open-data/usage-policy/readme_en
+
+User-agent: *
+Disallow: /collections/*/items
+Disallow: /collections/*/queryables
+Disallow: /collections/*/schema
+Disallow: /collections/*/map
+Disallow: /collections/*/coverage
