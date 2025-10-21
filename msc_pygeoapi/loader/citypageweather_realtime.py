@@ -2645,9 +2645,14 @@ class CitypageweatherRealtimeLoader(BaseLoader):
                 for forecast_func in set_forecast_funcs:
                     forecast_dict = forecast_func(forecast_elem, forecast_dict)
 
-                self.cpw_feature['properties']['forecastGroup'][
-                    'forecasts'
-                ].append(forecast_dict)
+                try:
+                    self.cpw_feature['properties']['forecastGroup'][
+                        'forecasts'
+                    ][i] = forecast_dict
+                except IndexError:
+                    self.cpw_feature['properties']['forecastGroup'][
+                        'forecasts'
+                    ].insert(i, forecast_dict)
 
         if not self.cpw_feature['properties'].get('forecast_group'):
             self.cpw_feature['properties'].pop('forecast_group', None)
@@ -2929,9 +2934,14 @@ class CitypageweatherRealtimeLoader(BaseLoader):
                         hourly_forecast_elem, hourly_forecast_dict
                     )
 
-                self.cpw_feature['properties']['hourlyForecastGroup'][
-                    'hourlyForecasts'
-                ].append(hourly_forecast_dict)
+                try:
+                    self.cpw_feature['properties']['hourlyForecastGroup'][
+                        'hourlyForecasts'
+                    ][i] = hourly_forecast_dict
+                except IndexError:
+                    self.cpw_feature['properties']['hourlyForecastGroup'][
+                        'hourlyForecasts'
+                    ].insert(i, hourly_forecast_dict)
 
         return self.cpw_feature
 
