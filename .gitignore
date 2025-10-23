@@ -9,3 +9,4 @@ schemas.opengis.net
 .pot
 theme/static/themes-gcweb
 locale/messages.pot
+*.mo
