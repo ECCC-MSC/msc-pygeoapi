@@ -38,6 +38,9 @@ override_dh_auto_configure:
 	mv ./theme/static/themes-dist-14.6.0-gcweb ./theme/static/themes-gcweb
 	rm -f ./themes-gcweb.zip
 
+	# Generate the binary file with the translations
+	pybabel compile -d locale -l fr
+
 override_dh_auto_test:
 	@echo "nocheck set, not running tests"
 

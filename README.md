@@ -40,6 +40,9 @@ unzip -o ./themes-gcweb.zip "*/wet-boew/*" -d theme/static
 mv ./theme/static/themes-dist-14.6.0-gcweb ./theme/static/themes-gcweb
 rm -f ./themes-gcweb.zip
 
+# compile translation files (generate locale/*/LC_MESSAGES/message.mo)
+pybabel compile -d locale -l fr
+
 # install codebase
 python setup.py build
 python setup.py install
