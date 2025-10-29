@@ -24,7 +24,7 @@ jobs:
     - name: Install requirements 📦
       run: |
         python3 -m pip install --upgrade pip
-        pip3 install setuptools wheel
+        pip3 install Cython setuptools wheel
         pip3 install numpy gdal==`gdal-config --version`
         pip3 install -r requirements-dev.txt
     - name: Install package 📦
