@@ -462,6 +462,7 @@ class CanSIPSProductsProvider(RasterioProvider):
                 return cj
 
             else:
+                self.filename = self.data.name
                 with MemoryFile() as memfile:
                     with memfile.open(**out_meta, nbits=30) as dest:
                         dest.write(out_image)
