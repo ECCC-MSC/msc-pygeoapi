@@ -57,7 +57,7 @@ PLUGINS = {
             'handler': 'msc_pygeoapi.loader.forecast_polygons.ForecastPolygonsLoader'  # noqa
         },
         'marine_weather_realtime': {
-            'filename_pattern': 'marine_weather/xml/',
+            'filename_pattern': 'marine_weather',
             'handler': 'msc_pygeoapi.loader.marine_weather_realtime.MarineWeatherRealtimeLoader'  # noqa
         },
         'cap_alerts_realtime': {
