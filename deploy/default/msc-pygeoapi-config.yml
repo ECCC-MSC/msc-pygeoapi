@@ -870,6 +870,9 @@ resources:
                   - WIND_DIRECTION_FLAG
                   - WIND_SPEED
                   - WIND_SPEED_FLAG
+                  - STN_ID
+                  - LONGITUDE_DECIMAL_DEGREES
+                  - LATITUDE_DECIMAL_DEGREES
 
     ahccd-stations:
         type: collection
