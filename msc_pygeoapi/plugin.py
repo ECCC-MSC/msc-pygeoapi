@@ -2,9 +2,12 @@
 #
 # Author: Tom Kralidis <tom.kralidis@ec.gc.ca>
 #         Felix Laframboise <felix.laframboise@canada.ca>
+#         Louis-Philippe Rousseau-Lambert
+#             <louis-philippe.rousseaulambert@ec.gc.ca>
 #
-# Copyright (c) 2023 Tom Kralidis
 # Copyright (c) 2021 Felix Laframboise
+# Copyright (c) 2023 Tom Kralidis
+# Copyright (c) 2025 Louis-Philippe Rousseau-Lambert
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -50,19 +53,23 @@ PLUGINS = {
         },
         'hurricanes_realtime': {
             'filename_pattern': 'hurricanes/',
-            'handler': 'msc_pygeoapi.loader.hurricanes_realtime.HurricanesRealtimeLoader'  # noqa
+            'handler': 'msc_pygeoapi.loader.hurricanes_realtime.HurricanesRealtimeLoader' # noqa
         },
         'forecast_polygons': {
             'filename_pattern': 'meteocode/geodata/',
-            'handler': 'msc_pygeoapi.loader.forecast_polygons.ForecastPolygonsLoader'  # noqa
+            'handler': 'msc_pygeoapi.loader.forecast_polygons.ForecastPolygonsLoader' # noqa
         },
         'marine_weather_realtime': {
             'filename_pattern': 'marine_weather/xml/',
-            'handler': 'msc_pygeoapi.loader.marine_weather_realtime.MarineWeatherRealtimeLoader'  # noqa
+            'handler': 'msc_pygeoapi.loader.marine_weather_realtime.MarineWeatherRealtimeLoader' # noqa
         },
         'cap_alerts_realtime': {
             'filename_pattern': 'alerts/cap',
-            'handler': 'msc_pygeoapi.loader.cap_alerts_realtime.CapAlertsRealtimeLoader'  # noqa
+            'handler': 'msc_pygeoapi.loader.cap_alerts_realtime.CapAlertsRealtimeLoader' # noqa
+        },
+        'alerts_realtime': {
+            'filename_pattern': 'MSC-DMS-OP/GEOMET/ALERT',
+            'handler': 'msc_pygeoapi.loader.alerts_realtime.AlertsRealtimeLoader' # noqa
         },
         'swob_realtime': {
             'filename_pattern': 'observations/swob-ml',
@@ -78,7 +85,7 @@ PLUGINS = {
         },
         'cumulative_effects_hs': {
             'filename_pattern': 'model_raqdps-fw/cumulative_effects/json',
-            'handler': 'msc_pygeoapi.loader.cumulative_effects_hs.CumulativeEffectsHSLoader'  # noqa
+            'handler': 'msc_pygeoapi.loader.cumulative_effects_hs.CumulativeEffectsHSLoader' # noqa
         },
         'umos_realtime': {
             'filename_pattern': 'stat-post-processing',

@@ -2,9 +2,12 @@
 #
 # Author: Tom Kralidis <tom.kralidis@ec.gc.ca>
 #         Felix Laframboise <felix.laframboise@canada.ca>
+#         Louis-Philippe Rousseau-Lambert
+#             <louis-philippe.rousseaulambert@ec.gc.ca>
 #
-# Copyright (c) 2023 Tom Kralidis
 # Copyright (c) 2021 Felix Laframboise
+# Copyright (c) 2023 Tom Kralidis
+# Copyright (c) 2025 Louis-Philippe Rousseau-Lambert
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -61,6 +64,7 @@ commands = (
     ('msc_pygeoapi.loader.forecast_polygons', 'forecast_polygons'),
     ('msc_pygeoapi.loader.marine_weather_realtime', 'marine_weather'),
     ('msc_pygeoapi.loader.cap_alerts_realtime', 'cap_alerts'),
+    ('msc_pygeoapi.loader.alerts_realtime', 'alerts_realtime'),
     ('msc_pygeoapi.loader.swob_realtime', 'swob_realtime'),
     ('msc_pygeoapi.loader.aqhi_realtime', 'aqhi_realtime'),
     ('msc_pygeoapi.loader.aqhi_stations', 'aqhi_stations'),
