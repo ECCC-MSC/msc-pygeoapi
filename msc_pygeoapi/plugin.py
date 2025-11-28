@@ -2,9 +2,12 @@
 #
 # Author: Tom Kralidis <tom.kralidis@ec.gc.ca>
 #         Felix Laframboise <felix.laframboise@canada.ca>
+#         Louis-Philippe Rousseau-Lambert
+#             <louis-philippe.rousseaulambert@ec.gc.ca>
 #
-# Copyright (c) 2023 Tom Kralidis
 # Copyright (c) 2021 Felix Laframboise
+# Copyright (c) 2023 Tom Kralidis
+# Copyright (c) 2025 Louis-Philippe Rousseau-Lambert
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -46,7 +49,7 @@ PLUGINS = {
         },
         'citypageweather_realtime': {
             'filename_pattern': 'citypage_weather',
-            'handler': 'msc_pygeoapi.loader.citypageweather_realtime.CitypageweatherRealtimeLoader' # noqa
+            'handler': 'msc_pygeoapi.loader.citypageweather_realtime.CitypageweatherRealtimeLoader'  # noqa
         },
         'hurricanes_realtime': {
             'filename_pattern': 'hurricanes/',
@@ -63,6 +66,10 @@ PLUGINS = {
         'cap_alerts_realtime': {
             'filename_pattern': 'alerts/cap',
             'handler': 'msc_pygeoapi.loader.cap_alerts_realtime.CapAlertsRealtimeLoader'  # noqa
+        },
+        'alerts_realtime': {
+            'filename_pattern': 'MSC-DMS-OP/GEOMET/ALERT',
+            'handler': 'msc_pygeoapi.loader.alerts_realtime.AlertsRealtimeLoader'  # noqa
         },
         'swob_realtime': {
             'filename_pattern': 'observations/swob-ml',
@@ -86,15 +93,15 @@ PLUGINS = {
         },
         'thunderstorm_outlook': {
             'filename_pattern': 'ThunderstormOutlook',
-            'handler': 'msc_pygeoapi.loader.thunderstorm_outlook.ThunderstormOutlookLoader' # noqa
+            'handler': 'msc_pygeoapi.loader.thunderstorm_outlook.ThunderstormOutlookLoader'  # noqa
         },
         'coastal_flood_risk_index': {
             'filename_pattern': 'CoastalFloodRiskIndex',
-            'handler': 'msc_pygeoapi.loader.coastal_flood_risk_index.CoastalFloodRiskIndexLoader' # noqa
+            'handler': 'msc_pygeoapi.loader.coastal_flood_risk_index.CoastalFloodRiskIndexLoader'  # noqa
         },
         'weatherstories': {
             'filename_pattern': 'wxstory_',
-            'handler': 'msc_pygeoapi.loader.weatherstories_realtime.WeatherStoriesRealtimeLoader' # noqa
+            'handler': 'msc_pygeoapi.loader.weatherstories_realtime.WeatherStoriesRealtimeLoader'  # noqa
         }
     }
 }
