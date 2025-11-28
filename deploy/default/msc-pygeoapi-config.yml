@@ -720,6 +720,45 @@ resources:
               data: ${MSC_PYGEOAPI_ES_URL}/citypageweather_realtime
               id_field: identifier
               time_field: lastUpdated
+    marineweather-realtime:
+        type: collection
+        title:
+            en: Marine forecasts and warnings [experimental]
+            fr: Prévisions et avertissements marins [expérimentale]
+        description:
+            en: "Environment Canada (EC) provides a marine forecasting service to mariners and marine interests. This enables them to make informed decisions about marine weather conditions that may impact their safety, security or operations. EC also provides marine forecasts in order to meet Canada’s treaty obligations under the International Maritime Organization’s Safety Of Life At Sea (SOLAS) Convention."
+            fr: "Environnement Canada (EC) fournit un service de prévisions maritimes aux navigateurs. Ce service les aide à prendre des décisions éclairées au sujet de conditions météorologiques maritimes qui peuvent avoir des répercussions sur leur sécurité ou leurs activités. EC fournit aussi des prévisions maritimes afin de respecter les engagements pris par le Canada dans le cadre de la Convention internationale pour la sauvegarde de la vie humaine en mer (SOLAS) de l’Organisation maritime internationale."
+        keywords:
+            en: [Marine forecasts and warnings, Weather forecasts, Precipitation, Air temperature, Humidity, Snow, Wind, Meteorological data]
+            fr: [Prévisions et avertissements marins, Prévisions météorologiques, Précipitation, Température de l'air, Humidité, Neige, Vent, Données météorologiques]
+        crs:
+            - CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title:
+                en: Data and products of the marine weather forecasts
+                fr: Données et produits des prévisions météorologiques maritimes
+              href:
+                en: https://eccc-msc.github.io/open-data/msc-data/marine-weather/readme_marine-weather_en/
+                fr: https://eccc-msc.github.io/open-data/msc-data/marine-weather/readme_marine-weather_fr/
+              hreflang:
+                en: en-CA
+                fr: fr-CA
+        extents:
+            spatial:
+                bbox: [-172.17, 36.5, -10.42, 83.6]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+            temporal:
+                begin: null
+                end: null # or empty
+        providers:
+            - type: feature
+              default: true
+              name: msc_pygeoapi.provider.cpw_elasticsearch.CPWElasticsearchProvider
+              data: ${MSC_PYGEOAPI_ES_URL}/marine_weather_realtime
+              id_field: identifier
+              time_field: lastUpdated
     climate-daily:
         type: collection
         title:
