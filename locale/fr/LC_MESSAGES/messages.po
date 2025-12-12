@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-10-16 21:01+0000\n"
+"POT-Creation-Date: 2025-12-12 20:45+0000\n"
 "PO-Revision-Date: 2022-07-05 09:20-0700\n"
 "Last-Translator: \n"
 "Language: fr_CA\n"
@@ -378,8 +378,8 @@ msgid "ID"
 msgstr "ID"
 
 #: theme/templates/collections/collection.html:94
-#: theme/templates/collections/index.html:23
-#: theme/templates/collections/index.html:110
+#: theme/templates/collections/index.html:29
+#: theme/templates/collections/index.html:114
 #: theme/templates/collections/schema.html:19
 #: theme/templates/collections/tiles/index.html:109
 #: theme/templates/processes/index.html:14 theme/templates/stac/catalog.html:29
@@ -394,79 +394,75 @@ msgid "Units"
 msgstr "Unités"
 
 #: theme/templates/collections/collection.html:106
-#: theme/templates/collections/index.html:31
-#: theme/templates/collections/index.html:122
-msgid "Temporal range"
+msgid "Temporal extent"
 msgstr "Étendue temporelle"
 
 #: theme/templates/collections/collection.html:112
 #: theme/templates/collections/collection.html:114
-#: theme/templates/collections/collection.html:132
-#: theme/templates/collections/index.html:45
-#: theme/templates/collections/index.html:67
-#: theme/templates/collections/index.html:69
-#: theme/templates/collections/index.html:79
+#: theme/templates/collections/collection.html:134
+#: theme/templates/collections/index.html:78
+#: theme/templates/collections/index.html:135
 msgid "From:"
 msgstr "De :"
 
 #: theme/templates/collections/collection.html:112
-#: theme/templates/collections/collection.html:121
-#: theme/templates/collections/collection.html:132
-#: theme/templates/collections/collection.html:137
-#: theme/templates/collections/index.html:67
-#: theme/templates/collections/index.html:72
-#: theme/templates/collections/index.html:79
-#: theme/templates/collections/index.html:80
-#: theme/templates/collections/index.html:132
-#: theme/templates/collections/index.html:135
+#: theme/templates/collections/collection.html:123
+#: theme/templates/collections/collection.html:134
+#: theme/templates/collections/collection.html:139
 msgid "Not available"
 msgstr "Pas disponible"
 
 #: theme/templates/collections/collection.html:121
 #: theme/templates/collections/collection.html:123
-#: theme/templates/collections/collection.html:137
-#: theme/templates/collections/index.html:46
-#: theme/templates/collections/index.html:72
-#: theme/templates/collections/index.html:74
+#: theme/templates/collections/collection.html:125
+#: theme/templates/collections/collection.html:139
 #: theme/templates/collections/index.html:80
+#: theme/templates/collections/index.html:82
+#: theme/templates/collections/index.html:135
 msgid "To:"
 msgstr "À :"
 
-#: theme/templates/collections/collection.html:142
+#: theme/templates/collections/collection.html:121
+#: theme/templates/collections/index.html:80
+#: theme/templates/collections/index.html:144
+msgid "Present"
+msgstr "Présent"
+
+#: theme/templates/collections/collection.html:144
 #: theme/templates/collections/edr/instance.html:25
 #: theme/templates/jobs/job.html:49 theme/templates/processes/process.html:77
 #: theme/templates/stac/catalog.html:13
 msgid "Links"
 msgstr "Liens"
 
-#: theme/templates/collections/collection.html:153
+#: theme/templates/collections/collection.html:155
 msgid "Reference Systems"
 msgstr "Systèmes de référence"
 
-#: theme/templates/collections/collection.html:161
+#: theme/templates/collections/collection.html:163
 msgid "Storage CRS"
 msgstr "Stockage SRC"
 
-#: theme/templates/collections/collection.html:164
+#: theme/templates/collections/collection.html:166
 msgid "CRS"
 msgstr "SRC"
 
-#: theme/templates/collections/collection.html:167
+#: theme/templates/collections/collection.html:169
 msgid "Epoch"
 msgstr "Époque"
 
-#: theme/templates/collections/index.html:8
+#: theme/templates/collections/index.html:14
 msgid "Collections in this service"
 msgstr "Collections dans ce service"
 
-#: theme/templates/collections/index.html:29
-#: theme/templates/collections/index.html:114
+#: theme/templates/collections/index.html:35
+#: theme/templates/collections/index.html:118
 #: theme/templates/collections/schema.html:21
 msgid "Type"
 msgstr "Type"
 
-#: theme/templates/collections/index.html:30
-#: theme/templates/collections/index.html:118
+#: theme/templates/collections/index.html:36
+#: theme/templates/collections/index.html:122
 #: theme/templates/processes/index.html:15
 #: theme/templates/processes/process.html:25
 #: theme/templates/processes/process.html:55
@@ -474,7 +470,12 @@ msgstr "Type"
 msgid "Description"
 msgstr "Description"
 
-#: theme/templates/collections/index.html:57
+#: theme/templates/collections/index.html:37
+#: theme/templates/collections/index.html:126
+msgid "Spatiotemporal extents"
+msgstr "Étendues spatio-temporelles"
+
+#: theme/templates/collections/index.html:66
 msgid "spatiotemporal"
 msgstr "spatio-temporelle"
 

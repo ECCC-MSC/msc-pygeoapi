@@ -142,3 +142,20 @@ image using the content attribute.
   animation: 2s linear 0s normal none infinite running spin;
   filter: drop-shadow(0 0 2 rgba(0, 0, 0, 0.33));
 }
+
+.map-wrapper {
+  height: 260px;
+  width: 300px;
+}
+
+.load-over-map::before {
+  z-index: 1000;
+}
+
+.load-over-map::after {
+  z-index: 1000;
+}
+
+.leaflet-control-attribution { 
+  display: none !important; 
+}
