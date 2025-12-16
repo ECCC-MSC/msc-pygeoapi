@@ -6,7 +6,7 @@ fsspec
 gdal<=3.8.4
 lxml
 netcdf4
-pandas<3
+pandas<2
 parse
 pygeometa
 pyproj<=3.6.1
