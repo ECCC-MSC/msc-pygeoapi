@@ -410,7 +410,7 @@ def download_stations(dataset):
     try:
         station_file = STATIONS_LIST_NAME.format(station)
         station_url = (
-            f'https://dd.weather.gc.ca/observations/doc/{station_file}'
+            f'https://dd.weather.gc.ca/today/observations/doc/{station_file}'
         )
         station_cache = os.path.join(MSC_PYGEOAPI_CACHEDIR, station_file)
         LOGGER.debug(f'Caching {station_url} to {station_cache}')
