@@ -103,7 +103,7 @@
         {% endfor %}
       </table>
       {% endif %}
-      <h3>{% trans %}Temporal range{% endtrans %}</h3>
+      <h3>{% trans %}Temporal extent{% endtrans %}</h3>
       {% if data['extent']['temporal'] != undefined %}
       <ul>
         <li>
@@ -111,16 +111,18 @@
             {% if data['extent']['temporal']['interval'][0][0] == None %}
               {% trans %}From:{% endtrans %} {% trans %}Not available{% endtrans %}
             {% else %}
-              {% trans %}From:{% endtrans %} {{data['extent']['temporal']['interval'][0][0]}}
+              {% trans %}From:{% endtrans %} {{data['extent']['temporal']['interval'][0][0].split('T')[0]}}
             {% endif %}
           </div>
         </li>
         <li>
           <div>
-            {% if data['extent']['temporal']['interval'][0][1] == None %}
+            {% if data['extent']['temporal']['interval'][0][1] == None and data['extent']['temporal']['interval'][0][0] != None%}
+              {% trans %}To:{% endtrans %} {% trans %}Present{% endtrans %}
+            {% elif data['extent']['temporal']['interval'][0][1] == None %}
               {% trans %}To:{% endtrans %} {% trans %}Not available{% endtrans %}
             {% else %}
-              {% trans %}To:{% endtrans %} {{data['extent']['temporal']['interval'][0][1]}}
+              {% trans %}To:{% endtrans %} {{data['extent']['temporal']['interval'][0][1].split('T')[0]}}
             {% endif %}
           </div>
         </li>

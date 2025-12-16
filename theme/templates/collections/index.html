@@ -3,6 +3,12 @@
 {% block crumbs %}{{ super() }}
 <li><a href="{{ data['collections_path'] }}?lang={{ (locale|lower)[:2] }}">{% trans %}Collections{% endtrans %}</a></li>
 {% endblock %}
+
+{% block extrahead %}
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+{% endblock %}
+
 {% block body %}
     <section id="collections">
       <h1>{% trans %}Collections in this service{% endtrans %}</h1>
@@ -28,7 +34,7 @@
           </th>
           <th v-if="noJs">{% trans %}Type{% endtrans %}</th>
           <th v-if="noJs">{% trans %}Description{% endtrans %}</th>
-          <th v-if="noJs">{% trans %}Temporal range{% endtrans %}</th>
+          <th v-if="noJs">{% trans %}Spatiotemporal extents{% endtrans %}</th>
         </tr>
         </thead>
         <tbody>
@@ -41,9 +47,12 @@
             <td data-label="type" v-text="collection.itemType"></td>
             <td data-label="description" v-text="truncateStripTags(collection.description)"></td>
             <td
-                data-label="temporal range">
-                <div v-if="collection.itemType === 'feature'">{% trans %}From:{% endtrans %} <span v-text="extractDate(collection.extent.temporal, 0)"></span></div><br>
-                <div v-if="collection.itemType === 'feature'">{% trans %}To:{% endtrans %} <span v-text="extractDate(collection.extent.temporal, 1)"></span></div>
+                data-label="spatio-temporal extents">
+                <div :class="{ 'loading-mask': itemsLoading, 'load-over-map': itemsLoading }">
+                  <div :id="collection.id" class="map-wrapper"></div>
+                </div>
+                <div v-if="collection.itemType === 'feature'"><span v-text="extractDate(collection.extent.temporal, 0)"></span></div>
+                <div v-if="collection.itemType === 'feature'"><span v-text="extractDate(collection.extent.temporal, 1)"></span></div>
             </td>
           </tr>
           {% for col in data['collections']  %}
@@ -62,23 +71,18 @@
               {{ col['description'] | striptags | truncate }}
             </td>
             {% if col['extent']['temporal'] %}
-            <td data-label="temporal range">
+            <td data-label="spatio-temporal extents">
               {% if col['extent']['temporal']['interval'][0][0] == None %}
-                {% trans %}From:{% endtrans %} {% trans %}Not available{% endtrans %}
+                <td></td>
               {% else %}
                 {% trans %}From:{% endtrans %} {{ col['extent']['temporal']['interval'][0][0] }}
-              {% endif %}
-              {% if col['extent']['temporal']['interval'][0][1] == None %}
-                <br><br>{% trans %}To:{% endtrans %} {% trans %}Not available{% endtrans %}
-              {% else %}
-                <br><br>{% trans %}To:{% endtrans %} {{ col['extent']['temporal']['interval'][0][1] }}
+                {% if col['extent']['temporal']['interval'][0][1] == None %}
+                  <br><br>{% trans %}To:{% endtrans %} {% trans %}Present{% endtrans %}
+                {% else %}
+                  <br><br>{% trans %}To:{% endtrans %} {{ col['extent']['temporal']['interval'][0][1] }}
+                {% endif %}
               {% endif %}
             </td>
-            {% elif col['itemType'] == 'feature' %}
-              <td data-label="temporal range">
-                {% trans %}From:{% endtrans %} {% trans %}Not available{% endtrans %}
-                <br><br>{% trans %}To:{% endtrans %} {% trans %}Not available{% endtrans %}
-              </td>
             {% else %}
               <td></td>
             {% endif %}
@@ -95,14 +99,14 @@
     <script type="module">
       import useCollections from '{{ config['server']['url'] }}/static/js/composables/useCollections.js?v={{ version }}'
       import useTableFilter from '{{ config['server']['url'] }}/static/js/composables/useTableFilter.js?v={{ version }}'
-      import { createApp, ref, computed } from 'vue'
+      import { createApp, ref, computed, nextTick, watch } from 'vue'
 
       const app = createApp({
         delimiters: ['[%', '%]'],
         setup() {
           const noJs = ref(false) // progressive enhancement
           const { collections } = useCollections()
-
+          const itemsLoading = ref(true)
           // table columns
           const tableFields = ref([
             {
@@ -119,7 +123,7 @@
               colClass: 'col-sm-7'
             }, {
               key: 'temporal',
-              text: '{% trans %}Temporal range{% endtrans %}',
+              text: '{% trans %}Spatiotemporal extents{% endtrans %}',
               colClass: 'col-sm-2'
             }
           ])
@@ -128,13 +132,18 @@
           })
 
           function extractDate(temporal_data, index) {
+            let startToString = ['{% trans %}From:{% endtrans %}', '{% trans %}To:{% endtrans %}']
             if (temporal_data === undefined){
-              return '{% trans %}Not available{% endtrans %}'
+              return ''
             }
-            if (temporal_data.interval[0][index] === null) {
-              return '{% trans %}Not available{% endtrans %}'
+            if (temporal_data.interval[0][0] === null) {
+              // Case of time data unavailable, return an empty string
+              return ''
+            } else if (index === 1 && temporal_data.interval[0][1] === null) {
+              // For data where the upper bound is the present
+              return startToString[1] + ' {% trans %}Present{% endtrans %}'
             }
-            return temporal_data.interval[0][index]
+            return startToString[index] + ' ' + temporal_data.interval[0][index].split('T')[0]
           }
 
           // filtering of table results
@@ -145,9 +154,130 @@
             collections: filteredRows, // don't care about unfiltered collections
             tableFields, truncateStripTags,
             searchText, searchTextLowered,
-            sortIconClass, sortDir, currentSort, extractDate
+            sortIconClass, sortDir, currentSort, extractDate, itemsLoading
           }
         }
-      }).mount('#collections')    
+      }).mount('#collections')
+      const tableToWatch = document.getElementById('collections-table')
+      const rows = tableToWatch.getElementsByClassName('map-wrapper')
+      let debounceVal = null
+      let allMapsAndPolygons = []
+      let lastAmount = rows.length
+
+      for (let i = 0; i < rows.length; i++) {
+        let map = L.map(
+          rows[i]['id'], 
+          {
+            minZoom: -0.6,
+            zoomDelta: 0.5,
+            zoomSnap: 0.5,
+            maxBoundsViscosity: 1,
+            maxBounds: [[-90, -180], [90, 180]],
+            wheelPxPerZoomLevel: 100,
+            boxZoom: false,
+            doubleClickZoom: false,
+            dragging: false,
+            keyboard: false,
+            scrollWheelZoom: false,
+            touchZoom: false,
+            zoomControl: false
+          }
+        ).setView([0, 0], 1);
+        map.addLayer(new L.TileLayer(
+          '{{ config['server']['map']['url'] }}', {
+            minZoom: -0.6,
+            noWrap: true,
+            bounds: [[-90, -180], [90, 180]],
+            maxZoom: 18,
+            attribution: '{{ config['server']['map']['attribution'] | safe }}'
+          }
+        ));
+
+        // Add in the polygons
+        // if this collection has a map representation, add it to the map
+        for (let link in app.collections[i]['links']) {
+          if (link['rel'] == 'http://www.opengis.net/def/rel/ogc/1.0/map' && link['href']) {
+            L.tileLayer.wms(link['href'], {"opacity": .7, "transparent": true, "crs": L.CRS.EPSG4326}).addTo(map)
+          }
+        }
+
+        var bbox_layer = L.polygon([
+          [app.collections[i]['extent']['spatial']['bbox'][0][1], app.collections[i]['extent']['spatial']['bbox'][0][0]],
+          [app.collections[i]['extent']['spatial']['bbox'][0][3], app.collections[i]['extent']['spatial']['bbox'][0][0]],
+          [app.collections[i]['extent']['spatial']['bbox'][0][3], app.collections[i]['extent']['spatial']['bbox'][0][2]],
+          [app.collections[i]['extent']['spatial']['bbox'][0][1], app.collections[i]['extent']['spatial']['bbox'][0][2]]
+        ]);
+        map.addLayer(bbox_layer);
+        map.fitBounds(bbox_layer.getBounds(), {maxZoom: 10});
+        allMapsAndPolygons.push([map, bbox_layer])
+      }
+      app.itemsLoading = false
+
+      watch(() => app.collections, () => {
+        // Need to keep track of the previous least amount of rows to recreate the DOM elements
+        if (app.collections.length < lastAmount) {
+          lastAmount = app.collections.length
+        }
+        app.itemsLoading = true
+
+        clearTimeout(debounceVal)
+        debounceVal = setTimeout(() => {
+          nextTick(() => {
+            for (let i = 0; i < rows.length; i++) {
+              allMapsAndPolygons[i][1].remove()
+              if (i >= lastAmount) {
+                // Case where the map references are tied to elements deleted by the DOM, need to recreate them
+                allMapsAndPolygons[i][0].remove()
+                let map = L.map(
+                  rows[i]['id'],
+                  {
+                    minZoom: -0.6,
+                    zoomDelta: 0.5,
+                    zoomSnap: 0.5,
+                    maxBoundsViscosity: 1,
+                    maxBounds: [[-90, -180], [90, 180]],
+                    wheelPxPerZoomLevel: 100,
+                    boxZoom: false,
+                    doubleClickZoom: false,
+                    dragging: false,
+                    keyboard: false,
+                    scrollWheelZoom: false,
+                    touchZoom: false,
+                    zoomControl: false
+                  }
+                ).setView([0, 0], 1);
+                map.addLayer(new L.TileLayer(
+                  '{{ config['server']['map']['url'] }}', {
+                    minZoom: -0.6,
+                    noWrap: true,
+                    bounds: [[-90, -180], [90, 180]],
+                    maxZoom: 18,
+                    attribution: '{{ config['server']['map']['attribution'] | safe }}'
+                  }
+                ));
+                allMapsAndPolygons[i][0] = map
+              }
+
+              for (let link in app.collections[i]['links']) {
+                if (link['rel'] == 'http://www.opengis.net/def/rel/ogc/1.0/map' && link['href']) {
+                  L.tileLayer.wms(link['href'], {"opacity": .7, "transparent": true, "crs": L.CRS.EPSG4326}).addTo(allMapsAndPolygons[i][0])
+                }
+              }
+
+              var bbox_layer = L.polygon([
+                [app.collections[i]['extent']['spatial']['bbox'][0][1], app.collections[i]['extent']['spatial']['bbox'][0][0]],
+                [app.collections[i]['extent']['spatial']['bbox'][0][3], app.collections[i]['extent']['spatial']['bbox'][0][0]],
+                [app.collections[i]['extent']['spatial']['bbox'][0][3], app.collections[i]['extent']['spatial']['bbox'][0][2]],
+                [app.collections[i]['extent']['spatial']['bbox'][0][1], app.collections[i]['extent']['spatial']['bbox'][0][2]]
+              ]);
+              allMapsAndPolygons[i][0].addLayer(bbox_layer);
+              allMapsAndPolygons[i][0].fitBounds(bbox_layer.getBounds(), {maxZoom: 10});
+              allMapsAndPolygons[i][1] = bbox_layer
+            }
+            lastAmount = app.collections.length
+            app.itemsLoading = false
+          })
+        }, 1000)
+      })
     </script>
 {% endblock %}
