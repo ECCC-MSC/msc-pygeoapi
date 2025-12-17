@@ -33,6 +33,7 @@ import json
 import logging
 import os
 from pathlib import Path
+import re
 
 import click
 from elasticsearch import exceptions
@@ -45,280 +46,495 @@ from msc_pygeoapi.env import MSC_PYGEOAPI_BASEPATH
 from msc_pygeoapi.loader.base import BaseLoader
 from msc_pygeoapi.util import (
     configure_es_connection,
+    DATETIME_RFC3339_FMT,
+    safe_cast_to_number,
     strftime_rfc3339
 )
 
 LOGGER = logging.getLogger(__name__)
 
 # index settings
-INDEX_NAME = 'marine_weather_{}'
+INDEX_NAME = 'marine_weather_realtime'
 
 FORECAST_POLYGONS_WATER_ES_INDEX = 'forecast_polygons_water_hybrid'
 
-MAPPINGS = {
-    'regular-forecasts': {
-        'issued_datetime_utc': {
-            'type': 'date',
-            'format': 'date_time_no_millis',
-            'ignore_malformed': False,
-        },
-        'issued_datetime_local': {
-            'type': 'date',
-            'format': 'date_time_no_millis',
-            'ignore_malformed': False,
-        },
-        'area_e': {'type': 'text', 'fields': {'raw': {'type': 'keyword'}}},
-        'area_f': {'type': 'text', 'fields': {'raw': {'type': 'keyword'}}},
-        'region_e': {'type': 'text', 'fields': {'raw': {'type': 'keyword'}}},
-        'region_f': {'type': 'text', 'fields': {'raw': {'type': 'keyword'}}},
-        'sub_region_e': {
-            'type': 'text',
-            'fields': {'raw': {'type': 'keyword'}},
-        },
-        'sub_region_f': {
-            'type': 'text',
-            'fields': {'raw': {'type': 'keyword'}},
-        },
-        'forecasts_e': {
-            'type': 'nested',
+MAPPING = {
+    'properties': {
+        'geometry': {'type': 'geo_shape'},
+        'properties': {
             'properties': {
-                'location_e': {
-                    'type': 'text',
-                    'fields': {'raw': {'type': 'keyword'}},
-                },
-                'period_of_coverage_e': {
-                    'type': 'text',
-                    'fields': {'raw': {'type': 'keyword'}},
-                },
-                'wind_e': {
-                    'type': 'text',
-                    'fields': {'raw': {'type': 'keyword'}},
-                },
-                'weather_visibility_e': {
-                    'type': 'text',
-                    'fields': {'raw': {'type': 'keyword'}},
-                },
-                'air_temperature_e': {
-                    'type': 'text',
-                    'fields': {'raw': {'type': 'keyword'}},
-                },
-                'freezing_spray_e': {
-                    'type': 'text',
-                    'fields': {'raw': {'type': 'keyword'}},
-                },
-                'status_statement_e': {
-                    'type': 'text',
-                    'fields': {'raw': {'type': 'keyword'}},
-                },
-            },
-        },
-        'forecasts_f': {
-            'type': 'nested',
-            'properties': {
-                'location_e': {
-                    'type': 'text',
-                    'fields': {'raw': {'type': 'keyword'}},
-                },
-                'period_of_coverage_f': {
-                    'type': 'text',
-                    'fields': {'raw': {'type': 'keyword'}},
-                },
-                'wind_f': {
-                    'type': 'text',
-                    'fields': {'raw': {'type': 'keyword'}},
-                },
-                'weather_visibility_f': {
-                    'type': 'text',
-                    'fields': {'raw': {'type': 'keyword'}},
-                },
-                'air_temperature_f': {
-                    'type': 'text',
-                    'fields': {'raw': {'type': 'keyword'}},
-                },
-                'freezing_spray_f': {
-                    'type': 'text',
-                    'fields': {'raw': {'type': 'keyword'}},
-                },
-                'status_statement_f': {
-                    'type': 'text',
-                    'fields': {'raw': {'type': 'keyword'}},
-                },
-            },
-        },
-    },
-    'extended-forecasts': {
-        'issued_datetime_utc': {
-            'type': 'date',
-            'format': 'date_time_no_millis',
-            'ignore_malformed': False,
-        },
-        'issued_datetime_local': {
-            'type': 'date',
-            'format': 'date_time_no_millis',
-            'ignore_malformed': False,
-        },
-        'area_e': {'type': 'text', 'fields': {'raw': {'type': 'keyword'}}},
-        'area_f': {'type': 'text', 'fields': {'raw': {'type': 'keyword'}}},
-        'region_e': {'type': 'text', 'fields': {'raw': {'type': 'keyword'}}},
-        'region_f': {'type': 'text', 'fields': {'raw': {'type': 'keyword'}}},
-        'sub_region_e': {
-            'type': 'text',
-            'fields': {'raw': {'type': 'keyword'}},
-        },
-        'sub_region_f': {
-            'type': 'text',
-            'fields': {'raw': {'type': 'keyword'}},
-        },
-        'extended_forecasts_e': {
-            'type': 'nested',
-            'properties': {
-                'location_e': {
-                    'type': 'text',
-                    'fields': {'raw': {'type': 'keyword'}},
-                },
-                'status_statement_e': {
-                    'type': 'text',
-                    'fields': {'raw': {'type': 'keyword'}},
-                },
-                'forecast_periods_e': {
-                    'type': 'nested',
+                'area': {
                     'properties': {
-                        'forecast_period_e': {
-                            'type': 'text',
-                            'fields': {'raw': {'type': 'keyword'}},
+                        'countryCode': {
+                            'properties': {
+                                'en': {
+                                    'type': 'text',
+                                    'fields': {'keyword': {'type': 'keyword'}},
+                                },
+                                'fr': {
+                                    'type': 'text',
+                                    'fields': {'keyword': {'type': 'keyword'}}
+                                }
+                            }
                         },
-                        'forecast_e': {
-                            'type': 'text',
-                            'fields': {'raw': {'type': 'keyword'}},
+                        'region': {
+                            'properties': {
+                                'en': {
+                                    'type': 'text',
+                                    'fields': {'keyword': {'type': 'keyword'}},
+                                },
+                                'fr': {
+                                    'type': 'text',
+                                    'fields': {'keyword': {'type': 'keyword'}}
+                                }
+                            }
                         },
-                    },
+                        'subRegion': {
+                            'properties': {
+                                'en': {
+                                    'type': 'text',
+                                    'fields': {'keyword': {'type': 'keyword'}},
+                                },
+                                'fr': {
+                                    'type': 'text',
+                                    'fields': {'keyword': {'type': 'keyword'}}
+                                }
+                            }
+                        },
+                        'value': {
+                            'properties': {
+                                'en': {
+                                    'type': 'text',
+                                    'fields': {'keyword': {'type': 'keyword'}}
+                                },
+                                'fr': {
+                                    'type': 'text',
+                                    'fields': {'keyword': {'type': 'keyword'}}
+                                }
+                            }
+                        }
+                    }
                 },
-            },
-        },
-        'extended_forecasts_f': {
-            'type': 'nested',
-            'properties': {
-                'location_f': {
-                    'type': 'text',
-                    'fields': {'raw': {'type': 'keyword'}},
-                },
-                'status_statement_f': {
-                    'type': 'text',
-                    'fields': {'raw': {'type': 'keyword'}},
-                },
-                'forecast_periods_f': {
-                    'type': 'nested',
+                'regularForecast': {
                     'properties': {
-                        'forecast_period_f': {
-                            'type': 'text',
-                            'fields': {'raw': {'type': 'keyword'}},
+                        'issuedDatetimeUTC': {
+                            'type': 'date',
+                            'format': 'date_time_no_millis'
                         },
-                        'forecast_f': {
-                            'type': 'text',
-                            'fields': {'raw': {'type': 'keyword'}},
+                        'issuedDatetimeLocal': {
+                            'type': 'date',
+                            'format': 'date_time_no_millis'
                         },
-                    },
+                        'locations': {
+                            'type': 'nested',
+                            'properties': {
+                                'weatherCondition': {
+                                    'type': 'object',
+                                    'properties': {
+                                        'periodOfCoverage': {
+                                            'type': 'object',
+                                            'properties': {
+                                                'en': {
+                                                    'type': 'text',
+                                                    'fields': {
+                                                        'keyword': {
+                                                            'type': 'keyword'
+                                                        }
+                                                    }
+                                                },
+                                                'fr': {
+                                                    'type': 'text',
+                                                    'fields': {
+                                                        'keyword': {
+                                                            'type': 'keyword'
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        'wind': {
+                                            'type': 'object',
+                                            'properties': {
+                                                'en': {
+                                                    'type': 'text',
+                                                    'fields': {
+                                                        'keyword': {
+                                                            'type': 'keyword'
+                                                        }
+                                                    }
+                                                },
+                                                'fr': {
+                                                    'type': 'text',
+                                                    'fields': {
+                                                        'keyword': {
+                                                            'type': 'keyword'
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        'weatherVisibility': {
+                                            'type': 'object',
+                                            'properties': {
+                                                'en': {
+                                                    'type': 'text',
+                                                    'fields': {
+                                                        'keyword': {
+                                                            'type': 'keyword'
+                                                        }
+                                                    }
+                                                },
+                                                'fr': {
+                                                    'type': 'text',
+                                                    'fields': {
+                                                        'keyword': {
+                                                            'type': 'keyword'
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        'airTemperature': {
+                                            'type': 'object',
+                                            'properties': {
+                                                'en': {
+                                                    'type': 'text',
+                                                    'fields': {
+                                                        'keyword': {
+                                                            'type': 'keyword'
+                                                        }
+                                                    }
+                                                },
+                                                'fr': {
+                                                    'type': 'text',
+                                                    'fields': {
+                                                        'keyword': {
+                                                            'type': 'keyword'
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        'freezingSpray': {
+                                            'type': 'object',
+                                            'properties': {
+                                                'en': {
+                                                    'type': 'text',
+                                                    'fields': {
+                                                        'keyword': {
+                                                            'type': 'keyword'
+                                                        }
+                                                    }
+                                                },
+                                                'fr': {
+                                                    'type': 'text',
+                                                    'fields': {
+                                                        'keyword': {
+                                                            'type': 'keyword'
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                'statusStatement': {
+                                    'type': 'object',
+                                    'properties': {
+                                        'en': {
+                                            'type': 'text',
+                                            'fields': {
+                                                'keyword': {'type': 'keyword'}
+                                            }
+                                        },
+                                        'fr': {
+                                            'type': 'text',
+                                            'fields': {
+                                                'keyword': {'type': 'keyword'}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 },
-            },
-        },
-    },
-    'warnings': {
-        'area_e': {'type': 'text', 'fields': {'raw': {'type': 'keyword'}}},
-        'area_f': {'type': 'text', 'fields': {'raw': {'type': 'keyword'}}},
-        'region_e': {'type': 'text', 'fields': {'raw': {'type': 'keyword'}}},
-        'region_f': {'type': 'text', 'fields': {'raw': {'type': 'keyword'}}},
-        'sub_region_e': {
-            'type': 'text',
-            'fields': {'raw': {'type': 'keyword'}},
-        },
-        'sub_region_f': {
-            'type': 'text',
-            'fields': {'raw': {'type': 'keyword'}},
-        },
-        'warnings_e': {
-            'type': 'nested',
-            'properties': {
-                'location_e': {
-                    'type': 'text',
-                    'fields': {'raw': {'type': 'keyword'}},
+                'extendedForecast': {
+                    'properties': {
+                        'issuedDatetimeUTC': {
+                            'type': 'date',
+                            'format': 'date_time_no_millis'
+                        },
+                        'issuedDatetimeLocal': {
+                            'type': 'date',
+                            'format': 'date_time_no_millis'
+                        },
+                        'locations': {
+                            'type': 'nested',
+                            'properties': {
+                                'weatherCondition': {
+                                    'type': 'object',
+                                    'properties': {
+                                        'forecastPeriods': {
+                                            'type': 'nested',
+                                            'properties': {
+                                                'name': {
+                                                    'type': 'object',
+                                                    'properties': {
+                                                        'en': {
+                                                            'type': 'text',
+                                                            'fields': {
+                                                                'keyword': {
+                                                                    'type': 'keyword'  # noqa
+                                                                }
+                                                            }
+                                                        },
+                                                        'fr': {
+                                                            'type': 'text',
+                                                            'fields': {
+                                                                'keyword': {
+                                                                    'type': 'keyword' # noqa
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                'value': {
+                                                    'type': 'object',
+                                                    'properties': {
+                                                        'en': {
+                                                            'type': 'text',
+                                                            'fields': {
+                                                                'keyword': {
+                                                                    'type': 'keyword' # noqa
+                                                                }
+                                                            }
+                                                        },
+                                                        'fr': {
+                                                            'type': 'text',
+                                                            'fields': {
+                                                                'keyword': {
+                                                                    'type': 'keyword' # noqa
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                'statusStatement': {
+                                    'type': 'object',
+                                    'properties': {
+                                        'en': {
+                                            'type': 'text',
+                                            'fields': {
+                                                'keyword': {'type': 'keyword'}
+                                            }
+                                        },
+                                        'fr': {
+                                            'type': 'text',
+                                            'fields': {
+                                                'keyword': {'type': 'keyword'}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 },
-                'issued_datetime_utc_e': {
-                    'type': 'date',
-                    'format': 'date_time_no_millis',
-                    'ignore_malformed': False,
+                'waveForecast': {
+                    'properties': {
+                        'issuedDatetimeUTC': {
+                            'type': 'date',
+                            'format': 'date_time_no_millis'
+                        },
+                        'issuedDatetimeLocal': {
+                            'type': 'date',
+                            'format': 'date_time_no_millis'
+                        },
+                        'locations': {
+                            'type': 'nested',
+                            'properties': {
+                                'weatherCondition': {
+                                    'type': 'object',
+                                    'properties': {
+                                        'periodOfCoverage': {
+                                            'type': 'object',
+                                            'properties': {
+                                                'en': {
+                                                    'type': 'text',
+                                                    'fields': {
+                                                        'keyword': {
+                                                            'type': 'keyword'
+                                                        }
+                                                    }
+                                                },
+                                                'fr': {
+                                                    'type': 'text',
+                                                    'fields': {
+                                                        'keyword': {
+                                                            'type': 'keyword'
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        'textSummary': {
+                                            'type': 'object',
+                                            'properties': {
+                                                'en': {
+                                                    'type': 'text',
+                                                    'fields': {
+                                                        'keyword': {
+                                                            'type': 'keyword'
+                                                        }
+                                                    }
+                                                },
+                                                'fr': {
+                                                    'type': 'text',
+                                                    'fields': {
+                                                        'keyword': {
+                                                            'type': 'keyword'
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 },
-                'issued_datetime_local_e': {
-                    'type': 'date',
-                    'format': 'date_time_no_millis',
-                    'ignore_malformed': False,
-                },
-                'event_type_e': {
-                    'type': 'text',
-                    'fields': {'raw': {'type': 'keyword'}},
-                },
-                'event_category_e': {
-                    'type': 'text',
-                    'fields': {'raw': {'type': 'keyword'}},
-                },
-                'event_name_e': {
-                    'type': 'text',
-                    'fields': {'raw': {'type': 'keyword'}},
-                },
-                'event_status_e': {
-                    'type': 'text',
-                    'fields': {'raw': {'type': 'keyword'}},
-                },
-            },
-        },
-        'warnings_f': {
-            'type': 'nested',
-            'properties': {
-                'location_f': {
-                    'type': 'text',
-                    'fields': {'raw': {'type': 'keyword'}},
-                },
-                'issued_datetime_utc_f': {
-                    'type': 'date',
-                    'format': 'date_time_no_millis',
-                    'ignore_malformed': False,
-                },
-                'issued_datetime_local_f': {
-                    'type': 'date',
-                    'format': 'date_time_no_millis',
-                    'ignore_malformed': False,
-                },
-                'event_type_f': {
-                    'type': 'text',
-                    'fields': {'raw': {'type': 'keyword'}},
-                },
-                'event_category_f': {
-                    'type': 'text',
-                    'fields': {'raw': {'type': 'keyword'}},
-                },
-                'event_name_f': {
-                    'type': 'text',
-                    'fields': {'raw': {'type': 'keyword'}},
-                },
-                'event_status_f': {
-                    'type': 'text',
-                    'fields': {'raw': {'type': 'keyword'}},
-                },
-            },
-        },
-    },
+                'warnings': {
+                    'properties': {
+                        'locations': {
+                            'type': 'nested',
+                            'properties': {
+                                'events': {
+                                    'type': 'nested',
+                                    'properties': {
+                                        'type': {
+                                            'type': 'object',
+                                            'properties': {
+                                                'en': {
+                                                    'type': 'text',
+                                                    'fields': {
+                                                        'keyword': {
+                                                            'type': 'keyword'
+                                                        }
+                                                    }
+                                                },
+                                                'fr': {
+                                                    'type': 'text',
+                                                    'fields': {
+                                                        'keyword': {
+                                                            'type': 'keyword'
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        'category': {
+                                            'type': 'object',
+                                            'properties': {
+                                                'en': {
+                                                    'type': 'text',
+                                                    'fields': {
+                                                        'keyword': {
+                                                            'type': 'keyword'
+                                                        }
+                                                    }
+                                                },
+                                                'fr': {
+                                                    'type': 'text',
+                                                    'fields': {
+                                                        'keyword': {
+                                                            'type': 'keyword'
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        'name': {
+                                            'type': 'object',
+                                            'properties': {
+                                                'en': {
+                                                    'type': 'text',
+                                                    'fields': {
+                                                        'keyword': {
+                                                            'type': 'keyword'
+                                                        }
+                                                    }
+                                                },
+                                                'fr': {
+                                                    'type': 'text',
+                                                    'fields': {
+                                                        'keyword': {
+                                                            'type': 'keyword'
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        'status': {
+                                            'type': 'object',
+                                            'properties': {
+                                                'en': {
+                                                    'type': 'text',
+                                                    'fields': {
+                                                        'keyword': {
+                                                            'type': 'keyword'
+                                                        }
+                                                    }
+                                                },
+                                                'fr': {
+                                                    'type': 'text',
+                                                    'fields': {
+                                                        'keyword': {
+                                                            'type': 'keyword'
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                'name': {
+                                    'type': 'object',
+                                    'properties': {
+                                        'en': {
+                                            'type': 'text',
+                                            'fields': {
+                                                'keyword': {'type': 'keyword'}
+                                            },
+                                        },
+                                        'fr': {
+                                            'type': 'text',
+                                            'fields': {
+                                                'keyword': {'type': 'keyword'}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 SETTINGS = {
     'settings': {'number_of_shards': 1, 'number_of_replicas': 0},
-    'mappings': {
-        'properties': {
-            'geometry': {'type': 'geo_shape'},
-            'properties': {'properties': None},
-        }
-    },
+    'mappings': MAPPING
 }
 
-INDICES = [INDEX_NAME.format(weather_var) for weather_var in MAPPINGS]
+MAX_XML_DATETIME_DIFF_SECONDS = 10
 
 
 class MarineWeatherRealtimeLoader(BaseLoader):
@@ -331,21 +547,153 @@ class MarineWeatherRealtimeLoader(BaseLoader):
 
         self.conn = ElasticsearchConnector(conn_config)
         self.filename_pattern = '{datetime}_MSC_MarineWeather_{region_name_code}_{lang}.xml'  # noqa
-        self.parsed_filename = None
+        self.filepath_en = None
+        self.filepath_fr = None
+        self.parsed_filename = parse(self.filename_pattern, '')
         self.region_name_code = None
         self.lang = None
-        self.root = None
+        self.xml_roots = {
+            'en': etree.Element('root'),
+            'fr': etree.Element('root'),
+        }
         self.area = {}
         self.items = []
+        self.marine_weather_feature = {
+            'type': "Feature",
+            'properties': {
+                'lastUpdated': datetime.now().strftime(DATETIME_RFC3339_FMT)
+            }
+        }
 
         # create marine weather indices if it don't exist
-        for item in MAPPINGS:
-            SETTINGS['mappings']['properties']['properties'][
-                'properties'
-            ] = MAPPINGS[item]
-            self.conn.create(INDEX_NAME.format(item), SETTINGS)
+        self.conn.create(INDEX_NAME, SETTINGS)
 
-    def parse_filename(self):
+    def _sort_by_datetime_diff(self, file):
+        """
+        Sort files by absolute datetime difference between filename and
+        parsed datetime in active file
+
+        :param file: `Path` object
+        :returns: `timedelta` object
+        """
+
+        return abs(
+            datetime.strptime(
+                self.parsed_filename.named['datetime'], '%Y%m%dT%H%M%S.%fZ'
+            )
+            - datetime.strptime(
+                parse(self.filename_pattern, file.name).named['datetime'],
+                '%Y%m%dT%H%M%S.%fZ'
+            )
+        )
+
+    def _node_to_dict(self, node, lang=None):
+        """
+        Convert an lxml.etree.Element to a dict
+
+        :param node: `lxml.etree.Element` node
+
+        :returns: `dict` representation of xml node
+        """
+
+        if node is not None:
+            # if node has no attributes, just return the text
+            if not node.attrib and node.text:
+                if lang:
+                    return {lang: safe_cast_to_number(node.text)}
+                else:
+                    return safe_cast_to_number(node.text)
+            else:
+                node_dict = {}
+                for attrib in node.attrib:
+                    if node.attrib[attrib]:
+                        # in some case node attributes contain datetime strings
+                        # formatted as YYYYMMDDHHMMSS, in this case we
+                        # want to convert them to RFC3339
+                        regex = r"^(?:[2][0-9]{3})(?:(?:0[1-9]|1[0-2]))(?:(?:0[1-9]|[12]\d|3[01]))(?:(?:[01]\d|2[0-3]))(?:[0-5]\d){2}$"  # noqa
+                        if re.match(regex, node.attrib[attrib]):
+                            dt = datetime.strptime(
+                                node.attrib[attrib], '%Y%m%d%H%M%S'
+                            )
+                            if lang:
+                                node_dict[attrib] = {
+                                    lang: dt.strftime(DATETIME_RFC3339_FMT)
+                                }
+                            else:
+                                node_dict[attrib] = dt.strftime(
+                                    DATETIME_RFC3339_FMT
+                                )
+                        elif lang:
+                            node_dict[attrib] = {
+                                lang: safe_cast_to_number(node.attrib[attrib])
+                            }
+                        else:
+                            node_dict[attrib] = safe_cast_to_number(
+                                node.attrib[attrib]
+                            )
+
+            if node.text and node.text.strip():
+                if lang:
+                    node_dict['value'] = {lang: safe_cast_to_number(node.text)}
+                else:
+                    node_dict['value'] = safe_cast_to_number(node.text)
+
+            return node_dict
+
+        return None
+
+    def _deep_merge(self, d1, d2):
+        """
+        Deep merge two dictionaries
+        :param d1: `dict` to merge into
+        :param d2: `dict` to merge from
+
+        :returns: `dict` of merged dictionaries
+        """
+        for key in d2:
+            if key in d1:
+                if isinstance(d1[key], dict) and isinstance(d2[key], dict):
+                    self._deep_merge(d1[key], d2[key])
+                else:
+                    d1[key] = d2[key]
+            else:
+                d1[key] = d2[key]
+        return d1
+
+    def _set_nested_value(self, d, keys, value):
+        """
+        Set nested value in dictionary, and merges dictionaries if they
+        already exist at path
+        :param d: `dict` to set value in
+        :param keys: `list` of keys
+        :param value: value to set
+
+        :returns: `dict` of modified dictionary
+        """
+        for key in keys[:-1]:
+            d = d.setdefault(key, {})
+
+        if keys[-1] in d:
+            # try to merge dictionaries
+            if isinstance(value, dict):
+                for k, v in value.items():
+                    if k in d[keys[-1]]:
+                        if isinstance(v, dict):
+                            d[keys[-1]][k] = self._deep_merge(
+                                d[keys[-1]][k], v
+                            )
+                        else:
+                            d[keys[-1]][k] = v
+                    else:
+                        d[keys[-1]][k] = v
+            else:
+                d[keys[-1]] = value
+        else:
+            d[keys[-1]] = value
+
+        return d
+
+    def _parse_filename(self):
         """
         Parses a marine weather forecast XML filename to get the
         region name code and language.
@@ -353,14 +701,14 @@ class MarineWeatherRealtimeLoader(BaseLoader):
         """
         # parse filepath
         filename = self.filepath.name
-        parsed_filename = parse(self.filename_pattern, filename)
+        self.parsed_filename = parse(self.filename_pattern, filename)
         # set class variables
-        self.region_name_code = parsed_filename.named['region_name_code']
-        self.lang = parsed_filename.named['lang']
+        self.region_name_code = self.parsed_filename.named['region_name_code']
+        self.lang = self.parsed_filename.named['lang']
 
         return True
 
-    def create_datetime_dict(self, datetime_elems):
+    def _create_datetime_dict(self, datetime_elems):
         """
         Used to pass a pair of timeStamp elements from the XML. These elements
         contain the UTC and local time for various marine forecast
@@ -384,7 +732,7 @@ class MarineWeatherRealtimeLoader(BaseLoader):
 
         return {'utc': datetime_utc, 'local': datetime_local}
 
-    def set_area_info(self):
+    def _set_area_info(self):
         """
         Gets the area name from the marine weather XML document and
         looks up the equivalent meteocode forecast polygon feature ID to
@@ -394,254 +742,391 @@ class MarineWeatherRealtimeLoader(BaseLoader):
         associated geometry.
         :return: `bool` representing successful setting of self.area attribute
         """
-        area_name = self.root.find('area').text
+        for lang in self.xml_roots:
+            with open(
+                os.path.join(
+                    MSC_PYGEOAPI_BASEPATH,
+                    'resources/meteocode_lookup.json',
+                )
+            ) as json_file:
+                meteocode_lookup = json.load(json_file)
+                forecast_id = meteocode_lookup[self.region_name_code]
 
-        with open(
-            os.path.join(
-                MSC_PYGEOAPI_BASEPATH, 'resources/meteocode_lookup.json',
-            )
-        ) as json_file:
-            meteocode_lookup = json.load(json_file)
-            forecast_id = meteocode_lookup[self.region_name_code]
+            try:
+                result = self.conn.Elasticsearch.get(
+                    index=FORECAST_POLYGONS_WATER_ES_INDEX,
+                    id=forecast_id,
+                    _source=['geometry']
+                )
 
-        try:
-            result = self.conn.Elasticsearch.get(
-                index=FORECAST_POLYGONS_WATER_ES_INDEX,
-                id=forecast_id,
-                _source=['geometry'],
-            )
-            self.area = {
-                # get area element value
-                **{'name': area_name},
-                # get area element attribute values
-                **{
-                    key: self.root.find('area').attrib[key]
-                    for key in ['countryCode', 'region', 'subRegion']
-                },
-                **result['_source'],
+                geometry = result['_source'].get('geometry')
+
+                area = self._node_to_dict(
+                    self.xml_roots[lang].find('area'), lang=lang
+                )
+
+                self._set_nested_value(
+                    self.marine_weather_feature['properties'],
+                    ['area'],
+                    area
+                )
+
+                self.marine_weather_feature['geometry'] = geometry
+
+            except exceptions.NotFoundError:
+                LOGGER.warning(f'Could not get forecast polygon document with id: {forecast_id}')  # noqa
+                return False
+        return True
+
+    def _set_warning(self):
+        """
+        Generates warnings for a given marine weather area. Warnings are
+        added to the marine weather feature properties.
+        :returns: marine weather feature `dict` with warnings added.
+        """
+        warnings = self.xml_root.findall('warnings/')
+
+        if 'warnings' not in self.marine_weather_feature['properties']:
+            self.marine_weather_feature['properties']['warnings'] = {
+                "locations": []
             }
 
-            return True
+        if len(warnings) == 0:
+            LOGGER.debug('No warnings found in XML.')
+            return self.marine_weather_feature
 
-        except exceptions.NotFoundError:
-            LOGGER.warning(f'Could not get forecast polygon document with id: {forecast_id}')  # noqa
+        locations = [
+            element for element in warnings if element.tag == 'location'
+        ]
+        existing_locations = self.marine_weather_feature['properties'][
+            'warnings'
+        ]['locations']
 
-    def generate_warnings(self):
-        """
-        Generates and yields a series of marine weather warnings
-        for a given marine weather area. Warnings are returned
-        as Elasticsearch bulk API upsert actions, with a single
-        document for the marine weather region in GeoJSON to match the
-        Elasticsearch index mappings.
-        :returns: Generator of Elasticsearch actions to upsert the marine
-                  weather warnings.
-        """
-        warnings = self.root.findall('warnings/')
+        for i, location_elem in enumerate(locations):
+            if i < len(existing_locations):
+                location_dict = existing_locations[i]
+            else:
+                location_dict = {'events': []}
 
-        feature = {'type': 'Feature', 'geometry': {}, 'properties': {}}
-
-        feature['geometry'] = self.area['geometry']
-
-        feature['properties'][f'area_{self.lang}'] = self.area['name']
-        feature['properties'][f'region_{self.lang}'] = self.area['region']
-        feature['properties'][
-            f'sub_region_{self.lang}'
-        ] = self.area['subRegion']
-        feature['properties'][f'warnings_{self.lang}'] = []
-
-        if len(warnings) > 0:
-            for elem in warnings:
-                datetimes = self.create_datetime_dict(
-                    elem.findall('event/' 'dateTime')
+            if location_elem.attrib.get('name'):
+                self._set_nested_value(
+                    location_dict,
+                    ['name'],
+                    {self.lang: location_elem.attrib['name']}
                 )
-                location = {
-                    f'location_{self.lang}': elem.attrib['name'],
-                    f'issued_datetime_utc_{self.lang}': strftime_rfc3339(datetimes['utc']),  # noqa
-                    f'issued_datetime_local_{self.lang}': strftime_rfc3339(datetimes['local']),  # noqa
-                    f'event_type_{self.lang}': elem.find('event').attrib['type'],  # noqa
-                    f'event_category_{self.lang}': elem.find('event').attrib['category'],  # noqa
-                    f'event_name_{self.lang}': elem.find('event').attrib['name'],  # noqa
-                    f'event_status_{self.lang}': elem.find('event').attrib['status']  # noqa
-                }
-                feature['properties'][f'warnings_{self.lang}'].append(location)  # noqa
 
-        self.items.append(feature)
+            # iterate over location events
+            events = location_elem.findall('event')
+            for event_index, event_elem in enumerate(events):
+                if event_index < len(location_dict['events']):
+                    event_dict = location_dict['events'][event_index]
+                else:
+                    event_dict = {}
 
-        action = {
-            '_id': self.filepath.stem.split('_')[0],
-            '_index': 'marine_weather_warnings',
-            '_op_type': 'update',
-            'doc': feature,
-            'doc_as_upsert': True,
-        }
+                for attrib in event_elem.attrib:
+                    self._set_nested_value(
+                        event_dict,
+                        [attrib],
+                        {self.lang: event_elem.attrib[attrib]}
+                    )
 
-        yield action
+                if event_index < len(location_dict['events']):
+                    location_dict['events'][event_index] = event_dict
+                else:
+                    location_dict['events'].append(event_dict)
 
-    def generate_regular_forecasts(self):
+            if i < len(existing_locations):
+                existing_locations[i] = location_dict
+            else:
+                existing_locations.append(location_dict)
+
+        return self.marine_weather_feature
+
+    def _set_regular_forecast(self):
         """
-        Generates and yields a series of marine weather regular forecasts
-        for a given marine weather area. Each regular forecast is returned
-        as Elasticsearch bulk API upsert actions, with documents in GeoJSON to
-        match the Elasticsearch index mappings.
-        :returns: Generator of Elasticsearch actions to upsert the marine
-                  weather regular forecast.
+        Generates regular forecasts for a given marine weather area. Regular
+        forecasts are added to the marine weather feature properties.
+        :returns: marine weather feature `dict` with regular forecasts added.
         """
-        regular_forecasts = self.root.findall('regularForecast/')
-        feature = {'type': 'Feature', 'geometry': {}, 'properties': {}}
+        regular_forecasts = self.xml_root.findall('regularForecast/')
 
-        feature['geometry'] = self.area['geometry']
-        feature['properties'][f'area_{self.lang}'] = self.area[
-            'name'
+        if 'regularForecast' not in self.marine_weather_feature['properties']:
+            self.marine_weather_feature['properties']['regularForecast'] = {
+                "locations": []
+            }
+
+        if len(regular_forecasts) == 0:
+            LOGGER.debug('No regular forecasts found in XML.')
+            return self.marine_weather_feature
+
+        # Set issued datetimes
+        datetimes = self._create_datetime_dict(
+            [elem for elem in regular_forecasts if elem.tag == 'dateTime']
+        )
+        self.marine_weather_feature['properties']['regularForecast'][
+            'issuedDatetimeUTC'
+        ] = strftime_rfc3339(datetimes['utc'])
+        self.marine_weather_feature['properties']['regularForecast'][
+            'issuedDatetimeLocal'
+        ] = datetimes['local'].isoformat()
+
+        # iterate over regular forecast location elements
+        locations = [
+            elem for elem in regular_forecasts if elem.tag == 'location'
         ]
-        feature['properties'][f'region_{self.lang}'] = self.area[
-            'region'
+        existing_locations = self.marine_weather_feature['properties'][
+            'regularForecast'
+        ]['locations']
+
+        for i, location_elem in enumerate(locations):
+            if i < len(existing_locations):
+                location_dict = existing_locations[i]
+            else:
+                location_dict = {}
+
+            if location_elem.attrib.get('name'):
+                self._set_nested_value(
+                    location_dict,
+                    ['name'],
+                    location_elem.attrib['name']
+                )
+
+            # add weather condition elements
+            weather_condition_paths = [
+                'weatherCondition/periodOfCoverage',
+                'weatherCondition/wind',
+                'weatherCondition/weatherVisibility',
+                'weatherCondition/airTemperature',
+                'weatherCondition/freezingSpray'
+            ]
+
+            weather_dict = {}
+            for path in weather_condition_paths:
+                node = location_elem.find(path)
+                if node is not None and node.text:
+                    weather_dict[path.split('/')[-1]] = self._node_to_dict(
+                        node, self.lang
+                    )
+
+            if weather_dict:
+                self._set_nested_value(
+                    location_dict, ['weatherCondition'], weather_dict
+                )
+
+            # add status statement
+            status_statement_node = location_elem.find('statusStatement')
+            if status_statement_node is not None and (
+                status_statement_node.attrib or status_statement_node.text
+            ):
+                self._set_nested_value(
+                    location_dict,
+                    ['statusStatement'],
+                    self._node_to_dict(status_statement_node, self.lang)
+                )
+
+            if i < len(existing_locations):
+                existing_locations[i] = location_dict
+            else:
+                existing_locations.append(location_dict)
+
+        return self.marine_weather_feature
+
+    def _set_extended_forecast(self):
+        """
+        Generates extended forecasts for a given marine weather area. Extended
+        forecasts are added to the marine weather feature properties.
+        :returns: marine weather feature `dict` with extended forecasts added.
+        """
+        extended_forecasts = self.xml_root.findall('extendedForecast/')
+
+        if 'extendedForecast' not in self.marine_weather_feature['properties']:
+            self.marine_weather_feature['properties']['extendedForecast'] = {
+                "locations": []
+            }
+
+        if len(extended_forecasts) == 0:
+            LOGGER.debug('No extended forecasts found in XML.')
+            return self.marine_weather_feature
+
+        # set extended forecast issued datetimes
+        datetimes = self._create_datetime_dict(
+            [elem for elem in extended_forecasts if elem.tag == 'dateTime']
+        )
+        self.marine_weather_feature['properties']['extendedForecast'][
+            'issuedDatetimeUTC'
+        ] = strftime_rfc3339(datetimes['utc'])
+        self.marine_weather_feature['properties']['extendedForecast'][
+            'issuedDatetimeLocal'
+        ] = datetimes['local'].isoformat()
+
+        # iterate over extended forecast location elements
+        locations = [
+            elem for elem in extended_forecasts if elem.tag == 'location'
         ]
-        feature['properties'][
-            f'sub_region_{self.lang}'
-        ] = self.area['subRegion']
-        feature['properties'][f'forecasts_{self.lang}'] = []
 
-        if len(regular_forecasts) > 0:
-            datetimes = self.create_datetime_dict(
-                [
-                    element
-                    for element in regular_forecasts
-                    if element.tag == 'dateTime'
-                ]
-            )
-            feature['properties']['issued_datetime_utc'] = strftime_rfc3339(
-                datetimes['utc']
-            )
-            feature['properties']['issued_datetime_local'] = strftime_rfc3339(
-                datetimes['local']
-            )
+        for i, location_elem in enumerate(locations):
+            existing_locations = self.marine_weather_feature['properties'][
+                'extendedForecast'
+            ]['locations']
 
-            locations = [
-                element
-                for element in regular_forecasts
-                if element.tag == 'location'
-            ]
-            for location in locations:
-                location = {
-                    f'location_{self.lang}': location.attrib['name']
-                    if 'name' in location.attrib else self.area['name'],
-                    f'period_of_coverage_{self.lang}':
-                    location.find('weatherCondition/periodOfCoverage').text
-                    if location.find('weatherCondition/periodOfCoverage')
-                    is not None else None,
-                    f'wind_{self.lang}': location.find(
-                        'weatherCondition/wind'
-                    ).text
-                    if location.find('weatherCondition/wind') is not None
-                    else None,
-                    f'weather_visibility_{self.lang}':
-                    location.find('weatherCondition/weatherVisibility').text
-                    if location.find('weatherCondition/weatherVisibility')
-                    is not None else None,
-                    f'air_temperature_{self.lang}': location.find(
-                        'weatherCondition/airTemperature'
-                    ).text
-                    if location.find('weatherCondition/airTemperature')
-                    is not None else None,
-                    f'freezing_spray_{self.lang}': location.find(
-                        'weatherCondition/freezingSpray'
-                    ).text
-                    if location.find('weatherCondition/freezingSpray')
-                    is not None else None,
-                    f'status_statement_{self.lang}': location.find(
-                        'statusStatement'
-                    ).text
-                    if location.find('statusStatement') is not None else None
-                }
-                feature['properties'][f'forecasts_{self.lang}'].append(location)  # noqa
+            if i < len(existing_locations):
+                location_dict = existing_locations[i]
+            else:
+                location_dict = {}
 
-        self.items.append(feature)
+            if location_elem.attrib.get('name'):
+                self._set_nested_value(
+                    location_dict,
+                    ['name'],
+                    location_elem.attrib['name']
+                )
 
-        action = {
-            '_id': self.filepath.stem.split('_')[0],
-            '_index': 'marine_weather_regular-forecasts',
-            '_op_type': 'update',
-            'doc': feature,
-            'doc_as_upsert': True,
-        }
+            # add weatherCondition tags and forecastPeriod children
+            weather_condition = location_elem.find('weatherCondition')
+            if weather_condition is not None and len(weather_condition) > 0:
+                # Get or initialize forecast periods list
+                weather_condition_dict = location_dict.setdefault(
+                    'weatherCondition', {}
+                )
+                forecast_periods = weather_condition_dict.setdefault(
+                    'forecastPeriods', []
+                )
 
-        yield action
+                forecast_periods_elems = weather_condition.findall(
+                    'forecastPeriod'
+                )
 
-    def generate_extended_forecasts(self):
-        """
-        Generates and yields a series of marine weather extended forecasts
-        for a given marine weather area. Each extended forecast is returned
-        as Elasticsearch bulk API upsert actions, with documents in GeoJSON to
-        match the Elasticsearch index mappings.
-        :returns: Generator of Elasticsearch actions to upsert the marine
-                  weather extended forecast.
-        """
-        extended_forecasts = self.root.findall('extendedForecast/')
-        feature = {'type': 'Feature', 'geometry': {}, 'properties': {}}
+                for period_index, forecast_period in enumerate(
+                    forecast_periods_elems
+                ):
+                    period_dict = self._node_to_dict(
+                        forecast_period, self.lang
+                    )
 
-        feature['geometry'] = self.area['geometry']
-        feature['properties'][f'area_{self.lang}'] = self.area['name']
-        feature['properties'][f'region_{self.lang}'] = self.area['region']
-        feature['properties'][f'sub_region_{self.lang}'] = self.area['subRegion']  # noqa
-        feature['properties'][f'extended_forecasts_{self.lang}'] = []
-
-        if len(extended_forecasts) > 0:
-            datetimes = self.create_datetime_dict(
-                [
-                    element
-                    for element in extended_forecasts
-                    if element.tag == 'dateTime'
-                ]
-            )
-            feature['properties']['issued_datetime_utc'] = strftime_rfc3339(
-                datetimes['utc']
-            )
-            feature['properties']['issued_datetime_local'] = strftime_rfc3339(
-                datetimes['local']
-            )
-
-            locations = [
-                element
-                for element in extended_forecasts
-                if element.tag == 'location'
-            ]
-            for location in locations:
-                location = {
-                    f'location_{self.lang}': location.attrib['name']
-                    if 'name' in location.attrib
-                    else self.area['name'],
-                    f'forecast_periods_{self.lang}': [
-                        {
-                            f'forecast_period_{self.lang}':
-                            forecast_period.attrib['name'],
-                            f'forecast_{self.lang}':
-                            forecast_period.text,
-                        }
-                        for forecast_period in location.findall(
-                            'weatherCondition/'
+                    if period_index < len(forecast_periods):
+                        forecast_periods[period_index] = self._deep_merge(
+                            forecast_periods[period_index], period_dict
                         )
-                        if location.findall('weatherCondition/') is not None
-                    ],
-                    f'status_statement_{self.lang}': location.find(
-                        'statusStatement'
-                    ).text
-                    if location.find('statusStatement') is not None
-                    else None,
-                }
-                feature['properties'][
-                    f'extended_forecasts_{self.lang}'].append(location)
+                    else:
+                        forecast_periods.append(period_dict)
+                # update forecast periods dictionary
+                self._set_nested_value(
+                    location_dict,
+                    ['weatherCondition', 'forecastPeriods'],
+                    forecast_periods,
+                )
 
-        self.items.append(feature)
+            # add statusStatement
+            status_statement_node = location_elem.find('statusStatement')
+            if (
+                status_statement_node is not None
+                and len(status_statement_node) > 0
+            ):
+                self._set_nested_value(
+                    location_dict,
+                    ['statusStatement'],
+                    self._node_to_dict(status_statement_node, self.lang)
+                )
 
-        action = {
-            '_id': self.filepath.stem.split('_')[0],
-            '_index': 'marine_weather_extended-forecasts',
-            '_op_type': 'update',
-            'doc': feature,
-            'doc_as_upsert': True,
-        }
+            if i < len(existing_locations):
+                existing_locations[i] = location_dict
+            else:
+                existing_locations.append(location_dict)
 
-        yield action
+        return self.marine_weather_feature
+
+    def _set_wave_forecast(self):
+        """
+        Generates wave forecasts for a given marine weather area. Wave
+        forecasts are added to the marine weather feature properties.
+        :returns: marine weather feature `dict` with wave forecasts added.
+        """
+        wave_forecasts = self.xml_root.findall('waveForecast/')
+
+        if len(wave_forecasts) == 0:
+            LOGGER.debug('No wave forecast found in XML.')
+            return self.marine_weather_feature
+
+        if 'waveForecast' not in self.marine_weather_feature['properties']:
+            self.marine_weather_feature['properties']['waveForecast'] = {
+                "locations": []
+            }
+
+        # set extended forecast issued datetimes
+        datetimes = self._create_datetime_dict(
+            [elem for elem in wave_forecasts if elem.tag == 'dateTime']
+        )
+        self.marine_weather_feature['properties']['waveForecast'][
+            'issuedDatetimeUTC'
+        ] = strftime_rfc3339(datetimes['utc'])
+        self.marine_weather_feature['properties']['waveForecast'][
+            'issuedDatetimeLocal'
+        ] = datetimes['local'].isoformat()
+
+        # iterate over wave forecast location elements
+        locations = [elem for elem in wave_forecasts if elem.tag == 'location']
+
+        existing_locations = self.marine_weather_feature['properties'][
+            'waveForecast'
+        ]['locations']
+
+        for i, location_elem in enumerate(locations):
+            if i < len(existing_locations):
+                location_dict = existing_locations[i]
+            else:
+                location_dict = {}
+
+            if location_elem.attrib.get('name'):
+                self._set_nested_value(
+                    location_dict,
+                    ['name'],
+                    location_elem.attrib['name']
+                )
+
+            # add weather condition elements
+            weather_condition_paths = [
+                'weatherCondition/periodOfCoverage',
+                'weatherCondition/textSummary'
+            ]
+
+            weather_dict = {}
+            for path in weather_condition_paths:
+                node = location_elem.find(path)
+                if node is not None and node.text:
+                    weather_dict[path.split('/')[-1]] = self._node_to_dict(
+                        node, self.lang
+                    )
+            if weather_dict:
+                self._set_nested_value(
+                    location_dict, ['weatherCondition'], weather_dict
+                )
+
+            if i < len(existing_locations):
+                existing_locations[i] = location_dict
+            else:
+                existing_locations.append(location_dict)
+
+        return self.marine_weather_feature
+
+    def xml2json_marine_weather(self):
+        """
+        main for generating marine weather json feature
+
+        :returns: `dict` representing marine weather feature
+        """
+
+        self._set_area_info()
+
+        for lang, xml_root in self.xml_roots.items():
+            self.xml_root = xml_root
+            self.lang = lang
+
+            self._set_regular_forecast()
+            self._set_extended_forecast()
+            self._set_wave_forecast()
+            self._set_warning()
+
+        return self.marine_weather_feature
 
     def load_data(self, filepath):
         """
@@ -650,22 +1135,91 @@ class MarineWeatherRealtimeLoader(BaseLoader):
         """
 
         self.filepath = Path(filepath)
-        self.parse_filename()
+        self._parse_filename()
+        current_lang = self.parsed_filename.named['lang']
+        alt_lang = 'fr' if current_lang == 'en' else 'en'
 
-        LOGGER.debug(f'Received file {self.filepath}')
+        # set current file language filepath
+        setattr(self, f'filepath_{current_lang}', self.filepath)
 
-        self.root = etree.parse(str(self.filepath.resolve())).getroot()
+        # construct alternate language filepath
+        alt_xml_wildcard = self.filename_pattern.format(
+            datetime='*', region_name_code=self.region_name_code, lang=alt_lang
+        )
 
-        # set area info for both languages from XML
-        self.set_area_info()
+        associated_alt_files = sorted(
+            self.filepath.parent.glob(alt_xml_wildcard),
+            key=self._sort_by_datetime_diff
+        )
 
-        warnings = self.generate_warnings()
-        regular_forecasts = self.generate_regular_forecasts()
-        extended_forecasts = self.generate_extended_forecasts()
+        if associated_alt_files:
+            # set alternate language filepath to closest datetime file
+            setattr(self, f'filepath_{alt_lang}', associated_alt_files[0])
+        else:
+            LOGGER.warning(
+                f'No associated {alt_lang} file found for '
+                f'{self.filepath.name}'
+            )
+            return False
 
-        for package in [warnings, regular_forecasts, extended_forecasts]:
-            self.conn.submit_elastic_package(package, request_size=80000)
-        return True
+        LOGGER.debug(
+            f'Processing XML: '
+            f'{getattr(self, f"filepath_en")} and '
+            f'{getattr(self, f"filepath_fr")}'
+        )
+
+        try:
+            self.xml_roots = {
+                'en': etree.parse(self.filepath_en).getroot(),
+                'fr': etree.parse(self.filepath_fr).getroot()
+            }
+        except Exception as err:
+            LOGGER.error(f'ERROR: cannot process data: {err}')
+            return False
+
+        xml_creation_dates = [
+            datetime.strptime(
+                self.xml_roots[key].find('dateTime/timeStamp').text,
+                '%Y%m%d%H%M%S'
+            )
+            for key in self.xml_roots
+        ]
+
+        # calculate diff between the two nearest en/fr XML creation dates
+        xml_creation_diff_seconds = abs(
+            (xml_creation_dates[0] - xml_creation_dates[1]).total_seconds()
+        )
+        if xml_creation_diff_seconds > MAX_XML_DATETIME_DIFF_SECONDS:
+            LOGGER.warning(
+                'File creation times differ by more than '
+                f'{MAX_XML_DATETIME_DIFF_SECONDS} seconds. '
+                'Skipping loading...'
+            )
+            return False
+        else:
+            LOGGER.debug(
+                f'File creation times differ by {xml_creation_diff_seconds} '
+                'seconds. Proceeding...'
+            )
+
+        # populate self.marine_weather_feature
+        self.xml2json_marine_weather()
+
+        # load self.marine_weather_feature
+        action = {
+            '_id': self.region_name_code,
+            '_index': INDEX_NAME,
+            '_op_type': 'update',
+            'doc': self.marine_weather_feature,
+            'doc_as_upsert': True
+        }
+
+        try:
+            self.conn.submit_elastic_package([action], refresh=True)
+            return True
+        except Exception as err:
+            LOGGER.error(f'ERROR: cannot process data: {err}')
+            return False
 
 
 @click.group()
@@ -709,12 +1263,11 @@ def add(ctx, file_, directory, es, username, password, ignore_certs):
 
 @click.command()
 @click.pass_context
-@cli_options.OPTION_INDEX_NAME(type=click.Choice(INDICES))
 @cli_options.OPTION_ELASTICSEARCH()
 @cli_options.OPTION_ES_USERNAME()
 @cli_options.OPTION_ES_PASSWORD()
 @cli_options.OPTION_ES_IGNORE_CERTS()
-def delete_index(ctx, index_name, es, username, password, ignore_certs):
+def delete_index(ctx, es, username, password, ignore_certs):
     """
     Delete a particular ES index with a given name as argument or all if no
     argument is passed
@@ -723,26 +1276,22 @@ def delete_index(ctx, index_name, es, username, password, ignore_certs):
     conn_config = configure_es_connection(es, username, password, ignore_certs)
     conn = ElasticsearchConnector(conn_config)
 
-    if index_name:
-        if click.confirm(
-            'Are you sure you want to delete ES index named: {}?'.format(
-                click.style(index_name, fg='red')
-            ),
-            abort=True,
-        ):
-            LOGGER.info(f'Deleting ES index {index_name}')
-            conn.delete(index_name)
-            return True
+    if click.confirm(
+        'Are you sure you want to delete ES index named: {}?'.format(
+            click.style(INDEX_NAME, fg='red')
+        ),
+        abort=True
+    ):
+        LOGGER.info(f'Deleting ES index {INDEX_NAME}')
+        conn.delete(INDEX_NAME)
+        return True
     else:
         if click.confirm(
-            'Are you sure you want to delete {} marine forecast'
-            ' indices ({})?'.format(
-                click.style('ALL', fg='red'),
-                click.style(", ".join(INDICES), fg='red'),
-            ),
-            abort=True,
+            'Are you sure you want to delete the marine forecast'
+            ' index ({})?'.format(click.style(INDEX_NAME, fg='red')),
+            abort=True
         ):
-            conn.delete(",".join(INDICES))
+            conn.delete(INDEX_NAME)
             return True
 
 
