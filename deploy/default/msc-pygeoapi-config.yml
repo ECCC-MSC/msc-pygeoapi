@@ -4533,6 +4533,41 @@ resources:
               data: ${MSC_PYGEOAPI_ES_URL}/coastal_flood_risk_index
               id_field: id
 
+    weather-alerts:
+        type: collection
+        title:
+            en: Weather alerts
+            fr: Alertes météo
+        description:
+            en: "Environment Canada issues weather alerts about weather related hazards in order to notify those in affected areas so that they can take steps to protect themselves and their property from harm. Alerts are classified depending on the severity and timing of the subject event and include: warnings, watches, advisories and statements. Warnings are usually issued six to 24 hours in advance, although some severe weather (such as thunderstorms and tornadoes) can occur rapidly, with less than a half hours' notice."
+            fr: "Environnement Canada publie des alertes météo lorsque le temps est menaçant pour informer les personnes se trouvant dans les zones touchées afin qu'elles puissent prendre des mesures pour se protéger et protéger leurs biens. Le type d'alerte utilisé dépend de la gravité et du moment de l'événement et inclut : les avertissements, les veilles, les avis et les bulletins. Les avertissements sont habituellement émis entre 6 et 24 heures à l'avance, même si certains phénomènes violents (par exemple les orages et les tornades) peuvent se produire rapidement, avec un avis de moins d'une demi-heure."
+        keywords:
+            en: [Weather warnings, Precipitation, Snow, Wind, Storms, Floods]
+            fr: [Alerte météorologique, Précipitation, Neige, Vent, Tempête, Inondation]
+        crs:
+            - CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title:
+                en: Meteorological Service of Canada open data
+                fr: Données ouvertes du Service météorologique du Canada
+              href:
+                en: https://eccc-msc.github.io/open-data/msc-data/readme_en
+                fr: https://eccc-msc.github.io/open-data/msc-data/readme_fr
+              hreflang:
+                en: en-CA
+                fr: fr-CA
+        extents:
+            spatial:
+                bbox: [-145.27, 37.3, -48.11, 87.61]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        providers:
+            - type: feature
+              name: Elasticsearch
+              data: ${MSC_PYGEOAPI_ES_URL}/alerts-realtime
+              id_field: id
+
     raster-drill:
         type: process
         processor:
