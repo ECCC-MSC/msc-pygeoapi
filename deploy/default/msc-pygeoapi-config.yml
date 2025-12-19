@@ -4229,6 +4229,9 @@ resources:
             spatial:
                 bbox: [-180,-90,180,90]
                 crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+            temporal:
+                begin: 2025-06-01T00:00:00Z
+                end: null
         links:
             - type: text/html
               rel: canonical
@@ -4244,7 +4247,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.cansips_rasterio.CanSIPSProvider
-              data: /data/geomet/local/cansips-archives/100km/forecast/2023/11/202311_MSC_CanSIPS_*_LatLon1.0_P00M.grib2
+              data: /data/geomet/local/cansips-archives/100km/forecast/2025/06/202506_MSC_CanSIPS_*_LatLon1.0_P00M.grib2
               options:
                   DATA_ENCODING: COMPLEX_PACKING
               format:
@@ -4303,6 +4306,9 @@ resources:
             spatial:
                 bbox: [-180.5,-90.5,179.5,90.5]
                 crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+            temporal:
+                begin: 2025-06-01T00:00:00Z
+                end: null
         links:
             - type: text/html
               rel: canonical
@@ -4318,7 +4324,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.cansips_products_rasterio.CanSIPSProductsProvider
-              data: /data/geomet/local/cansips-archives/100km/forecast/2023/10/202310_MSC_CanSIPS_AirTemp-ProbAboveNormal_AGL-2m_LatLon1.0_P00M-P02M.grib2
+              data: /data/geomet/local/cansips-archives/100km/forecast/2025/06/202506_MSC_CanSIPS_AirTemp-ProbAboveNormal_AGL-2m_LatLon1.0_P00M-P02M.grib2
               options:
                   DATA_ENCODING: COMPLEX_PACKING
               format:
@@ -4340,6 +4346,9 @@ resources:
             spatial:
                 bbox: [-180.5,-90.5,179.5,90.5]
                 crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+            temporal:
+                begin: 2025-06-01T00:00:00Z
+                end: null
         links:
             - type: text/html
               rel: canonical
@@ -4355,7 +4364,7 @@ resources:
         providers:
             - type: coverage
               name: msc_pygeoapi.provider.cansips_products_rasterio.CanSIPSProductsProvider
-              data: /data/geomet/local/cansips-archives/100km/forecast/2025/03/202503_MSC_CanSIPS_AirTemp-ProbAboveNormal_AGL-2m_LatLon1.0_P00M.grib2
+              data: /data/geomet/local/cansips-archives/100km/forecast/2025/06/202506_MSC_CanSIPS_AirTemp-ProbAboveNormal_AGL-2m_LatLon1.0_P00M.grib2
               options:
                   DATA_ENCODING: COMPLEX_PACKING
               format:
