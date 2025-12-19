@@ -392,7 +392,7 @@ class CanSIPSProvider(RasterioProvider):
 
         domainset['reference_time'] = {
             'definition': 'reference_time - Temporal',
-            'interval': [['2023-11', end]],
+            'interval': [['2025-06', end]],
             'grid': {
                 'resolution': restime
                 }
