@@ -70,3 +70,6 @@ MAILTO=""
 # every hour at 00h, clean expired tcoastal flood risk index
 0 * * * * geoadm . /local/home/geoadm/.profile && msc-pygeoapi data coastal-flood-risk-index clean-index --yes
 
+# every hour at 00h, clean alerts indexes older than 2 hours
+0 * * * * geoadm . /local/home/geoadm/.profile && msc-pygeoapi data alerts-realtime clean-indexes --yes
+
