@@ -139,9 +139,13 @@
             if (temporal_data.interval[0][0] === null) {
               // Case of time data unavailable, return an empty string
               return ''
-            } else if (index === 1 && temporal_data.interval[0][1] === null) {
+            }
+            if (index === 1 && temporal_data.interval[0][1] === null) {
               // For data where the upper bound is the present
               return startToString[1] + ' {% trans %}Present{% endtrans %}'
+            }
+            if (typeof(temporal_data.interval[0][index]) !== 'string') {
+              return startToString[index] + ' ' + temporal_data.interval[0][index]
             }
             return startToString[index] + ' ' + temporal_data.interval[0][index].split('T')[0]
           }

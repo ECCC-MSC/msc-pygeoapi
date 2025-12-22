@@ -110,8 +110,10 @@
           <div>
             {% if data['extent']['temporal']['interval'][0][0] == None %}
               {% trans %}From:{% endtrans %} {% trans %}Not available{% endtrans %}
-            {% else %}
+            {% elif data['extent']['temporal']['interval'][0][0] is string %}
               {% trans %}From:{% endtrans %} {{data['extent']['temporal']['interval'][0][0].split('T')[0]}}
+            {% else %}
+              {% trans %}From:{% endtrans %} {{data['extent']['temporal']['interval'][0][0]}}
             {% endif %}
           </div>
         </li>
@@ -121,8 +123,10 @@
               {% trans %}To:{% endtrans %} {% trans %}Present{% endtrans %}
             {% elif data['extent']['temporal']['interval'][0][1] == None %}
               {% trans %}To:{% endtrans %} {% trans %}Not available{% endtrans %}
-            {% else %}
+            {% elif data['extent']['temporal']['interval'][0][0] is string %}
               {% trans %}To:{% endtrans %} {{data['extent']['temporal']['interval'][0][1].split('T')[0]}}
+            {% else %}
+              {% trans %}To:{% endtrans %} {{data['extent']['temporal']['interval'][0][1]}}
             {% endif %}
           </div>
         </li>
