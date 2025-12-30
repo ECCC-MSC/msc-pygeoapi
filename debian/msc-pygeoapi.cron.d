@@ -2,8 +2,11 @@ MAILTO=""
 # =================================================================
 #
 # Author: Tom Kralidis <tom.kralidis@ec.gc.ca>
+#         Louis-Philippe Rousseau-Lambert
+#             <louis-philippe.rousseaulambert@ec.gc.ca>
 #
 # Copyright (c) 2023 Tom Kralidis
+# Copyright (c) 2025 Louis-Philippe Rousseau-Lambert
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -61,8 +64,8 @@ MAILTO=""
 # every hour, clean out Marine Weather XML files older than 12 hours
 0 * * * * geoadm . /local/home/geoadm/.profile && /usr/bin/find $MSC_PYGEOAPI_CACHEDIR/marine_weather -type f -mmin +720 -delete > /dev/null 2>&1
 
-# every day at 0800h, clean umos realtime data older than 7 days
-0 8 * * * geoadm . /local/home/geoadm/.profile && msc-pygeoapi data umos-realtime clean-indexes --dataset all --days 7 --yes
+# every day at 0800h, clean prognos realtime data older than 7 days
+0 8 * * * geoadm . /local/home/geoadm/.profile && msc-pygeoapi data prognos-realtime clean-indexes --dataset all --days 7 --yes
 
 # every hour at 00h, clean expired thunderstorm outlooks
 0 * * * * geoadm . /local/home/geoadm/.profile && msc-pygeoapi data thunderstorm-outlook clean-outlooks --yes

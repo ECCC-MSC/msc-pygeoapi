@@ -87,9 +87,9 @@ PLUGINS = {
             'filename_pattern': 'model_raqdps-fw/cumulative_effects/json',
             'handler': 'msc_pygeoapi.loader.cumulative_effects_hs.CumulativeEffectsHSLoader'  # noqa
         },
-        'umos_realtime': {
+        'prognos_realtime': {
             'filename_pattern': 'stat-post-processing',
-            'handler': 'msc_pygeoapi.loader.umos_realtime.UMOSRealtimeLoader'
+            'handler': 'msc_pygeoapi.loader.prognos_realtime.PROGNOSRealtimeLoader'  # noqa
         },
         'thunderstorm_outlook': {
             'filename_pattern': 'ThunderstormOutlook',

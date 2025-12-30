@@ -3,7 +3,7 @@
 # Author: Louis-Philippe Rousseau-Lambert
 #             <louis-philippe.rousseaulambert@ec.gc.ca>
 #
-# Copyright (c) 2024 Louis-Philippe Rousseau-Lambert
+# Copyright (c) 2025 Louis-Philippe Rousseau-Lambert
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -51,7 +51,7 @@ LOGGER = logging.getLogger(__name__)
 DAYS_TO_KEEP = 7
 
 # index settings
-INDEX_BASENAME = 'umos-{}-realtime.'
+INDEX_BASENAME = 'prognos-{}-realtime.'
 
 MAPPINGS = {
     "dynamic_templates": [
@@ -83,7 +83,7 @@ MAPPINGS = {
                     'fields': {
                         'raw': {'type': 'keyword'}
                     }
-                    },
+                },
                 'ssp_system': {
                     'type': 'text',
                     'fields': {
@@ -102,6 +102,36 @@ MAPPINGS = {
                         'raw': {'type': 'keyword'}
                     }
                 },
+                'stat_method': {
+                    'type': 'text',
+                    'fields': {
+                        'raw': {'type': 'keyword'}
+                    }
+                },
+                'predictor_set': {
+                    'type': 'text',
+                    'fields': {
+                        'raw': {'type': 'keyword'}
+                    }
+                },
+                'ade_id': {
+                    'type': 'text',
+                    'fields': {
+                        'raw': {'type': 'keyword'}
+                    }
+                },
+                'station_network': {
+                    'type': 'text',
+                    'fields': {
+                        'raw': {'type': 'keyword'}
+                    }
+                },
+                'prognos_station_id': {
+                    'type': 'text',
+                    'fields': {
+                        'raw': {'type': 'keyword'}
+                    }
+                },
                 'reference_datetime': {
                     'type': 'date',
                     'format': 'strict_date_time_no_millis||strict_date_optional_time'  # noqa
@@ -109,36 +139,6 @@ MAPPINGS = {
                 'forecast_datetime': {
                     'type': 'date',
                     'format': 'strict_date_time_no_millis||strict_date_optional_time'  # noqa
-                },
-                'stat_method': {
-                    'type': 'text',
-                    'fields': {
-                        'raw': {'type': 'keyword'}
-                    }
-                },
-                'umos_id': {
-                    'type': 'text',
-                    'fields': {
-                        'raw': {'type': 'keyword'}
-                    }
-                },
-                'scribe_id': {
-                    'type': 'text',
-                    'fields': {
-                        'raw': {'type': 'keyword'}
-                    }
-                },
-                'station_name': {
-                    'type': 'text',
-                    'fields': {
-                        'raw': {'type': 'keyword'}
-                    }
-                },
-                'province': {
-                    'type': 'text',
-                    'fields': {
-                        'raw': {'type': 'keyword'}
-                    }
                 },
                 'forecast_leadtime': {
                     'type': 'text',
@@ -180,8 +180,8 @@ SETTINGS = {
 MODEL_LIST = ['gdps', 'rdps', 'hrdps', 'raqdps']
 
 
-class UMOSRealtimeLoader(BaseLoader):
-    """UMOS Real-time loader"""
+class PROGNOSRealtimeLoader(BaseLoader):
+    """PROGNOS Real-time loader"""
 
     def __init__(self, conn_config={}):
         """initializer"""
@@ -196,14 +196,18 @@ class UMOSRealtimeLoader(BaseLoader):
 
     def parse_filename(self, filename):
         """
-        Parses a umos filename in order to get the date
+        Parses a prognos filename in order to get the date
 
         :return: `bool` of parse status
         """
 
         # parse filepath
-        pattern = '{date_}_MSC_{model}-UMOS-{stat}_{variable}_{elevation}_PT{fcts}H.json' # noqa
+        # See namest issues 158; typo in filename on DD
+        # This is the correct pattern once filenames are fixed on DD
+        pattern = '{date_}_MSC_{model}-PROGNOS-{stat}_{variable}_{elevation}_PT{fcts}H.json'  # noqa
         parsed_filename = parse(pattern, filename)
+
+        print(filename)
 
         self.model = parsed_filename.named['model'].lower()
 
@@ -215,12 +219,12 @@ class UMOSRealtimeLoader(BaseLoader):
 
     def generate_geojson_features(self):
         """
-        Generates and yields a series of umos.
-        Umos are returned as Elasticsearch bulk API
+        Generates and yields a series of prognos.
+        Prognos are returned as Elasticsearch bulk API
         upsert actions,with documents in GeoJSON to match the Elasticsearch
         index mappings.
 
-        :returns: Generator of Elasticsearch actions to upsert the UMOS
+        :returns: Generator of Elasticsearch actions to upsert the PROGNOS
         """
 
         with open(self.filepath.resolve()) as f:
@@ -275,8 +279,8 @@ class UMOSRealtimeLoader(BaseLoader):
 
 
 @click.group()
-def umos_realtime():
-    """Manages UMOS indexes"""
+def prognos_realtime():
+    """Manages PROGNOS indexes"""
     pass
 
 
@@ -289,7 +293,7 @@ def umos_realtime():
 @cli_options.OPTION_ES_PASSWORD()
 @cli_options.OPTION_ES_IGNORE_CERTS()
 def add(ctx, file_, directory, es, username, password, ignore_certs):
-    """Add UMOS data to Elasticsearch"""
+    """Add PROGNOS data to Elasticsearch"""
 
     if all([file_ is None, directory is None]):
         raise click.ClickException('Missing --file/-f or --dir/-d option')
@@ -303,11 +307,12 @@ def add(ctx, file_, directory, es, username, password, ignore_certs):
     elif directory is not None:
         for root, dirs, files in os.walk(directory):
             for f in [file for file in files if file.endswith('.json')]:
+                click.echo(os.path.join(root, f))
                 files_to_process.append(os.path.join(root, f))
         files_to_process.sort(key=os.path.getmtime)
 
     for file_to_process in files_to_process:
-        loader = UMOSRealtimeLoader(conn_config)
+        loader = PROGNOSRealtimeLoader(conn_config)
         result = loader.load_data(file_to_process)
         if not result:
             click.echo('features not generated')
@@ -320,7 +325,7 @@ def add(ctx, file_, directory, es, username, password, ignore_certs):
     help=f'Delete indexes older than n days (default={DAYS_TO_KEEP})',
 )
 @cli_options.OPTION_DATASET(
-    help='UMOS dataset indexes to delete.',
+    help='PROGNOS dataset indexes to delete.',
     type=click.Choice(MODEL_LIST + ['all']),
 )
 @cli_options.OPTION_ELASTICSEARCH()
@@ -329,7 +334,7 @@ def add(ctx, file_, directory, es, username, password, ignore_certs):
 @cli_options.OPTION_ES_IGNORE_CERTS()
 @cli_options.OPTION_YES(prompt='Are you sure you want to delete old indexes?')
 def clean_indexes(ctx, days, dataset, es, username, password, ignore_certs):
-    """Delete old UMOS realtime indexes older than n days"""
+    """Delete old PROGNOS realtime indexes older than n days"""
 
     conn_config = configure_es_connection(es, username, password, ignore_certs)
     conn = ElasticsearchConnector(conn_config)
@@ -353,7 +358,7 @@ def clean_indexes(ctx, days, dataset, es, username, password, ignore_certs):
 @click.command()
 @click.pass_context
 @cli_options.OPTION_DATASET(
-    help='UMOS dataset indexes to delete.',
+    help='PROGNOS dataset indexes to delete.',
     type=click.Choice(MODEL_LIST + ['all']),
 )
 @cli_options.OPTION_ELASTICSEARCH()
@@ -363,13 +368,13 @@ def clean_indexes(ctx, days, dataset, es, username, password, ignore_certs):
 @cli_options.OPTION_INDEX_TEMPLATE()
 def delete_indexes(ctx, dataset, es, username, password, ignore_certs,
                    index_template):
-    """Delete all UMOS realtime indexes"""
+    """Delete all PROGNOS realtime indexes"""
 
     conn_config = configure_es_connection(es, username, password, ignore_certs)
     conn = ElasticsearchConnector(conn_config)
 
     if dataset == 'all':
-        indexes = 'umos-*'
+        indexes = 'prognos-*'
     else:
         indexes = '{}*'.format(INDEX_BASENAME.format(dataset))
 
@@ -386,6 +391,6 @@ def delete_indexes(ctx, dataset, es, username, password, ignore_certs,
     click.echo('Done')
 
 
-umos_realtime.add_command(add)
-umos_realtime.add_command(clean_indexes)
-umos_realtime.add_command(delete_indexes)
+prognos_realtime.add_command(add)
+prognos_realtime.add_command(clean_indexes)
+prognos_realtime.add_command(delete_indexes)
