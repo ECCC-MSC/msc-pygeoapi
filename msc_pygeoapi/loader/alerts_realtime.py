@@ -49,7 +49,7 @@ from msc_pygeoapi.util import (
 LOGGER = logging.getLogger(__name__)
 
 # cleanup settings
-DAYS_TO_KEEP = 7
+HOURS_TO_KEEP = 2
 
 # index settings
 INDEX_BASENAME = 'alerts-realtime.'
@@ -305,11 +305,12 @@ class AlertsRealtimeLoader(BaseLoader):
 
         return True
 
-    def delete_indices(self, indices):
-        for idx in indices:
-            self.conn.delete(idx)
+    # Commented to keep data ingestion and deletion separated
+    # def delete_indices(self, indices):
+    #     for idx in indices:
+    #         self.conn.delete(idx)
 
-        return True
+    #     return True
 
     def generate_geojson_features(self, es_index):
         """
@@ -404,8 +405,8 @@ class AlertsRealtimeLoader(BaseLoader):
             self.swap_alias(es_index)
 
             # Delete old indices
-            LOGGER.debug(f'Deleting previous indexes: {current_indices}')
-            self.delete_indices(current_indices)
+            # LOGGER.debug(f'Deleting previous indexes: {current_indices}')
+            # self.delete_indices(current_indices)
 
         return True
 
@@ -438,7 +439,7 @@ def add(ctx, file_, directory, es, username, password, ignore_certs):
         files_to_process = [file_]
     elif directory is not None:
         for root, dirs, files in os.walk(directory):
-            for f in [file for file in files if file.endswith('.json')]:
+            for f in [file_ for file_ in files if '.json' in file_]:
                 files_to_process.append(os.path.join(root, f))
         files_to_process.sort(key=os.path.getmtime)
 
@@ -451,27 +452,35 @@ def add(ctx, file_, directory, es, username, password, ignore_certs):
 
 @click.command()
 @click.pass_context
-@cli_options.OPTION_DAYS(
-    default=DAYS_TO_KEEP,
-    help=f'Delete indexes older than n days (default={DAYS_TO_KEEP})',
+@cli_options.OPTION_HOURS(
+    default=HOURS_TO_KEEP,
+    help=f'Delete indexes older than n hours (default={HOURS_TO_KEEP})',
 )
 @cli_options.OPTION_ELASTICSEARCH()
 @cli_options.OPTION_ES_USERNAME()
 @cli_options.OPTION_ES_PASSWORD()
 @cli_options.OPTION_ES_IGNORE_CERTS()
 @cli_options.OPTION_YES(prompt='Are you sure you want to delete old indexes?')
-def clean_indexes(ctx, days, es, username, password, ignore_certs):
-    """Delete old alerts realtime indexes older than n days"""
+def clean_indexes(ctx, hours, es, username, password, ignore_certs):
+    """Delete old alerts realtime indexes older than n hours"""
+
+    # ex: alerts-realtime.2025-12-03t151500.000000z
+    pattern = '{index_name}.{year:d}-{month:d}-{day:d}t{hour:02d}{minute:02d}{second:02d}.{microsecond:d}z'  # noqa
 
     conn_config = configure_es_connection(es, username, password, ignore_certs)
     conn = ElasticsearchConnector(conn_config)
 
-    indexes_to_fetch = '{INDEX_BASENAME}.*'
+    indexes_to_fetch = f'{INDEX_BASENAME}*'
 
     indexes = conn.get(indexes_to_fetch)
 
     if indexes:
-        indexes_to_delete = check_es_indexes_to_delete(indexes, days)
+        days = hours / 24.0
+        indexes_to_delete = check_es_indexes_to_delete(indexes, days, pattern)
+        indexes_to_delete.sort()
+        # newest index should not be deleted
+        indexes_to_delete.pop(-1)
+
         if indexes_to_delete:
             click.echo(f'Deleting indexes {indexes_to_delete}')
             conn.delete(','.join(indexes_to_delete))
