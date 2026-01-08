@@ -1,12 +1,13 @@
+/opt/msc-pygeoapi/etc/sarracenia/aqhi-realtime.conf
 /opt/msc-pygeoapi/etc/sarracenia/bulletins-realtime.conf
 /opt/msc-pygeoapi/etc/sarracenia/cap-alerts.conf
 /opt/msc-pygeoapi/etc/sarracenia/citypageweather-realtime.conf
+/opt/msc-pygeoapi/etc/sarracenia/coastal-flood-risk-index.conf
+/opt/msc-pygeoapi/etc/sarracenia/dms-alerts.conf
 /opt/msc-pygeoapi/etc/sarracenia/hurricanes.conf
 /opt/msc-pygeoapi/etc/sarracenia/hydrometric-realtime.conf
 /opt/msc-pygeoapi/etc/sarracenia/marineweather-realtime.conf
-/opt/msc-pygeoapi/etc/sarracenia/swob-realtime.conf
-/opt/msc-pygeoapi/etc/sarracenia/aqhi-realtime.conf
 /opt/msc-pygeoapi/etc/sarracenia/metnotes.conf
 /opt/msc-pygeoapi/etc/sarracenia/prognos-realtime.conf
+/opt/msc-pygeoapi/etc/sarracenia/swob-realtime.conf
 /opt/msc-pygeoapi/etc/sarracenia/thunderstorm-outlook.conf
-/opt/msc-pygeoapi/etc/sarracenia/coastal-flood-risk-index.conf
