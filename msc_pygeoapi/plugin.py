@@ -68,7 +68,7 @@ PLUGINS = {
             'handler': 'msc_pygeoapi.loader.cap_alerts_realtime.CapAlertsRealtimeLoader'  # noqa
         },
         'alerts_realtime': {
-            'filename_pattern': 'MSC-DMS-OP/GEOMET/ALERT',
+            'filename_pattern': 'dms-geomet/alerts',
             'handler': 'msc_pygeoapi.loader.alerts_realtime.AlertsRealtimeLoader'  # noqa
         },
         'swob_realtime': {
