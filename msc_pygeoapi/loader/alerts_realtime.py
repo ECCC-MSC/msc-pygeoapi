@@ -474,12 +474,15 @@ def clean_indexes(ctx, hours, es, username, password, ignore_certs):
 
     indexes = conn.get(indexes_to_fetch)
 
+    click.echo(f'indexes: {indexes}')
+
     if indexes:
+        # newest index should not be deleted
+        indexes.sort()
+        indexes.pop(-1)
         days = hours / 24.0
         indexes_to_delete = check_es_indexes_to_delete(indexes, days, pattern)
-        indexes_to_delete.sort()
-        # newest index should not be deleted
-        indexes_to_delete.pop(-1)
+        click.echo(f'indexes to delete: {indexes_to_delete}')
 
         if indexes_to_delete:
             click.echo(f'Deleting indexes {indexes_to_delete}')
