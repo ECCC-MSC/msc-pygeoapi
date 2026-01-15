@@ -1,3 +1,17 @@
+msc-pygeoapi (0.16.0) jammy; urgency=medium
+
+  * add newline to crontab
+  * add robots.txt
+  * display temporal extent for OACov and OAFeat in UI
+  * city page weather loader: remove duplicate forecasts
+  * CanSIPS: ensure filepath is is set properly
+  * add environment variables for AMQP connections
+  * add initial version of alerts data workflow
+  * update UMOS loader for prognos
+  * autobuild .mo files 
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Thu, 15 Jan 2026 11:30:33 +0000
+
 msc-pygeoapi (0.15.0) jammy; urgency=medium
 
   * add GEOMET_LOCAL_BASEPATH to setup
