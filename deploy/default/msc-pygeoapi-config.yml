@@ -4549,8 +4549,8 @@ resources:
     coastal_flood_risk_index:
         type: collection
         title:
-            en: Coastal Flooding Risk Index
-            fr: Indice de risque de submersion côtière
+            en: Coastal Flooding Risk Index [experimental]
+            fr: Indice de risque de submersion côtière [expérimental]
         description:
             en: The Coastal Flooding Risk Index is a geo- and time-referenced polygon product issued by the Meteorological Service of Canada (MSC) to articulate the coastal flooding risk, impact and probability. Products are issued daily by Storm Prediction Centres and are intended to provide early notification, out to 5 days, of coastal flooding due to astronomical tide, storm surge and wave impacts.
             fr: L'indice de risque de submersion côtière est un produit polygonal géoréférencé et temporel émis par le Service météorologique du Canada (SMC) afin d'articuler le risque, l'impact et la probabilité de submersion côtière. Les produits sont générés quotidiennement par les centres de prévision des intempéries et sont destinés à fournir une notification précoce, jusqu'à 5 jours, des submersions côtières dues aux marées astronomiques, aux ondes de tempête et aux impacts des vagues.
