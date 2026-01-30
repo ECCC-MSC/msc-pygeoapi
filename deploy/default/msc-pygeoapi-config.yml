@@ -912,6 +912,7 @@ resources:
                   - STN_ID
                   - LONGITUDE_DECIMAL_DEGREES
                   - LATITUDE_DECIMAL_DEGREES
+                  - FLAG
 
     ahccd-stations:
         type: collection
