@@ -1937,44 +1937,45 @@ resources:
               id_field: id
               time_field: forecast_datetime
 
-    # umos-hrdps-realtime:
-    #     type: collection
-    #     title:
-    #         en: UMOS statistically post-processed Forecast of the High Resolution Deterministic Prediction System (HRDPS-UMOS-MLR)
-    #         fr: Prévision du système à haute résolution de prévision déterministe statistiquement post-traité par UMOS (SHRPD-UMOS-RLM)
-    #     description:
-    #         en: "UMOS statistically post-processed Forecast of the High Resolution Deterministic Prediction System (HRDPS-UMOS-MLR)"
-    #         fr: "Prévision du système à haute résolution de prévision déterministe statistiquement post-traité par UMOS (SHRPD-UMOS-RLM)"
-    #     keywords:
-    #         en: [Statistical post-processing, Machine learning, Multiple linear regression, UMOS, Environmental forecast, Point forecast, Weather forecasts, Air temperature, Wind]
-    #         fr: [Post-traitement statistique, Apprentissage machine, Régression linéaire multiple, UMOS, Prévisions environnementales, Prévisions aux points, Prévisions météorologiques, "Température de l'air", Vent]
-    #     crs:
-    #         - CRS84
-    #     links:
-    #         - type: text/html
-    #           rel: canonical
-    #           title:
-    #               en: Global Deterministic Prediction System (GDPS) data statistically post-processed in GeoJSON format
-    #               fr: Données GeoJSON du système global de prévision déterministe (SGPD) statistiquement post-traitées
-    #           href:
-    #               en: https://eccc-msc.github.io/open-data/msc-data/nwp_gdps/readme_gdps-statpostproc-datamart_en/
-    #               fr: https://eccc-msc.github.io/open-data/msc-data/nwp_gdps/readme_gdps-statpostproc-datamart_fr/
-    #           hreflang:
-    #               en: en-CA
-    #               fr: fr-CA
-    #     extents:
-    #         spatial:
-    #             bbox: [-152.7685268, 27.2840148, -40.6938032, 70.6164825]
-    #             crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
-    #         temporal:
-    #             begin: null # to be updated when available
-    #             end: null # or empty
-    #     providers:
-    #         - type: feature
-    #           name: Elasticsearch
-    #           data: ${MSC_PYGEOAPI_ES_URL}/umos-hrdps-realtime.*
-    #           id_field: id
-    #           time_field: forecast_datetime
+    prognos-hrdps-realtime:
+        type: collection
+        title:
+            en: PROGNOS - High Resolution Deterministic Prediction System (HRDPS) statistically post-processed by PROGNOS-MLR
+            fr: PROGNOS - Système à haute résolution de prévision déterministe (SHRPD) statistiquement post-traitées par PROGNOS-MLR
+        description:
+                en: "Statistical post-processing of forecasts from numerical weather and environmental models, including the High Resolution Deterministic Prediction System (HRDPS), helps reduce systematic biases and error variance in raw forecasts. This is achieved by establishing optimized statistical relationships between observations recorded at stations and numerical model outputs at nearby grid points. The PROGNOS system is a software package developed by Environment and Climate Change Canada that enables this. Relationships are built using the 'Model Output Statistics' (MOS) method and multiple linear regression (MLR). Currently, only the air temperature at 1.5 meters above the Earth's surface is statistically post-processed. The absence of statistically post-processed forecasts can be due to the unavailability of a statistical model caused by insufficient observation quality or quantity. The geographical region covered by this data includes the territory covered by Canadian meteorological stations and some American buoys. For the HRDPS, statistically post-processed forecasts are available at the same issuance frequency as the raw forecasts produced by numerical models (e.g., 00Z, 06Z, 12Z, 18Z) and at hourly forecast lead times, from 00 to 48 hours."
+                fr: "Le post-traitement statistique des prévisions des modèles numériques du temps et de l'environnement, incluant le Système à haute résolution de prévision déterministe (SHRPD), permet de réduire les biais systématiques et la variance de l'erreur des prévisions brutes. Pour ce faire, des relations statistiques optimisées entre les observations enregistrées aux stations et les sorties des modèles numériques aux points de grilles à proximité sont établies. Le système PROGNOS est un progiciel développé par Environnement et Changement climatique Canada permettant cela. Les relations sont bâties par l'entremise de la méthode 'Model Output Statistics' (MOS) et par régression linéaire multiple (RLM). À l'heure actuelle, seule la température de l'air à 1.5 mètres au-dessus de la surface de la Terre est post-traitée statistiquement. L'absence de prévisions statistiquement post-traitées peut être dûe à l'indisponibilité d'un modèle statistique causé par une qualité ou quantité insuffisantes d'observations. La région géographique couverte par ces données inclut le territoire couvert par les stations météorologiques du Canada et quelques bouées américaines. Pour le SHRPD, les prévisions issues du post-traitement statistique sont disponibles à la même fréquence d'émission que les prévisions brutes produites par les modèles numériques (ex. 00Z, 06Z, 12Z, 18Z) et à des échéances de prévision à chaque heure, de 00 à 48 heures."
+
+        keywords:
+            en: [Statistical post-processing, Machine learning, Multiple linear regression, PROGNOS, Environmental forecast, Point forecast, Weather forecasts, Air temperature, Wind]
+            fr: [Post-traitement statistique, Apprentissage machine, Régression linéaire multiple, PROGNOS, Prévisions environnementales, Prévisions aux points, Prévisions météorologiques, "Température de l'air", Vent]
+        crs:
+            - CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title:
+                  en: High Resolution Deterministic Prediction System (HRDPS) data statistically post-processed in GeoJSON format
+                  fr: Données GeoJSON du Système à haute résolution de prévision déterministe (SHRPD) statistiquement post-traitées
+              href:
+                  en: https://eccc-msc.github.io/open-data/msc-data/nwp_hrdps/readme_hrdps-statpostproc-datamart_en/
+                  fr: https://eccc-msc.github.io/open-data/msc-data/nwp_hrdps/readme_hrdps-statpostproc-datamart_fr/
+              hreflang:
+                  en: en-CA
+                  fr: fr-CA
+        extents:
+            spatial:
+                bbox: [-149, 40, -42, 88]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+            temporal:
+                begin: 2025-07-24T00:00:00Z
+                end: null # or empty
+        providers:
+            - type: feature
+              name: Elasticsearch
+              data: ${MSC_PYGEOAPI_ES_URL}/prognos-hrdps-realtime.*
+              id_field: id
+              time_field: forecast_datetime
 
     # umos-raqdps-realtime:
     #     type: collection
