@@ -21,6 +21,9 @@ export default function useMap(mapElemId, geoJsonData, itemsPath, tileLayerUrl, 
   const geoJsonIsPointGeometry = computed(() => {
     if (Object.prototype.hasOwnProperty.call(geoJsonData.value, 'features')) {
       if (geoJsonData.value.features.length > 0 ) {
+        if ([undefined, null].includes(geoJsonData.value.features[0]['geometry'])) {
+          return false
+        }
         if (geoJsonData.value.features[0]['geometry']['type'] === 'Point') {
           return true
         }
