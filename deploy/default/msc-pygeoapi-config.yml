@@ -569,7 +569,7 @@ resources:
                   - F_NORMAL_ELEMENT_NAME
                   - MONTH
                   - VALUE
-
+                  - STN_ID
     climate-stations:
         type: collection
         title:
@@ -681,6 +681,7 @@ resources:
                   - DAYS_WITH_VALID_SUNSHINE
                   - COOLING_DEGREE_DAYS
                   - HEATING_DEGREE_DAYS
+                  - STN_ID
     citypageweather-realtime:
         type: collection
         title:
@@ -833,6 +834,7 @@ resources:
                   - MIN_REL_HUMIDITY_FLAG
                   - MAX_REL_HUMIDITY
                   - MAX_REL_HUMIDITY_FLAG
+                  - STN_ID
 
     climate-hourly:
         type: collection

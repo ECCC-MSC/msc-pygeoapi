@@ -203,10 +203,7 @@ class ClimateArchiveLoader(BaseLoader):
                         "type": {"type": "text"},
                         "properties": {
                             "properties": {
-                                "STN_ID": {
-                                    "type": "text",
-                                    "fields": {"raw": {"type": "keyword"}},
-                                },
+                                "STN_ID": {"type": "integer"},
                                 "MONTH": {"type": "integer"},
                                 "VALUE": {"type": "integer"},
                                 "OCCURRENCE_COUNT": {"type": "integer"},
@@ -304,10 +301,7 @@ class ClimateArchiveLoader(BaseLoader):
                                     "type": "text",
                                     "fields": {"raw": {"type": "keyword"}},
                                 },
-                                "STN_ID": {
-                                    "type": "text",
-                                    "fields": {"raw": {"type": "keyword"}},
-                                },
+                                "STN_ID": {"type": "integer"},
                                 "STATION_NAME": {
                                     "type": "text",
                                     "fields": {"raw": {"type": "keyword"}},
@@ -391,10 +385,7 @@ class ClimateArchiveLoader(BaseLoader):
                                     "type": "text",
                                     "fields": {"raw": {"type": "keyword"}},
                                 },
-                                "STN_ID": {
-                                    "type": "text",
-                                    "fields": {"raw": {"type": "keyword"}},
-                                },
+                                "STN_ID": {"type": "integer"},
                                 "STATION_NAME": {
                                     "type": "text",
                                     "fields": {"raw": {"type": "keyword"}},
@@ -502,10 +493,7 @@ class ClimateArchiveLoader(BaseLoader):
                         "type": {"type": "text"},
                         "properties": {
                             "properties": {
-                                "STN_ID": {
-                                    "type": "text",
-                                    "fields": {"raw": {"type": "keyword"}},
-                                },
+                                "STN_ID": {"type": "integer"},
                                 "CLIMATE_IDENTIFIER": {
                                     "type": "text",
                                     "fields": {"raw": {"type": "keyword"}},
