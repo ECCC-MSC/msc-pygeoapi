@@ -180,9 +180,12 @@ export default function useTableFilter(rows, keyColumns, defaultSortCol, tableTe
         linksList += '<li><a href="' + element['href'] + '">' + element['title'] + '</a></li>'
       ) 
       return `${linksList}`
-    } else if (typeof row === 'object') {
+    } else if (typeof row[key] === 'object') {
       return JSON.stringify(row[key], null, 2)
     } else {
+      if (typeof(row[key]) === 'string') {
+        return row[key].replace(/\n/g, '<br/>')
+      }
       return row[key]
     }
   }
