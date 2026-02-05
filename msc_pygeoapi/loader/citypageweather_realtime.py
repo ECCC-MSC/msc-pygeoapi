@@ -1966,7 +1966,7 @@ class CitypageweatherRealtimeLoader(BaseLoader):
 
             self.cpw_feature['geometry'] = {
                 'type': 'Point',
-                'coordinates': [lon, lat, 0.0]
+                'coordinates': [lon, lat]
             }
 
             if self.lang == 'en':
