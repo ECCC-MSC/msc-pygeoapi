@@ -31,15 +31,16 @@
 #
 # =================================================================
 
-import click
 from datetime import datetime
+import json
 import logging
 import os
 
+import click
 from lxml import etree
 
 from msc_pygeoapi import cli_options
-from msc_pygeoapi.env import MSC_PYGEOAPI_CACHEDIR
+from msc_pygeoapi.env import MSC_PYGEOAPI_BASEPATH, MSC_PYGEOAPI_CACHEDIR
 from msc_pygeoapi.connector.elasticsearch_ import ElasticsearchConnector
 from msc_pygeoapi.loader.base import BaseLoader
 from msc_pygeoapi.util import (
@@ -56,6 +57,12 @@ STATIONS_LIST_URL = f'https://dd.weather.gc.ca/observations/doc/{STATIONS_LIST_N
 
 STATIONS_CACHE = os.path.join(MSC_PYGEOAPI_CACHEDIR, STATIONS_LIST_NAME)
 
+with open(
+    os.path.join(
+        MSC_PYGEOAPI_BASEPATH, 'resources/swob_realtime_element_subset.json'
+    )
+) as json_file:
+    SWOB_SUBSET = json.load(json_file)
 # cleanup settings
 DAYS_TO_KEEP = 30
 
@@ -236,6 +243,39 @@ def parse_swob(swob_file):
             for k, v in swob_values['properties'].items():
                 if v == 'MSNG':
                     swob_values['properties'][k] = None
+
+            core_fields = {
+                'id',
+                'url',
+                'dataset',
+                'obs_date_tm',
+                'processed_date_tm'
+            }
+
+            filtered_properties = {}
+            for k, v in swob_values['properties'].items():
+                # always ensure core fields are kept
+                if k in core_fields:
+                    filtered_properties[k] = v
+                else:
+                    base_name = k
+                    for suffix in [
+                        '-data_flag-uom',
+                        '-data_flag-code_src',
+                        '-data_flag-value',
+                        '-uom',
+                        '-qa',
+                        '-value'
+                    ]:
+                        if k.endswith(suffix):
+                            base_name = k[:-len(suffix)]
+                            break
+
+                    # keep property only if base element name is in the subset
+                    if base_name in SWOB_SUBSET:
+                        filtered_properties[k] = v
+
+            swob_values['properties'] = filtered_properties
 
             return swob_values
 
