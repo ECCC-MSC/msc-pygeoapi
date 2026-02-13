@@ -1,3 +1,18 @@
+msc-pygeoapi (0.17.0) jammy; urgency=medium
+
+  * keep Coastal Flooding Risk Index as experimental
+  * add MSC Alerts
+  * update climate-hourly select properties in config
+  * add STN_ID to select properties as integer
+  * update prognos config collection identifier
+  * fix display of alerts UI
+  * fix TypeError for bulletins UI
+  * fix WxO urls for citypage
+  * remove z coordinate for citypage
+  * subset SWOB properties to pre-defined list
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Fri, 13 Feb 2026 19:15:45 +0000
+
 msc-pygeoapi (0.16.0) jammy; urgency=medium
 
   * add newline to crontab
