@@ -52,7 +52,6 @@ def read_json(file_name):
 
 
 def service_ok(url, timeout=5):
-    print("JJJJ", url)
     ok = False
     try:
         return requests.get(url).status_code == requests.codes.ok
