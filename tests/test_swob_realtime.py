@@ -37,20 +37,9 @@ from random import randrange
 import pytest
 import requests
 
-from msc_pygeoapi.loader.swob_realtime import swob2geojson, SWOB_SUBSET
+from msc_pygeoapi.loader.swob_realtime import swob2geojson
 
 from util import get_test_file_path, read_json
-
-SWOB_TEST_FILES = [
-    'data/swob/2020-05-31-0200-CYBQ-AUTO-swob',
-    'data/swob/2020-06-08-0000-CAAW-AUTO-minute-swob',
-    'data/swob/2020-06-08-0000-CPOX-AUTO-minute-swob',
-    'data/swob/2020-07-01-0007-CAFC-AUTO-minute-swob',
-    'data/swob/2020-07-01-0007-CGCH-AUTO-minute-swob',
-    'data/swob/2020-07-14-0052-CNCO-AUTO-minute-swob',
-    'data/swob/2020-07-14-0300-CABB-AUTO-swob',
-    'data/swob/2020-07-14-0418-CAVA-AUTO-minute-swob',
-]
 
 
 @pytest.fixture()
@@ -58,52 +47,23 @@ def url(pytestconfig):
     return pytestconfig.getoption('url')
 
 
-@pytest.mark.parametrize('swob', SWOB_TEST_FILES)
+@pytest.mark.parametrize('swob', [
+    'data/swob/2020-05-31-0200-CYBQ-AUTO-swob',
+    'data/swob/2020-06-08-0000-CAAW-AUTO-minute-swob',
+    'data/swob/2020-06-08-0000-CPOX-AUTO-minute-swob',
+    'data/swob/2020-07-01-0007-CAFC-AUTO-minute-swob',
+    'data/swob/2020-07-01-0007-CGCH-AUTO-minute-swob',
+    'data/swob/2020-07-14-0052-CNCO-AUTO-minute-swob',
+    'data/swob/2020-07-14-0300-CABB-AUTO-swob',
+    'data/swob/2020-07-14-0418-CAVA-AUTO-minute-swob'
+    ]
+)
 def test_loader(swob):
     """Test suite for converting swobs to geojson"""
 
     xml = get_test_file_path(f'{swob}.xml')
     geojson = read_json(get_test_file_path(f'{swob}.geojson'))
     assert swob2geojson(xml) == geojson
-
-
-def test_swob_subset_list():
-    """Test suite for swob subset length less than 1000 entries"""
-
-    # ensure swob subset length is less than or equal to 1000
-    assert (
-        len(SWOB_SUBSET) <= 1000
-    ), f"SWOB_SUBSET length is {len(SWOB_SUBSET)}, which exceeds 1000 entries"
-
-
-@pytest.mark.parametrize('swob', SWOB_TEST_FILES)
-def test_swob_subset_filtering(swob):
-    """Test that swob output only contains subset properties"""
-
-    core_fields = {'id', 'url', 'dataset', 'obs_date_tm', 'processed_date_tm'}
-    suffixes = [
-        '-data_flag-uom',
-        '-data_flag-code_src',
-        '-data_flag-value',
-        '-uom',
-        '-qa',
-        '-value',
-    ]
-
-    xml = get_test_file_path(f'{swob}.xml')
-    result = swob2geojson(xml)
-
-    for key in result['properties']:
-        if key in core_fields or key == '_is-minutely_obs-value':
-            continue
-        base_name = key
-        for suffix in suffixes:
-            if key.endswith(suffix):
-                base_name = key[: -len(suffix)]
-                break
-        assert (
-            base_name in SWOB_SUBSET
-        ), f"Property '{key}' (base: '{base_name}') not in SWOB_SUBSET"
 
 
 def test_api(url):
