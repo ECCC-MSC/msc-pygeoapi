@@ -167,19 +167,15 @@ class ElasticsearchConnector(BaseConnector):
         :returns: `bool` of deletion status
         """
 
-        if indexes in ['*', '_all'] or not self.Elasticsearch.indices.exists(
-            index=indexes
-        ):
-            msg = (
-                f'Cannot delete {indexes}. ',
-                'Either the index does not exist or an unaccepted index ',
-                'pattern was given (\'*\' or \'_all\')'
-            )
+        if indexes in ['*', '_all']:
+            msg = 'Cannot delete using \'*\' or \'_all\' pattern'
             LOGGER.error(msg)
             raise ValueError(msg)
 
         LOGGER.info(f'Deleting indexes {indexes}')
-        self.Elasticsearch.indices.delete(index=indexes)
+        self.Elasticsearch.indices.delete(
+            index=indexes, ignore_unavailable=True
+        )
 
         return True
 
