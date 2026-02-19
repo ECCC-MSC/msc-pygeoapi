@@ -486,7 +486,9 @@ def clean_indexes(ctx, hours, es, username, password, ignore_certs):
 
         if indexes_to_delete:
             click.echo(f'Deleting indexes {indexes_to_delete}')
-            conn.delete(','.join(indexes_to_delete))
+            # delete indices individually to safeguard against HTTP 411 errors
+            for index in indexes_to_delete:
+                conn.delete(index)
 
     click.echo('Done')
 
