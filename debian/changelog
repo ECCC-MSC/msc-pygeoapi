@@ -1,3 +1,10 @@
+msc-pygeoapi (0.17.1) jammy; urgency=medium
+
+  * fix ES index multi index deletion
+  * refesh OpenAPI document
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Thu, 19 Feb 2026 17:16:29 +0000
+
 msc-pygeoapi (0.17.0) jammy; urgency=medium
 
   * keep Coastal Flooding Risk Index as experimental
