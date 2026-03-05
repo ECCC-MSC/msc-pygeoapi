@@ -3,7 +3,7 @@
 # Author: Philippe Theroux <Philippe.Theroux@ec.gc.ca>
 #
 # Copyright (c) 2022 Philippe Theroux
-# Copyright (c) 2023 Tom Kralidis
+# Copyright (c) 2026 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -64,6 +64,7 @@ PROCESS_METADATA = {
             "hreflang": "fr-CA",
         },
     ],
+    'jobControlOptions': ['sync-execute'],
     "inputs": {
         "model": {
             "title": "Model",

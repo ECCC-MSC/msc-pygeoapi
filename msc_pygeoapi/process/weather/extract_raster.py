@@ -3,7 +3,7 @@
 # Author: Tom Cooney <tom.cooney@canada.ca>
 #
 # Copyright (c) 2021 Tom Cooney
-# Copyright (c) 2023 Tom Kralidis
+# Copyright (c) 2026 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -60,6 +60,7 @@ PROCESS_METADATA = {
         'hreflang': 'fr-CA'
 
     }],
+    'jobControlOptions': ['sync-execute'],
     'inputs': [{
         'id': 'model',
         'title': 'model',

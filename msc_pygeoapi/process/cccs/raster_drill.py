@@ -4,7 +4,7 @@
 #         <Louis-Philippe.RousseauLambert2@canada.ca>
 #
 # Copyright (c) 2019 Louis-Philippe Rousseau-Lambert
-# Copyright (c) 2023 Tom Kralidis
+# Copyright (c) 2026 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -86,6 +86,7 @@ PROCESS_METADATA = {
         'href': 'https://canada.ca/services-climatiques',
         'hreflang': 'fr-CA'
     }],
+    'jobControlOptions': ['sync-execute'],
     'inputs': {
         'layer': {
             'title': 'layer name',
