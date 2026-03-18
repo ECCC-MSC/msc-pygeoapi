@@ -3,6 +3,8 @@
 # Author: Tom Kralidis <tom.kralidis@ec.gc.ca>
 #
 # Copyright (c) 2026 Tom Kralidis
+# Copyright (c) 2025 Mustafa Zafar
+# Copyright (c) 2026 Justin Tran
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -68,9 +70,29 @@ def test_collections(url):
 
     collections = response['collections']
 
-    assert len(collections) == 100
+    assert len(collections) == 103
 
     collection_errors = []
+
+    # certain collections can contain 0 features
+    # an exception is made for these cases
+    skip_feature_collections = [
+        'coastal_flood_risk_index',
+        'hurricanes-cyclone-realtime',
+        'hurricanes-error_cone-realtime',
+        'hurricanes-track-realtime',
+        'hurricanes-wind_radii-realtime',
+        'metnotes',
+        'thunderstorm_outlook',
+        'weather-alerts'
+    ]
+
+    # certain collections do not contain the extent.temporal.grid property
+    # an exception is made for these cases
+    skip_coverage_collections = [
+        'weather:cansips:100km:forecast:seasonal-products',
+        'weather:cansips:100km:forecast:monthly-products'
+    ]
 
     for collection in collections:
         # test all collections by "touching" the data
@@ -85,7 +107,183 @@ def test_collections(url):
             if not response.ok:
                 collection_errors.append({
                    'collection': collection_id,
-                   'status_code': response.status_code
+                   'status_code': response.status_code,
+                   'error_message': 'Error in retrieving .../schema endpoint'
                 })
 
+            # Single item check
+            request = f'{url}/collections/{collection_id}/items'
+            response = requests.get(request, params={'limit': 1})
+            if not response.ok:
+                collection_errors.append({
+                   'collection': collection_id,
+                   'status_code': response.status_code,
+                   'error_message': 'Error in retrieving .../items endpoint'
+                })
+            else:
+                instance = response.json()
+                if len(instance['features']) == 0:
+                    if collection_id not in skip_feature_collections:
+                        msg = f'No features for collection {collection_id}'
+                        collection_errors.append({
+                            'collection': collection_id,
+                            'status_code': None,
+                            'error_message': msg
+                        })
+                else:
+                    feature_id = instance['features'][0]['id']
+                    request = (
+                        f'{url}/collections/{collection_id}/items/{feature_id}'
+                    )
+                    response = requests.get(request)
+                    if not response.ok:
+                        msg = f'Failed to retrieve feature {feature_id}'
+                        collection_errors.append({
+                            'collection': collection_id,
+                            'status_code': response.status_code,
+                            'error_message': msg
+                        })
+        else:
+            # Case of coverage data
+            request = f'{url}/collections/{collection_id}'
+            response = requests.get(request)
+            if not response.ok:
+                collection_errors.append({
+                   'collection': collection_id,
+                   'status_code': response.status_code,
+                   'error_message': 'Failed to retrieve collection data'
+                })
+            else:
+                instance = response.json()
+                spatial_extent = instance['extent']['spatial']
+                if 'grid' not in spatial_extent:
+                    msg = 'Missing property extent.spatial.grid'
+                    collection_errors.append({
+                        'collection': collection_id,
+                        'status_code': None,
+                        'error_message': msg
+                    })
+
+                if len(spatial_extent['bbox'][0]) != 4:
+                    msg = 'Invalid length for extent.spatial.bbox'
+                    collection_errors.append({
+                        'collection': collection_id,
+                        'status_code': None,
+                        'error_message': msg
+                    })
+
+                if 'temporal' in instance['extent']:
+                    temporal_extent = instance['extent']['temporal']
+                    if 'interval' not in temporal_extent:
+                        msg = 'Missing property extent.temporal.interval'
+                        collection_errors.append({
+                            'collection': collection_id,
+                            'status_code': None,
+                            'error_message': msg
+                        })
+
+                    if 'grid' not in temporal_extent:
+                        if collection_id not in skip_coverage_collections:
+                            msg = 'Missing property extent.temporal.grid'
+                            collection_errors.append({
+                                'collection': collection_id,
+                                'status_code': None,
+                                'error_message': msg
+                            })
+
+            request = f'{url}/collections/{collection_id}/schema'
+            response = requests.get(request)
+            if not response.ok:
+                collection_errors.append({
+                   'collection': collection_id,
+                   'status_code': response.status_code,
+                   'error_message': 'Error in retrieving .../schema endpoint'
+                })
+            else:
+                instance = response.json()
+                if (len(instance['properties'].keys()) == 0):
+                    msg = 'No keys found in properties of its schema'
+                    collection_errors.append({
+                        'collection': collection_id,
+                        'status_code': None,
+                        'error_message': msg
+                    })
+
+            request = f'{url}/collections/{collection_id}/coverage'
+            response = requests.get(request)
+            if not response.ok:
+                collection_errors.append({
+                    'collection': collection_id,
+                    'status_code': response.status_code,
+                    'error_message': 'Failed to retrieve coverage data'
+                })
+            else:
+                instance = response.json()
+                domain_axes = sorted(instance['domain']['axes'].keys())
+                ranges_params = instance['ranges'].keys()
+
+                for ranges_param in ranges_params:
+                    param_axes = instance['ranges'][ranges_param]['axisNames']
+                    # Sorting required, as not always in alphabetic order
+                    param_axes.sort(key=str.lower)
+
+                    if param_axes != domain_axes:
+                        msg = (
+                            f'ranges.{ranges_param}.axisNames do not '
+                            f'matach values of domain.axis keys'
+                        )
+                        collection_errors.append({
+                            'collection': collection_id,
+                            'status_code': None,
+                            'error_message': msg
+                        })
+
+                params = instance['parameters'].keys()
+                for param in params:
+                    if param not in ranges_params:
+                        msg = f'Missing key {param} in ranges'
+                        collection_errors.append({
+                            'collection': collection_id,
+                            'status_code': None,
+                            'error_message': msg
+                        })
+
     assert len(collection_errors) == 0, collection_errors
+
+
+def test_processes(url):
+    """Test processes"""
+
+    request = f'{url}/processes'
+    response = requests.get(request)
+    assert response.status_code == 200
+
+    instance = response.json()
+    process_errors = []
+    assert len(instance['processes']) == 1
+
+    for process in instance['processes']:
+        indiv_process = f"{url}/processes/{process['id']}"
+        response = requests.get(indiv_process)
+        instance = response.json()
+
+        if not response.ok:
+            process_errors.append({
+                'process': process,
+                'status_code': response.status_code
+            })
+        else:
+            if instance['jobControlOptions'] != ['sync-execute']:
+                process_errors.append({
+                    'process': process,
+                    'status_code': None,
+                    'error_message': 'Unexpected value for sync-execute'
+                })
+            if instance['outputTransmission'] != ['value']:
+                process_errors.append({
+                    'process': process,
+                    'status_code': None,
+                    'error_message': 'Unexpected value for outputTransmission'
+                })
+
+    assert len(process_errors) == 0, process_errors
