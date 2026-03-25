@@ -10,3 +10,14 @@ schemas.opengis.net
 theme/static/themes-gcweb
 locale/messages.pot
 *.mo
+dev.env
+
+# uv
+.venv
+.python-version
+uv.lock
+
+# IDE
+.idea
+.vscode
+*.swp

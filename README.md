@@ -10,11 +10,11 @@ MSC GeoMet pygeoapi server configuration and utilities
 ## Installation
 
 ### Requirements
-- Python 3
-- [virtualenv](https://virtualenv.pypa.io/)
+- Python 3.10+
+- [uv](https://docs.astral.sh/uv/)
 
 ### Dependencies
-Dependencies are listed in [requirements.txt](requirements.txt). Dependencies
+Dependencies are listed in `pyproject.toml`. Dependencies
 are automatically installed during msc-pygeoapi installation.
 
 Dependencies of note:
@@ -23,11 +23,11 @@ Dependencies of note:
  - [pygeoapi](https://github.com/geopython/pygeoapi)
 
 ### Installing msc-pygeoapi
+
 ```bash
-# setup virtualenv
-python3 -m venv --system-site-packages msc-pygeoapi
-cd msc-pygeoapi
-source bin/activate
+# create virtual environment
+uv venv
+source .venv/bin/activate
 
 # clone codebase
 git clone https://github.com/ECCC-MSC/msc-pygeoapi.git
@@ -44,8 +44,7 @@ rm -f ./themes-gcweb.zip
 pybabel compile -d locale -l fr
 
 # install codebase
-python setup.py build
-python setup.py install
+uv sync
 
 # configure environment
 cp msc-pygeoapi.env dev.env
@@ -64,9 +63,9 @@ msc-pygeoapi --version
 
 Server will be located at http://localhost/features
 
-# Sample Queries
+## Sample Queries
 
-## Hydrometric features (Water Level and Flow)
+### Hydrometric features (Water Level and Flow)
 
 ```bash
 
@@ -105,7 +104,8 @@ http://localhost/features/collections/hydrometric-stations/items?STATUS_EN=Activ
 ## Running the loaders
 
 ```bash
-pip install -r requirements-oracle.txt
+# for Oracle support
+uv sync --extra oracle
 
 # view all data loaders available
 msc-pygeoapi data
@@ -142,23 +142,29 @@ msc-pygeoapi process cccs execute raster-drill --y=45 --x=-75 --layer=CMIP5.SFCW
 ### Running Tests
 
 ```bash
-# install dev requirements
-pip install -r requirements-dev.txt
+# install dev dependencies
+uv sync --all-extras
 
 # API tests run against http://localhost:5000
 # use --url to override
 
 # run all tests
-pytest
+uv run pytest
 
 # run one test file
-pytest test/test_hydat.py
+uv run pytest tests/test_hydat.py
 
 # override endpoint
-pytest test/test_hydat.py --url https://example.org/dev
+uv run pytest tests/test_hydat.py --url https://example.org/dev
 
 # skip API tests (run only unit tests)
-pytest -k 'not api'
+uv run pytest -k 'not api'
+```
+
+### Linting
+
+```bash
+uv run flake8
 ```
 
 ### Multilingual Updates
@@ -180,8 +186,8 @@ pybabel compile -d locale -l fr
 ## Releasing
 
 ```bash
-python setup.py sdist bdist_wheel --universal
-twine upload dist/*
+uv build
+uv publish
 ```
 
 ### Code Conventions
