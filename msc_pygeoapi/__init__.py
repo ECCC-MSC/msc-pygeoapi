@@ -27,6 +27,8 @@
 #
 # =================================================================
 
+from importlib.metadata import PackageNotFoundError, version
+
 import click
 
 from msc_pygeoapi.env import (
@@ -42,7 +44,10 @@ from msc_pygeoapi.loader import metadata  # noqa
 from msc_pygeoapi.process import process  # noqa
 
 
-__version__ = '0.17.0'
+try:
+    __version__ = version('msc-pygeoapi')
+except PackageNotFoundError:
+    __version__ = 'unknown'
 
 
 @click.group()

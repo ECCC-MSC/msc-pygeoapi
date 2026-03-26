@@ -143,7 +143,7 @@ msc-pygeoapi process cccs execute raster-drill --y=45 --x=-75 --layer=CMIP5.SFCW
 
 ```bash
 # install dev dependencies
-uv sync --all-extras
+uv sync
 
 # API tests run against http://localhost:5000
 # use --url to override

@@ -41,10 +41,6 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = [
-    "flake8",
-    "pytest",
-]
 oracle = ["cx-oracle"]
 
 [project.scripts]
