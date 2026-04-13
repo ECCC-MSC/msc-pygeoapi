@@ -841,7 +841,7 @@ class ClimateArchiveLoader(BaseLoader):
             if not date:
                 try:
                     self.cur.execute(
-                        f'select * from CCCS_PORTAL.PUBLIC_DAILY_DATA '
+                        f'select * from CCCS_PORTAL.PUBLIC_DAILY_DATA_BULK '
                         f'where STN_ID={station}'
                     )
                 except Exception as err:
@@ -853,7 +853,7 @@ class ClimateArchiveLoader(BaseLoader):
                 try:
                     self.cur.execute(
                         (
-                            f"select * from CCCS_PORTAL.PUBLIC_DAILY_DATA "
+                            f"select * from CCCS_PORTAL.PUBLIC_DAILY_DATA_BULK "  #noqa
                             f"where STN_ID={station} and "
                             f"LOCAL_DATE > TO_TIMESTAMP('{date} 00:00:00', "
                             f"'YYYY-MM-DD HH24:MI:SS')"
