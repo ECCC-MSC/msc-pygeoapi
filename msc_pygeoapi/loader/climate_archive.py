@@ -853,7 +853,7 @@ class ClimateArchiveLoader(BaseLoader):
                 try:
                     self.cur.execute(
                         (
-                            f"select * from CCCS_PORTAL.PUBLIC_DAILY_DATA_BULK "  #noqa
+                            f"select * from CCCS_PORTAL.PUBLIC_DAILY_DATA_BULK "  # noqa
                             f"where STN_ID={station} and "
                             f"LOCAL_DATE > TO_TIMESTAMP('{date} 00:00:00', "
                             f"'YYYY-MM-DD HH24:MI:SS')"
