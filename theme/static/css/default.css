@@ -159,3 +159,11 @@ image using the content attribute.
 .leaflet-control-attribution { 
   display: none !important; 
 }
+
+.summary-text {
+  white-space: pre-wrap;
+}
+
+ul.list-items {
+  list-style-type: none;
+}

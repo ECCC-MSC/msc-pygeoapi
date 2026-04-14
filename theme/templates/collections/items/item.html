@@ -1,20 +1,26 @@
 {% extends "_base.html" %}
 {% set ptitle = data['properties'][data['title_field']] or ("Item {}".format(data['id'])) %}
 {# Optionally renders an img element, otherwise standard value or link rendering #}
-{% macro render_item_value(v, width) -%}
+{% macro render_item_value(v, width, isRecursive) -%}
     {% set val = v | string | trim %}
     {% if val|length and val.lower().endswith(('.jpg', '.jpeg', '.png', '.gif', '.bmp')) %}
         {# Ends with image extension: render img element with link to image #}
         <a href="{{ val }}"><img src="{{ val }}" alt="{{ val.split('/') | last }}" width="{{ width }}"/></a>
         {% elif v is string or v is number %}
-        {{ val | urlize() }}
+          {% if isRecursive %}
+            {{ val | urlize() }}
+          {% else %}
+            <div class="summary-text">{{ val | urlize() }}</div>
+          {% endif %}
     {% elif v is mapping %}
-      {% for i,j in v.items() %}
-        <i>{{ i }}:</i> {{ render_item_value(j, 60) }}<br/>
-      {% endfor %}
+      <ul class="list-items">
+        {% for i,j in v.items() %}
+          <li><strong>{{ i }}:</strong> {{ render_item_value(j, 60, True) }}</li>
+        {% endfor %}
+      </ul>
     {% elif v is iterable %}
       {% for i in v %}
-        {{ render_item_value(i, 60) }}
+        {{ render_item_value(i, 60, True) }}
       {% endfor %}
     {% else %}
       {{ val | urlize() }}
@@ -106,7 +112,7 @@
                       </ul>
                     </td>
                     {% else %}
-                      <td>{{ render_item_value(v, 80) }}</td>
+                      <td>{{ render_item_value(v, 80, False) }}</td>
                     {% endif %}
                   </tr>
                   {% endif %}
