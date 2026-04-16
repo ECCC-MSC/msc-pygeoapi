@@ -15,7 +15,7 @@ docker compose -f docker/docker-compose.yml -f docker/docker-compose.override.ym
 
 # test OGC API endpoint
 ```bash
-curl "http://geomet-dev-31.edc-mtl.ec.gc.ca:5089"
+curl "http://geomet-dev-32.edc-mtl.ec.gc.ca:5089"
 # or
-curl "https://geomet-dev-31-nightly.edc-mtl.ec.gc.ca/msc-pygeoapi"
+curl "https://geomet-dev-32-nightly.edc-mtl.ec.gc.ca/msc-pygeoapi"
 ```
