@@ -29,5 +29,6 @@
 
 services:
   msc-pygeoapi:
-    ports:
-      - 5089:5089
+    # ports not needed with network_mode: host
+    # ports:
+    #   - 5089:5089
