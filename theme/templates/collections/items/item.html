@@ -13,7 +13,7 @@
             <div class="summary-text">{{ val | urlize() }}</div>
           {% endif %}
     {% elif v is mapping %}
-      <ul class="list-items">
+      <ul class="lst-none {{ 'pd-lft-0' if not isRecursive }}">
         {% for i,j in v.items() %}
           <li><strong>{{ i }}:</strong> {{ render_item_value(j, 60, True) }}</li>
         {% endfor %}

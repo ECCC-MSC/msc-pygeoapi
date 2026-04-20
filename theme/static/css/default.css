@@ -52,8 +52,8 @@
   resize:vertical;
   min-height: 400px;
 }
-.leaflet-attribution-flag { 
-  display: none !important; 
+.leaflet-attribution-flag {
+  display: none !important;
 }
 
 footer.sticky {
@@ -90,15 +90,15 @@ table:not(.horizontal) {
 }
 
 /*
-We set the element we are applying our loading mask to relative  
+We set the element we are applying our loading mask to relative
 */
 .loading-mask {
   position: relative;
 }
 
 /*
-Because we set .loading-mask relative, we can span our ::before  
-element over the whole parent element  
+Because we set .loading-mask relative, we can span our ::before
+element over the whole parent element
 */
 .loading-mask::before {
   content: '';
@@ -111,7 +111,7 @@ element over the whole parent element
 }
 
 /*
-Spin animation for .loading-mask::after  
+Spin animation for .loading-mask::after
 */
 @keyframes spin {
   from {
@@ -123,10 +123,10 @@ Spin animation for .loading-mask::after
 }
 
 /*
-The loading throbber is a single spinning element with three  
-visible borders and a border-radius of 50%.  
-Instead of a border we could also use a font-icon or any  
-image using the content attribute.  
+The loading throbber is a single spinning element with three
+visible borders and a border-radius of 50%.
+Instead of a border we could also use a font-icon or any
+image using the content attribute.
 */
 .loading-mask::after {
   content: "";
@@ -156,14 +156,14 @@ image using the content attribute.
   z-index: 1000;
 }
 
-.leaflet-control-attribution { 
-  display: none !important; 
+.leaflet-control-attribution {
+  display: none !important;
 }
 
 .summary-text {
   white-space: pre-wrap;
 }
 
-ul.list-items {
-  list-style-type: none;
+ul.pd-lft-0 {
+  padding-left: 0;
 }
