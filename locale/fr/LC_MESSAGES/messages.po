@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-12-12 20:45+0000\n"
+"POT-Creation-Date: 2026-04-22 20:26+0000\n"
 "PO-Revision-Date: 2022-07-05 09:20-0700\n"
 "Last-Translator: \n"
 "Language: fr_CA\n"
@@ -196,7 +196,7 @@ msgstr "Documentation utilisateur de la plateforme GeoMet du SMC"
 #: theme/templates/collections/index.html:2
 #: theme/templates/collections/index.html:4
 #: theme/templates/collections/items/index.html:16
-#: theme/templates/collections/items/item.html:25
+#: theme/templates/collections/items/item.html:31
 #: theme/templates/collections/queryables.html:4
 #: theme/templates/collections/schema.html:4
 #: theme/templates/collections/tiles/index.html:4
@@ -378,8 +378,8 @@ msgid "ID"
 msgstr "ID"
 
 #: theme/templates/collections/collection.html:94
-#: theme/templates/collections/index.html:29
-#: theme/templates/collections/index.html:114
+#: theme/templates/collections/index.html:30
+#: theme/templates/collections/index.html:115
 #: theme/templates/collections/schema.html:19
 #: theme/templates/collections/tiles/index.html:109
 #: theme/templates/processes/index.html:14 theme/templates/stac/catalog.html:29
@@ -399,55 +399,57 @@ msgstr "Étendue temporelle"
 
 #: theme/templates/collections/collection.html:112
 #: theme/templates/collections/collection.html:114
-#: theme/templates/collections/collection.html:134
-#: theme/templates/collections/index.html:78
-#: theme/templates/collections/index.html:135
+#: theme/templates/collections/collection.html:116
+#: theme/templates/collections/collection.html:138
+#: theme/templates/collections/index.html:79
+#: theme/templates/collections/index.html:136
 msgid "From:"
 msgstr "De :"
 
 #: theme/templates/collections/collection.html:112
-#: theme/templates/collections/collection.html:123
-#: theme/templates/collections/collection.html:134
-#: theme/templates/collections/collection.html:139
+#: theme/templates/collections/collection.html:125
+#: theme/templates/collections/collection.html:138
+#: theme/templates/collections/collection.html:143
 msgid "Not available"
 msgstr "Pas disponible"
 
-#: theme/templates/collections/collection.html:121
 #: theme/templates/collections/collection.html:123
 #: theme/templates/collections/collection.html:125
-#: theme/templates/collections/collection.html:139
-#: theme/templates/collections/index.html:80
-#: theme/templates/collections/index.html:82
-#: theme/templates/collections/index.html:135
+#: theme/templates/collections/collection.html:127
+#: theme/templates/collections/collection.html:129
+#: theme/templates/collections/collection.html:143
+#: theme/templates/collections/index.html:81
+#: theme/templates/collections/index.html:83
+#: theme/templates/collections/index.html:136
 msgid "To:"
 msgstr "À :"
 
-#: theme/templates/collections/collection.html:121
-#: theme/templates/collections/index.html:80
-#: theme/templates/collections/index.html:144
+#: theme/templates/collections/collection.html:123
+#: theme/templates/collections/index.html:81
+#: theme/templates/collections/index.html:146
 msgid "Present"
 msgstr "Présent"
 
-#: theme/templates/collections/collection.html:144
+#: theme/templates/collections/collection.html:148
 #: theme/templates/collections/edr/instance.html:25
 #: theme/templates/jobs/job.html:49 theme/templates/processes/process.html:77
 #: theme/templates/stac/catalog.html:13
 msgid "Links"
 msgstr "Liens"
 
-#: theme/templates/collections/collection.html:155
+#: theme/templates/collections/collection.html:159
 msgid "Reference Systems"
 msgstr "Systèmes de référence"
 
-#: theme/templates/collections/collection.html:163
+#: theme/templates/collections/collection.html:167
 msgid "Storage CRS"
 msgstr "Stockage SRC"
 
-#: theme/templates/collections/collection.html:166
+#: theme/templates/collections/collection.html:170
 msgid "CRS"
 msgstr "SRC"
 
-#: theme/templates/collections/collection.html:169
+#: theme/templates/collections/collection.html:173
 msgid "Epoch"
 msgstr "Époque"
 
@@ -455,14 +457,18 @@ msgstr "Époque"
 msgid "Collections in this service"
 msgstr "Collections dans ce service"
 
-#: theme/templates/collections/index.html:35
-#: theme/templates/collections/index.html:118
+#: theme/templates/collections/index.html:22
+msgid "Collections displayed:"
+msgstr "Collections affichées :"
+
+#: theme/templates/collections/index.html:36
+#: theme/templates/collections/index.html:119
 #: theme/templates/collections/schema.html:21
 msgid "Type"
 msgstr "Type"
 
-#: theme/templates/collections/index.html:36
-#: theme/templates/collections/index.html:122
+#: theme/templates/collections/index.html:37
+#: theme/templates/collections/index.html:123
 #: theme/templates/processes/index.html:15
 #: theme/templates/processes/process.html:25
 #: theme/templates/processes/process.html:55
@@ -470,12 +476,12 @@ msgstr "Type"
 msgid "Description"
 msgstr "Description"
 
-#: theme/templates/collections/index.html:37
-#: theme/templates/collections/index.html:126
+#: theme/templates/collections/index.html:38
+#: theme/templates/collections/index.html:127
 msgid "Spatiotemporal extents"
 msgstr "Étendues spatio-temporelles"
 
-#: theme/templates/collections/index.html:66
+#: theme/templates/collections/index.html:67
 msgid "spatiotemporal"
 msgstr "spatio-temporelle"
 
@@ -586,7 +592,7 @@ msgid "CSV"
 msgstr "CSV"
 
 #: theme/templates/collections/items/index.html:23
-#: theme/templates/collections/items/item.html:31
+#: theme/templates/collections/items/item.html:37
 msgid "Items"
 msgstr "Items"
 
@@ -661,7 +667,7 @@ msgid "Page [% currentPage %] / [% maxPages %]"
 msgstr "Page [% currentPage %] / [% maxPages %]"
 
 #: theme/templates/collections/items/index.html:172
-#: theme/templates/collections/items/item.html:62
+#: theme/templates/collections/items/item.html:68
 msgid "Next"
 msgstr "Suivant"
 
@@ -695,16 +701,16 @@ msgstr ""
 "Affichage de $startEntryOfPage jusqu'à $lastEntryOfPage de "
 "$filteredNumEntries"
 
-#: theme/templates/collections/items/item.html:60
+#: theme/templates/collections/items/item.html:66
 msgid "Prev"
 msgstr "Précédent"
 
-#: theme/templates/collections/items/item.html:75
+#: theme/templates/collections/items/item.html:81
 #: theme/templates/stac/item.html:58
 msgid "Property"
 msgstr "Propriété"
 
-#: theme/templates/collections/items/item.html:76
+#: theme/templates/collections/items/item.html:82
 #: theme/templates/stac/item.html:59
 msgid "Value"
 msgstr "Valeur"

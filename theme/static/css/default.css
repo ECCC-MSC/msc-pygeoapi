@@ -167,3 +167,12 @@ image using the content attribute.
 ul.pd-lft-0 {
   padding-left: 0;
 }
+
+[v-cloak] {
+  display: none;
+}
+
+.collections-displayed {
+  float: right;
+  width: 250px;
+}

@@ -19,6 +19,7 @@
           class="form-control"
           placeholder="Filter"
           v-model="searchText">
+        <span class="collections-displayed" v-cloak>{% trans %}Collections displayed:{% endtrans %} [% numFilteredCollections %]</span>
       </div>
 
       <table id="collections-table" class="table table-striped">
@@ -154,11 +155,15 @@
           const { filteredRows, searchText, searchTextLowered,
             currentSort, sortDir, sortIconClass, truncateStripTags } = useTableFilter(collections, keyColumns, 'title')
 
+          const numFilteredCollections = computed(() => {
+            return filteredRows.value.length
+          })
+
           return {
             collections: filteredRows, // don't care about unfiltered collections
             tableFields, truncateStripTags,
             searchText, searchTextLowered,
-            sortIconClass, sortDir, currentSort, extractDate, itemsLoading
+            sortIconClass, sortDir, currentSort, extractDate, itemsLoading, numFilteredCollections
           }
         }
       }).mount('#collections')
@@ -170,7 +175,7 @@
 
       for (let i = 0; i < rows.length; i++) {
         let map = L.map(
-          rows[i]['id'], 
+          rows[i]['id'],
           {
             minZoom: -0.6,
             zoomDelta: 0.5,
