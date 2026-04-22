@@ -1,37 +1,58 @@
 name: build ⚙️
 
-on: [ push, pull_request ]
+on: [push, pull_request]
 
 jobs:
-  main:
+  lint:
     runs-on: ubuntu-22.04
-    strategy:
-      matrix:
-        python-version: ['3.10']
     steps:
-    - uses: actions/checkout@master
-    - uses: actions/setup-python@v5
-      name: Set up Python ${{ matrix.python-version }}
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install system dependencies 📦
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y build-essential devscripts dh-python devscripts fakeroot debhelper python3-all build-essential software-properties-common
-        sudo add-apt-repository ppa:ubuntugis/ppa
-        sudo apt-get update
-        sudo apt-get install -y libgdal-dev
-    - name: Install requirements 📦
-      run: |
-        python3 -m pip install --upgrade pip
-        pip3 install Cython setuptools wheel
-        pip3 install numpy gdal==`gdal-config --version`
-        pip3 install -r requirements-dev.txt
-    - name: Install package 📦
-      run: python3 setup.py install
-    - name: run tests ⚙️
-      run: |
-        pytest -k test_loader
-        pytest tests/test_openapi_document.py
-    - name: build Debian package 🏗️
-      run: sudo debuild -b -uc -us
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.10"
+      - uses: astral-sh/setup-uv@v7
+      - name: Install dev dependencies
+        run: uv sync --only-dev
+      - name: Run flake8
+        run: uv run flake8
+
+  test:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install system dependencies 📦
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential devscripts dh-python \
+            fakeroot debhelper python3-all software-properties-common
+          sudo add-apt-repository ppa:ubuntugis/ppa
+          sudo apt-get update
+          sudo apt-get install -y libgdal-dev
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.10"
+      - uses: astral-sh/setup-uv@v7
+      - name: Install GDAL Python binding
+        run: uv pip install --system gdal==$(gdal-config --version)
+      - name: Install dependencies
+        run: uv sync
+      - name: Run tests ⚙️
+        run: |
+          uv run pytest -k test_loader
+          uv run pytest tests/test_openapi_document.py
+
+  debian:
+    runs-on: ubuntu-22.04
+    needs: [lint, test]
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install system dependencies 📦
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential devscripts dh-python \
+            fakeroot debhelper python3-all software-properties-common
+          sudo add-apt-repository ppa:ubuntugis/ppa
+          sudo apt-get update
+          sudo apt-get install -y libgdal-dev
+      - name: Build Debian package 🏗️
+        run: sudo debuild -b -uc -us
