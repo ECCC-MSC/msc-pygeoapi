@@ -4620,6 +4620,92 @@ resources:
               data: ${MSC_PYGEOAPI_ES_URL}/alerts-realtime
               id_field: id
 
+    radar-visibility-impact-zones:
+        type: collection
+        title:
+            en: Radar Visibility - Impact Zones
+            fr: Visibilité des radars - Zones d'impact
+        description: 
+            en: "Wind turbines can contaminate weather radar data which can compromise Environment and Climate Change Canada’s (ECCC) ability to provide quality weather forecasts and warnings to Canadians. In support of ECCC’s wind farm and weather radar siting guidelines, weather radar visibility layers were created for 150, 200 and 250 meters above ground level (mAGL) surface heights, which are representative of typical past and present wind turbine heights (base-to-tip or total) as well as potential future turbine heights given the trend. These visibility layers were generated from a viewshed analysis using ECCC’s 32 operational S-Band weather radars as observers and the three abovementioned heights as surface offsets. Within these visibility layers, turbines that are 150, 200 and 250 mAGL tall are likely to be visible to ECCC’s operational weather radars and therefore have the potential to contaminate weather radar data. A polygon layer containing 10 and 60 kilometer radius buffers around each radar denoting the turbine-radar impact zones are also included in this dataset."
+            fr: "Les éoliennes peuvent contaminer les données des radars météorologiques, ce qui peut compromettre la capacité d'Environnement et changement climatique Canada (ECCC) à fournir des prévisions et des avertissements météorologiques de qualité aux Canadiens. Afin d'appuyer les lignes directrices d'ECCC concernant les emplacements des parcs éoliens et des radars météorologiques, des couches de visibilité de radars météorologiques ont été créées pour des hauteurs de surface de 150, 200 et 250 mètres au-dessus du sol (mAGL). Ceci correspond aux hauteurs typiques passées et présentes des éoliennes (de la base à la pointe ou au total) ainsi qu'aux hauteurs potentielles futures de celles-ci, compte tenu la tendance actuelle. Ces couches de visibilité ont été générées à partir d'une analyse de cônes de visibilité utilisant les 32 radars météorologiques opérationnels en bande S d'ECCC comme observateurs et les trois hauteurs susmentionnées comme décalages de surface. Au sein de ces couches de visibilité, les turbines de hauteurs de 150, 200 et 250 mAGL sont susceptibles d'être visibles par les radars météorologiques opérationnels d'ECCC et ont donc le potentiel de contaminer les données des radars météorologiques. Une couche de polygones contenant les zones tampons de 10 et 60 kilomètres de rayon entourant chaque radar et délimitant les zones d'impact des turbines sur ces derniers sont également incluses dans cet ensemble de données."
+        keywords:
+            en: ['features', 'geojson']
+            fr: ['features', 'geojson']
+        crs:
+            - CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title:
+                en: Meteorological Service of Canada open data
+                fr: Données ouvertes du Service météorologique du Canada
+              href:
+                en: https://eccc-msc.github.io/open-data/msc-data/readme_en
+                fr: https://eccc-msc.github.io/open-data/msc-data/readme_fr
+              hreflang:
+                en: en-CA
+                fr: fr-CA
+        extents:
+            spatial:
+                bbox: [-126.539629, 42.552435, -51.475350, 57.880894]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        providers:
+            - type: feature
+              name: OGR
+              data: 
+                source_type: GeoJSON
+                source: /data/geomet/local/radar-visibility/20250113_MSC_Radar-ImpactZones.json
+                source_capabilities:
+                    paging: True
+                gdal_ogr_options:
+                    EMPTY_AS_NULL: NO
+                    CPL_DEBUG: NO
+              id_field: id
+              layer: RadarImpactZones_unproj
+
+    radar-visibility-viewsheds:
+        type: collection
+        title:
+            en: Radar Visibility - Viewsheds
+            fr: Visibilité des radars - Visibilité
+        description: 
+            en: "Wind turbines can contaminate weather radar data which can compromise Environment and Climate Change Canada’s (ECCC) ability to provide quality weather forecasts and warnings to Canadians. In support of ECCC’s wind farm and weather radar siting guidelines, weather radar visibility layers were created for 150, 200 and 250 meters above ground level (mAGL) surface heights, which are representative of typical past and present wind turbine heights (base-to-tip or total) as well as potential future turbine heights given the trend. These visibility layers were generated from a viewshed analysis using ECCC’s 32 operational S-Band weather radars as observers and the three abovementioned heights as surface offsets. Within these visibility layers, turbines that are 150, 200 and 250 mAGL tall are likely to be visible to ECCC’s operational weather radars and therefore have the potential to contaminate weather radar data. A polygon layer containing 10 and 60 kilometer radius buffers around each radar denoting the turbine-radar impact zones are also included in this dataset."
+            fr: "Les éoliennes peuvent contaminer les données des radars météorologiques, ce qui peut compromettre la capacité d'Environnement et changement climatique Canada (ECCC) à fournir des prévisions et des avertissements météorologiques de qualité aux Canadiens. Afin d'appuyer les lignes directrices d'ECCC concernant les emplacements des parcs éoliens et des radars météorologiques, des couches de visibilité de radars météorologiques ont été créées pour des hauteurs de surface de 150, 200 et 250 mètres au-dessus du sol (mAGL). Ceci correspond aux hauteurs typiques passées et présentes des éoliennes (de la base à la pointe ou au total) ainsi qu'aux hauteurs potentielles futures de celles-ci, compte tenu la tendance actuelle. Ces couches de visibilité ont été générées à partir d'une analyse de cônes de visibilité utilisant les 32 radars météorologiques opérationnels en bande S d'ECCC comme observateurs et les trois hauteurs susmentionnées comme décalages de surface. Au sein de ces couches de visibilité, les turbines de hauteurs de 150, 200 et 250 mAGL sont susceptibles d'être visibles par les radars météorologiques opérationnels d'ECCC et ont donc le potentiel de contaminer les données des radars météorologiques. Une couche de polygones contenant les zones tampons de 10 et 60 kilomètres de rayon entourant chaque radar et délimitant les zones d'impact des turbines sur ces derniers sont également incluses dans cet ensemble de données."
+        keywords:
+            en: ['features', 'geojson']
+            fr: ['features', 'geojson']
+        crs:
+            - CRS84
+        links:
+            - type: text/html
+              rel: canonical
+              title:
+                en: Meteorological Service of Canada open data
+                fr: Données ouvertes du Service météorologique du Canada
+              href:
+                en: https://eccc-msc.github.io/open-data/msc-data/readme_en
+                fr: https://eccc-msc.github.io/open-data/msc-data/readme_fr
+              hreflang:
+                en: en-CA
+                fr: fr-CA
+        extents:
+            spatial:
+                bbox: [-126.539629, 42.552435, -51.475350, 57.880894]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        providers:
+            - type: feature
+              name: OGR
+              data: 
+                source_type: GeoJSON
+                source: /data/geomet/local/radar-visibility/20250113_MSC_Radar-Viewsheds.json
+                source_capabilities:
+                    paging: True
+                gdal_ogr_options:
+                    EMPTY_AS_NULL: NO
+                    CPL_DEBUG: NO
+              id_field: id
+              layer: RadarViewsheds_unproj
+
     raster-drill:
         type: process
         processor:
