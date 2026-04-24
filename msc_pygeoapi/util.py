@@ -217,3 +217,16 @@ def configure_es_connection(es, username, password, ignore_certs=False):
     conn_config['verify_certs'] = not ignore_certs
 
     return conn_config
+
+
+def trim_bbox(bbox):
+    """
+    helper function to remove z-axis values when unneeded
+
+    :param bbox: list whose values define a bounding box
+
+    returns: list with 4 values defining the desired bounding box
+    """
+    if len(bbox) == 6:
+        bbox = [bbox[0], bbox[1], bbox[3], bbox[4]]
+    return bbox
