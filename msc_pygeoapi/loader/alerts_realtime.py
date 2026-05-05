@@ -314,8 +314,8 @@ class AlertsRealtimeLoader(BaseLoader):
 
     def generate_geojson_features(self, es_index):
         """
-        Generates and yields a series of umos.
-        Umos are returned as Elasticsearch bulk API
+        Generates and yields a series of alerts.
+        Alerts are returned as Elasticsearch bulk API
         upsert actions,with documents in GeoJSON to match the Elasticsearch
         index mappings.
 
@@ -337,22 +337,23 @@ class AlertsRealtimeLoader(BaseLoader):
             features = data['features']
 
         for feature in features:
-            prop_id = feature['properties']['id']
-            feat_id = feature['properties']['feature_id']
-            feature['id'] = f'{prop_id}_{feat_id}'
-            feature['properties']['id'] = feature['id']
+            if feature['properties'].get('display_status') != 'contour':
+                prop_id = feature['properties']['id']
+                feat_id = feature['properties']['feature_id']
+                feature['id'] = f'{prop_id}_{feat_id}'
+                feature['properties']['id'] = feature['id']
 
-            self.items.append(feature)
+                self.items.append(feature)
 
-            action = {
-                '_id': feature['id'],
-                '_index': es_index,
-                '_op_type': 'update',
-                'doc': feature,
-                'doc_as_upsert': True
-            }
+                action = {
+                    '_id': feature['id'],
+                    '_index': es_index,
+                    '_op_type': 'update',
+                    'doc': feature,
+                    'doc_as_upsert': True
+                }
 
-            yield action
+                yield action
 
     def load_data(self, filepath):
         """
