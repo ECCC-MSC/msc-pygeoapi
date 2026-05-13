@@ -4619,6 +4619,31 @@ resources:
               name: Elasticsearch
               data: ${MSC_PYGEOAPI_ES_URL}/alerts-realtime
               id_field: id
+              properties:
+                  - alert_code
+                  - alert_type
+                  - alert_name_en
+                  - alert_name_fr
+                  - alert_short_name_en
+                  - alert_short_name_fr
+                  - publication_datetime
+                  - expiration_datetime
+                  - validity_datetime
+                  - event_end_datetime
+                  - alert_text_en
+                  - alert_text_fr
+                  - risk_colour_en
+                  - risk_colour_fr
+                  - confidence_en
+                  - confidence_fr
+                  - impact_en
+                  - impact_fr
+                  - feature_name_en
+                  - feature_name_fr
+                  - province
+                  - status_en
+                  - status_fr
+                  - feature_id
 
     raster-drill:
         type: process
