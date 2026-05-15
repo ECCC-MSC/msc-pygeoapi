@@ -4550,7 +4550,7 @@ resources:
               data: ${MSC_PYGEOAPI_ES_URL}/thunderstorm_outlook
               id_field: id
 
-    coastal_flood_risk_index:
+    coastal-flooding-risk-index:
         type: collection
         title:
             en: Coastal Flooding Risk Index
