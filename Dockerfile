@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1.4
 ###################################################################
 #
 # Author: Tom Kralidis <tom.kralidis@ec.gc.ca>
@@ -42,15 +43,17 @@ RUN apt-get update && \
     apt-get install -y software-properties-common && \
     add-apt-repository ppa:gcpp-kalxas/wmo-staging && \
     add-apt-repository ppa:ubuntugis/ppa && apt update
-RUN apt-get install -y python3 python3-setuptools python3-pip git curl unzip python3-click python3-fiona python3-gdal python3-lxml python3-parse python3-pyproj python3-rasterio python3-requests python3-slugify python3-sqlalchemy python3-xarray python3-yaml
+RUN apt-get install -y python3 python3-setuptools git curl unzip python3-click python3-fiona python3-gdal python3-lxml python3-parse python3-pyproj python3-rasterio python3-requests python3-slugify python3-sqlalchemy python3-xarray python3-yaml
+
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 # install pygeoapi
 RUN git clone $PYGEOAPI_GITREPO -b 0.20.0 && \
     cd pygeoapi && \
-    pip3 install --upgrade packaging && \
-    pip3 install -r requirements.txt && \
-    pip3 install flask_cors gunicorn gevent greenlet && \
-    pip3 install . && \
+    uv pip install --system --upgrade packaging && \
+    uv pip install --system -r requirements.txt && \
+    uv pip install --system flask_cors gunicorn gevent greenlet && \
+    uv pip install --system . && \
     cd ..
 
 # requirement of GEOMET_CLIMATE_CONFIG file
@@ -65,8 +68,7 @@ RUN mkdir schemas.opengis.net && \
 # install msc-pygeoapi
 COPY . $BASEDIR/msc-pygeoapi
 RUN cd msc-pygeoapi && \
-    pip3 install -r requirements.txt && \
-    pip3 install elasticsearch_dsl && \
+    uv pip install --system . && \
     # ensure cors enabled in config
     sed -i 's^# cors: true^cors: true^' $BASEDIR/msc-pygeoapi/deploy/default/msc-pygeoapi-config.yml && \
     # GCWeb theme files
@@ -75,8 +77,6 @@ RUN cd msc-pygeoapi && \
     unzip -o ./themes-gcweb.zip "*/wet-boew/*" -d theme/static && \
     mv ./theme/static/themes-dist-14.6.0-gcweb ./theme/static/themes-gcweb && \
     rm -f ./themes-gcweb.zip && \
-    # install msc-pygeoapi
-    pip3 install . && \
     # show version
     MSC_PYGEOAPI_VERSION=$(dpkg-parsechangelog -SVersion) && \
     sed -i "s/MSC_PYGEOAPI_VERSION/$MSC_PYGEOAPI_VERSION/" theme/templates/_base.html && \

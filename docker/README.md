@@ -1,6 +1,6 @@
 # build Docker image
 ```bash
-docker build -t eccc-msc/msc-pygeoapi:nightly .
+docker buildx build --load -t eccc-msc/msc-pygeoapi:nightly .
 ```
 
 # (recommended) build Docker image via Docker Compose

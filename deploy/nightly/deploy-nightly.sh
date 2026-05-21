@@ -70,9 +70,9 @@ git clone $PYGEOAPI_GITREPO
 cd pygeoapi
 pip3 install -r requirements.txt
 pip3 install flask_cors elasticsearch
-python3 setup.py install
+pip3 install .
 cd ../msc-pygeoapi
-python3 setup.py install
+pip3 install .
 cd ..
 
 mkdir schemas.opengis.net
