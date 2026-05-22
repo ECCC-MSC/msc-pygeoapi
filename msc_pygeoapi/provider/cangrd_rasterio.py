@@ -458,4 +458,15 @@ class CanGRDProvider(RasterioProvider):
 
         cj['parameters'] = parameter
 
+        ranges = {}
+        ranges[pm['id']] = {
+            'type': 'NdArray',
+            'dataType': 'float',
+            'axisNames': ['y', 'x'],
+            'shape': [metadata['height'], metadata['width']],
+            'values': data.flatten().tolist()
+        }
+
+        cj['ranges'] = ranges
+
         return cj
