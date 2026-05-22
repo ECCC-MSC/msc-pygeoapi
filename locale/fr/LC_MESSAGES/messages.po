@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-04-22 20:26+0000\n"
+"POT-Creation-Date: 2026-05-22 15:20+0000\n"
 "PO-Revision-Date: 2022-07-05 09:20-0700\n"
 "Last-Translator: \n"
 "Language: fr_CA\n"
@@ -309,29 +309,26 @@ msgid "Browse"
 msgstr "Parcourir"
 
 #: theme/templates/collections/collection.html:55
-#, fuzzy
 msgid "Browse items"
-msgstr "Aucun items"
+msgstr "Parcourir items"
 
 #: theme/templates/collections/collection.html:56
-#, fuzzy
 msgid "Browse through the items of"
-msgstr "Parcourez les items de « %(data_title)s »"
+msgstr "Parcourir les items de"
 
 #: theme/templates/collections/collection.html:59
 #: theme/templates/collections/queryables.html:6
 #: theme/templates/collections/queryables.html:17
 msgid "Queryables"
-msgstr "Interrogeables"
+msgstr "Propriétés interrogeables"
 
 #: theme/templates/collections/collection.html:63
 msgid "Display queryables"
-msgstr "Afficher les tables de requêtes"
+msgstr "Afficher les propriétés interrogeables"
 
 #: theme/templates/collections/collection.html:64
-#, fuzzy
 msgid "Display queryables of"
-msgstr "Afficher les tables de requêtes"
+msgstr "Afficher les propriétés interrogeables de"
 
 #: theme/templates/collections/collection.html:67
 #: theme/templates/collections/schema.html:6
@@ -340,12 +337,10 @@ msgid "Schema"
 msgstr "Schéma"
 
 #: theme/templates/collections/collection.html:71
-#, fuzzy
 msgid "Display schema"
 msgstr "Afficher le schéma"
 
 #: theme/templates/collections/collection.html:72
-#, fuzzy
 msgid "Display schema of"
 msgstr "Afficher le schéma de"
 
