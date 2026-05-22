@@ -1706,8 +1706,8 @@ resources:
     hurricanes-cyclone-realtime:
         type: collection
         title:
-            en: Hurricane Tracks - Cyclone [experimental]
-            fr: Trajectoires d'ouragans - Cyclone [expérimental]
+            en: Hurricane Tracks - Cyclone
+            fr: Trajectoires d'ouragans - Cyclone
         description:
             en: "Hurricane tracks and response zone are issued by the Canadian Hurricane Centre as part of the regular hurricane season forecast."
             fr: "Les trajectoires d'ouragans et la zone de réaction aux ouragans sont émises par le Centre canadien de prévision des ouragans, dans le cadre des prévisions régulières lors de la saison des ouragans."
@@ -1745,8 +1745,8 @@ resources:
     hurricanes-track-realtime:
         type: collection
         title:
-            en: Hurricane Tracks - Track [experimental]
-            fr: Trajectoires d'ouragans - Trajectoire [expérimental]
+            en: Hurricane Tracks - Track
+            fr: Trajectoires d'ouragans - Trajectoire
         description:
             en: "Hurricane tracks and response zone are issued by the Canadian Hurricane Centre as part of the regular hurricane season forecast."
             fr: "Les trajectoires d'ouragans et la zone de réaction aux ouragans sont émises par le Centre canadien de prévision des ouragans, dans le cadre des prévisions régulières lors de la saison des ouragans."
@@ -1784,8 +1784,8 @@ resources:
     hurricanes-error_cone-realtime:
         type: collection
         title:
-            en: Hurricane Tracks - Error Cone [experimental]
-            fr: Trajectoires d'ouragans - Cone d'erreur [expérimental]
+            en: Hurricane Tracks - Error Cone
+            fr: Trajectoires d'ouragans - Cone d'erreur
         description:
             en: "Hurricane tracks and response zone are issued by the Canadian Hurricane Centre as part of the regular hurricane season forecast."
             fr: "Les trajectoires d'ouragans et la zone de réaction aux ouragans sont émises par le Centre canadien de prévision des ouragans, dans le cadre des prévisions régulières lors de la saison des ouragans."
@@ -1823,8 +1823,8 @@ resources:
     hurricanes-wind_radii-realtime:
         type: collection
         title:
-            en: Hurricane Tracks - Wind Radii [experimental]
-            fr: Trajectoires d'ouragans - Radius de vent [expérimental]
+            en: Hurricane Tracks - Wind Radii
+            fr: Trajectoires d'ouragans - Radius de vent
         description:
             en: "Hurricane tracks and response zone are issued by the Canadian Hurricane Centre as part of the regular hurricane season forecast."
             fr: "Les trajectoires d'ouragans et la zone de réaction aux ouragans sont émises par le Centre canadien de prévision des ouragans, dans le cadre des prévisions régulières lors de la saison des ouragans."

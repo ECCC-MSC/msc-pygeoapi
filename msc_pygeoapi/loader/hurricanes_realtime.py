@@ -3,7 +3,7 @@
 # Author: Louis-Philippe Rousseau-Lambert
 #             <louis-philippe.rousseaulambert@ec.gc.ca>
 #
-# Copyright (c) 2025 Louis-Philippe Rousseau-Lambert
+# Copyright (c) 2026 Louis-Philippe Rousseau-Lambert
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -38,6 +38,7 @@ import click
 
 from msc_pygeoapi import cli_options
 from msc_pygeoapi.connector.elasticsearch_ import ElasticsearchConnector
+from msc_pygeoapi.env import GEOMET_LOCAL_BASEPATH
 from msc_pygeoapi.loader.base import BaseLoader
 from msc_pygeoapi.util import (
     configure_es_connection,
@@ -103,7 +104,7 @@ SETTINGS = {
     'version': 1,
     'index_patterns': [f'{INDEX_BASENAME}*'],
     'settings': {'number_of_shards': 1, 'number_of_replicas': 0},
-    'mappings': None
+    'mappings': {}
 }
 
 
@@ -180,8 +181,8 @@ class HurricanesRealtimeLoader(BaseLoader):
                 self.file_id = filename
                 feature['properties']['file_name'] = self.file_id
 
-                # set default status ti inactive
-                # activate status will be set later with a ES request
+                # set default status to inactive
+                # active status will be set later with an ES request
                 feature['properties']['active'] = False
                 feature['properties']['latest_publication'] = False
 
@@ -366,6 +367,73 @@ class HurricanesRealtimeLoader(BaseLoader):
 
         return True
 
+    def generate_local_copy(self):
+        """
+        Query Elasticsearch for all hurricane features across all indexes
+        and write them as a GeoJSON FeatureCollection to the local filesystem
+        at::
+
+            GEOMET_LOCAL_BASEPATH/hurricanes/all-hurricanes/all-hurricanes.json
+
+        The output directory is created if it does not already exist.
+
+        :returns: `bool` of status result
+        """
+
+        for hurricane_feature_type in ['wind_radii',
+                                       'track',
+                                       'error_cone',
+                                       'cyclone']:
+            index_ = f'{INDEX_BASENAME.format(hurricane_feature_type)}.*'
+
+            self.conn.Elasticsearch.indices.refresh(
+                index=index_,
+                ignore_unavailable=True
+            )
+
+            query = {
+                'query': {'match_all': {}}
+            }
+
+            features = []
+
+            try:
+                result = self.conn.Elasticsearch.search(
+                    index=index_,
+                    body=query,
+                    ignore_unavailable=True
+                )
+                hits = result.get('hits', {}).get('hits', [])
+                for hit in hits:
+                    features.append(hit['_source'])
+
+            except Exception as err:
+                LOGGER.warning(f'Failed to query ES for local copy: {err}')
+                return False
+
+            feature_collection = {
+                'type': 'FeatureCollection',
+                'features': features
+            }
+
+            json_filename = f'all-hurricanes-{hurricane_feature_type}.json'
+            output_path = os.path.join(GEOMET_LOCAL_BASEPATH,
+                                       'hurricanes',
+                                       'all-hurricanes',
+                                       json_filename)
+
+            output_dir = os.path.dirname(output_path)
+
+            try:
+                os.makedirs(output_dir, exist_ok=True)
+                with open(output_path, 'w') as f:
+                    json.dump(feature_collection, f)
+                LOGGER.debug(f'Local copy written to {output_path}')
+            except Exception as err:
+                LOGGER.warning(f'Failed to write local copy to {output_path}: {err}')  # noqa
+
+        return True
+
     def load_data(self, filepath):
         """
         loads data from event to target
@@ -382,11 +450,16 @@ class HurricanesRealtimeLoader(BaseLoader):
         try:
             r = self.conn.submit_elastic_package(package)
             LOGGER.debug(f'Result: {r}')
+
             if self.newer:
                 self.update_latest_status(self.storm_name, self.file_id)
                 msg = f'Update active and latest status: {self.storm_name} {self.file_id}' # noqa
                 LOGGER.debug(msg)
+
+            self.generate_local_copy()
+
             return True
+
         except Exception as err:
             LOGGER.warning(f'Error indexing: {err}')
             return False
@@ -467,6 +540,9 @@ def clean_indexes(ctx, es, username, password, dataset, days, ignore_certs):
             click.echo(f'Deleting indexes {indexes_to_delete}')
             conn.delete(','.join(indexes_to_delete))
 
+        loader = HurricanesRealtimeLoader(conn_config)
+        loader.generate_local_copy()
+
     click.echo('Done')
 
 
@@ -487,6 +563,7 @@ def update_active_status(ctx, es, username, password, hours, ignore_certs):
 
     loader = HurricanesRealtimeLoader(conn_config)
     result = loader.update_active_status(hours)
+    loader.generate_local_copy()
 
     if result:
         click.echo('active status updated')
@@ -512,19 +589,23 @@ def delete_indexes(ctx, dataset, es, username, password, ignore_certs,
 
     if dataset == 'all':
         wildcard = '*'
-        indexes = f'{INDEX_BASENAME.format(wildcard)}*'
+        indexes = f'{INDEX_BASENAME.format(wildcard)}'
     else:
         indexes = f'{INDEX_BASENAME.format(dataset)}*'
 
-    click.echo(f'Deleting indexes {indexes}')
-
-    conn.delete(indexes)
+    matching = list(conn.get(indexes))
+    click.echo(f'Deleting indexes {matching}')
+    if matching:
+        conn.delete(matching)
 
     if index_template:
         for type_ in TEMPLATE_MAPPINGS:
             index_name = INDEX_BASENAME.format(type_)
             click.echo(f'Deleting index template {index_name}')
             conn.delete_template(index_name)
+
+    loader = HurricanesRealtimeLoader(conn_config)
+    loader.generate_local_copy()
 
     click.echo('Done')
 
