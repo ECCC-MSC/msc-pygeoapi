@@ -36,6 +36,7 @@ import logging
 import os
 from parse import search
 import pathlib
+import re
 
 import rasterio
 from rasterio.crs import CRS
@@ -195,17 +196,37 @@ class RDPAProvider(RasterioProvider):
 
             if '/' not in datetime_:
                 try:
-                    period = datetime.strptime(
-                        datetime_, '%Y-%m-%dT%HZ').strftime('%Y%m%d%H')
+                    if ':' in datetime_:
+                        period = datetime.strptime(
+                            datetime_, '%Y-%m-%dT%H:%M:%SZ')
+                    else:
+                        period = datetime.strptime(
+                            datetime_, '%Y-%m-%dT%HZ')
+
+                    self.verify_date_hour(period)
+                    period = period.strftime('%Y%m%d%H')
                     self.data = [v for v in self.file_list if period in v][0]
-                except IndexError as err:
-                    msg = 'Datetime value invalid or out of time domain'
+                except ValueError as err:
+                    msg = (
+                        'Datetime value invalid. Value must be '
+                        'YYYY-MM-DDThh:mm:ssZ or YYYY-MM-DDThhZ'
+                    )
                     LOGGER.error(err)
-                    raise ProviderQueryError(msg)
+                    raise ProviderQueryError(err, user_msg=msg)
+                except IndexError as err:
+                    msg = (
+                        'Datetime value out of time domain. '
+                        'Value must be between '
+                        f'{self._coverage_properties["time_range"][0]} and '
+                        f'{self._coverage_properties["time_range"][1]}.'
+                    )
+                    LOGGER.error(err)
+                    raise ProviderQueryError(err, user_msg=msg)
 
             else:
                 self.get_file_list(self.var, datetime_)
                 date_file_list = self.file_list
+                self.data = date_file_list[-1]
 
         if bands:
             LOGGER.debug('Selecting bands')
@@ -261,8 +282,16 @@ class RDPAProvider(RasterioProvider):
 
             out_meta['units'] = _data.units
 
-            self.filename = self.data.split('/')[-1].replace(
-                '*', '')
+            if date_file_list:
+                filename = self.data.split('/')[-1].replace(
+                        '*', '')
+                filename_parts = re.split(self.end_time, filename)
+
+                date_range = f'{self.start_time}-{self.end_time}'
+                self.filename = date_range.join(filename_parts)
+            else:
+                self.filename = self.data.split('/')[-1].replace(
+                    '*', '')
 
             # CovJSON output does not support multiple bands yet
             # Only the first timestep is returned
@@ -384,10 +413,90 @@ class RDPAProvider(RasterioProvider):
             if datetime_:
                 begin, end = datetime_.split('/')
 
-                begin = datetime.strptime(begin, '%Y-%m-%dT%HZ').\
-                    strftime('%Y%m%d%H')
-                end = datetime.strptime(end, '%Y-%m-%dT%HZ').\
-                    strftime('%Y%m%d%H')
+                if '..' not in [begin, end]:
+                    # begin and end need to be in the same time format
+                    if ':' in begin:
+                        if ':' not in end:
+                            raise ValueError(
+                                'Invalid datetime interval provided. '
+                                'Value must be '
+                                'YYYY-MM-DDThh:mm:ssZ/YYYY-MM-DDThh:mm:ssZ or '
+                                'YYYY-MM-DDThhZ/YYYY-MM-DDThhZ'
+                            )
+                        begin = datetime.strptime(
+                            begin,
+                            '%Y-%m-%dT%H:%M:%SZ'
+                        )
+                        end = datetime.strptime(end, '%Y-%m-%dT%H:%M:%SZ')
+                    else:
+                        if ':' in end:
+                            raise ValueError(
+                                'Invalid datetime interval provided. '
+                                'Value must be '
+                                'YYYY-MM-DDThh:mm:ssZ/YYYY-MM-DDThh:mm:ssZ or '
+                                'YYYY-MM-DDThhZ/YYYY-MM-DDThhZ'
+                            )
+                        begin = datetime.strptime(begin, '%Y-%m-%dT%HZ')
+                        end = datetime.strptime(end, '%Y-%m-%dT%HZ')
+                else:
+                    # At least one of begin or end is an open interval.
+                    # No longer need to check that their formats are the same
+
+                    if begin == '..':
+                        begin = self._coverage_properties['time_range'][0]
+                        begin = datetime.strptime(begin, '%Y-%m-%dT%HZ')
+                    elif ':' in begin:
+                        begin = datetime.strptime(
+                            begin,
+                            '%Y-%m-%dT%H:%M:%SZ'
+                        )
+                    else:
+                        begin = datetime.strptime(begin, '%Y-%m-%dT%HZ')
+
+                    if end == '..':
+                        end = self._coverage_properties['time_range'][1]
+                        end = datetime.strptime(end, '%Y-%m-%dT%HZ')
+                    elif ':' in end:
+                        end = datetime.strptime(end, '%Y-%m-%dT%H:%M:%SZ')
+                    else:
+                        end = datetime.strptime(end, '%Y-%m-%dT%HZ')
+
+                if end < begin:
+                    msg = (
+                        'Invalid date interval. '
+                        'End date occurs before the start date.'
+                    )
+                    LOGGER.error(msg)
+                    raise ProviderQueryError(msg, user_msg=msg)
+
+                self.verify_date_hour(begin)
+                self.verify_date_hour(end)
+
+                # Before proceeding, need to limit the amount of data
+                # that can be selected in a single request
+                diff = end - begin
+
+                if '10km' in self.data and 'APCP-006' in self.data:
+                    if diff.days > 12:
+                        msg = (
+                            'Provided date range is too large for this '
+                            'collection. Please choose a date range that '
+                            'spans at most 13 days.'
+                        )
+                        LOGGER.error(msg)
+                        raise ProviderQueryError(msg, user_msg=msg)
+                else:
+                    if diff.days > 26:
+                        msg = (
+                            'Provided date range is too large. '
+                            'Please choose a date range that spans '
+                            'at most 27 days.'
+                        )
+                        LOGGER.error(msg)
+                        raise ProviderQueryError(msg, user_msg=msg)
+
+                begin = begin.strftime('%Y%m%d%H')
+                end = end.strftime('%Y%m%d%H')
 
                 begin_file_idx = [file_path_.index(i) for i
                                   in file_path_ if begin in i]
@@ -396,14 +505,33 @@ class RDPAProvider(RasterioProvider):
 
                 self.file_list = file_path_[
                     begin_file_idx[0]:end_file_idx[0] + 1]
+
+                self.start_time = begin
+                self.end_time = end
                 return True
             else:
                 self.file_list = file_path_
                 return True
 
         except ValueError as err:
+            user_msg = (
+                'Invalid datetime interval provided. '
+                'Value must be '
+                'YYYY-MM-DDThh:mm:ssZ/YYYY-MM-DDThh:mm:ssZ, '
+                'YYYY-MM-DDThhZ/YYYY-MM-DDThhZ or .. meaning '
+                'it is open-ended.'
+            )
             LOGGER.error(err)
-            return False
+            raise ProviderQueryError(err, user_msg=user_msg)
+        except IndexError as err:
+            user_msg = (
+                f'Datetime values out of time domain. '
+                f'Values must be between '
+                f'{self._coverage_properties["time_range"][0]} and '
+                f'{self._coverage_properties["time_range"][1]}.'
+            )
+            LOGGER.error(err)
+            raise ProviderQueryError(err, user_msg=user_msg)
 
     def get_end_time_from_file(self):
         """
@@ -421,3 +549,41 @@ class RDPAProvider(RasterioProvider):
         end = datetime.strptime(end, '%Y%m%d%H').strftime('%Y-%m-%dT%HZ')
 
         return [begin, end]
+
+    def verify_date_hour(self, date: datetime):
+        """
+        Ensures that the selected date has a valid hour for the dataset
+        """
+        if 'APCP-006' in self.data:
+            valid_hours = [0, 6, 12, 18]
+            if date.hour not in valid_hours:
+                err = (
+                    'Datetime value invalid. For this collection, '
+                    'value must be YYYY-MM-DDTXX:mm:ssZ or '
+                    'YYYY-MM-DDTXXZ where XX is 00, 06, 12 or 18.'
+                )
+                LOGGER.error(err)
+                raise ProviderQueryError(err, user_msg=err)
+        else:
+            boundary = datetime.strptime(
+                '2018-11-06T00Z', '%Y-%m-%dT%HZ'
+            )
+            if date < boundary:
+                if date.hour != 12:
+                    err = (
+                        'Datetime value invalid. For this collection, '
+                        'dates before 2018-11-06 must be YYYY-MM-DDT12:mm:ssZ '
+                        'or YYYY-MM-DDT12Z.'
+                    )
+                    LOGGER.error(err)
+                    raise ProviderQueryError(err, user_msg=err)
+            else:
+                valid_hours = [6, 12]
+                if date.hour not in valid_hours:
+                    err = (
+                        'Datetime value invalid. For this collection, '
+                        'dates after 2018-11-05 must be YYYY-MM-DDTXX:mm:ssZ '
+                        'or YYYY-MM-DDTXXZ where XX is 06, 12.'
+                    )
+                    LOGGER.error(err)
+                    raise ProviderQueryError(err, user_msg=err)
