@@ -52,7 +52,7 @@
       <ul>
         <li>
           <div>
-            <a title="{% trans %}Browse items{% endtrans %}" href="{{ data['collections_path'] }}/{{ data['id'] }}/items">
+            <a title="{% trans %}Browse items{% endtrans %}" href="{{ data['collections_path'] }}/{{ data['id'] }}/items?lang={{ (locale|lower)[:2] }}">
               {% trans %}Browse through the items of{% endtrans %} "{{ data['title'] }}"</a></div>
         </li>
       </ul>
@@ -60,7 +60,7 @@
       <ul>
         <li>
           <div>
-            <a title="{% trans %}Display queryables{% endtrans %}" href="{{ data['collections_path'] }}/{{ data['id'] }}/queryables">
+            <a title="{% trans %}Display queryables{% endtrans %}" href="{{ data['collections_path'] }}/{{ data['id'] }}/queryables?lang={{ (locale|lower)[:2] }}">
               {% trans %}Display queryables of{% endtrans %} "{{ data['title'] }}"</a></div>
         </li>
       </ul>
@@ -68,7 +68,7 @@
       <ul>
         <li>
           <div>
-            <a title="{% trans %}Display schema{% endtrans %}" href="{{ data['collections_path'] }}/{{ data['id'] }}/schema">
+            <a title="{% trans %}Display schema{% endtrans %}" href="{{ data['collections_path'] }}/{{ data['id'] }}/schema?lang={{ (locale|lower)[:2] }}">
               {% trans %}Display schema of{% endtrans %} "{{ data['title'] }}"</a></div>
         </li>
       </ul>
