@@ -7,7 +7,7 @@
 #
 # Copyright (c) 2021 Felix Laframboise
 # Copyright (c) 2023 Tom Kralidis
-# Copyright (c) 2025 Louis-Philippe Rousseau-Lambert
+# Copyright (c) 2026 Louis-Philippe Rousseau-Lambert
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -70,6 +70,18 @@ PLUGINS = {
         'alerts_realtime': {
             'filename_pattern': 'dms-geomet/alerts',
             'handler': 'msc_pygeoapi.loader.alerts_realtime.AlertsRealtimeLoader'  # noqa
+        },
+        'alerts_realtime-alpha': {
+            'filename_pattern': 'dms-alpha/alerts',
+            'handler': 'msc_pygeoapi.loader.alerts_realtime_dev.AlertsRealtimeLoaderDev'  # noqa
+        },
+        'alerts_realtime-dev': {
+            'filename_pattern': 'dms-dev/alerts',
+            'handler': 'msc_pygeoapi.loader.alerts_realtime_dev.AlertsRealtimeLoaderDev'  # noqa
+        },
+        'alerts_realtime-stage': {
+            'filename_pattern': 'dms-stage/alerts',
+            'handler': 'msc_pygeoapi.loader.alerts_realtime_dev.AlertsRealtimeLoaderDev'  # noqa
         },
         'swob_realtime': {
             'filename_pattern': 'observations/swob-ml',

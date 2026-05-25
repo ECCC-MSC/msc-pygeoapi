@@ -7,7 +7,7 @@
 #
 # Copyright (c) 2021 Felix Laframboise
 # Copyright (c) 2023 Tom Kralidis
-# Copyright (c) 2025 Louis-Philippe Rousseau-Lambert
+# Copyright (c) 2026 Louis-Philippe Rousseau-Lambert
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -81,7 +81,8 @@ commands = (
         'msc_pygeoapi.loader.coastal_flood_risk_index',
         'coastal_flood_risk_index'
     ),
-    ('msc_pygeoapi.loader.weatherstories_realtime', 'weatherstories_realtime')
+    ('msc_pygeoapi.loader.weatherstories_realtime', 'weatherstories_realtime'),
+    ('msc_pygeoapi.loader.alerts_realtime_dev', 'alerts_realtime_dev')
 )
 
 for module, name in commands:
