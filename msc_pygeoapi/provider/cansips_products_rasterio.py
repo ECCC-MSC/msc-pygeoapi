@@ -41,6 +41,8 @@ import rasterio
 from rasterio.io import MemoryFile
 import rasterio.mask
 
+from msc_pygeoapi.util import remove_z_from_bbox
+
 from msc_pygeoapi.env import GEOMET_LOCAL_BASEPATH
 
 LOGGER = logging.getLogger(__name__)
@@ -70,6 +72,8 @@ class CanSIPSProductsProvider(RasterioProvider):
         else:
             self.product_type = 'monthly'
 
+        self.lower_date_bound = None
+        self.upper_date_bound = None
         self.file_list = self._get_files_list()
 
         try:
@@ -153,6 +157,11 @@ class CanSIPSProductsProvider(RasterioProvider):
             ).rglob(filter_)
             if pattern.search(file_.name)
         )
+
+        self.lower_date_bound = datetime.strptime(
+            files[0].name.split('_')[0], '%Y%m')
+        self.upper_date_bound = datetime.strptime(
+            files[-1].name.split('_')[0], '%Y%m')
 
         # create files dict where for each variable, we have a list of files
         files_dict: dict[str, list[Path]] = {}
@@ -325,7 +334,7 @@ class CanSIPSProductsProvider(RasterioProvider):
         if len(properties) > 1:
             err = 'Only a single property value is supported.'
             LOGGER.error(err)
-            raise ProviderQueryError(err)
+            raise ProviderQueryError(err, user_msg=err)
 
         property_ = properties[0]
         shapes = []
@@ -339,7 +348,7 @@ class CanSIPSProductsProvider(RasterioProvider):
             ):
                 err = 'Invalid period value provided.'
                 LOGGER.error(err)
-                raise ProviderQueryError(err)
+                raise ProviderQueryError(err, user_msg=err)
         except (KeyError, IndexError):
             self.period = (
                 'P00M-P02M' if self.product_type == 'seasonal' else 'P00M'
@@ -351,15 +360,31 @@ class CanSIPSProductsProvider(RasterioProvider):
             self.reference_time = datetime.strptime(
                 subsets['reference_time'][0], '%Y-%m'
             )
+
+            if (
+                self.reference_time < self.lower_date_bound or
+                self.reference_time > self.upper_date_bound
+            ):
+                raise ValueError(
+                    "Invalid reference_time value provided. "
+                    "Value must be YYYY-MM between "
+                    f"{self.lower_date_bound.strftime('%Y-%m')} and "
+                    f"{self.upper_date_bound.strftime('%Y-%m')}."
+                )
         except (KeyError, IndexError):
             self.reference_time = datetime.strptime(
                 self._coverage_properties['uad']['reference_time']['interval'][0][-1], # noqa
                 '%Y-%m'
             )
-        except ValueError:
-            err = 'Invalid reference_time value provided.'
+        except (ValueError, TypeError) as err:
+            user_msg = (
+                "Invalid reference_time value provided. "
+                "Value must be YYYY-MM between "
+                f"{self.lower_date_bound.strftime('%Y-%m')} and "
+                f"{self.upper_date_bound.strftime('%Y-%m')}."
+            )
             LOGGER.error(err)
-            raise ProviderQueryError(err)
+            raise ProviderQueryError(err, user_msg=user_msg)
 
         # piece together the filepath based on the requested
         # property reference_time and period
@@ -378,10 +403,11 @@ class CanSIPSProductsProvider(RasterioProvider):
             LOGGER.debug(f'File {self.data} does not exist.')
             err = 'No data found for the specified query.'
             LOGGER.error(err)
-            raise ProviderQueryError(err)
+            raise ProviderQueryError(err, user_msg=err)
 
         # set the data bbox from bbox query param or xy axis subsets
         if len(bbox) > 0:
+            bbox = remove_z_from_bbox(bbox)
             minx, miny, maxx, maxy = bbox
             shapes = [
                 {
@@ -421,7 +447,11 @@ class CanSIPSProductsProvider(RasterioProvider):
                     )
                 except ValueError as err:
                     LOGGER.error(err)
-                    raise ProviderQueryError(err)
+                    user_msg = (
+                        'Encountered error when applying spatial '
+                        'subset with provided bbox.'
+                    )
+                    raise ProviderQueryError(err, user_msg=user_msg)
                 out_meta.update(
                     {
                         'driver': self.native_format,
