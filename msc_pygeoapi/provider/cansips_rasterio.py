@@ -41,6 +41,8 @@ import rasterio
 from rasterio.io import MemoryFile
 import rasterio.mask
 
+from msc_pygeoapi.util import remove_z_from_bbox
+
 from pygeoapi.provider.base import (BaseProvider, ProviderConnectionError,
                                     ProviderQueryError)
 from pygeoapi.provider.rasterio_ import (RasterioProvider,
@@ -175,17 +177,30 @@ class CanSIPSProvider(RasterioProvider):
         if len(properties) > 1:
             err = 'Only one range-subset value is supported'
             LOGGER.error(err)
-            raise ProviderQueryError(err)
+            raise ProviderQueryError(err, user_msg=err)
 
         if properties[0] not in self.var_list:
             err = 'Not a supported property (variable)'
             LOGGER.error(err)
-            raise ProviderQueryError(err)
+            raise ProviderQueryError(err, user_msg=err)
 
         try:
             self.member = subsets['member']
+            domain = self._coverage_properties['uad']['member']['interval'][0]
+            min_member_val = domain[0]
+            max_member_val = domain[1]
+            member_val = int(self.member[0])
+            if (
+                min_member_val > member_val or
+                max_member_val < member_val
+            ):
+                raise ValueError('Invalid member value provided.')
         except KeyError:
             self.member = [1]
+        except ValueError:
+            err = 'Invalid member value provided.'
+            LOGGER.error(err)
+            raise ProviderQueryError(err, user_msg=err)
 
         args = {
             'indexes': None
@@ -197,13 +212,89 @@ class CanSIPSProvider(RasterioProvider):
         dt_begin = self._coverage_properties['time_range'][0]
         month_list = ['00']
 
+        if 'reference_time' in subsets:
+            sub = subsets['reference_time']
+
+            ref_time_lower_bound = datetime.strptime(
+                drt_dict['interval'][0][0], '%Y-%m')
+            ref_time_upper_bound = datetime.strptime(
+                drt_dict['interval'][0][1], '%Y-%m')
+
+            try:
+                reference_time = datetime.strptime(
+                    sub[0], '%Y-%m'
+                )
+                if len(sub[0].split('-')[1]) != 2:
+                    raise ValueError(
+                        'Invalid reference_time value provided. '
+                        'Value must be YYYY-MM.'
+                    )
+
+                if (
+                    reference_time < ref_time_lower_bound or
+                    reference_time > ref_time_upper_bound
+                ):
+                    raise ValueError(
+                        "Invalid reference_time value provided. "
+                        "Value must be YYYY-MM between "
+                        f"{ref_time_lower_bound.strftime('%Y-%m')} "
+                        f"and {ref_time_upper_bound.strftime('%Y-%m')}."
+                    )
+
+            except (ValueError, TypeError) as err:
+                user_msg = (
+                    "Invalid reference_time value provided. "
+                    "Value must be YYYY-MM between "
+                    f"{ref_time_lower_bound.strftime('%Y-%m')} "
+                    f"and {ref_time_upper_bound.strftime('%Y-%m')}."
+                )
+                LOGGER.error(err)
+                raise ProviderQueryError(err, user_msg=user_msg)
+
         if datetime_:
             if '/' in datetime_:  # Date range scenario
+                try:
+                    dates_range = datetime_.split('/')
+                    start_date_interval = datetime.strptime(
+                        dates_range[0], '%Y-%m'
+                    )
+                    lower_bound_month = dates_range[0].split('-')[1]
+                    upper_bound_month = dates_range[1].split('-')[1]
+                    if (
+                        len(lower_bound_month) != 2 or
+                        len(upper_bound_month) != 2
+                    ):
+                        raise ValueError(
+                            'Invalid datetime value provided for date range. '
+                            'Value must be YYYY-MM/YYYY-MM.'
+                        )
+                except (ValueError, TypeError, IndexError) as err:
+                    user_msg = (
+                        'Invalid datetime value provided for date range. '
+                        'Value must be YYYY-MM/YYYY-MM.'
+                    )
+                    LOGGER.error(err)
+                    raise ProviderQueryError(err, user_msg=user_msg)
+
                 month_list = []
                 reference_time_key = 'reference_time' in subsets
                 if reference_time_key:
                     sub_rf = subsets['reference_time'][0]
                     model_year, model_month = sub_rf.split('-')
+
+                    # Want to check that the first date of the interval
+                    # is valid for the reference time
+                    model_run = datetime.strptime(
+                        sub_rf, '%Y-%m'
+                    )
+
+                    if model_run > start_date_interval:
+                        err = (
+                            'Invalid datetime value provided for date range. '
+                            'Date range begins before the reference_time.'
+                        )
+                        LOGGER.error(err)
+                        raise ProviderQueryError(err, user_msg=err)
                 else:
                     dt_split = datetime_.split('/')[0]
                     model_year, model_month = dt_split.split('-')
@@ -211,6 +302,17 @@ class CanSIPSProvider(RasterioProvider):
                 min_date, max_date = datetime_.split('/')
                 min_forecast_year, min_forecast_month = min_date.split('-')
                 max_forecast_year, max_forecast_month = max_date.split('-')
+
+                if (
+                    datetime.strptime(min_date, '%Y-%m') >
+                    datetime.strptime(max_date, '%Y-%m')
+                ):
+                    err = (
+                            'Invalid datetime value provided for date range. '
+                            'End date occurs before the start date.'
+                        )
+                    LOGGER.error(err)
+                    raise ProviderQueryError(err, user_msg=err)
 
                 # Compute month differences and generate list
                 min_diff = self.get_month_difference(model_year,
@@ -224,10 +326,35 @@ class CanSIPSProvider(RasterioProvider):
                 month_list = self.generate_month_list(min_diff, max_diff)
 
             else:  # Single date scenario
+                try:
+                    selected_date = datetime.strptime(
+                        datetime_, '%Y-%m'
+                    )
+                    if len(datetime_.split('-')[1]) != 2:
+                        raise ValueError(
+                            'Invalid value provided for datetime. '
+                            'Value must be YYYY-MM.'
+                        )
+                except (ValueError, TypeError) as err:
+                    user_msg = (
+                        'Invalid value provided for datetime. '
+                        'Value must be YYYY-MM.'
+                    )
+                    LOGGER.error(err)
+                    raise ProviderQueryError(err, user_msg=user_msg)
+
                 reference_time_key = 'reference_time' in subsets
                 if reference_time_key:
                     sub = subsets['reference_time']
                     model_year, model_month = sub[0].split('-')
+
+                    if selected_date < reference_time:
+                        err = (
+                            'Invalid value provided for datetime. '
+                            'Value must not occur before reference_time.'
+                        )
+                        LOGGER.error(err)
+                        raise ProviderQueryError(err, user_msg=err)
                 elif datetime_ > dt_begin:
                     drtd = drt_dict['interval']
                     model_year, model_month = drtd[0][-1].split('-')
@@ -250,12 +377,44 @@ class CanSIPSProvider(RasterioProvider):
 
         # Call the function with computed values
         if any(int(i) > 11 for i in month_list):
-            msg = 'time interval is invalid'
+            if 'reference_time' in subsets:
+                if '/' in datetime_:
+                    msg = (
+                        'Invalid datetime value for the provided '
+                        'reference_time. Date range must span at most '
+                        '11 months. Values must be at most 11 '
+                        'months from the reference_time.'
+                    )
+                else:
+                    msg = (
+                        'Invalid datetime value for the provided '
+                        'reference_time. Value must be at most 11 '
+                        'months from the reference_time.'
+                    )
+            else:
+                expected_start = self._coverage_properties['time_range'][0]
+                expected_end = self._coverage_properties['time_range'][1]
+                if '/' in datetime_:
+                    msg = (
+                        'Invalid datetime value. Date range must span at '
+                        'most 11 months. Values must be between '
+                        f'{expected_start} and {expected_end}.'
+                    )
+                else:
+                    msg = (
+                        'Invalid datetime value. Value must be between '
+                        f'{expected_start} and {expected_end}.'
+                    )
             LOGGER.error(msg)
-            raise ProviderQueryError(msg)
+            raise ProviderQueryError(msg, user_msg=msg)
         self.get_file_list(properties[0],
                            f'{model_year}{model_month}',
                            month_list)
+
+        if len(self.file_list) == 0:
+            err = 'No associated data files found.'
+            LOGGER.error(err)
+            raise ProviderQueryError(err, user_msg=err)
 
         LOGGER.debug('Selecting bands')
         args['indexes'] = bands
@@ -264,7 +423,7 @@ class CanSIPSProvider(RasterioProvider):
             if not os.path.isfile(_file):
                 msg = 'No such file'
                 LOGGER.error(msg)
-                raise ProviderQueryError(msg)
+                raise ProviderQueryError(msg, user_msg=msg)
 
         with rasterio.open(self.file_list[0]) as self._data:
 
@@ -273,6 +432,7 @@ class CanSIPSProvider(RasterioProvider):
             tags = [self._data.tags(args['indexes'][0])]
 
             if len(bbox) > 0:
+                bbox = remove_z_from_bbox(bbox)
                 minx, miny, maxx, maxy = bbox
             else:
                 minx, miny, maxx, maxy = self._data.bounds
@@ -304,7 +464,11 @@ class CanSIPSProvider(RasterioProvider):
                     indexes=args['indexes'])
             except ValueError as err:
                 LOGGER.error(err)
-                raise ProviderQueryError(err)
+                user_msg = (
+                    'Encountered error when applying spatial '
+                    'subset with provided bbox.'
+                )
+                raise ProviderQueryError(err, user_msg=user_msg)
 
             out_meta.update({'driver': self.native_format,
                              'height': out_image.shape[1],
@@ -318,7 +482,7 @@ class CanSIPSProvider(RasterioProvider):
                 if datetime_ and '/' in datetime_:
                     err = 'Date range not yet supported for CovJSON'
                     LOGGER.error(err)
-                    raise ProviderQueryError(err)
+                    raise ProviderQueryError(err, user_msg=err)
                 else:
                     LOGGER.debug('Creating output in CoverageJSON')
                     out_meta['bands'] = [1]
@@ -354,7 +518,14 @@ class CanSIPSProvider(RasterioProvider):
                                                     indexes=args['indexes'])
                                         except ValueError as err:
                                             LOGGER.error(err)
-                                            raise ProviderQueryError(err)
+                                            user_msg = (
+                                                'Encountered error when '
+                                                'applying spatial '
+                                                'subset with provided bbox.'
+                                            )
+                                            raise ProviderQueryError(
+                                                err, user_msg=user_msg
+                                            )
                                     else:
                                         out_image = src1.read(
                                             indexes=args['indexes'])
@@ -401,7 +572,7 @@ class CanSIPSProvider(RasterioProvider):
         properties['uad'] = domainset
 
         begin = self.get_time_from_dim(end, 0)
-        end = self.get_time_from_dim(end, 12)
+        end = self.get_time_from_dim(end, 11)
 
         properties['time_range'] = [begin, end]
         properties['restime'] = restime
