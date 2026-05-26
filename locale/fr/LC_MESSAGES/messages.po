@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-05-22 15:20+0000\n"
+"POT-Creation-Date: 2026-05-26 15:27+0000\n"
 "PO-Revision-Date: 2022-07-05 09:20-0700\n"
 "Last-Translator: \n"
 "Language: fr_CA\n"
@@ -441,12 +441,13 @@ msgid "Storage CRS"
 msgstr "Stockage SRC"
 
 #: theme/templates/collections/collection.html:170
-msgid "CRS"
-msgstr "SRC"
+#: theme/templates/collections/map/metadata.html:25
+msgid "CRS:"
+msgstr "SRC :"
 
 #: theme/templates/collections/collection.html:173
-msgid "Epoch"
-msgstr "Époque"
+msgid "Epoch:"
+msgstr "Époque :"
 
 #: theme/templates/collections/index.html:14
 msgid "Collections in this service"
@@ -753,11 +754,6 @@ msgstr "Maxx :"
 #, fuzzy
 msgid "Maxy:"
 msgstr "Maxy :"
-
-#: theme/templates/collections/map/metadata.html:25
-#, fuzzy
-msgid "CRS:"
-msgstr "SRC :"
 
 #: theme/templates/collections/map/metadata.html:28
 #, fuzzy
