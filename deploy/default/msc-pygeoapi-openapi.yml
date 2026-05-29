@@ -2187,15 +2187,19 @@ paths:
             - forecast_datetime_text_en
             - forecast_datetime_text_fr
             - forecast_period.period_1.aqhi
+            - forecast_period.period_1.aqhi_insmoke
             - forecast_period.period_1.forecast_period_en
             - forecast_period.period_1.forecast_period_fr
             - forecast_period.period_2.aqhi
+            - forecast_period.period_2.aqhi_insmoke
             - forecast_period.period_2.forecast_period_en
             - forecast_period.period_2.forecast_period_fr
             - forecast_period.period_3.aqhi
+            - forecast_period.period_3.aqhi_insmoke
             - forecast_period.period_3.forecast_period_en
             - forecast_period.period_3.forecast_period_fr
             - forecast_period.period_4.aqhi
+            - forecast_period.period_4.aqhi_insmoke
             - forecast_period.period_4.forecast_period_en
             - forecast_period.period_4.forecast_period_fr
             - forecast_period.period_5.aqhi
@@ -2261,6 +2265,14 @@ paths:
         style: form
       - explode: false
         in: query
+        name: forecast_period.period_1.aqhi_insmoke
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
         name: forecast_period.period_1.forecast_period_en
         required: false
         schema:
@@ -2276,6 +2288,14 @@ paths:
       - explode: false
         in: query
         name: forecast_period.period_2.aqhi
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: forecast_period.period_2.aqhi_insmoke
         required: false
         schema:
           format: long
@@ -2305,6 +2325,14 @@ paths:
         style: form
       - explode: false
         in: query
+        name: forecast_period.period_3.aqhi_insmoke
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
         name: forecast_period.period_3.forecast_period_en
         required: false
         schema:
@@ -2320,6 +2348,14 @@ paths:
       - explode: false
         in: query
         name: forecast_period.period_4.aqhi
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: forecast_period.period_4.aqhi_insmoke
         required: false
         schema:
           format: long
@@ -3312,6 +3348,7 @@ paths:
             - identifier
             - issuer_code
             - issuing_office
+            - ttaaii
             - type
             - url
             type: string
@@ -3347,6 +3384,13 @@ paths:
       - explode: false
         in: query
         name: issuing_office
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: ttaaii
         required: false
         schema:
           type: string
@@ -6244,7 +6288,7 @@ paths:
         name: STN_ID
         required: false
         schema:
-          type: string
+          type: integer
         style: form
       - explode: false
         in: query
@@ -6478,6 +6522,7 @@ paths:
             - CLIMATE_IDENTIFIER
             - DEW_POINT_TEMP
             - DEW_POINT_TEMP_FLAG
+            - FLAG
             - HUMIDEX
             - HUMIDEX_FLAG
             - ID
@@ -6539,6 +6584,13 @@ paths:
       - explode: false
         in: query
         name: DEW_POINT_TEMP_FLAG
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: FLAG
         required: false
         schema:
           type: string
@@ -6681,7 +6733,7 @@ paths:
         name: STN_ID
         required: false
         schema:
-          type: string
+          type: integer
         style: form
       - explode: false
         in: query
@@ -7237,7 +7289,7 @@ paths:
         name: STN_ID
         required: false
         schema:
-          type: string
+          type: integer
         style: form
       - explode: false
         in: query
@@ -7608,7 +7660,7 @@ paths:
         name: STN_ID
         required: false
         schema:
-          type: string
+          type: integer
         style: form
       - explode: false
         in: query
@@ -10889,7 +10941,7 @@ paths:
       summary: Get SPEI-3 - Projected coverage
       tags:
       - climate:spei-3:projected
-  /collections/coastal_flood_risk_index:
+  /collections/coastal-flooding-risk-index:
     get:
       description: The Coastal Flooding Risk Index is a geo- and time-referenced polygon
         product issued by the Meteorological Service of Canada (MSC) to articulate
@@ -10897,7 +10949,7 @@ paths:
         by Storm Prediction Centres and are intended to provide early notification,
         out to 5 days, of coastal flooding due to astronomical tide, storm surge and
         wave impacts.
-      operationId: describeCoastal_flood_risk_indexCollection
+      operationId: describeCoastal-flooding-risk-indexCollection
       parameters:
       - $ref: '#/components/parameters/f'
       - $ref: '#/components/parameters/lang'
@@ -10910,10 +10962,10 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Coastal Flooding Risk Index [experimental] metadata
+      summary: Get Coastal Flooding Risk Index metadata
       tags:
-      - coastal_flood_risk_index
-  /collections/coastal_flood_risk_index/items:
+      - coastal-flooding-risk-index
+  /collections/coastal-flooding-risk-index/items:
     get:
       description: The Coastal Flooding Risk Index is a geo- and time-referenced polygon
         product issued by the Meteorological Service of Canada (MSC) to articulate
@@ -10921,7 +10973,7 @@ paths:
         by Storm Prediction Centres and are intended to provide early notification,
         out to 5 days, of coastal flooding due to astronomical tide, storm surge and
         wave impacts.
-      operationId: getCoastal_flood_risk_indexFeatures
+      operationId: getCoastal-flooding-risk-indexFeatures
       parameters:
       - $ref: '#/components/parameters/f'
       - $ref: '#/components/parameters/lang'
@@ -10943,7 +10995,6 @@ paths:
             - expiration_datetime
             - file_id
             - id
-            - metobject.confidence.value
             - metobject.impact.value
             - metobject.likelihood.value
             - metobject.risk.value
@@ -11001,14 +11052,6 @@ paths:
         required: false
         schema:
           type: string
-        style: form
-      - explode: false
-        in: query
-        name: metobject.confidence.value
-        required: false
-        schema:
-          format: long
-          type: number
         style: form
       - explode: false
         in: query
@@ -11123,9 +11166,9 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Coastal Flooding Risk Index [experimental] items
+      summary: Get Coastal Flooding Risk Index items
       tags:
-      - coastal_flood_risk_index
+      - coastal-flooding-risk-index
     options:
       description: The Coastal Flooding Risk Index is a geo- and time-referenced polygon
         product issued by the Meteorological Service of Canada (MSC) to articulate
@@ -11133,14 +11176,14 @@ paths:
         by Storm Prediction Centres and are intended to provide early notification,
         out to 5 days, of coastal flooding due to astronomical tide, storm surge and
         wave impacts.
-      operationId: optionsCoastal_flood_risk_indexFeatures
+      operationId: optionsCoastal-flooding-risk-indexFeatures
       responses:
         '200':
           description: options response
-      summary: Options for Coastal Flooding Risk Index [experimental] items
+      summary: Options for Coastal Flooding Risk Index items
       tags:
-      - coastal_flood_risk_index
-  /collections/coastal_flood_risk_index/items/{featureId}:
+      - coastal-flooding-risk-index
+  /collections/coastal-flooding-risk-index/items/{featureId}:
     get:
       description: The Coastal Flooding Risk Index is a geo- and time-referenced polygon
         product issued by the Meteorological Service of Canada (MSC) to articulate
@@ -11148,7 +11191,7 @@ paths:
         by Storm Prediction Centres and are intended to provide early notification,
         out to 5 days, of coastal flooding due to astronomical tide, storm surge and
         wave impacts.
-      operationId: getCoastal_flood_risk_indexFeature
+      operationId: getCoastal-flooding-risk-indexFeature
       parameters:
       - $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       - $ref: '#/components/parameters/crs'
@@ -11163,9 +11206,9 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Coastal Flooding Risk Index [experimental] item by id
+      summary: Get Coastal Flooding Risk Index item by id
       tags:
-      - coastal_flood_risk_index
+      - coastal-flooding-risk-index
     options:
       description: The Coastal Flooding Risk Index is a geo- and time-referenced polygon
         product issued by the Meteorological Service of Canada (MSC) to articulate
@@ -11173,16 +11216,16 @@ paths:
         by Storm Prediction Centres and are intended to provide early notification,
         out to 5 days, of coastal flooding due to astronomical tide, storm surge and
         wave impacts.
-      operationId: optionsCoastal_flood_risk_indexFeature
+      operationId: optionsCoastal-flooding-risk-indexFeature
       parameters:
       - $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/parameters/featureId
       responses:
         '200':
           description: options response
-      summary: Options for Coastal Flooding Risk Index [experimental] item by id
+      summary: Options for Coastal Flooding Risk Index item by id
       tags:
-      - coastal_flood_risk_index
-  /collections/coastal_flood_risk_index/queryables:
+      - coastal-flooding-risk-index
+  /collections/coastal-flooding-risk-index/queryables:
     get:
       description: The Coastal Flooding Risk Index is a geo- and time-referenced polygon
         product issued by the Meteorological Service of Canada (MSC) to articulate
@@ -11190,7 +11233,7 @@ paths:
         by Storm Prediction Centres and are intended to provide early notification,
         out to 5 days, of coastal flooding due to astronomical tide, storm surge and
         wave impacts.
-      operationId: getCoastal_flood_risk_indexQueryables
+      operationId: getCoastal-flooding-risk-indexQueryables
       parameters:
       - $ref: '#/components/parameters/f'
       - $ref: '#/components/parameters/lang'
@@ -11203,10 +11246,10 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Coastal Flooding Risk Index [experimental] queryables
+      summary: Get Coastal Flooding Risk Index queryables
       tags:
-      - coastal_flood_risk_index
-  /collections/coastal_flood_risk_index/schema:
+      - coastal-flooding-risk-index
+  /collections/coastal-flooding-risk-index/schema:
     get:
       description: The Coastal Flooding Risk Index is a geo- and time-referenced polygon
         product issued by the Meteorological Service of Canada (MSC) to articulate
@@ -11214,7 +11257,7 @@ paths:
         by Storm Prediction Centres and are intended to provide early notification,
         out to 5 days, of coastal flooding due to astronomical tide, storm surge and
         wave impacts.
-      operationId: getCoastal_flood_risk_indexSchema
+      operationId: getCoastal-flooding-risk-indexSchema
       parameters:
       - $ref: '#/components/parameters/f'
       - $ref: '#/components/parameters/lang'
@@ -11227,9 +11270,9 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Coastal Flooding Risk Index [experimental] schema
+      summary: Get Coastal Flooding Risk Index schema
       tags:
-      - coastal_flood_risk_index
+      - coastal-flooding-risk-index
   /collections/datasets-footprints:
     get:
       description: MSC datasets footprints inventory
@@ -11440,7 +11483,7 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Hurricane Tracks - Cyclone [experimental] metadata
+      summary: Get Hurricane Tracks - Cyclone metadata
       tags:
       - hurricanes-cyclone-realtime
   /collections/hurricanes-cyclone-realtime/items:
@@ -11548,7 +11591,7 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Hurricane Tracks - Cyclone [experimental] items
+      summary: Get Hurricane Tracks - Cyclone items
       tags:
       - hurricanes-cyclone-realtime
     options:
@@ -11558,7 +11601,7 @@ paths:
       responses:
         '200':
           description: options response
-      summary: Options for Hurricane Tracks - Cyclone [experimental] items
+      summary: Options for Hurricane Tracks - Cyclone items
       tags:
       - hurricanes-cyclone-realtime
   /collections/hurricanes-cyclone-realtime/items/{featureId}:
@@ -11580,7 +11623,7 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Hurricane Tracks - Cyclone [experimental] item by id
+      summary: Get Hurricane Tracks - Cyclone item by id
       tags:
       - hurricanes-cyclone-realtime
     options:
@@ -11592,7 +11635,7 @@ paths:
       responses:
         '200':
           description: options response
-      summary: Options for Hurricane Tracks - Cyclone [experimental] item by id
+      summary: Options for Hurricane Tracks - Cyclone item by id
       tags:
       - hurricanes-cyclone-realtime
   /collections/hurricanes-cyclone-realtime/queryables:
@@ -11612,7 +11655,7 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Hurricane Tracks - Cyclone [experimental] queryables
+      summary: Get Hurricane Tracks - Cyclone queryables
       tags:
       - hurricanes-cyclone-realtime
   /collections/hurricanes-cyclone-realtime/schema:
@@ -11632,7 +11675,7 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Hurricane Tracks - Cyclone [experimental] schema
+      summary: Get Hurricane Tracks - Cyclone schema
       tags:
       - hurricanes-cyclone-realtime
   /collections/hurricanes-error_cone-realtime:
@@ -11652,7 +11695,7 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Hurricane Tracks - Error Cone [experimental] metadata
+      summary: Get Hurricane Tracks - Error Cone metadata
       tags:
       - hurricanes-error_cone-realtime
   /collections/hurricanes-error_cone-realtime/items:
@@ -11760,7 +11803,7 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Hurricane Tracks - Error Cone [experimental] items
+      summary: Get Hurricane Tracks - Error Cone items
       tags:
       - hurricanes-error_cone-realtime
     options:
@@ -11770,7 +11813,7 @@ paths:
       responses:
         '200':
           description: options response
-      summary: Options for Hurricane Tracks - Error Cone [experimental] items
+      summary: Options for Hurricane Tracks - Error Cone items
       tags:
       - hurricanes-error_cone-realtime
   /collections/hurricanes-error_cone-realtime/items/{featureId}:
@@ -11792,7 +11835,7 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Hurricane Tracks - Error Cone [experimental] item by id
+      summary: Get Hurricane Tracks - Error Cone item by id
       tags:
       - hurricanes-error_cone-realtime
     options:
@@ -11804,7 +11847,7 @@ paths:
       responses:
         '200':
           description: options response
-      summary: Options for Hurricane Tracks - Error Cone [experimental] item by id
+      summary: Options for Hurricane Tracks - Error Cone item by id
       tags:
       - hurricanes-error_cone-realtime
   /collections/hurricanes-error_cone-realtime/queryables:
@@ -11824,7 +11867,7 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Hurricane Tracks - Error Cone [experimental] queryables
+      summary: Get Hurricane Tracks - Error Cone queryables
       tags:
       - hurricanes-error_cone-realtime
   /collections/hurricanes-error_cone-realtime/schema:
@@ -11844,7 +11887,7 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Hurricane Tracks - Error Cone [experimental] schema
+      summary: Get Hurricane Tracks - Error Cone schema
       tags:
       - hurricanes-error_cone-realtime
   /collections/hurricanes-track-realtime:
@@ -11864,7 +11907,7 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Hurricane Tracks - Track [experimental] metadata
+      summary: Get Hurricane Tracks - Track metadata
       tags:
       - hurricanes-track-realtime
   /collections/hurricanes-track-realtime/items:
@@ -11972,7 +12015,7 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Hurricane Tracks - Track [experimental] items
+      summary: Get Hurricane Tracks - Track items
       tags:
       - hurricanes-track-realtime
     options:
@@ -11982,7 +12025,7 @@ paths:
       responses:
         '200':
           description: options response
-      summary: Options for Hurricane Tracks - Track [experimental] items
+      summary: Options for Hurricane Tracks - Track items
       tags:
       - hurricanes-track-realtime
   /collections/hurricanes-track-realtime/items/{featureId}:
@@ -12004,7 +12047,7 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Hurricane Tracks - Track [experimental] item by id
+      summary: Get Hurricane Tracks - Track item by id
       tags:
       - hurricanes-track-realtime
     options:
@@ -12016,7 +12059,7 @@ paths:
       responses:
         '200':
           description: options response
-      summary: Options for Hurricane Tracks - Track [experimental] item by id
+      summary: Options for Hurricane Tracks - Track item by id
       tags:
       - hurricanes-track-realtime
   /collections/hurricanes-track-realtime/queryables:
@@ -12036,7 +12079,7 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Hurricane Tracks - Track [experimental] queryables
+      summary: Get Hurricane Tracks - Track queryables
       tags:
       - hurricanes-track-realtime
   /collections/hurricanes-track-realtime/schema:
@@ -12056,7 +12099,7 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Hurricane Tracks - Track [experimental] schema
+      summary: Get Hurricane Tracks - Track schema
       tags:
       - hurricanes-track-realtime
   /collections/hurricanes-wind_radii-realtime:
@@ -12076,7 +12119,7 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Hurricane Tracks - Wind Radii [experimental] metadata
+      summary: Get Hurricane Tracks - Wind Radii metadata
       tags:
       - hurricanes-wind_radii-realtime
   /collections/hurricanes-wind_radii-realtime/items:
@@ -12184,7 +12227,7 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Hurricane Tracks - Wind Radii [experimental] items
+      summary: Get Hurricane Tracks - Wind Radii items
       tags:
       - hurricanes-wind_radii-realtime
     options:
@@ -12194,7 +12237,7 @@ paths:
       responses:
         '200':
           description: options response
-      summary: Options for Hurricane Tracks - Wind Radii [experimental] items
+      summary: Options for Hurricane Tracks - Wind Radii items
       tags:
       - hurricanes-wind_radii-realtime
   /collections/hurricanes-wind_radii-realtime/items/{featureId}:
@@ -12216,7 +12259,7 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Hurricane Tracks - Wind Radii [experimental] item by id
+      summary: Get Hurricane Tracks - Wind Radii item by id
       tags:
       - hurricanes-wind_radii-realtime
     options:
@@ -12228,7 +12271,7 @@ paths:
       responses:
         '200':
           description: options response
-      summary: Options for Hurricane Tracks - Wind Radii [experimental] item by id
+      summary: Options for Hurricane Tracks - Wind Radii item by id
       tags:
       - hurricanes-wind_radii-realtime
   /collections/hurricanes-wind_radii-realtime/queryables:
@@ -12248,7 +12291,7 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Hurricane Tracks - Wind Radii [experimental] queryables
+      summary: Get Hurricane Tracks - Wind Radii queryables
       tags:
       - hurricanes-wind_radii-realtime
   /collections/hurricanes-wind_radii-realtime/schema:
@@ -12268,7 +12311,7 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Hurricane Tracks - Wind Radii [experimental] schema
+      summary: Get Hurricane Tracks - Wind Radii schema
       tags:
       - hurricanes-wind_radii-realtime
   /collections/hydrometric-annual-peaks:
@@ -16157,12 +16200,6 @@ paths:
             - regularForecast.locations.name
             - regularForecast.locations.statusStatement.en
             - regularForecast.locations.statusStatement.fr
-            - regularForecast.locations.statusStatement.href.en
-            - regularForecast.locations.statusStatement.href.fr
-            - regularForecast.locations.statusStatement.note.en
-            - regularForecast.locations.statusStatement.note.fr
-            - regularForecast.locations.statusStatement.value.en
-            - regularForecast.locations.statusStatement.value.fr
             - regularForecast.locations.weatherCondition.airTemperature.en
             - regularForecast.locations.weatherCondition.airTemperature.fr
             - regularForecast.locations.weatherCondition.freezingSpray.en
@@ -16378,48 +16415,6 @@ paths:
       - explode: false
         in: query
         name: regularForecast.locations.statusStatement.fr
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: regularForecast.locations.statusStatement.href.en
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: regularForecast.locations.statusStatement.href.fr
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: regularForecast.locations.statusStatement.note.en
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: regularForecast.locations.statusStatement.note.fr
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: regularForecast.locations.statusStatement.value.en
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: regularForecast.locations.statusStatement.value.fr
         required: false
         schema:
           type: string
@@ -19347,6 +19342,9 @@ paths:
             - altmetr_setng
             - altmetr_setng-qa
             - altmetr_setng-uom
+            - avg_air_temp_pst10mts
+            - avg_air_temp_pst10mts-qa
+            - avg_air_temp_pst10mts-uom
             - avg_air_temp_pst1hr
             - avg_air_temp_pst1hr-data_flag-code_src
             - avg_air_temp_pst1hr-data_flag-uom
@@ -19359,12 +19357,12 @@ paths:
             - avg_air_temp_pst1hr_2-uom
             - avg_air_temp_pst1hr_3
             - avg_air_temp_pst1hr_3-uom
-            - avg_air_temp_pst2mts
-            - avg_air_temp_pst2mts-qa
-            - avg_air_temp_pst2mts-uom
             - avg_batry_crnt_pst1hr
             - avg_batry_crnt_pst1hr-qa
             - avg_batry_crnt_pst1hr-uom
+            - avg_batry_volt_pst10mts
+            - avg_batry_volt_pst10mts-qa
+            - avg_batry_volt_pst10mts-uom
             - avg_batry_volt_pst1hr
             - avg_batry_volt_pst1hr-qa
             - avg_batry_volt_pst1hr-uom
@@ -19386,22 +19384,32 @@ paths:
             - avg_globl_solr_radn_pst1hr-data_flag-code_src
             - avg_globl_solr_radn_pst1hr-data_flag-uom
             - avg_globl_solr_radn_pst1hr-data_flag-value
-            - avg_globl_solr_radn_pst1hr-qa
             - avg_globl_solr_radn_pst1hr-uom
             - avg_globl_solr_radn_pst1mt
             - avg_globl_solr_radn_pst1mt-data_flag-code_src
             - avg_globl_solr_radn_pst1mt-data_flag-uom
             - avg_globl_solr_radn_pst1mt-data_flag-value
             - avg_globl_solr_radn_pst1mt-uom
+            - avg_max_wave_hgt_pst20mts
+            - avg_max_wave_hgt_pst20mts-qa
+            - avg_max_wave_hgt_pst20mts-uom
+            - avg_max_wave_pd_pst20mts
+            - avg_max_wave_pd_pst20mts-qa
+            - avg_max_wave_pd_pst20mts-uom
+            - avg_mslp_pst10mts
+            - avg_mslp_pst10mts-data_flag-code_src
+            - avg_mslp_pst10mts-data_flag-uom
+            - avg_mslp_pst10mts-data_flag-value
+            - avg_mslp_pst10mts-uom
             - avg_rel_hum_pst1hr
             - avg_rel_hum_pst1hr-data_flag-code_src
             - avg_rel_hum_pst1hr-data_flag-uom
             - avg_rel_hum_pst1hr-data_flag-value
             - avg_rel_hum_pst1hr-qa
             - avg_rel_hum_pst1hr-uom
-            - avg_rel_hum_pst2mts
-            - avg_rel_hum_pst2mts-qa
-            - avg_rel_hum_pst2mts-uom
+            - avg_sea_sfc_temp_pst10mts
+            - avg_sea_sfc_temp_pst10mts-qa
+            - avg_sea_sfc_temp_pst10mts-uom
             - avg_snw_dpth_pst5mts
             - avg_snw_dpth_pst5mts-qa
             - avg_snw_dpth_pst5mts-uom
@@ -19411,35 +19419,45 @@ paths:
             - avg_snw_dpth_pst5mts_2-uom
             - avg_snw_dpth_pst5mts_3
             - avg_snw_dpth_pst5mts_3-uom
+            - avg_solr_panl_crnt_pst10mts
+            - avg_solr_panl_crnt_pst10mts-qa
+            - avg_solr_panl_crnt_pst10mts-uom
             - avg_solr_panl_crnt_pst1hr
             - avg_solr_panl_crnt_pst1hr-qa
             - avg_solr_panl_crnt_pst1hr-uom
             - avg_solr_panl_volt_pst1hr
             - avg_solr_panl_volt_pst1hr-qa
             - avg_solr_panl_volt_pst1hr-uom
+            - avg_stn_pres_pst10mts
+            - avg_stn_pres_pst10mts-qa
+            - avg_stn_pres_pst10mts-uom
+            - avg_stn_pres_pst10mts_1
+            - avg_stn_pres_pst10mts_1-qa
+            - avg_stn_pres_pst10mts_1-uom
+            - avg_stn_pres_pst10mts_2
+            - avg_stn_pres_pst10mts_2-qa
+            - avg_stn_pres_pst10mts_2-uom
             - avg_vis_pst10mts
             - avg_vis_pst10mts-qa
             - avg_vis_pst10mts-uom
+            - avg_wave_hgt_pst20mts
+            - avg_wave_hgt_pst20mts-qa
+            - avg_wave_hgt_pst20mts-uom
+            - avg_wave_pd_pst20mts
+            - avg_wave_pd_pst20mts-qa
+            - avg_wave_pd_pst20mts-uom
             - avg_wnd_dir_10m_pst10mts
             - avg_wnd_dir_10m_pst10mts-data_flag-code_src
             - avg_wnd_dir_10m_pst10mts-data_flag-uom
             - avg_wnd_dir_10m_pst10mts-data_flag-value
             - avg_wnd_dir_10m_pst10mts-qa
             - avg_wnd_dir_10m_pst10mts-uom
-            - avg_wnd_dir_10m_pst10mts_1
-            - avg_wnd_dir_10m_pst10mts_1-uom
-            - avg_wnd_dir_10m_pst10mts_2
-            - avg_wnd_dir_10m_pst10mts_2-uom
             - avg_wnd_dir_10m_pst1hr
             - avg_wnd_dir_10m_pst1hr-data_flag-code_src
             - avg_wnd_dir_10m_pst1hr-data_flag-uom
             - avg_wnd_dir_10m_pst1hr-data_flag-value
             - avg_wnd_dir_10m_pst1hr-qa
             - avg_wnd_dir_10m_pst1hr-uom
-            - avg_wnd_dir_10m_pst1hr_1
-            - avg_wnd_dir_10m_pst1hr_1-uom
-            - avg_wnd_dir_10m_pst1hr_2
-            - avg_wnd_dir_10m_pst1hr_2-uom
             - avg_wnd_dir_10m_pst1mt
             - avg_wnd_dir_10m_pst1mt-qa
             - avg_wnd_dir_10m_pst1mt-uom
@@ -19449,17 +19467,15 @@ paths:
             - avg_wnd_dir_10m_pst2mts-data_flag-value
             - avg_wnd_dir_10m_pst2mts-qa
             - avg_wnd_dir_10m_pst2mts-uom
-            - avg_wnd_dir_10m_pst2mts_1
-            - avg_wnd_dir_10m_pst2mts_1-uom
-            - avg_wnd_dir_10m_pst2mts_2
-            - avg_wnd_dir_10m_pst2mts_2-uom
             - avg_wnd_dir_pst10mts
             - avg_wnd_dir_pst10mts-qa
             - avg_wnd_dir_pst10mts-uom
-            - avg_wnd_dir_pst1hr
-            - avg_wnd_dir_pst1hr-qa
-            - avg_wnd_dir_pst1hr-uom
-            - avg_wnd_dir_pst1mt
+            - avg_wnd_dir_pst10mts_1
+            - avg_wnd_dir_pst10mts_1-qa
+            - avg_wnd_dir_pst10mts_1-uom
+            - avg_wnd_dir_pst10mts_2
+            - avg_wnd_dir_pst10mts_2-qa
+            - avg_wnd_dir_pst10mts_2-uom
             - avg_wnd_dir_pst1mt-qa
             - avg_wnd_dir_pst1mt-uom
             - avg_wnd_spd_10m_pst10mts
@@ -19468,20 +19484,12 @@ paths:
             - avg_wnd_spd_10m_pst10mts-data_flag-value
             - avg_wnd_spd_10m_pst10mts-qa
             - avg_wnd_spd_10m_pst10mts-uom
-            - avg_wnd_spd_10m_pst10mts_1
-            - avg_wnd_spd_10m_pst10mts_1-uom
-            - avg_wnd_spd_10m_pst10mts_2
-            - avg_wnd_spd_10m_pst10mts_2-uom
             - avg_wnd_spd_10m_pst1hr
             - avg_wnd_spd_10m_pst1hr-data_flag-code_src
             - avg_wnd_spd_10m_pst1hr-data_flag-uom
             - avg_wnd_spd_10m_pst1hr-data_flag-value
             - avg_wnd_spd_10m_pst1hr-qa
             - avg_wnd_spd_10m_pst1hr-uom
-            - avg_wnd_spd_10m_pst1hr_1
-            - avg_wnd_spd_10m_pst1hr_1-uom
-            - avg_wnd_spd_10m_pst1hr_2
-            - avg_wnd_spd_10m_pst1hr_2-uom
             - avg_wnd_spd_10m_pst1mt
             - avg_wnd_spd_10m_pst1mt-qa
             - avg_wnd_spd_10m_pst1mt-uom
@@ -19491,10 +19499,6 @@ paths:
             - avg_wnd_spd_10m_pst2mts-data_flag-value
             - avg_wnd_spd_10m_pst2mts-qa
             - avg_wnd_spd_10m_pst2mts-uom
-            - avg_wnd_spd_10m_pst2mts_1
-            - avg_wnd_spd_10m_pst2mts_1-uom
-            - avg_wnd_spd_10m_pst2mts_2
-            - avg_wnd_spd_10m_pst2mts_2-uom
             - avg_wnd_spd_pcpn_gag_pst10mts
             - avg_wnd_spd_pcpn_gag_pst10mts-data_flag-code_src
             - avg_wnd_spd_pcpn_gag_pst10mts-data_flag-uom
@@ -19507,12 +19511,17 @@ paths:
             - avg_wnd_spd_pst10mts
             - avg_wnd_spd_pst10mts-qa
             - avg_wnd_spd_pst10mts-uom
-            - avg_wnd_spd_pst1mt
+            - avg_wnd_spd_pst10mts_1
+            - avg_wnd_spd_pst10mts_1-qa
+            - avg_wnd_spd_pst10mts_1-uom
+            - avg_wnd_spd_pst10mts_2
+            - avg_wnd_spd_pst10mts_2-qa
+            - avg_wnd_spd_pst10mts_2-uom
             - avg_wnd_spd_pst1mt-qa
             - avg_wnd_spd_pst1mt-uom
-            - batry_crnt
-            - batry_crnt-qa
-            - batry_crnt-uom
+            - avg_wtr_lvl_snsr_volt_pst10mts
+            - avg_wtr_lvl_snsr_volt_pst10mts-qa
+            - avg_wtr_lvl_snsr_volt_pst10mts-uom
             - batry_volt
             - batry_volt-qa
             - batry_volt-uom
@@ -19537,6 +19546,9 @@ paths:
             - cld_amt_code_4
             - cld_amt_code_4-qa
             - cld_amt_code_4-uom
+            - cld_amt_code_5
+            - cld_amt_code_5-qa
+            - cld_amt_code_5-uom
             - cld_bas_hgt_1
             - cld_bas_hgt_1-qa
             - cld_bas_hgt_1-uom
@@ -19549,6 +19561,9 @@ paths:
             - cld_bas_hgt_4
             - cld_bas_hgt_4-qa
             - cld_bas_hgt_4-uom
+            - cld_bas_hgt_5
+            - cld_bas_hgt_5-qa
+            - cld_bas_hgt_5-uom
             - cld_typ_1
             - cld_typ_1-qa
             - cld_typ_1-uom
@@ -19558,10 +19573,22 @@ paths:
             - cld_typ_3
             - cld_typ_3-qa
             - cld_typ_3-uom
+            - cld_typ_4
+            - cld_typ_4-qa
+            - cld_typ_4-uom
+            - cld_typ_5
+            - cld_typ_5-qa
+            - cld_typ_5-uom
             - clim_id-uom
             - clim_id-value
             - cor-uom
             - cor-value
+            - crnt_buoy_lat
+            - crnt_buoy_lat-qa
+            - crnt_buoy_lat-uom
+            - crnt_buoy_long
+            - crnt_buoy_long-qa
+            - crnt_buoy_long-uom
             - data_attrib_not-uom
             - data_attrib_not-value
             - data_avail
@@ -19586,8 +19613,6 @@ paths:
             - dwpt_temp-data_flag-value
             - dwpt_temp-qa
             - dwpt_temp-uom
-            - frstry_distrct-uom
-            - frstry_distrct-value
             - hdr_fwd_pwr
             - hdr_fwd_pwr-qa
             - hdr_fwd_pwr-uom
@@ -19606,6 +19631,8 @@ paths:
             - logr_panl_temp
             - logr_panl_temp-qa
             - logr_panl_temp-uom
+            - logr_typ-uom
+            - logr_typ-value
             - max_air_temp_pst1hr
             - max_air_temp_pst1hr-data_flag-code_src
             - max_air_temp_pst1hr-data_flag-uom
@@ -19630,6 +19657,15 @@ paths:
             - max_air_temp_pst6hrs-data_flag-value
             - max_air_temp_pst6hrs-qa
             - max_air_temp_pst6hrs-uom
+            - max_avg_wnd_spd_pst10mts
+            - max_avg_wnd_spd_pst10mts-qa
+            - max_avg_wnd_spd_pst10mts-uom
+            - max_avg_wnd_spd_pst10mts_1
+            - max_avg_wnd_spd_pst10mts_1-qa
+            - max_avg_wnd_spd_pst10mts_1-uom
+            - max_avg_wnd_spd_pst10mts_2
+            - max_avg_wnd_spd_pst10mts_2-qa
+            - max_avg_wnd_spd_pst10mts_2-uom
             - max_batry_volt_pst1hr
             - max_batry_volt_pst1hr-data_flag-code_src
             - max_batry_volt_pst1hr-data_flag-uom
@@ -19666,12 +19702,8 @@ paths:
             - max_rel_hum_pst24hrs
             - max_rel_hum_pst24hrs-qa
             - max_rel_hum_pst24hrs-uom
-            - max_vis_pst10mts
             - max_vis_pst10mts-qa
             - max_vis_pst10mts-uom
-            - max_wnd_dir_max_spd_10m_pst1hr
-            - max_wnd_dir_max_spd_10m_pst1hr-qa
-            - max_wnd_dir_max_spd_10m_pst1hr-uom
             - max_wnd_gst_spd_10m_pst10mts
             - max_wnd_gst_spd_10m_pst10mts-data_flag-code_src
             - max_wnd_gst_spd_10m_pst10mts-data_flag-uom
@@ -19684,20 +19716,12 @@ paths:
             - max_wnd_spd_10m_pst10mts-data_flag-value
             - max_wnd_spd_10m_pst10mts-qa
             - max_wnd_spd_10m_pst10mts-uom
-            - max_wnd_spd_10m_pst10mts_1
-            - max_wnd_spd_10m_pst10mts_1-uom
-            - max_wnd_spd_10m_pst10mts_2
-            - max_wnd_spd_10m_pst10mts_2-uom
             - max_wnd_spd_10m_pst1hr
             - max_wnd_spd_10m_pst1hr-data_flag-code_src
             - max_wnd_spd_10m_pst1hr-data_flag-uom
             - max_wnd_spd_10m_pst1hr-data_flag-value
             - max_wnd_spd_10m_pst1hr-qa
             - max_wnd_spd_10m_pst1hr-uom
-            - max_wnd_spd_10m_pst1hr_1
-            - max_wnd_spd_10m_pst1hr_1-uom
-            - max_wnd_spd_10m_pst1hr_2
-            - max_wnd_spd_10m_pst1hr_2-uom
             - max_wnd_spd_10m_pst1mt
             - max_wnd_spd_10m_pst1mt-qa
             - max_wnd_spd_10m_pst1mt-uom
@@ -19710,10 +19734,6 @@ paths:
             - max_wnd_spd_pst1hr_tm-data_flag-value
             - max_wnd_spd_pst1hr_tm-qa
             - max_wnd_spd_pst1hr_tm-uom
-            - max_wnd_spd_pst1hr_tm_1
-            - max_wnd_spd_pst1hr_tm_1-uom
-            - max_wnd_spd_pst1hr_tm_2
-            - max_wnd_spd_pst1hr_tm_2-uom
             - min_air_temp_pst1hr
             - min_air_temp_pst1hr-data_flag-code_src
             - min_air_temp_pst1hr-data_flag-uom
@@ -19759,7 +19779,6 @@ paths:
             - min_rel_hum_pst24hrs
             - min_rel_hum_pst24hrs-qa
             - min_rel_hum_pst24hrs-uom
-            - min_vis_pst10mts
             - min_vis_pst10mts-qa
             - min_vis_pst10mts-uom
             - msc_id-uom
@@ -19778,11 +19797,6 @@ paths:
             - pcpn_amt_pst10mts-data_flag-uom
             - pcpn_amt_pst10mts-data_flag-value
             - pcpn_amt_pst10mts-uom
-            - pcpn_amt_pst12hrs
-            - pcpn_amt_pst12hrs-data_flag-code_src
-            - pcpn_amt_pst12hrs-data_flag-uom
-            - pcpn_amt_pst12hrs-data_flag-value
-            - pcpn_amt_pst12hrs-uom
             - pcpn_amt_pst1hr
             - pcpn_amt_pst1hr-data_flag-code_src
             - pcpn_amt_pst1hr-data_flag-uom
@@ -19812,16 +19826,17 @@ paths:
             - pcpn_amt_snc_top_of_hr-data_flag-uom
             - pcpn_amt_snc_top_of_hr-data_flag-value
             - pcpn_amt_snc_top_of_hr-uom
-            - pcpn_snc_last_reset
-            - pcpn_snc_last_reset-qa
-            - pcpn_snc_last_reset-uom
             - pcpn_snc_last_syno_hr
             - pcpn_snc_last_syno_hr-data_flag-code_src
             - pcpn_snc_last_syno_hr-data_flag-uom
             - pcpn_snc_last_syno_hr-data_flag-value
             - pcpn_snc_last_syno_hr-uom
-            - pcpn_snsr_stat
-            - pcpn_snsr_stat-qa
+            - pk_wave_hgt_pst20mts
+            - pk_wave_hgt_pst20mts-qa
+            - pk_wave_hgt_pst20mts-uom
+            - pk_wave_pd_pst20mts
+            - pk_wave_pd_pst20mts-qa
+            - pk_wave_pd_pst20mts-uom
             - pk_wnd_rmk
             - pk_wnd_rmk-data_flag-code_src
             - pk_wnd_rmk-data_flag-uom
@@ -19847,9 +19862,9 @@ paths:
             - prsnt_wx_2
             - prsnt_wx_2-qa
             - prsnt_wx_2-uom
-            - refltd_shrtwv_radn
-            - refltd_shrtwv_radn-qa
-            - refltd_shrtwv_radn-uom
+            - pvmnt_sfc_temp_1
+            - pvmnt_sfc_temp_1-qa
+            - pvmnt_sfc_temp_1-uom
             - rel_hum
             - rel_hum-qa
             - rel_hum-uom
@@ -19893,6 +19908,12 @@ paths:
             - rpt_typ-value
             - rptg_freq-uom
             - rptg_freq-value
+            - sig_wave_hgt_pst20mts
+            - sig_wave_hgt_pst20mts-qa
+            - sig_wave_hgt_pst20mts-uom
+            - sig_wave_pd_pst20mts
+            - sig_wave_pd_pst20mts-qa
+            - sig_wave_pd_pst20mts-uom
             - snw_dpth
             - snw_dpth-data_flag-code_src
             - snw_dpth-data_flag-uom
@@ -19905,14 +19926,6 @@ paths:
             - snw_dpth_2-uom
             - snw_dpth_3
             - snw_dpth_3-uom
-            - snw_dpth_qlty
-            - snw_dpth_qlty-qa
-            - solr_panl_crnt
-            - solr_panl_crnt-qa
-            - solr_panl_crnt-uom
-            - solr_panl_volt
-            - solr_panl_volt-qa
-            - solr_panl_volt-uom
             - stn_id-uom
             - stn_id-value
             - stn_nam-uom
@@ -19924,9 +19937,6 @@ paths:
             - stn_typ-value
             - tc_id-uom
             - tc_id-value
-            - tlmtry_volt
-            - tlmtry_volt-qa
-            - tlmtry_volt-uom
             - tot_cld_amt
             - tot_cld_amt-qa
             - tot_cld_amt-uom
@@ -19939,19 +19949,14 @@ paths:
             - tot_globl_solr_radn_pst1mt
             - tot_globl_solr_radn_pst1mt-qa
             - tot_globl_solr_radn_pst1mt-uom
-            - tot_rnfl_amt_pst5mts
             - tot_rnfl_amt_pst5mts-qa
             - tot_rnfl_amt_pst5mts-uom
-            - trans_batry_volt
-            - trans_batry_volt-qa
-            - trans_batry_volt-uom
             - trans_batry_volt_1hr_ago
             - trans_batry_volt_1hr_ago-qa
             - trans_batry_volt_1hr_ago-uom
             - trans_date_tm-uom
             - trans_date_tm-value
             - url
-            - vert_vis
             - vert_vis-qa
             - vert_vis-uom
             - vis
@@ -19962,6 +19967,8 @@ paths:
             - wetblb_temp-data_flag-uom
             - wetblb_temp-data_flag-value
             - wetblb_temp-uom
+            - wmo_id_extnd-uom
+            - wmo_id_extnd-value
             - wmo_synop_id-uom
             - wmo_synop_id-value
             - wnd_dir_10m_pst10mts_max_spd
@@ -19970,20 +19977,12 @@ paths:
             - wnd_dir_10m_pst10mts_max_spd-data_flag-value
             - wnd_dir_10m_pst10mts_max_spd-qa
             - wnd_dir_10m_pst10mts_max_spd-uom
-            - wnd_dir_10m_pst10mts_max_spd_1
-            - wnd_dir_10m_pst10mts_max_spd_1-uom
-            - wnd_dir_10m_pst10mts_max_spd_2
-            - wnd_dir_10m_pst10mts_max_spd_2-uom
             - wnd_dir_10m_pst1hr_max_spd
             - wnd_dir_10m_pst1hr_max_spd-data_flag-code_src
             - wnd_dir_10m_pst1hr_max_spd-data_flag-uom
             - wnd_dir_10m_pst1hr_max_spd-data_flag-value
             - wnd_dir_10m_pst1hr_max_spd-qa
             - wnd_dir_10m_pst1hr_max_spd-uom
-            - wnd_dir_10m_pst1hr_max_spd_1
-            - wnd_dir_10m_pst1hr_max_spd_1-uom
-            - wnd_dir_10m_pst1hr_max_spd_2
-            - wnd_dir_10m_pst1hr_max_spd_2-uom
             - wnd_dir_10m_pst1hr_pk_spd
             - wnd_dir_10m_pst1hr_pk_spd-data_flag-code_src
             - wnd_dir_10m_pst1hr_pk_spd-data_flag-uom
@@ -19996,12 +19995,11 @@ paths:
             - wnd_dir_pst1hr_max_spd
             - wnd_dir_pst1hr_max_spd-qa
             - wnd_dir_pst1hr_max_spd-uom
-            - wnd_gst_char
-            - wnd_gst_char-qa
-            - wnd_gst_char-uom
             - wnd_run_pst1hr
             - wnd_run_pst1hr-qa
             - wnd_run_pst1hr-uom
+            - wnd_snsr_vert_disp
+            - wnd_snsr_vert_disp-qa
             - wnd_snsr_vert_disp-uom
             - wnd_snsr_vert_disp-value
             type: string
@@ -20126,6 +20124,29 @@ paths:
         style: form
       - explode: false
         in: query
+        name: avg_air_temp_pst10mts
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: avg_air_temp_pst10mts-qa
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: avg_air_temp_pst10mts-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
         name: avg_air_temp_pst1hr
         required: false
         schema:
@@ -20216,29 +20237,6 @@ paths:
         style: form
       - explode: false
         in: query
-        name: avg_air_temp_pst2mts
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: avg_air_temp_pst2mts-qa
-        required: false
-        schema:
-          format: long
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: avg_air_temp_pst2mts-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
         name: avg_batry_crnt_pst1hr
         required: false
         schema:
@@ -20256,6 +20254,29 @@ paths:
       - explode: false
         in: query
         name: avg_batry_crnt_pst1hr-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: avg_batry_volt_pst10mts
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: avg_batry_volt_pst10mts-qa
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: avg_batry_volt_pst10mts-uom
         required: false
         schema:
           type: string
@@ -20356,7 +20377,7 @@ paths:
         name: avg_dwpt_temp_pst1hr
         required: false
         schema:
-          format: long
+          format: float
           type: number
         style: form
       - explode: false
@@ -20393,7 +20414,7 @@ paths:
         name: avg_globl_solr_radn_pst1hr
         required: false
         schema:
-          format: long
+          format: float
           type: number
         style: form
       - explode: false
@@ -20420,14 +20441,6 @@ paths:
         style: form
       - explode: false
         in: query
-        name: avg_globl_solr_radn_pst1hr-qa
-        required: false
-        schema:
-          format: long
-          type: number
-        style: form
-      - explode: false
-        in: query
         name: avg_globl_solr_radn_pst1hr-uom
         required: false
         schema:
@@ -20438,7 +20451,7 @@ paths:
         name: avg_globl_solr_radn_pst1mt
         required: false
         schema:
-          format: long
+          format: float
           type: number
         style: form
       - explode: false
@@ -20466,6 +20479,89 @@ paths:
       - explode: false
         in: query
         name: avg_globl_solr_radn_pst1mt-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: avg_max_wave_hgt_pst20mts
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: avg_max_wave_hgt_pst20mts-qa
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: avg_max_wave_hgt_pst20mts-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: avg_max_wave_pd_pst20mts
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: avg_max_wave_pd_pst20mts-qa
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: avg_max_wave_pd_pst20mts-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: avg_mslp_pst10mts
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: avg_mslp_pst10mts-data_flag-code_src
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: avg_mslp_pst10mts-data_flag-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: avg_mslp_pst10mts-data_flag-value
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: avg_mslp_pst10mts-uom
         required: false
         schema:
           type: string
@@ -20517,7 +20613,15 @@ paths:
         style: form
       - explode: false
         in: query
-        name: avg_rel_hum_pst2mts
+        name: avg_sea_sfc_temp_pst10mts
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: avg_sea_sfc_temp_pst10mts-qa
         required: false
         schema:
           format: long
@@ -20525,15 +20629,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: avg_rel_hum_pst2mts-qa
-        required: false
-        schema:
-          format: long
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: avg_rel_hum_pst2mts-uom
+        name: avg_sea_sfc_temp_pst10mts-uom
         required: false
         schema:
           type: string
@@ -20608,6 +20704,29 @@ paths:
         style: form
       - explode: false
         in: query
+        name: avg_solr_panl_crnt_pst10mts
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: avg_solr_panl_crnt_pst10mts-qa
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: avg_solr_panl_crnt_pst10mts-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
         name: avg_solr_panl_crnt_pst1hr
         required: false
         schema:
@@ -20654,6 +20773,75 @@ paths:
         style: form
       - explode: false
         in: query
+        name: avg_stn_pres_pst10mts
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: avg_stn_pres_pst10mts-qa
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: avg_stn_pres_pst10mts-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: avg_stn_pres_pst10mts_1
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: avg_stn_pres_pst10mts_1-qa
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: avg_stn_pres_pst10mts_1-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: avg_stn_pres_pst10mts_2
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: avg_stn_pres_pst10mts_2-qa
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: avg_stn_pres_pst10mts_2-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
         name: avg_vis_pst10mts
         required: false
         schema:
@@ -20671,6 +20859,52 @@ paths:
       - explode: false
         in: query
         name: avg_vis_pst10mts-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: avg_wave_hgt_pst20mts
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: avg_wave_hgt_pst20mts-qa
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: avg_wave_hgt_pst20mts-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: avg_wave_pd_pst20mts
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: avg_wave_pd_pst20mts-qa
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: avg_wave_pd_pst20mts-uom
         required: false
         schema:
           type: string
@@ -20722,36 +20956,6 @@ paths:
         style: form
       - explode: false
         in: query
-        name: avg_wnd_dir_10m_pst10mts_1
-        required: false
-        schema:
-          format: long
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: avg_wnd_dir_10m_pst10mts_1-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: avg_wnd_dir_10m_pst10mts_2
-        required: false
-        schema:
-          format: long
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: avg_wnd_dir_10m_pst10mts_2-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
         name: avg_wnd_dir_10m_pst1hr
         required: false
         schema:
@@ -20791,36 +20995,6 @@ paths:
       - explode: false
         in: query
         name: avg_wnd_dir_10m_pst1hr-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: avg_wnd_dir_10m_pst1hr_1
-        required: false
-        schema:
-          format: long
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: avg_wnd_dir_10m_pst1hr_1-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: avg_wnd_dir_10m_pst1hr_2
-        required: false
-        schema:
-          format: long
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: avg_wnd_dir_10m_pst1hr_2-uom
         required: false
         schema:
           type: string
@@ -20895,36 +21069,6 @@ paths:
         style: form
       - explode: false
         in: query
-        name: avg_wnd_dir_10m_pst2mts_1
-        required: false
-        schema:
-          format: long
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: avg_wnd_dir_10m_pst2mts_1-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: avg_wnd_dir_10m_pst2mts_2
-        required: false
-        schema:
-          format: long
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: avg_wnd_dir_10m_pst2mts_2-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
         name: avg_wnd_dir_pst10mts
         required: false
         schema:
@@ -20948,7 +21092,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: avg_wnd_dir_pst1hr
+        name: avg_wnd_dir_pst10mts_1
         required: false
         schema:
           format: long
@@ -20956,7 +21100,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: avg_wnd_dir_pst1hr-qa
+        name: avg_wnd_dir_pst10mts_1-qa
         required: false
         schema:
           format: long
@@ -20964,18 +21108,33 @@ paths:
         style: form
       - explode: false
         in: query
-        name: avg_wnd_dir_pst1hr-uom
+        name: avg_wnd_dir_pst10mts_1-uom
         required: false
         schema:
           type: string
         style: form
       - explode: false
         in: query
-        name: avg_wnd_dir_pst1mt
+        name: avg_wnd_dir_pst10mts_2
         required: false
         schema:
           format: long
           type: number
+        style: form
+      - explode: false
+        in: query
+        name: avg_wnd_dir_pst10mts_2-qa
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: avg_wnd_dir_pst10mts_2-uom
+        required: false
+        schema:
+          type: string
         style: form
       - explode: false
         in: query
@@ -21039,36 +21198,6 @@ paths:
         style: form
       - explode: false
         in: query
-        name: avg_wnd_spd_10m_pst10mts_1
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: avg_wnd_spd_10m_pst10mts_1-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: avg_wnd_spd_10m_pst10mts_2
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: avg_wnd_spd_10m_pst10mts_2-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
         name: avg_wnd_spd_10m_pst1hr
         required: false
         schema:
@@ -21108,36 +21237,6 @@ paths:
       - explode: false
         in: query
         name: avg_wnd_spd_10m_pst1hr-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: avg_wnd_spd_10m_pst1hr_1
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: avg_wnd_spd_10m_pst1hr_1-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: avg_wnd_spd_10m_pst1hr_2
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: avg_wnd_spd_10m_pst1hr_2-uom
         required: false
         schema:
           type: string
@@ -21206,36 +21305,6 @@ paths:
       - explode: false
         in: query
         name: avg_wnd_spd_10m_pst2mts-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: avg_wnd_spd_10m_pst2mts_1
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: avg_wnd_spd_10m_pst2mts_1-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: avg_wnd_spd_10m_pst2mts_2
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: avg_wnd_spd_10m_pst2mts_2-uom
         required: false
         schema:
           type: string
@@ -21333,11 +21402,49 @@ paths:
         style: form
       - explode: false
         in: query
-        name: avg_wnd_spd_pst1mt
+        name: avg_wnd_spd_pst10mts_1
         required: false
         schema:
           format: float
           type: number
+        style: form
+      - explode: false
+        in: query
+        name: avg_wnd_spd_pst10mts_1-qa
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: avg_wnd_spd_pst10mts_1-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: avg_wnd_spd_pst10mts_2
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: avg_wnd_spd_pst10mts_2-qa
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: avg_wnd_spd_pst10mts_2-uom
+        required: false
+        schema:
+          type: string
         style: form
       - explode: false
         in: query
@@ -21356,7 +21463,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: batry_crnt
+        name: avg_wtr_lvl_snsr_volt_pst10mts
         required: false
         schema:
           format: float
@@ -21364,7 +21471,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: batry_crnt-qa
+        name: avg_wtr_lvl_snsr_volt_pst10mts-qa
         required: false
         schema:
           format: long
@@ -21372,7 +21479,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: batry_crnt-uom
+        name: avg_wtr_lvl_snsr_volt_pst10mts-uom
         required: false
         schema:
           type: string
@@ -21563,6 +21670,29 @@ paths:
         style: form
       - explode: false
         in: query
+        name: cld_amt_code_5
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: cld_amt_code_5-qa
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: cld_amt_code_5-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
         name: cld_bas_hgt_1
         required: false
         schema:
@@ -21655,6 +21785,29 @@ paths:
         style: form
       - explode: false
         in: query
+        name: cld_bas_hgt_5
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: cld_bas_hgt_5-qa
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: cld_bas_hgt_5-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
         name: cld_typ_1
         required: false
         schema:
@@ -21724,6 +21877,52 @@ paths:
         style: form
       - explode: false
         in: query
+        name: cld_typ_4
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: cld_typ_4-qa
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: cld_typ_4-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: cld_typ_5
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: cld_typ_5-qa
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: cld_typ_5-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
         name: clim_id-uom
         required: false
         schema:
@@ -21746,6 +21945,52 @@ paths:
       - explode: false
         in: query
         name: cor-value
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: crnt_buoy_lat
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: crnt_buoy_lat-qa
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: crnt_buoy_lat-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: crnt_buoy_long
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: crnt_buoy_long-qa
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: crnt_buoy_long-uom
         required: false
         schema:
           type: string
@@ -21888,7 +22133,7 @@ paths:
         name: dwpt_temp
         required: false
         schema:
-          format: long
+          format: float
           type: number
         style: form
       - explode: false
@@ -21924,20 +22169,6 @@ paths:
       - explode: false
         in: query
         name: dwpt_temp-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: frstry_distrct-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: frstry_distrct-value
         required: false
         schema:
           type: string
@@ -21993,7 +22224,7 @@ paths:
         name: hdr_refltd_pwr
         required: false
         schema:
-          format: float
+          format: long
           type: number
         style: form
       - explode: false
@@ -22016,7 +22247,7 @@ paths:
         name: hdr_suply_volt
         required: false
         schema:
-          format: long
+          format: float
           type: number
         style: form
       - explode: false
@@ -22074,6 +22305,20 @@ paths:
       - explode: false
         in: query
         name: logr_panl_temp-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: logr_typ-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: logr_typ-value
         required: false
         schema:
           type: string
@@ -22254,6 +22499,75 @@ paths:
       - explode: false
         in: query
         name: max_air_temp_pst6hrs-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: max_avg_wnd_spd_pst10mts
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: max_avg_wnd_spd_pst10mts-qa
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: max_avg_wnd_spd_pst10mts-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: max_avg_wnd_spd_pst10mts_1
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: max_avg_wnd_spd_pst10mts_1-qa
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: max_avg_wnd_spd_pst10mts_1-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: max_avg_wnd_spd_pst10mts_2
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: max_avg_wnd_spd_pst10mts_2-qa
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: max_avg_wnd_spd_pst10mts_2-uom
         required: false
         schema:
           type: string
@@ -22532,14 +22846,6 @@ paths:
         style: form
       - explode: false
         in: query
-        name: max_vis_pst10mts
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
         name: max_vis_pst10mts-qa
         required: false
         schema:
@@ -22549,29 +22855,6 @@ paths:
       - explode: false
         in: query
         name: max_vis_pst10mts-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: max_wnd_dir_max_spd_10m_pst1hr
-        required: false
-        schema:
-          format: long
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: max_wnd_dir_max_spd_10m_pst1hr-qa
-        required: false
-        schema:
-          format: long
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: max_wnd_dir_max_spd_10m_pst1hr-uom
         required: false
         schema:
           type: string
@@ -22668,36 +22951,6 @@ paths:
         style: form
       - explode: false
         in: query
-        name: max_wnd_spd_10m_pst10mts_1
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: max_wnd_spd_10m_pst10mts_1-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: max_wnd_spd_10m_pst10mts_2
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: max_wnd_spd_10m_pst10mts_2-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
         name: max_wnd_spd_10m_pst1hr
         required: false
         schema:
@@ -22737,36 +22990,6 @@ paths:
       - explode: false
         in: query
         name: max_wnd_spd_10m_pst1hr-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: max_wnd_spd_10m_pst1hr_1
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: max_wnd_spd_10m_pst1hr_1-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: max_wnd_spd_10m_pst1hr_2
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: max_wnd_spd_10m_pst1hr_2-uom
         required: false
         schema:
           type: string
@@ -22858,36 +23081,6 @@ paths:
       - explode: false
         in: query
         name: max_wnd_spd_pst1hr_tm-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: max_wnd_spd_pst1hr_tm_1
-        required: false
-        schema:
-          format: long
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: max_wnd_spd_pst1hr_tm_1-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: max_wnd_spd_pst1hr_tm_2
-        required: false
-        schema:
-          format: long
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: max_wnd_spd_pst1hr_tm_2-uom
         required: false
         schema:
           type: string
@@ -23233,14 +23426,6 @@ paths:
         style: form
       - explode: false
         in: query
-        name: min_vis_pst10mts
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
         name: min_vis_pst10mts-qa
         required: false
         schema:
@@ -23368,43 +23553,6 @@ paths:
       - explode: false
         in: query
         name: pcpn_amt_pst10mts-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: pcpn_amt_pst12hrs
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: pcpn_amt_pst12hrs-data_flag-code_src
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: pcpn_amt_pst12hrs-data_flag-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: pcpn_amt_pst12hrs-data_flag-value
-        required: false
-        schema:
-          format: long
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: pcpn_amt_pst12hrs-uom
         required: false
         schema:
           type: string
@@ -23628,29 +23776,6 @@ paths:
         style: form
       - explode: false
         in: query
-        name: pcpn_snc_last_reset
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: pcpn_snc_last_reset-qa
-        required: false
-        schema:
-          format: long
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: pcpn_snc_last_reset-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
         name: pcpn_snc_last_syno_hr
         required: false
         schema:
@@ -23688,7 +23813,15 @@ paths:
         style: form
       - explode: false
         in: query
-        name: pcpn_snsr_stat
+        name: pk_wave_hgt_pst20mts
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: pk_wave_hgt_pst20mts-qa
         required: false
         schema:
           format: long
@@ -23696,11 +23829,33 @@ paths:
         style: form
       - explode: false
         in: query
-        name: pcpn_snsr_stat-qa
+        name: pk_wave_hgt_pst20mts-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: pk_wave_pd_pst20mts
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: pk_wave_pd_pst20mts-qa
         required: false
         schema:
           format: long
           type: number
+        style: form
+      - explode: false
+        in: query
+        name: pk_wave_pd_pst20mts-uom
+        required: false
+        schema:
+          type: string
         style: form
       - explode: false
         in: query
@@ -23891,7 +24046,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: refltd_shrtwv_radn
+        name: pvmnt_sfc_temp_1
         required: false
         schema:
           format: float
@@ -23899,7 +24054,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: refltd_shrtwv_radn-qa
+        name: pvmnt_sfc_temp_1-qa
         required: false
         schema:
           format: long
@@ -23907,7 +24062,7 @@ paths:
         style: form
       - explode: false
         in: query
-        name: refltd_shrtwv_radn-uom
+        name: pvmnt_sfc_temp_1-uom
         required: false
         schema:
           type: string
@@ -24234,6 +24389,52 @@ paths:
         style: form
       - explode: false
         in: query
+        name: sig_wave_hgt_pst20mts
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: sig_wave_hgt_pst20mts-qa
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: sig_wave_hgt_pst20mts-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: sig_wave_pd_pst20mts
+        required: false
+        schema:
+          format: float
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: sig_wave_pd_pst20mts-qa
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: sig_wave_pd_pst20mts-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
         name: snw_dpth
         required: false
         schema:
@@ -24324,68 +24525,6 @@ paths:
         style: form
       - explode: false
         in: query
-        name: snw_dpth_qlty
-        required: false
-        schema:
-          format: long
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: snw_dpth_qlty-qa
-        required: false
-        schema:
-          format: long
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: solr_panl_crnt
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: solr_panl_crnt-qa
-        required: false
-        schema:
-          format: long
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: solr_panl_crnt-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: solr_panl_volt
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: solr_panl_volt-qa
-        required: false
-        schema:
-          format: long
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: solr_panl_volt-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
         name: stn_id-uom
         required: false
         schema:
@@ -24459,29 +24598,6 @@ paths:
       - explode: false
         in: query
         name: tc_id-value
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: tlmtry_volt
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: tlmtry_volt-qa
-        required: false
-        schema:
-          format: long
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: tlmtry_volt-uom
         required: false
         schema:
           type: string
@@ -24579,14 +24695,6 @@ paths:
         style: form
       - explode: false
         in: query
-        name: tot_rnfl_amt_pst5mts
-        required: false
-        schema:
-          format: long
-          type: number
-        style: form
-      - explode: false
-        in: query
         name: tot_rnfl_amt_pst5mts-qa
         required: false
         schema:
@@ -24596,29 +24704,6 @@ paths:
       - explode: false
         in: query
         name: tot_rnfl_amt_pst5mts-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: trans_batry_volt
-        required: false
-        schema:
-          format: float
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: trans_batry_volt-qa
-        required: false
-        schema:
-          format: long
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: trans_batry_volt-uom
         required: false
         schema:
           type: string
@@ -24667,14 +24752,6 @@ paths:
         required: false
         schema:
           type: string
-        style: form
-      - explode: false
-        in: query
-        name: vert_vis
-        required: false
-        schema:
-          format: float
-          type: number
         style: form
       - explode: false
         in: query
@@ -24753,6 +24830,20 @@ paths:
         style: form
       - explode: false
         in: query
+        name: wmo_id_extnd-uom
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: wmo_id_extnd-value
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
         name: wmo_synop_id-uom
         required: false
         schema:
@@ -24812,36 +24903,6 @@ paths:
         style: form
       - explode: false
         in: query
-        name: wnd_dir_10m_pst10mts_max_spd_1
-        required: false
-        schema:
-          format: long
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: wnd_dir_10m_pst10mts_max_spd_1-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: wnd_dir_10m_pst10mts_max_spd_2
-        required: false
-        schema:
-          format: long
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: wnd_dir_10m_pst10mts_max_spd_2-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
         name: wnd_dir_10m_pst1hr_max_spd
         required: false
         schema:
@@ -24881,36 +24942,6 @@ paths:
       - explode: false
         in: query
         name: wnd_dir_10m_pst1hr_max_spd-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: wnd_dir_10m_pst1hr_max_spd_1
-        required: false
-        schema:
-          format: long
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: wnd_dir_10m_pst1hr_max_spd_1-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
-        name: wnd_dir_10m_pst1hr_max_spd_2
-        required: false
-        schema:
-          format: long
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: wnd_dir_10m_pst1hr_max_spd_2-uom
         required: false
         schema:
           type: string
@@ -25008,29 +25039,6 @@ paths:
         style: form
       - explode: false
         in: query
-        name: wnd_gst_char
-        required: false
-        schema:
-          format: long
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: wnd_gst_char-qa
-        required: false
-        schema:
-          format: long
-          type: number
-        style: form
-      - explode: false
-        in: query
-        name: wnd_gst_char-uom
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
         name: wnd_run_pst1hr
         required: false
         schema:
@@ -25051,6 +25059,22 @@ paths:
         required: false
         schema:
           type: string
+        style: form
+      - explode: false
+        in: query
+        name: wnd_snsr_vert_disp
+        required: false
+        schema:
+          format: long
+          type: number
+        style: form
+      - explode: false
+        in: query
+        name: wnd_snsr_vert_disp-qa
+        required: false
+        schema:
+          format: long
+          type: number
         style: form
       - explode: false
         in: query
@@ -25553,7 +25577,6 @@ paths:
             - metobject.rain.unit
             - metobject.rain.value
             - metobject.risk_swo.value
-            - metobject.severity.value
             - metobject.sub_type
             - metobject.thunderstorm.value
             - metobject.tornado_risk.value
@@ -25676,13 +25699,6 @@ paths:
         schema:
           format: long
           type: number
-        style: form
-      - explode: false
-        in: query
-        name: metobject.severity.value
-        required: false
-        schema:
-          type: string
         style: form
       - explode: false
         in: query
@@ -25935,7 +25951,7 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Weather alerts metadata
+      summary: Get Weather Alerts metadata
       tags:
       - weather-alerts
   /collections/weather-alerts/items:
@@ -26105,13 +26121,6 @@ paths:
         style: form
       - explode: false
         in: query
-        name: id
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: false
-        in: query
         name: impact_en
         required: false
         schema:
@@ -26184,7 +26193,7 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Weather alerts items
+      summary: Get Weather Alerts items
       tags:
       - weather-alerts
     options:
@@ -26199,7 +26208,7 @@ paths:
       responses:
         '200':
           description: options response
-      summary: Options for Weather alerts items
+      summary: Options for Weather Alerts items
       tags:
       - weather-alerts
   /collections/weather-alerts/items/{featureId}:
@@ -26226,7 +26235,7 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Weather alerts item by id
+      summary: Get Weather Alerts item by id
       tags:
       - weather-alerts
     options:
@@ -26243,7 +26252,7 @@ paths:
       responses:
         '200':
           description: options response
-      summary: Options for Weather alerts item by id
+      summary: Options for Weather Alerts item by id
       tags:
       - weather-alerts
   /collections/weather-alerts/queryables:
@@ -26268,7 +26277,7 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Weather alerts queryables
+      summary: Get Weather Alerts queryables
       tags:
       - weather-alerts
   /collections/weather-alerts/schema:
@@ -26293,7 +26302,7 @@ paths:
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
         '500':
           $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
-      summary: Get Weather alerts schema
+      summary: Get Weather Alerts schema
       tags:
       - weather-alerts
   /collections/weather:cansips:100km:forecast:members:
@@ -26474,6 +26483,66 @@ paths:
         precipitations at 100km resolution coverage
       tags:
       - weather:cansips:100km:forecast:seasonal-products
+  /collections/weather:cansips:100km:hindcast:
+    get:
+      description: The Canadian Seasonal to Inter-annual Prediction System (CanSIPS)
+        carries out physics calculations to arrive at probabilistic predictions of
+        atmospheric elements from the beginning of a month out to up to 12 months
+        into the future, resulting in seasonal forecasts. Atmospheric elements include
+        temperature, precipitation, wind speed and direction and others. This product
+        contains raw numerical results of these calculations. Geographical coverage
+        is global. Data is available on a grid at a horizontal resolution of 2.5 degrees
+        and 1 degree and for a few selected vertical levels. In addition, forecast
+        probabilities for below, near, and above normal temperature and precipitation
+        are available at both resolutions. Predictions and corresponding hindcast
+        are made available monthly.
+      operationId: describeWeather:cansips:100km:hindcastCollection
+      parameters:
+      - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/lang'
+      responses:
+        '200':
+          $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Collection
+        '400':
+          $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        '404':
+          $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        '500':
+          $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get CanSIPS - Monthly historical hindcasts at 100km resolution metadata
+      tags:
+      - weather:cansips:100km:hindcast
+  /collections/weather:cansips:100km:hindcast/coverage:
+    get:
+      description: The Canadian Seasonal to Inter-annual Prediction System (CanSIPS)
+        carries out physics calculations to arrive at probabilistic predictions of
+        atmospheric elements from the beginning of a month out to up to 12 months
+        into the future, resulting in seasonal forecasts. Atmospheric elements include
+        temperature, precipitation, wind speed and direction and others. This product
+        contains raw numerical results of these calculations. Geographical coverage
+        is global. Data is available on a grid at a horizontal resolution of 2.5 degrees
+        and 1 degree and for a few selected vertical levels. In addition, forecast
+        probabilities for below, near, and above normal temperature and precipitation
+        are available at both resolutions. Predictions and corresponding hindcast
+        are made available monthly.
+      operationId: getWeather:cansips:100km:hindcastCoverage
+      parameters:
+      - $ref: '#/components/parameters/lang'
+      - $ref: '#/components/parameters/f'
+      - $ref: '#/components/parameters/bbox'
+      - $ref: '#/components/parameters/bbox-crs'
+      responses:
+        '200':
+          $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/Features
+        '400':
+          $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/InvalidParameter
+        '404':
+          $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/NotFound
+        '500':
+          $ref: ${MSC_PYGEOAPI_OGC_API_URL}/schemas/ogcapi/features/part1/1.0/openapi/ogcapi-features-1.yaml#/components/responses/ServerError
+      summary: Get CanSIPS - Monthly historical hindcasts at 100km resolution coverage
+      tags:
+      - weather:cansips:100km:hindcast
   /collections/weather:cansips:250km:forecast:members:
     get:
       description: The Canadian Seasonal to Inter-annual Prediction System (CanSIPS)
@@ -27932,6 +28001,17 @@ tags:
     normal temperature and precipitation are available at both resolutions. Predictions
     and corresponding hindcast are made available monthly.
   name: weather:cansips:100km:forecast:monthly-products
+- description: The Canadian Seasonal to Inter-annual Prediction System (CanSIPS) carries
+    out physics calculations to arrive at probabilistic predictions of atmospheric
+    elements from the beginning of a month out to up to 12 months into the future,
+    resulting in seasonal forecasts. Atmospheric elements include temperature, precipitation,
+    wind speed and direction and others. This product contains raw numerical results
+    of these calculations. Geographical coverage is global. Data is available on a
+    grid at a horizontal resolution of 2.5 degrees and 1 degree and for a few selected
+    vertical levels. In addition, forecast probabilities for below, near, and above
+    normal temperature and precipitation are available at both resolutions. Predictions
+    and corresponding hindcast are made available monthly.
+  name: weather:cansips:100km:hindcast
 - description: The Public Standard Forecast Zones layer is a collection of public
     program forecast location zone polygons that represents bounded measurable locations
     at the Public program Standard level. The public program standard level is used
@@ -27993,7 +28073,7 @@ tags:
     coastal flooding risk, impact and probability. Products are issued daily by Storm
     Prediction Centres and are intended to provide early notification, out to 5 days,
     of coastal flooding due to astronomical tide, storm surge and wave impacts.
-  name: coastal_flood_risk_index
+  name: coastal-flooding-risk-index
 - description: 'Environment Canada issues weather alerts about weather related hazards
     in order to notify those in affected areas so that they can take steps to protect
     themselves and their property from harm. Alerts are classified depending on the
