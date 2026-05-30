@@ -1,3 +1,22 @@
+msc-pygeoapi (0.18.0) jammy; urgency=medium
+
+  * ES: fix ES deletion errors 
+  * update OpenAPI document
+  * add integration tests
+  * ensure processes support synchronous handling
+  * rename Weather Alerts to Weather alerts
+  * switch data source and status of coastal flooding risk index
+  * update sarra feed to use only the new GDPS-SN feed for prognos
+  * update alerts loader for CAM
+  * add CanSIPS hindcast data
+  * various UI fixes
+  * various translations updates
+  * various data feed updates 
+  * provide better exception messaging for users
+  * update RDPA datetime handling
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Sat, 30 May 2026 16:13:55 +0000
+
 msc-pygeoapi (0.17.0) jammy; urgency=medium
 
   * keep Coastal Flooding Risk Index as experimental
