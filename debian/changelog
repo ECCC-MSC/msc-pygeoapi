@@ -1,3 +1,9 @@
+msc-pygeoapi (0.18.1) jammy; urgency=medium
+
+  * update CFRI abstract
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Tue, 02 Jun 2026 19:56:24 +0000
+
 msc-pygeoapi (0.18.0) jammy; urgency=medium
 
   * ES: fix ES deletion errors 
