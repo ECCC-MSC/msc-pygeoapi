@@ -36,10 +36,5 @@ export MSC_PYGEOAPI_OGC_API_URL_BASEPATH=/
 export MSC_PYGEOAPI_METPX_EVENT_FILE_PY=msc_pygeoapi.event.EventAfterWork
 export MSC_PYGEOAPI_METPX_EVENT_MESSAGE_PY=msc_pygeoapi.event.EventAfterAccept
 
-export XDG_CACHE_HOME=/tmp/geoadm-sarra-logs
-
 export PYGEOAPI_CONFIG=/opt/msc-pygeoapi/conf/msc-pygeoapi-config.yml
 export PYGEOAPI_OPENAPI=/opt/msc-pygeoapi/conf/msc-pygeoapi-openapi.yml
-
-mkdir -p $XDG_CACHE_HOME
-chown -R geoadm.geoadm $XDG_CACHE_HOME
