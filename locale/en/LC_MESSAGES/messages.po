@@ -769,3 +769,6 @@ msgstr ""
 #: theme/templates/collections/index.html:51
 msgid "spatiotemporal"
 msgstr ""
+
+msgid "/static/img/eccc_c_en.png"
+msgstr ""

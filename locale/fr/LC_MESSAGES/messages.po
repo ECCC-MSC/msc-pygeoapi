@@ -961,3 +961,5 @@ msgstr "Aperçu de l'étendue de la carte n'est pas disponible"
 #~ msgid "Output Formats"
 #~ msgstr "Formats de fichiers"
 
+msgid "/static/img/eccc_c_en.png"
+msgstr "/static/img/eccc_c_fr.png"
