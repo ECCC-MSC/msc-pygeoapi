@@ -398,14 +398,30 @@ class HurricanesRealtimeLoader(BaseLoader):
             features = []
 
             try:
-                result = self.conn.Elasticsearch.search(
+                count_result = self.conn.Elasticsearch.count(
                     index=index_,
                     body=query,
                     ignore_unavailable=True
                 )
-                hits = result.get('hits', {}).get('hits', [])
-                for hit in hits:
-                    features.append(hit['_source'])
+                total = count_result['count']
+
+                LOGGER.info(f'{total} items found for {index_}')
+
+                page_size = 10000
+                offset = 0
+
+                while offset < total:
+                    result = self.conn.Elasticsearch.search(
+                        index=index_,
+                        body=query,
+                        size=page_size,
+                        from_=offset,
+                        ignore_unavailable=True
+                    )
+                    hits = result.get('hits', {}).get('hits', [])
+                    for hit in hits:
+                        features.append(hit['_source'])
+                    offset += page_size
 
             except Exception as err:
                 LOGGER.warning(f'Failed to query ES for local copy: {err}')
