@@ -119,7 +119,7 @@ class HurricanesRealtimeLoader(BaseLoader):
         self.filepath = None
         self.datetime = None
         self.es_index = None
-        self.storm_name = None
+        self.storm_number = None
         self.file_id = None
         self.newer = None
         self.conn = ElasticsearchConnector(conn_config)
@@ -208,9 +208,9 @@ class HurricanesRealtimeLoader(BaseLoader):
 
                     # if this file is newer
                     # set all previous forecast publication latest
-                    # to False for this hurricane storm name
+                    # to False for this hurricane storm number
                     # before adding the latest file with status latest = True
-                    self.storm_name = feature['properties']['storm_name']
+                    self.storm_number = feature['properties']['storm_number']
 
                 action = {
                     '_id': feature['properties']['id'],
@@ -285,7 +285,7 @@ class HurricanesRealtimeLoader(BaseLoader):
 
         return {'update': upt_, 'id_list': id_list}
 
-    def update_latest_status(self, storm_name, file_id):
+    def update_latest_status(self, storm_number, file_id):
         """
         update latest status for the latest hurricane publication
 
@@ -303,7 +303,7 @@ class HurricanesRealtimeLoader(BaseLoader):
                         'bool': {
                             'must': [{
                                 'match': {
-                                    'properties.storm_name': storm_name
+                                    'properties.storm_number': storm_number
                                 }
                             }],
                             'must_not': [{
@@ -452,8 +452,8 @@ class HurricanesRealtimeLoader(BaseLoader):
             LOGGER.debug(f'Result: {r}')
 
             if self.newer:
-                self.update_latest_status(self.storm_name, self.file_id)
-                msg = f'Update active and latest status: {self.storm_name} {self.file_id}' # noqa
+                self.update_latest_status(self.storm_number, self.file_id)
+                msg = f'Update active and latest status: storm #{self.storm_number} - {self.file_id}' # noqa
                 LOGGER.debug(msg)
 
             self.generate_local_copy()
