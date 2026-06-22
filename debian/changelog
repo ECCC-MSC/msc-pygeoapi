@@ -1,3 +1,9 @@
+msc-pygeoapi (0.18.5) jammy; urgency=medium
+
+  * fix hurricanes id fields
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Mon, 22 Jun 2026 14:56:32 +0000
+
 msc-pygeoapi (0.18.4) jammy; urgency=medium
 
   * fix hurricanes query limits
