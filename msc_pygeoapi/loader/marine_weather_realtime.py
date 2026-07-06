@@ -128,6 +128,23 @@ MAPPING = {
                         'locations': {
                             'type': 'nested',
                             'properties': {
+                                'name': {
+                                    'type': 'object',
+                                    'properties': {
+                                        'en': {
+                                            'type': 'text',
+                                            'fields': {
+                                                'keyword': {'type': 'keyword'}
+                                            }
+                                        },
+                                        'fr': {
+                                            'type': 'text',
+                                            'fields': {
+                                                'keyword': {'type': 'keyword'}
+                                            }
+                                        }
+                                    }
+                                },
                                 'weatherCondition': {
                                     'type': 'object',
                                     'properties': {
@@ -272,6 +289,23 @@ MAPPING = {
                         'locations': {
                             'type': 'nested',
                             'properties': {
+                                'name': {
+                                    'type': 'object',
+                                    'properties': {
+                                        'en': {
+                                            'type': 'text',
+                                            'fields': {
+                                                'keyword': {'type': 'keyword'}
+                                            }
+                                        },
+                                        'fr': {
+                                            'type': 'text',
+                                            'fields': {
+                                                'keyword': {'type': 'keyword'}
+                                            }
+                                        }
+                                    }
+                                },
                                 'weatherCondition': {
                                     'type': 'object',
                                     'properties': {
@@ -358,6 +392,23 @@ MAPPING = {
                         'locations': {
                             'type': 'nested',
                             'properties': {
+                                'name': {
+                                    'type': 'object',
+                                    'properties': {
+                                        'en': {
+                                            'type': 'text',
+                                            'fields': {
+                                                'keyword': {'type': 'keyword'}
+                                            }
+                                        },
+                                        'fr': {
+                                            'type': 'text',
+                                            'fields': {
+                                                'keyword': {'type': 'keyword'}
+                                            }
+                                        }
+                                    }
+                                },
                                 'weatherCondition': {
                                     'type': 'object',
                                     'properties': {
@@ -888,7 +939,7 @@ class MarineWeatherRealtimeLoader(BaseLoader):
                 self._set_nested_value(
                     location_dict,
                     ['name'],
-                    location_elem.attrib['name']
+                    {self.lang: location_elem.attrib['name']}
                 )
 
             # add weather condition elements
@@ -978,7 +1029,7 @@ class MarineWeatherRealtimeLoader(BaseLoader):
                 self._set_nested_value(
                     location_dict,
                     ['name'],
-                    location_elem.attrib['name']
+                    {self.lang: location_elem.attrib['name']}
                 )
 
             # add weatherCondition tags and forecastPeriod children
@@ -1080,7 +1131,7 @@ class MarineWeatherRealtimeLoader(BaseLoader):
                 self._set_nested_value(
                     location_dict,
                     ['name'],
-                    location_elem.attrib['name']
+                    {self.lang: location_elem.attrib['name']}
                 )
 
             # add weather condition elements
