@@ -29,6 +29,7 @@
 #
 # =================================================================
 
+from lxml import html
 import pytest
 import requests
 
@@ -38,24 +39,33 @@ def url(pytestconfig):
     return pytestconfig.getoption('url')
 
 
-def test_landing_page(url):
+@pytest.mark.parametrize('lang,title', [
+    ('en', 'MSC GeoMet - GeoMet-OGC-API'),
+    ('fr', 'GeoMet du SMC - GeoMet-OGC-API')
+])
+def test_landing_page(lang, title, url):
     """Test landing page"""
 
-    request = url
-    response = requests.get(request).json()
+    xpath_to_logo = "//body/header/div[@id='wb-bnr']//img[@property='logo']"
 
-    assert response['title'] == 'MSC GeoMet - GeoMet-OGC-API'
-
-    request = f'{url}/?lang=fr'
-    params = {
-        'lang': 'fr'
+    headers = {
+        'Accept': 'text/html'
     }
 
-    response = requests.get(request, params=params)
+    params = {
+        'lang': lang
+    }
+
+    response = requests.get(url, params=params)
     assert response.headers['X-Powered-By'] == 'pygeoapi 0.20.0'
     response = response.json()
+    assert response['title'] == title
 
-    assert response['title'] == 'GeoMet du SMC - GeoMet-OGC-API'
+    response = requests.get(url, headers=headers, params=params)
+    tree = html.fromstring(response.text)
+    element = tree.xpath(xpath_to_logo)[0]
+    logo_src = element.get('src')
+    assert lang in logo_src
 
 
 def test_collections(url):
@@ -70,7 +80,7 @@ def test_collections(url):
 
     collections = response['collections']
 
-    assert len(collections) == 103
+    assert len(collections) == 104
 
     collection_errors = []
 
