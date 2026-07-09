@@ -176,3 +176,14 @@ ul.pd-lft-0 {
   float: right;
   width: 250px;
 }
+
+.popup-items-list {
+  list-style-type: none;
+  padding-left: 0;
+  overflow: auto;
+  max-height: 200px;
+}
+
+.popup-items-text {
+  padding-bottom: 5px;
+}
