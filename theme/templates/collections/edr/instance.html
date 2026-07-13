@@ -13,8 +13,8 @@
 {% endblock %}
 {% block body %}
     <section id="collection">
-      <h1>{{ data['title'][(locale|lower)[:2]] }}</h1>
-      <p>{{ data['description'][(locale|lower)[:2]] }}</p>
+      <h1>{{ data['title'] }}</h1>
+      <p>{{ data['description'] }}</p>
       <ul class="list-inline">
         {% for kw in data['keywords'][(locale|lower)[:2]] %}
           <li><span class="label label-info">{{ kw }}</span></li>
@@ -34,13 +34,7 @@
     {% for link in data['links'] %}
         <li>
           <a title="{{ link['rel'] }}" href="{{ link['href'] }}">
-          <span>
-            {% if (locale|lower)[:2] in link['title'] %}
-              {{ link['title'][(locale|lower)[:2]] }}
-            {% else %}
-              {{ link['title'] }}
-            {% endif %}
-          </span>
+          <span>{{ link['title'] }}</span>
           (<span>{{ link['type'] }}</span>)
           </a>
         </li>
