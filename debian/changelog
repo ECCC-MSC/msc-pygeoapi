@@ -1,3 +1,10 @@
+msc-pygeoapi (0.18.6) jammy; urgency=medium
+
+  * return marine forecast location names as bilingual objects
+  * fix hurricanes id fields
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Tue, 15 Jul 2026 14:33:55 +0000
+
 msc-pygeoapi (0.18.5) jammy; urgency=medium
 
   * fix hurricanes id fields
