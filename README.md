@@ -18,9 +18,9 @@ Dependencies are listed in [requirements.txt](requirements.txt). Dependencies
 are automatically installed during msc-pygeoapi installation.
 
 Dependencies of note:
-- [Elasticsearch](https://elastic.co) (5 or above)
+- [Elasticsearch](https://elastic.co) (8 or above)
  - i.e. `sudo echo `deb https://artifacts.elastic.co/packages/5.x/apt stable main` > /etc/apt/sources.list.d/elastic.list`
- - [pygeoapi](https://github.com/geopython/pygeoapi)
+ - [pygeoapi](https://github.com/geopython/pygeoapi) (0.20.0 or above)
 
 ### Installing msc-pygeoapi
 ```bash
@@ -44,8 +44,7 @@ rm -f ./themes-gcweb.zip
 pybabel compile -d locale -l fr
 
 # install codebase
-python setup.py build
-python setup.py install
+pip install .
 
 # configure environment
 cp msc-pygeoapi.env dev.env
