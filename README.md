@@ -44,7 +44,7 @@ rm -f ./themes-gcweb.zip
 pybabel compile -d locale -l fr
 
 # install codebase
-pip install .
+pip3 install .
 
 # configure environment
 cp msc-pygeoapi.env dev.env
