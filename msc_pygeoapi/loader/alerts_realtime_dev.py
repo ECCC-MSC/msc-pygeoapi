@@ -33,6 +33,7 @@ import json
 import logging
 import os
 from pathlib import Path
+import uuid
 
 import click
 from parse import parse
@@ -275,6 +276,11 @@ class AlertsRealtimeLoaderDev(BaseLoader):
         self.index_date = None
         self.items = []
 
+    # To avoid having identical id for CAM alerts
+    def gen_uuid(self):
+
+        return str(uuid.uuid4())
+
     def parse_filename(self, filename):
         """
         Parses an alerts filename in order to get the date
@@ -341,7 +347,12 @@ class AlertsRealtimeLoaderDev(BaseLoader):
         for feature in features:
             if feature['properties'].get('display_status') != 'contour':
                 prop_id = feature['properties']['id']
-                feat_id = feature['properties']['feature_id']
+
+                # if feature_id is null or empty
+                # we want to assign a uuid value instead
+                feat_id = feature['properties'].get('feature_id',
+                                                    self.gen_uuid())
+
                 feature['id'] = f'{prop_id}_{feat_id}'
                 feature['properties']['id'] = feature['id']
 
