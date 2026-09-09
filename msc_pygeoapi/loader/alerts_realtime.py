@@ -3,7 +3,7 @@
 # Author: Louis-Philippe Rousseau-Lambert
 #             <louis-philippe.rousseaulambert@ec.gc.ca>
 #
-# Copyright (c) 2025 Louis-Philippe Rousseau-Lambert
+# Copyright (c) 2026 Louis-Philippe Rousseau-Lambert
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -33,6 +33,7 @@ import json
 import logging
 import os
 from pathlib import Path
+import uuid
 
 import click
 from parse import parse
@@ -275,6 +276,11 @@ class AlertsRealtimeLoader(BaseLoader):
         self.index_date = None
         self.items = []
 
+    # To avoid having identical id for CAM alerts
+    def gen_uuid(self):
+
+        return str(uuid.uuid4())
+
     def parse_filename(self, filename):
         """
         Parses an alerts filename in order to get the date
@@ -339,7 +345,12 @@ class AlertsRealtimeLoader(BaseLoader):
         for feature in features:
             if feature['properties'].get('display_status') != 'contour':
                 prop_id = feature['properties']['id']
-                feat_id = feature['properties']['feature_id']
+
+                # if feature_id is null or empty
+                # we want to assign a uuid value instead
+                feat_id = feature['properties'].get('feature_id',
+                                                    self.short_uuid())
+
                 feature['id'] = f'{prop_id}_{feat_id}'
                 feature['properties']['id'] = feature['id']
 
