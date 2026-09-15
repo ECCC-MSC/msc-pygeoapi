@@ -1,3 +1,9 @@
+msc-pygeoapi (0.18.8) jammy; urgency=medium
+
+  * fix function name in alerts loads
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Tue, 15 Sep 2026 12:01:33 +0000
+
 msc-pygeoapi (0.18.7) jammy; urgency=medium
 
   * added failsafe for empty feature_id for CAM alerts
