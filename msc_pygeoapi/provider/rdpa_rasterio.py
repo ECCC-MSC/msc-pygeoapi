@@ -116,6 +116,8 @@ class RDPAProvider(RasterioProvider):
         bands = properties
         LOGGER.debug(f'Bands: {bands}, subsets: {subsets}')
 
+        self.selected_bands = properties
+
         args = {
             'indexes': None
         }
@@ -587,3 +589,41 @@ class RDPAProvider(RasterioProvider):
                     )
                     LOGGER.error(err)
                     raise ProviderQueryError(err, user_msg=err)
+
+    def gen_covjson(self, metadata, data):
+        cj = super().gen_covjson(metadata, data)
+
+        if self.selected_bands[0] == '2':
+            cj_id = cj['parameters']['APCP']['observedProperty']['id']
+
+            param_properties = {
+                'CFIA': {
+                    'type': 'Parameter',
+                    'description': 'Index of confidence [-]',
+                    'unit': {
+                        'symbol': '[-]'
+                    },
+                    'observedProperty': {
+                        'id': cj_id,
+                        'label': {
+                            'en': 'Index of confidence [-]'
+                        }
+                    }
+                }
+            }
+
+            cj['parameters'] = param_properties
+            cj['ranges'] = {
+                'CFIA': cj['ranges']['APCP']
+            }
+
+        return cj
+
+    def get_fields(self):
+        fields = super().get_fields()
+
+        if '2' in fields.keys():
+            fields['2']['title'] = 'Index of confidence [-]'
+            fields['2']['_meta']['GRIB_COMMENT'] = 'Index of confidence [-]'
+            fields['2']['_meta']['GRIB_ELEMENT'] = 'CFIA'
+        return fields
