@@ -348,8 +348,10 @@ class AlertsRealtimeLoader(BaseLoader):
 
                 # if feature_id is null or empty
                 # we want to assign a uuid value instead
-                feat_id = feature['properties'].get('feature_id',
-                                                    self.gen_uuid())
+                if feature["properties"].get("feature_id") not in [None, '']:
+                    feat_id = feature['properties']['feature_id']
+                else:
+                    feat_id = self.gen_uuid()
 
                 feature['id'] = f'{prop_id}_{feat_id}'
                 feature['properties']['id'] = feature['id']
