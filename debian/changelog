@@ -1,3 +1,9 @@
+msc-pygeoapi (0.18.9) jammy; urgency=medium
+
+  * fix feature id detection logic in alerts loader
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Thu, 24 Sep 2026 13:10:42 +0000
+
 msc-pygeoapi (0.18.8) jammy; urgency=medium
 
   * fix function name in alerts loads
