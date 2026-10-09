@@ -1491,6 +1491,368 @@ CPW_PROPERTIES = {
                 }
             }
         },
+        'yesterdayConditions': {
+            'type': 'object',
+            'properties': {
+                'temperature': {
+                    'type': 'nested',
+                    'properties': {
+                        'class': {
+                            'type': 'object',
+                            'properties': {
+                                'en': {
+                                    'type': 'text',
+                                    'fields': {'raw': {'type': 'keyword'}}
+                                },
+                                'fr': {
+                                    'type': 'text',
+                                    'fields': {'raw': {'type': 'keyword'}}
+                                }
+                            }
+                        },
+                        'value': {
+                            'type': 'object',
+                            'properties': {
+                                'en': {'type': 'float'},
+                                'fr': {'type': 'float'}
+                            }
+                        },
+                        'units': {
+                            'type': 'object',
+                            'properties': {
+                                'en': {
+                                    'type': 'text',
+                                    'fields': {'raw': {'type': 'keyword'}}
+                                },
+                                'fr': {
+                                    'type': 'text',
+                                    'fields': {'raw': {'type': 'keyword'}}
+                                }
+                            }
+                        },
+                        'unitType': {
+                            'type': 'object',
+                            'properties': {
+                                'en': {
+                                    'type': 'text',
+                                    'fields': {'raw': {'type': 'keyword'}}
+                                },
+                                'fr': {
+                                    'type': 'text',
+                                    'fields': {'raw': {'type': 'keyword'}}
+                                }
+                            }
+                        }
+                    }
+                },
+                'precip': {
+                    'type': 'object',
+                    'properties': {
+                        'trace': {
+                            'type': 'object',
+                            'properties': {
+                                'en': {
+                                    'type': 'text',
+                                    'fields': {'raw': {'type': 'keyword'}}
+                                },
+                                'fr': {
+                                    'type': 'text',
+                                    'fields': {'raw': {'type': 'keyword'}}
+                                }
+                            }
+                        },
+                        'value': {
+                            'type': 'object',
+                            'properties': {
+                                'en': {'type': 'float'},
+                                'fr': {'type': 'float'}
+                            }
+                        },
+                        'units': {
+                            'type': 'object',
+                            'properties': {
+                                'en': {
+                                    'type': 'text',
+                                    'fields': {'raw': {'type': 'keyword'}}
+                                },
+                                'fr': {
+                                    'type': 'text',
+                                    'fields': {'raw': {'type': 'keyword'}}
+                                }
+                            }
+                        },
+                        'unitType': {
+                            'type': 'object',
+                            'properties': {
+                                'en': {
+                                    'type': 'text',
+                                    'fields': {'raw': {'type': 'keyword'}}
+                                },
+                                'fr': {
+                                    'type': 'text',
+                                    'fields': {'raw': {'type': 'keyword'}}
+                                }
+                            }
+                        }
+                    }
+                },
+                'snowfall': {
+                    'type': 'object',
+                    'properties': {
+                        'trace': {
+                            'type': 'object',
+                            'properties': {
+                                'en': {
+                                    'type': 'text',
+                                    'fields': {'raw': {'type': 'keyword'}}
+                                },
+                                'fr': {
+                                    'type': 'text',
+                                    'fields': {'raw': {'type': 'keyword'}}
+                                }
+                            }
+                        },
+                        'value': {
+                            'type': 'object',
+                            'properties': {
+                                'en': {'type': 'float'},
+                                'fr': {'type': 'float'}
+                            }
+                        },
+                        'units': {
+                            'type': 'object',
+                            'properties': {
+                                'en': {
+                                    'type': 'text',
+                                    'fields': {'raw': {'type': 'keyword'}}
+                                },
+                                'fr': {
+                                    'type': 'text',
+                                    'fields': {'raw': {'type': 'keyword'}}
+                                }
+                            }
+                        },
+                        'unitType': {
+                            'type': 'object',
+                            'properties': {
+                                'en': {
+                                    'type': 'text',
+                                    'fields': {'raw': {'type': 'keyword'}}
+                                },
+                                'fr': {
+                                    'type': 'text',
+                                    'fields': {'raw': {'type': 'keyword'}}
+                                }
+                            }
+                        }
+                    }
+                },
+                'rainfall': {
+                    'type': 'object',
+                    'properties': {
+                        'trace': {
+                            'type': 'object',
+                            'properties': {
+                                'en': {
+                                    'type': 'text',
+                                    'fields': {'raw': {'type': 'keyword'}}
+                                },
+                                'fr': {
+                                    'type': 'text',
+                                    'fields': {'raw': {'type': 'keyword'}}
+                                }
+                            }
+                        },
+                        'value': {
+                            'type': 'object',
+                            'properties': {
+                                'en': {'type': 'float'},
+                                'fr': {'type': 'float'}
+                            }
+                        },
+                        'units': {
+                            'type': 'object',
+                            'properties': {
+                                'en': {
+                                    'type': 'text',
+                                    'fields': {'raw': {'type': 'keyword'}}
+                                },
+                                'fr': {
+                                    'type': 'text',
+                                    'fields': {'raw': {'type': 'keyword'}}
+                                }
+                            }
+                        },
+                        'unitType': {
+                            'type': 'object',
+                            'properties': {
+                                'en': {
+                                    'type': 'text',
+                                    'fields': {'raw': {'type': 'keyword'}}
+                                },
+                                'fr': {
+                                    'type': 'text',
+                                    'fields': {'raw': {'type': 'keyword'}}
+                                }
+                            }
+                        }
+                    }
+                },
+                'windGust': {
+                    'type': 'object',
+                    'properties': {
+                        'speed': {
+                            'type': 'object',
+                            'properties': {
+                                'value': {
+                                    'type': 'object',
+                                    'properties': {
+                                        'en': {'type': 'float'},
+                                        'fr': {'type': 'float'}
+                                    }
+                                },
+                                'units': {
+                                    'type': 'object',
+                                    'properties': {
+                                        'en': {
+                                            'type': 'text',
+                                            'fields': {
+                                                'raw': {'type': 'keyword'}
+                                            }
+                                        },
+                                        'fr': {
+                                            'type': 'text',
+                                            'fields': {
+                                                'raw': {'type': 'keyword'}
+                                            }
+                                        }
+                                    }
+                                },
+                                'unitType': {
+                                    'type': 'object',
+                                    'properties': {
+                                        'en': {
+                                            'type': 'text',
+                                            'fields': {
+                                                'raw': {'type': 'keyword'}
+                                            }
+                                        },
+                                        'fr': {
+                                            'type': 'text',
+                                            'fields': {
+                                                'raw': {'type': 'keyword'}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        'direction': {
+                            'type': 'object',
+                            'properties': {
+                                'value': {
+                                    'type': 'object',
+                                    'properties': {
+                                        'en': {
+                                            'type': 'text',
+                                            'fields': {
+                                                'raw': {'type': 'keyword'}
+                                            }
+                                        },
+                                        'fr': {
+                                            'type': 'text',
+                                            'fields': {
+                                                'raw': {'type': 'keyword'}
+                                            }
+                                        }
+                                    }
+                                },
+                                'units': {
+                                    'type': 'object',
+                                    'properties': {
+                                        'en': {
+                                            'type': 'text',
+                                            'fields': {
+                                                'raw': {'type': 'keyword'}
+                                            }
+                                        },
+                                        'fr': {
+                                            'type': 'text',
+                                            'fields': {
+                                                'raw': {'type': 'keyword'}
+                                            }
+                                        }
+                                    }
+                                },
+                                'unitType': {
+                                    'type': 'object',
+                                    'properties': {
+                                        'en': {
+                                            'type': 'text',
+                                            'fields': {
+                                                'raw': {'type': 'keyword'}
+                                            }
+                                        },
+                                        'fr': {
+                                            'type': 'text',
+                                            'fields': {
+                                                'raw': {'type': 'keyword'}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        'bearing': {
+                            'type': 'object',
+                            'properties': {
+                                'value': {
+                                    'type': 'object',
+                                    'properties': {
+                                        'en': {'type': 'float'},
+                                        'fr': {'type': 'float'}
+                                    }
+                                },
+                                'units': {
+                                    'type': 'object',
+                                    'properties': {
+                                        'en': {
+                                            'type': 'text',
+                                            'fields': {
+                                                'raw': {'type': 'keyword'}
+                                            }
+                                        },
+                                        'fr': {
+                                            'type': 'text',
+                                            'fields': {
+                                                'raw': {'type': 'keyword'}
+                                            }
+                                        }
+                                    }
+                                },
+                                'unitType': {
+                                    'type': 'object',
+                                    'properties': {
+                                        'en': {
+                                            'type': 'text',
+                                            'fields': {
+                                                'raw': {'type': 'keyword'}
+                                            }
+                                        },
+                                        'fr': {
+                                            'type': 'text',
+                                            'fields': {
+                                                'raw': {'type': 'keyword'}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         'riseSet': {
             'type': 'object',
             'properties': {
@@ -3033,6 +3395,70 @@ class CitypageweatherRealtimeLoader(BaseLoader):
 
         return self.cpw_feature
 
+    def _set_yesterdays_conditions(self):
+        """
+        Set yesterday conditions information for the citypageweather object
+
+        :returns: `dict` of modified citypageweather object
+        """
+
+        yesterday_conditions = self.xml_root.find('yesterdayConditions')
+
+        if yesterday_conditions is not None and len(yesterday_conditions):
+            if 'yesterdayConditions' not in self.cpw_feature['properties']:
+                yesterday_conditions_dict = {}
+            else:
+                yesterday_conditions_dict = self.cpw_feature['properties'][
+                    'yesterdayConditions'
+                ]
+
+            # get high/low temperatures
+            temperatures = [
+                self._node_to_dict(temp, self.lang)
+                for temp in yesterday_conditions.findall('temperature')
+            ]
+            for i, temp in enumerate(temperatures):
+                if i < len(yesterday_conditions_dict.get('temperature', [])):
+                    temperatures[i] = self._deep_merge(
+                        yesterday_conditions_dict['temperature'][i], temp
+                    )
+            if temperatures:
+                yesterday_conditions_dict['temperature'] = temperatures
+
+            # get precipitation amounts
+            for key in ['precip', 'snowfall', 'rainfall']:
+                node = yesterday_conditions.find(key)
+                if node is not None and (node.attrib or node.text):
+                    self._set_nested_value(
+                        yesterday_conditions_dict,
+                        [key],
+                        self._node_to_dict(node, self.lang)
+                    )
+
+            # get wind gust speed and direction (cardinal and/or degrees)
+            wind_gust = yesterday_conditions.find('windGust')
+            if wind_gust is not None and len(wind_gust):
+                kv_mapping = {
+                    'speed': 'speed',
+                    'direction': "direction[@units='cardinal']",
+                    'bearing': "direction[@units='°']"
+                }
+                for key, value in kv_mapping.items():
+                    node = wind_gust.find(value)
+                    if node is not None and node.text:
+                        self._set_nested_value(
+                            yesterday_conditions_dict,
+                            ['windGust', key],
+                            self._node_to_dict(node, self.lang)
+                        )
+
+            if yesterday_conditions_dict:
+                self.cpw_feature['properties'][
+                    'yesterdayConditions'
+                ] = yesterday_conditions_dict
+
+        return self.cpw_feature
+
     def xml2json_cpw(self):
         """
         main for generating weather data
@@ -3051,6 +3477,7 @@ class CitypageweatherRealtimeLoader(BaseLoader):
             self._set_cpw_forecast_group()
             self._set_cpw_hourly_forecast_group()
             self._set_cpw_warnings()
+            self._set_yesterdays_conditions()
             self._set_cpw_riseSet()
 
         return self.cpw_feature
