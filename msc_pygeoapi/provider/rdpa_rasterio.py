@@ -43,6 +43,8 @@ from rasterio.crs import CRS
 from rasterio.io import MemoryFile
 import rasterio.mask
 
+from msc_pygeoapi.util import remove_z_from_bbox
+
 from pygeoapi.provider.base import (BaseProvider,
                                     ProviderConnectionError,
                                     ProviderQueryError)
@@ -129,6 +131,7 @@ class RDPAProvider(RasterioProvider):
             raise ProviderQueryError(msg)
 
         if len(bbox) > 0:
+            bbox = remove_z_from_bbox(bbox)
             minx, miny, maxx, maxy = bbox
 
             crs_src = CRS.from_epsg(4326)
@@ -255,7 +258,11 @@ class RDPAProvider(RasterioProvider):
                         indexes=args['indexes'])
                 except ValueError as err:
                     LOGGER.error(err)
-                    raise ProviderQueryError(err)
+                    user_msg = (
+                        'Encountered error when applying spatial '
+                        'subset with provided bbox.'
+                    )
+                    raise ProviderQueryError(err, user_msg=user_msg)
 
                 out_meta.update({'driver': self.native_format,
                                  'height': out_image.shape[1],
@@ -300,7 +307,7 @@ class RDPAProvider(RasterioProvider):
                 if date_file_list:
                     err = 'Date range not yet supported for CovJSON output'
                     LOGGER.error(err)
-                    raise ProviderQueryError(err)
+                    raise ProviderQueryError(err, user_msg=err)
                 else:
                     LOGGER.debug('Creating output in CoverageJSON')
                     out_meta['bands'] = [1]
@@ -329,7 +336,14 @@ class RDPAProvider(RasterioProvider):
                                                     indexes=args['indexes'])
                                         except ValueError as err:
                                             LOGGER.error(err)
-                                            raise ProviderQueryError(err)
+                                            user_msg = (
+                                                'Encountered error when '
+                                                'applying spatial '
+                                                'subset with provided bbox.'
+                                            )
+                                            raise ProviderQueryError(
+                                                err, user_msg=user_msg
+                                            )
                                     else:
                                         out_image = src1.read(
                                             indexes=args['indexes'])
