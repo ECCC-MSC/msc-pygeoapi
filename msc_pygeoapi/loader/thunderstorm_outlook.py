@@ -28,7 +28,7 @@
 #
 # =================================================================
 
-from datetime import datetime
+from datetime import datetime, timezone
 import json
 import logging
 import os
@@ -36,9 +36,11 @@ from pathlib import Path
 import re
 
 import click
+from elasticsearch import helpers
 
 from msc_pygeoapi import cli_options
 from msc_pygeoapi.connector.elasticsearch_ import ElasticsearchConnector
+from msc_pygeoapi.env import GEOMET_LOCAL_BASEPATH
 from msc_pygeoapi.loader.base import BaseLoader
 from msc_pygeoapi.util import configure_es_connection
 
@@ -48,6 +50,15 @@ LOGGER = logging.getLogger(__name__)
 INDEX_NAME = 'thunderstorm_outlook'
 
 DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
+
+# local GeoJSON copy served by GeoMet-Weather
+LOCAL_FILEPATH = (
+    Path(GEOMET_LOCAL_BASEPATH)
+    / 'thunderstorm-outlooks'
+    / 'active-thunderstorm-outlooks.json'
+    if GEOMET_LOCAL_BASEPATH
+    else None
+)
 
 MAPPINGS = {
     'properties': {
@@ -65,15 +76,18 @@ MAPPINGS = {
                 'validity_datetime': {
                     'type': 'date',
                     'format': 'strict_date_time_no_millis'
-                }
+                },
+                'product_type': {'type': 'keyword'},
+                'product_sub_type': {'type': 'keyword'},
+                'file_id': {'type': 'keyword'},
+                'amendment': {'type': 'integer'},
+                'version': {'type': 'integer'}
             }
         }
     }
 }
 
-SETTINGS = {
-    'settings': {'number_of_shards': 1, 'number_of_replicas': 0}
-}
+SETTINGS = {'settings': {'number_of_shards': 1, 'number_of_replicas': 0}}
 
 
 class ThunderstormOutlookLoader(BaseLoader):
@@ -87,6 +101,7 @@ class ThunderstormOutlookLoader(BaseLoader):
         self.filepath = None
         self.datetime = None
         self.conn = ElasticsearchConnector(conn_config)
+        self.loaded_panel = None
 
         SETTINGS['mappings'] = MAPPINGS
         if not self.conn.exists(INDEX_NAME):
@@ -107,68 +122,97 @@ class ThunderstormOutlookLoader(BaseLoader):
             data = json.load(f)['features']
 
         features = []
-        filename = f.name.split('/')[-1]
+        filename = self.filepath.name
         file_id = re.sub(r'_v\d+\.json', '', filename)
 
-        if len(data) > 0:
-            for feature in data:
-
-                # flatten metobject properties
-                metobj = feature['properties']['metobject']
-                for item, values in metobj.items():
-                    try:
-                        metobj_flat_item = self.flatten_json(item,
-                                                             values,
-                                                             'metobject')
-                        feature['properties'].update(metobj_flat_item)
-                        feature['properties']['file_id'] = file_id
-                    except Exception as err:
-                        msg = f'Error while flattening Thunderstorm JSON {err}'
-                        LOGGER.error(f'{msg}')
-                        pass
-
-                del feature['properties']['metobject']
-                f_exp_datetime = feature['properties']['expiration_datetime']
-                exp_datetime = datetime.strptime(f_exp_datetime,
-                                                 DATETIME_FORMAT)
-
-                if exp_datetime > datetime.now():
-                    features.append(feature)
-
-            # check if id is already in ES and if amendment is +=1
-            amendment = features[0]['properties']['amendment']
-            is_newer = self.check_if_newer(file_id, amendment)
-
-            if is_newer['update']:
-                for outlook in features:
-                    action = {
-                        '_id': outlook['properties']['id'],
-                        '_index': INDEX_NAME,
-                        '_op_type': 'update',
-                        'doc': outlook,
-                        'doc_as_upsert': True
-                    }
-
-                    yield action
-
-                for id_ in is_newer['id_list']:
-                    self.conn.Elasticsearch.delete(index=INDEX_NAME,
-                                                   id=id_)
+        match = re.search(r'_v(\d+)\.json$', filename)
+        if match is None:
+            LOGGER.warning(f'{filename} carries no version, assuming 1')
+            version = 1
         else:
+            version = int(match.group(1))
+
+        if not data:
             LOGGER.warning(f'empty thunderstorm outlook json in {filename}')
 
-            version = re.search(r'v(\d+)\.json$', filename).group(1)
-            if int(version) > 1:
-                # we need to delete the associated outlooks
+            if version > 1:
+                # forecast can emit empty outlooks which redacts
+                # previous versions, the query below will remove
+                # previous issued outlooks for the same issuance
+                # and panel
                 query = {
-                    "query": {
-                        "match": {
-                            "properties.file_id": file_id
+                    'query': {
+                        'bool': {
+                            'filter': [
+                                {'term': {'properties.file_id': file_id}}
+                            ],
+                            'must_not': [
+                                {
+                                    'range': {
+                                        'properties.version': {'gte': version}
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
-                self.conn.Elasticsearch.delete_by_query(index=INDEX_NAME,
-                                                        body=query)
+                self.conn.Elasticsearch.delete_by_query(
+                    index=INDEX_NAME, body=query, conflicts='proceed'
+                )
+            return
+
+        for feature in data:
+
+            # flatten metobject properties
+            metobj = feature['properties']['metobject']
+            for item, values in metobj.items():
+                try:
+                    metobj_flat_item = self.flatten_json(
+                        item, values, 'metobject'
+                    )
+                    feature['properties'].update(metobj_flat_item)
+                except Exception as err:
+                    msg = f'Error while flattening Thunderstorm JSON {err}'
+                    LOGGER.error(f'{msg}')
+
+            feature['properties']['file_id'] = file_id
+            feature['properties']['version'] = version
+
+            del feature['properties']['metobject']
+            f_exp_datetime = feature['properties']['expiration_datetime']
+            exp_datetime = datetime.strptime(
+                f_exp_datetime, DATETIME_FORMAT
+            ).replace(tzinfo=timezone.utc)
+
+            if exp_datetime > datetime.now(timezone.utc):
+                features.append(feature)
+
+        if not features:
+            LOGGER.warning(f'all outlooks expired in {filename}')
+            return
+
+        properties = features[0]['properties']
+        amendment = int(properties.get('amendment') or 0)
+
+        # check if outlook is already superseded
+        # this can happen when files come in out of order
+        # or while manually replaying file ingestion
+        if self.is_superseded(file_id, amendment):
+            LOGGER.warning(f'{filename} is already superseded, skipping')
+            return
+
+        for outlook in features:
+            action = {
+                '_id': outlook['properties']['id'],
+                '_index': INDEX_NAME,
+                '_op_type': 'update',
+                'doc': outlook,
+                'doc_as_upsert': True
+            }
+
+            yield action
+
+        self.loaded_panel = (file_id, amendment)
 
     def flatten_json(self, key, values, parent_key=''):
         """
@@ -188,40 +232,198 @@ class ThunderstormOutlookLoader(BaseLoader):
             items[new_key] = value
         return items
 
-    def check_if_newer(self, file_id, amendment):
+    def panel_filter(self, file_id, amendment, operator):
         """
-        check if the thunderstorm outlook is the newest version
+        Elasticsearch filter clauses selecting the other amendments of one
+        forecast panel.
 
-        :returns: `bool` if latest, id_list for ids to delete
+        Every issuance stays indexed so the collection can be queried for
+        them; only the amendments of a single panel are ordered here.
+
+        :param operator: 'gt' for the amendments that outrank this one,
+                         'lt' for the ones it outranks
+        :returns: `list` of filter clauses
         """
 
-        upt_ = True
-        id_list = []
+        return [
+            {'term': {'properties.file_id': file_id}},
+            {'range': {'properties.amendment': {operator: amendment}}}
+        ]
+
+    def is_superseded(self, file_id, amendment):
+        """
+        Checks whether a later amendment of this forecast panel is already
+        indexed, which happens when files arrive out of order or are
+        replayed
+
+        :returns: `bool` True if this panel is already superseded
+        """
 
         query = {
-            "query": {
-                "match": {
-                    "properties.file_id": file_id
-                }
+            'query': {
+                'bool': {'filter': self.panel_filter(file_id, amendment, 'gt')}
             }
         }
 
-        # Fetch the document
         try:
-            result = self.conn.Elasticsearch.search(index=INDEX_NAME,
-                                                    body=query)
-            if result:
-                hit = result['hits']['hits'][0]
-                es_amendement = hit["_source"]['properties']['amendment']
-                if es_amendement >= amendment:
-                    upt_ = False
-                else:
-                    for id_ in result['hits']['hits']:
-                        id_list.append(id_['_id'])
-        except Exception:
-            LOGGER.warning(f'Item ({file_id}) does not exist in index')
+            result = self.conn.Elasticsearch.count(
+                index=INDEX_NAME, body=query
+            )
+            return result['count'] > 0
+        except Exception as err:
+            LOGGER.warning(f'Failed to check for newer amendments: {err}')
+            return False
 
-        return {'update': upt_, 'id_list': id_list}
+    def delete_superseded(self, file_id, amendment):
+        """
+        Drops the earlier amendments of the provided forecast panel.
+
+        :returns: `bool` of status result
+        """
+
+        query = {
+            'query': {
+                'bool': {'filter': self.panel_filter(file_id, amendment, 'lt')}
+            }
+        }
+
+        try:
+            self.conn.Elasticsearch.delete_by_query(
+                index=INDEX_NAME, body=query, conflicts='proceed'
+            )
+            return True
+        except Exception as err:
+            LOGGER.warning(f'Failed to delete superseded amendments: {err}')
+            return False
+
+    def latest_per_centre(self, features):
+        """
+        Keep the latest issuance of each storm prediction centre, and
+        within that issuance the latest amendment of each forecast panel.
+
+        Since the index holds all the issuances, this functions filters out
+        the superseded ones for each storm prediction centre and region.
+
+        :returns: `list` of features
+        """
+
+        required = (
+            'product_type',
+            'product_sub_type',
+            'publication_datetime',
+            'file_id'
+        )
+        usable = []
+        for feature in features:
+            missing = [
+                key for key in required if key not in feature['properties']
+            ]
+            if missing:
+                LOGGER.warning(
+                    f'leaving a feature missing {missing} out of '
+                    f'the local copy'
+                )
+                continue
+            usable.append(feature)
+
+        newest = {}
+        for feature in usable:
+            properties = feature['properties']
+            centre = (
+                properties['product_type'],
+                properties['product_sub_type'],
+            )
+            publication = properties['publication_datetime']
+            if publication > newest.get(centre, ''):
+                newest[centre] = publication
+
+        panels = {}
+        for feature in usable:
+            properties = feature['properties']
+            centre = (
+                properties['product_type'],
+                properties['product_sub_type'],
+            )
+            if properties['publication_datetime'] != newest[centre]:
+                continue
+            file_id = properties['file_id']
+            amendment = int(properties.get('amendment') or 0)
+            latest, kept = panels.get(file_id, (-1, []))
+            if amendment > latest:
+                panels[file_id] = (amendment, [feature])
+            elif amendment == latest:
+                kept.append(feature)
+
+        return [f for _, kept in panels.values() for f in kept]
+
+    def update_local_copy(self):
+        """
+        Writes a local copy of all active and latest thunderstorm outlooks
+        for each centre. This is performed atomically to avoid
+        potential conflicts during concurrent writes.
+
+        :returns: `bool` of write status
+        """
+
+        if LOCAL_FILEPATH is None:
+            LOGGER.warning(
+                'GEOMET_LOCAL_BASEPATH not set, ' 'skipping local copy'
+            )
+            return False
+
+        self.conn.Elasticsearch.indices.refresh(
+            index=INDEX_NAME, ignore_unavailable=True
+        )
+
+        now = datetime.now(timezone.utc).strftime(DATETIME_FORMAT)
+        query = {
+            'query': {'range': {'properties.expiration_datetime': {'gt': now}}}
+        }
+
+        features = []
+
+        try:
+            for hit in helpers.scan(
+                self.conn.Elasticsearch,
+                index=INDEX_NAME,
+                query=query,
+                preserve_order=False
+            ):
+                features.append(hit['_source'])
+        except Exception as err:
+            LOGGER.warning(f'Failed to query ES for local copy: {err}')
+            return False
+
+        indexed = len(features)
+        features = self.latest_per_centre(features)
+        LOGGER.info(
+            f'{len(features)} of {indexed} active outlooks kept for '
+            f'the local copy'
+        )
+
+        feature_collection = {
+            'type': 'FeatureCollection',
+            'features': features
+        }
+
+        output_dir = LOCAL_FILEPATH.parent
+        tmp_path = f'{LOCAL_FILEPATH}.{os.getpid()}.tmp'
+
+        try:
+            os.makedirs(output_dir, exist_ok=True)
+            with open(tmp_path, 'w') as f:
+                json.dump(feature_collection, f)
+            os.replace(tmp_path, LOCAL_FILEPATH)
+            LOGGER.debug(f'Local copy written to {LOCAL_FILEPATH}')
+        except Exception as err:
+            LOGGER.warning(
+                f'Failed to write local copy to {LOCAL_FILEPATH}: {err}'
+            )
+            if os.path.exists(tmp_path):
+                os.remove(tmp_path)
+            return False
+
+        return True
 
     def load_data(self, filepath):
         """
@@ -231,6 +433,7 @@ class ThunderstormOutlookLoader(BaseLoader):
         """
 
         self.filepath = Path(filepath)
+        self.loaded_panel = None
 
         LOGGER.debug(f'Received file {self.filepath}')
 
@@ -239,10 +442,17 @@ class ThunderstormOutlookLoader(BaseLoader):
         try:
             r = self.conn.submit_elastic_package(package)
             LOGGER.debug(f'Result: {r}')
-            return True
         except Exception as err:
             LOGGER.warning(f'Error indexing: {err}')
             return False
+
+        # only retire the earlier amendments once this panel is indexed
+        if self.loaded_panel is not None:
+            self.delete_superseded(*self.loaded_panel)
+
+        self.update_local_copy()
+
+        return True
 
 
 @click.group()
@@ -298,10 +508,10 @@ def clean_outlooks(ctx, es, username, password, ignore_certs):
     """Delete expired outlook documents"""
 
     conn_config = configure_es_connection(es, username, password, ignore_certs)
-    conn = ElasticsearchConnector(conn_config)
+    loader = ThunderstormOutlookLoader(conn_config)
 
     click.echo('Deleting documents older than datetime.now()')
-    now = datetime.now().strftime(DATETIME_FORMAT)
+    now = datetime.now(timezone.utc).strftime(DATETIME_FORMAT)
 
     query = {
         'query': {
@@ -313,7 +523,29 @@ def clean_outlooks(ctx, es, username, password, ignore_certs):
         }
     }
 
-    conn.Elasticsearch.delete_by_query(index=INDEX_NAME, body=query)
+    loader.conn.Elasticsearch.delete_by_query(
+        index=INDEX_NAME, body=query, conflicts='proceed'
+    )
+
+    loader.update_local_copy()
+
+
+@click.command()
+@click.pass_context
+@cli_options.OPTION_ELASTICSEARCH()
+@cli_options.OPTION_ES_USERNAME()
+@cli_options.OPTION_ES_PASSWORD()
+@cli_options.OPTION_ES_IGNORE_CERTS()
+def update_local_copy(ctx, es, username, password, ignore_certs):
+    """Refresh the local GeoJSON copy served by GeoMet-Weather"""
+
+    conn_config = configure_es_connection(es, username, password, ignore_certs)
+    loader = ThunderstormOutlookLoader(conn_config)
+
+    if not loader.update_local_copy():
+        raise click.ClickException('local copy not updated')
+
+    click.echo('Done')
 
 
 @click.command()
@@ -344,4 +576,5 @@ def delete_index(ctx, es, username, password, ignore_certs, index_template):
 
 thunderstorm_outlook.add_command(add)
 thunderstorm_outlook.add_command(clean_outlooks)
+thunderstorm_outlook.add_command(update_local_copy)
 thunderstorm_outlook.add_command(delete_index)
