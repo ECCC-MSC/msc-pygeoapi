@@ -35,11 +35,14 @@ import logging
 import os
 from parse import search
 import pathlib
+from datetime import datetime
 
 import rasterio
 from rasterio.crs import CRS
 from rasterio.io import MemoryFile
 import rasterio.mask
+
+from msc_pygeoapi.util import remove_z_from_bbox
 
 from pygeoapi.provider.base import (ProviderConnectionError,
                                     ProviderQueryError)
@@ -168,6 +171,7 @@ class CanGRDProvider(RasterioProvider):
         shapes = []
 
         if len(bbox) > 0:
+            bbox = remove_z_from_bbox(bbox)
             minx, miny, maxx, maxy = bbox
 
             crs_src = CRS.from_epsg(4326)
@@ -219,50 +223,124 @@ class CanGRDProvider(RasterioProvider):
             self.data = self.get_file_list(var)[-1]
         except IndexError as err:
             LOGGER.error(err)
-            raise ProviderQueryError(err)
+            user_msg = 'No data found for the specified query.'
+            raise ProviderQueryError(err, user_msg=user_msg)
 
         if 'season' in subsets:
             seasonal = subsets['season']
-
+            seasons = self._coverage_properties['uad']['season']['interval'][0]
             try:
                 if len(seasonal) > 1:
-                    msg = 'multiple seasons are not supported'
-                    LOGGER.error(msg)
-                    raise ProviderQueryError(msg)
+                    err = 'multiple seasons are not supported'
+                    LOGGER.error(err)
+                    raise ProviderQueryError(err, user_msg=err)
                 elif seasonal != ['DJF']:
-                    season = str(seasonal[0])
+                    season = str(seasonal[0]).upper()
+                    if (
+                        season not in
+                        seasons
+                    ):
+                        raise ValueError(
+                            'Invalid season value provided. '
+                            'Expected DJF, MAM, JJA, or SON.'
+                        )
                     self.data = self.data.replace('DJF',
                                                   season)
 
-            except Exception as err:
+            except ValueError as err:
                 LOGGER.error(err)
-                raise ProviderQueryError(err)
-
+                user_msg = (
+                    'Invalid season value provided. '
+                    'Expected DJF, MAM, JJA, or SON.'
+                )
+                raise ProviderQueryError(err, user_msg=user_msg)
         if datetime_ and 'trend' in self.data:
-            msg = 'Datetime is not supported for trend'
-            LOGGER.error(msg)
-            raise ProviderQueryError(msg)
+            err = 'Datetime is not supported for trend'
+            LOGGER.error(err)
+            raise ProviderQueryError(err, user_msg=err)
 
         date_file_list = False
 
         if datetime_:
             if '/' not in datetime_:
-                if 'month' in self.data:
-                    month = search('_{:d}-{:d}.tif', self.data)
-                    period = f'{month[0]}-{month[1]:02}'
-                    self.data = self.data.replace(str(month), str(datetime_))
-                else:
-                    period = search('_{:d}.tif', self.data)[0]
-                self.data = self.data.replace(str(period), str(datetime_))
+                try:
+                    time_range = self._coverage_properties['time_range']
+                    lower_bound = str(time_range[0])
+                    upper_bound = str(time_range[1])
+
+                    if 'month' in self.data:
+                        format = 'YYYY-MM'
+
+                        if len(datetime_.split('-')[1]) != 2:
+                            raise ValueError(
+                                'Invalid datetime value provided. '
+                                f'Value must be {format}.'
+                            )
+
+                        if var == 'PCP':
+                            upper_bound = '2014-12'
+                        month = search('_{:d}-{:d}.tif', self.data)
+                        period = f'{month[0]}-{month[1]:02}'
+                        self.data = self.data.replace(
+                            str(month), str(datetime_)
+                        )
+
+                        lower_bound_datetime = datetime.strptime(
+                            lower_bound,
+                            '%Y-%m'
+                        )
+                        upper_bound_datetime = datetime.strptime(
+                            upper_bound,
+                            '%Y-%m'
+                        )
+                        selected_time = datetime.strptime(datetime_, '%Y-%m')
+                    else:
+                        format = 'YYYY'
+                        if var == 'PCP':
+                            upper_bound = '2014'
+                        period = search('_{:d}.tif', self.data)[0]
+
+                        lower_bound_datetime = datetime.strptime(
+                            lower_bound,
+                            '%Y'
+                        )
+                        upper_bound_datetime = datetime.strptime(
+                            upper_bound,
+                            '%Y'
+                        )
+                        selected_time = datetime.strptime(datetime_, '%Y')
+
+                    if (
+                        selected_time < lower_bound_datetime or
+                        selected_time > upper_bound_datetime
+                    ):
+                        err = (
+                            'Invalid datetime range provided. '
+                            'For the selected parameter, '
+                            f'value must be between '
+                            f'{lower_bound} and {upper_bound}.'
+                        )
+                        LOGGER.error(err)
+                        raise ProviderQueryError(err, user_msg=err)
+                    self.data = self.data.replace(str(period), str(datetime_))
+                except (ValueError, IndexError) as err:
+                    user_msg = (
+                        'Invalid datetime value provided. '
+                        f'Value must be {format}.'
+                    )
+                    LOGGER.error(err)
+                    raise ProviderQueryError(err, user_msg=user_msg)
+
             else:
                 date_file_list = self.get_file_list(properties[0].upper(),
                                                     datetime_)
                 args['indexes'] = list(range(1, len(date_file_list) + 1))
+                self.data = date_file_list[-1]
 
         if not os.path.isfile(self.data):
-            msg = 'No such file'
-            LOGGER.error(msg)
-            raise ProviderQueryError(msg)
+            err = 'No such file'
+            LOGGER.error(err)
+            raise ProviderQueryError(err, user_msg=err)
 
         with rasterio.open(self.data) as _data:
             LOGGER.debug('Creating output coverage metadata')
@@ -283,8 +361,12 @@ class CanGRDProvider(RasterioProvider):
                         crop=True,
                         indexes=None)
                 except ValueError as err:
+                    user_msg = (
+                        'Encountered error when applying spatial '
+                        'subset with provided bbox.'
+                    )
                     LOGGER.error(err)
-                    raise ProviderQueryError(err)
+                    raise ProviderQueryError(err, user_msg=user_msg)
 
                 out_meta.update({'driver': self.native_format,
                                  'height': out_image.shape[1],
@@ -318,7 +400,7 @@ class CanGRDProvider(RasterioProvider):
                 if date_file_list:
                     err = 'Date range not yet supported for CovJSON output'
                     LOGGER.error(err)
-                    raise ProviderQueryError(err)
+                    raise ProviderQueryError(err, user_msg=err)
                 else:
                     LOGGER.debug('Creating output in CoverageJSON')
                     out_meta['bands'] = args['indexes']
@@ -351,7 +433,14 @@ class CanGRDProvider(RasterioProvider):
                                                     indexes=1)
                                         except ValueError as err:
                                             LOGGER.error(err)
-                                            raise ProviderQueryError(err)
+                                            user_msg = (
+                                                'Encountered error when '
+                                                'applying spatial '
+                                                'subset with provided bbox.'
+                                            )
+                                            raise ProviderQueryError(
+                                                err, user_msg=user_msg
+                                            )
                                     else:
                                         out_image = src1.read(indexes=1)
                                     dest.write_band(id, out_image)
@@ -418,6 +507,86 @@ class CanGRDProvider(RasterioProvider):
 
         if datetime_:
             begin, end = datetime_.split('/')
+            time_range = self._coverage_properties['time_range']
+            lower_bound = str(time_range[0])
+            upper_bound = str(time_range[1])
+            try:
+                if 'month' in self.data:
+                    format = 'YYYY-MM/YYYY-MM'
+
+                    if (
+                        len(begin.split('-')[1]) != 2 or
+                        len(end.split('-')[1]) != 2
+                    ):
+                        raise ValueError(
+                            'Invalid datetime value provided. '
+                            f'Value must be {format}.'
+                        )
+
+                    if variable == 'PCP':
+                        upper_bound = '2014-12'
+                    lower_bound_datetime = datetime.strptime(
+                        lower_bound,
+                        '%Y-%m'
+                    )
+                    upper_bound_datetime = datetime.strptime(
+                        upper_bound,
+                        '%Y-%m'
+                    )
+                    selected_interval_begin = datetime.strptime(
+                        begin, '%Y-%m'
+                    )
+                    selected_interval_end = datetime.strptime(
+                        end, '%Y-%m'
+                    )
+
+                else:
+                    format = 'YYYY/YYYY'
+                    if variable == 'PCP':
+                        upper_bound = '2014'
+                    lower_bound_datetime = datetime.strptime(
+                        lower_bound,
+                        '%Y'
+                    )
+                    upper_bound_datetime = datetime.strptime(
+                        upper_bound,
+                        '%Y'
+                    )
+                    selected_interval_begin = datetime.strptime(
+                        begin, '%Y'
+                    )
+                    selected_interval_end = datetime.strptime(
+                        end, '%Y'
+                    )
+
+                if selected_interval_begin > selected_interval_end:
+                    err = (
+                        'Invalid datetime range provided. '
+                        'End date occurs before the start date.'
+                    )
+                    LOGGER.error(err)
+                    raise ProviderQueryError(err, user_msg=err)
+
+                if (
+                    selected_interval_begin < lower_bound_datetime or
+                    selected_interval_end > upper_bound_datetime
+                ):
+                    err = (
+                        'Invalid datetime range provided. '
+                        'For the selected parameter, '
+                        f'value must be between '
+                        f'{lower_bound} and {upper_bound}.'
+                    )
+                    LOGGER.error(err)
+                    raise ProviderQueryError(err, user_msg=err)
+
+            except (ValueError, IndexError) as err:
+                user_msg = (
+                    'Invalid datetime range provided. '
+                    f'Value must be {format}.'
+                )
+                LOGGER.error(err)
+                raise ProviderQueryError(err, user_msg=user_msg)
 
             begin_file_idx = [file_path_.index(
                 i) for i in file_path_ if begin in i]
