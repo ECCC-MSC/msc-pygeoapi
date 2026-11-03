@@ -2137,11 +2137,10 @@ class CitypageweatherRealtimeLoader(BaseLoader):
 
         if data:
             try:
-                r = self.conn.Elasticsearch.update(
+                r = self.conn.Elasticsearch.index(
                     index=INDEX_NAME,
                     id=data['properties']['identifier'],
-                    doc_as_upsert=True,
-                    doc=data
+                    document=data
                 )
                 LOGGER.debug(f'Result: {r}')
                 return True
