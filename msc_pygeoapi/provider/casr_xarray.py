@@ -31,7 +31,6 @@
 #
 # =================================================================
 
-from datetime import datetime
 import logging
 import tempfile
 
@@ -176,7 +175,7 @@ class CasrProvider(XarrayProvider):
             if coord.ndim != 1:
                 continue
 
-            # Finds the axis value by looking in the coord attributes.
+            # Finds the axis name by looking in the coord attributes.
             if coord.attrs.get("axis", "").upper() == axis:
                 return name
 
@@ -199,7 +198,6 @@ class CasrProvider(XarrayProvider):
         properties=[],
         subsets={},
         bbox=[],
-        bbox_crs=4326,
         datetime_=None,
         format_="json",
         **kwargs,
@@ -210,9 +208,9 @@ class CasrProvider(XarrayProvider):
         :param properties: list of data variables to return (all if blank)
         :param subsets: Not supported with CasrProvider
         :param bbox: bounding box [minx,miny,maxx,maxy]
-        :param bbox_crs: CRS of bounding box
         :param datetime_: temporal (datestamp or extent)
         :param format_: data format of output
+        :param **kwargs: Only there to keep the compatibility the xarray_.py provider
 
         :returns: coverage data as dict of CoverageJSON or native format
         """
@@ -253,15 +251,6 @@ class CasrProvider(XarrayProvider):
                 )
 
                 mask_values = mask.compute()
-
-                LOGGER.warning(f"lon min={float(data['lon'].min())}")
-                LOGGER.warning(f"lon max={float(data['lon'].max())}")
-                LOGGER.warning(f"lat min={float(data['lat'].min())}")
-                LOGGER.warning(f"lat max={float(data['lat'].max())}")
-
-                LOGGER.warning(f"bbox={bbox}")
-
-                LOGGER.warning(f"mask count={mask.sum().values}")
 
                 if not mask_values.any():
                     raise ProviderNoDataError("No data found within requested bbox")
@@ -359,6 +348,8 @@ class CasrProvider(XarrayProvider):
             # json does not support float32
             data = _convert_float32_to_float64(data)
 
+        # Returns the metadata of the filtered dataset. The bbox is in the rotated grid coordinates.
+        # bbox_crs returns the projjson of the dataset.
         out_meta = {
             "bbox": [
                 data.coords[self.x_field].values[0],
@@ -545,7 +536,7 @@ class CasrProvider(XarrayProvider):
         :returns: grid-mapping variable name or None
         """
 
-        for name, variable in self._data.data_vars.items():
+        """for name, variable in self._data.data_vars.items():
             if not {
                 self.x_field,
                 self.y_field,
@@ -563,7 +554,7 @@ class CasrProvider(XarrayProvider):
                 )
                 return grid_mapping
 
-            # First mecanism looking for the "grid_mapping" name in the variable encoding.
+            # Second mecanism looking for the "grid_mapping" name in the variable encoding.
             grid_mapping = variable.encoding.get("grid_mapping")
 
             if grid_mapping:
@@ -572,7 +563,7 @@ class CasrProvider(XarrayProvider):
                     grid_mapping,
                     name,
                 )
-                return grid_mapping
+                return grid_mapping"""
 
         # Third mecanism which found any variable containing "grid_mapping_name"
         for name, variable in self._data.variables.items():
@@ -588,6 +579,7 @@ class CasrProvider(XarrayProvider):
     def _set_crs(self):
         """
         Determine the native CRS from CF grid-mapping metadata.
+        Creates the PROJJSON.
 
         No storage_crs configuration value is required.
         """
@@ -695,8 +687,6 @@ class CasrProvider(XarrayProvider):
 
             title = (
                 variable.attrs.get("long_name")
-                or variable.attrs.get("description_short_en")
-                or name
             )
 
             # Construction of the metadata for each valid variables.
@@ -764,61 +754,19 @@ class CasrProvider(XarrayProvider):
 
         return {}
 
-    def _get_crs_metadata(self):
-        """
-        Build CRS metadata for the coverage description.
-
-        :returns: dictionary containing the CRS identifier and type
-        """
-
-        authority = self.crs.to_authority()
-
-        if authority is not None:
-            authority_name, authority_code = authority
-
-            # OGC id of the CRS.
-            crs_id = (
-                "http://www.opengis.net/def/crs/" f"{authority_name}/0/{authority_code}"
-            )
-        # If no authority found (often the case for "rotated_pole"), the complete def of the CRS is stocked in PROJJSON.
-        else:
-            crs_id = self.crs.to_json()
-
-        # Determinates the CRS type
-        if self.crs.is_projected:
-            crs_type = "ProjectedCRS"  # True for Lambert Conformal
-        elif self.crs.is_geographic:
-            crs_type = "GeographicCRS"  # True for EPSG:4326
-        else:
-            crs_type = "ReferenceSystem"  # Non-standard cases
-
-        return {
-            "id": crs_id,
-            "type": crs_type,
-        }
-
     def _get_coverage_properties(self):
         """
         Normalize CaSR coverage properties.
         """
 
-        crs_metadata = self._get_crs_metadata()
-
         x_coord = self._data.coords[self.x_field]
         y_coord = self._data.coords[self.y_field]
 
-        # lon = self._data["lon"]
-        # lat = self._data["lat"]
 
         if x_coord.size < 2 or y_coord.size < 2:
             raise ProviderConnectionError(
                 "Spatial axes must contain at least two values"
             )
-
-        # if lon.size < 2 or lat.size < 2:
-        #     raise ProviderConnectionError(
-        #         "Spatial axes must contain at least two values"
-        #     )
 
         properties = {
             "bbox": [
@@ -836,8 +784,6 @@ class CasrProvider(XarrayProvider):
             "height": self._data.sizes[self.y_field],
             "resx": float(np.abs(x_coord.values[1] - x_coord.values[0])),
             "resy": float(np.abs(y_coord.values[1] - y_coord.values[0])),
-            # "resx": float(np.abs(lon.values[1] - lon.values[0])),
-            # "resy": float(np.abs(lat.values[1] - lat.values[0])),
             "uad": self.get_coverage_domainset(),
         }
 
@@ -884,44 +830,6 @@ class CasrProvider(XarrayProvider):
         raise ProviderConnectionError(
             f"Unsupported temporal resolution: {months} month(s)"
         )
-
-        # The old way, if I want to come back to it.
-        """
-        first_month = first.astype("datetime64[M]")
-        second_month = second.astype("datetime64[M]")
-
-        month_difference = int(second_month.astype(int) - first_month.astype(int))
-
-        if (
-            month_difference > 0
-            and first == first_month.astype("datetime64[ns]")
-            and second == second_month.astype("datetime64[ns]")
-        ):
-            return f"P{month_difference}M"
-        """
-
-    '''@staticmethod
-    def _to_datetime_string(datetime_value):
-        """
-        Convert a NumPy or Python datetime value to an ISO 8601 string.
-        """
-
-        try:
-            value = np.datetime64(datetime_value, "ns")
-
-            if np.isnat(value):
-                return None
-
-            return np.datetime_as_string(
-                value,
-                unit="s",
-            )
-
-        except (TypeError, ValueError):
-            if isinstance(datetime_value, datetime):
-                return datetime_value.isoformat()
-
-            return str(datetime_value)'''
 
     def _format_time_range_value(self, value):
         """
