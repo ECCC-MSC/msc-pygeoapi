@@ -1,3 +1,10 @@
+msc-pygeoapi (0.18.10) jammy; urgency=medium
+
+  * fix citypageweather loader/persistence
+  * pin Leaflet and Leaflet.markercluster HTML artifacts
+
+ -- Tom Kralidis <tom.kralidis@ec.gc.ca>  Wed, 25 Nov 2026 22:10:42 +0000
+
 msc-pygeoapi (0.18.9) jammy; urgency=medium
 
   * fix feature id detection logic in alerts loader
