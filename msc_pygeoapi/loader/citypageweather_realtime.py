@@ -528,6 +528,48 @@ CPW_PROPERTIES = {
                             }
                         }
                     }
+                },
+                'visibility': {
+                    'type': 'object',
+                    'properties': {
+                        'unitType': {
+                            'type': 'object',
+                            'properties': {
+                                'en': {
+                                    'type': 'text',
+                                    'fields': {'raw': {'type': 'keyword'}}
+                                },
+                                'fr': {
+                                    'type': 'text',
+                                    'fields': {'raw': {'type': 'keyword'}}
+                                }
+                            }
+                        },
+                        'units': {
+                            'type': 'object',
+                            'properties': {
+                                'en': {
+                                    'type': 'text',
+                                    'fields': {'raw': {'type': 'keyword'}}
+                                },
+                                'fr': {
+                                    'type': 'text',
+                                    'fields': {'raw': {'type': 'keyword'}}
+                                }
+                            }
+                        },
+                        'value': {
+                            'type': 'object',
+                            'properties': {
+                                'en': {
+                                    'type': 'float'
+                                },
+                                'fr': {
+                                    'type': 'float'
+                                }
+                            }
+                        }
+                    }
                 }
             }
         },
@@ -2388,6 +2430,7 @@ class CitypageweatherRealtimeLoader(BaseLoader):
                     'wind/bearing'
                 ],
                 'pressure': 'pressure',
+                'visibility': 'visibility',
                 'temperature': 'temperature',
                 'dewpoint': 'dewpoint',
                 'windChill': 'windChill',
