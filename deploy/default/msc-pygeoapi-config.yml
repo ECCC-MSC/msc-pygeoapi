@@ -4664,6 +4664,8 @@ resources:
                   - alert_type
                   - alert_name_en
                   - alert_name_fr
+                  - alert_title_en
+                  - alert_title_fr
                   - alert_short_name_en
                   - alert_short_name_fr
                   - publication_datetime

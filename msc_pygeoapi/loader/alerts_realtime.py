@@ -57,6 +57,7 @@ INDEX_BASENAME = 'alerts-realtime.'
 
 ALIAS = 'alerts-realtime'
 
+# MAPPINGS is imported in the alerts_realtime_dev loader
 MAPPINGS = {
     'properties': {
         'geometry': {'type': 'geo_shape'},
@@ -127,6 +128,22 @@ MAPPINGS = {
                     }
                 },
                 'alert_short_name_fr': {
+                    'type': 'text',
+                    'fields': {
+                        'raw': {
+                            'type': 'keyword'
+                        }
+                    }
+                },
+                'alert_title_en': {
+                    'type': 'text',
+                    'fields': {
+                        'raw': {
+                            'type': 'keyword'
+                        }
+                    }
+                },
+                'alert_title_fr': {
                     'type': 'text',
                     'fields': {
                         'raw': {
